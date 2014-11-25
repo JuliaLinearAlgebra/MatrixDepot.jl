@@ -96,8 +96,8 @@ Input options:
 ['inverse', 'orthogonal', 'eigen']
 ```
 
-From the information given by `matrixdepot("hilb")`, we notice we create
-a 4-by-6 rectanglular Hilbert matrix by
+From the information given by `matrixdepot("hilb")`, we notice that we
+can create a 4-by-6 rectanglular Hilbert matrix by
 
 ```julia
 julia> matrixdepot("hilb", 4, 6)
