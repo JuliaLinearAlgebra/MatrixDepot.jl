@@ -9,7 +9,7 @@ To install the package, type
 
 ```julia
 julia> Pkg.clone("git://github.com/weijianzhang/MatrixDepot.jl.git")
-
+```
 
 ## Usage
 
@@ -17,17 +17,15 @@ First load the package:
 
 ```julia
 julia> using MatrixDepot
+```
 
 The only function will be exported is `matrixdepot`.
 
-
-    ? matrixdepot
-
-    INFO: Loading help data...
-
-
-    matrixdepot (generic function with 8 methods)
-
+```julia
+julia>? matrixdepot
+INFO: Loading help data...
+matrixdepot (generic function with 8 methods)
+```
 
 Every matrix in the collection is represented by a string `matrix_name`, for
 example, the Cauchy matrix is represented by `"cauchy"` and the Hilbert matrix
