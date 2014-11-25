@@ -2,6 +2,7 @@
 
 Matrix Depot is a multi-language collection of test matrices.
 
+[![Build Status](https://travis-ci.org/weijianzhang/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/weijianzhang/MatrixDepot.jl)
 
 ## Install
 
