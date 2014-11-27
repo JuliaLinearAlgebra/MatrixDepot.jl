@@ -77,7 +77,7 @@ function dingdong{T}(::Type{T}, n::Int)
     # type: data type
     # n: the dimension of the matrix
     D = zeros(T, n, n)
-    [D[i,j] = one(T)/2*(n-i-j+1.5) for i = 1:n, j= 1:n]
+    [D[i,j] = one(T)/(2*(n-i-j+1.5)) for i = 1:n, j= 1:n]
     return D
 end
 
