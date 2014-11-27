@@ -127,14 +127,14 @@ collection) having that property.
 
 ```julia
 julia> matrixdepot("symmetric")
-3-element Array{ASCIIString,1}:
+4-element Array{ASCIIString,1}:
  "hilb"  
  "cauchy"
  "circul"
  "dingdong"
 
 julia> matrixdepot("ill-cond")
-2-element Array{ASCIIString,1}:
+3-element Array{ASCIIString,1}:
  "hilb"  
  "cauchy"
  "frank"
