@@ -81,9 +81,24 @@ function dingdong{T}(::Type{T}, n::Int)
     return D
 end
 
+# 
+# Frank Matrix
+#
+function frank{T}(::Type{T}, n::Int, k::Int)
+    # Compute the frank matrix
+    # type: data type
+    # n: the dimension of the matrix
+    # k = 0 or 1: k = 1 reflect about the anti-diagonal
+    p = T[n:-1:1];
+    F = triu(ones(T, n, 1)*p') + diagm(p[2:n], -1);
+    k == 0 ?  F :
+    k == 1 ?  F[p,p]' : error("k = 0 or 1, but get ", k)
+end
+frank{T}(::Type{T}, n::Int) = frank(T, n, 0)
+
 matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
               "cauchy" => cauchy, "circul" => circul,
-              "dingdong" => dingdong];
+              "dingdong" => dingdong, "frank" => frank];
 
 matrixinfo = ["hilb" => "Hilbert matrix: 
               \n Input options: 
@@ -108,13 +123,19 @@ matrixinfo = ["hilb" => "Hilbert matrix:
               \n ['symmetric', 'pos-def', 'eigen']",
               "dingdong" => "Dingdong matrix:
               \n Input options:
-              \n (type), n:: Int: the dimension of the matrix.
+              \n (type), n: the dimension of the matrix.
               \n ['symmetric', 'eigen']",
+              "frank" => "Frank matrix:
+              \n Input options:
+              \n (type), n, k: n is the dimension of the matrix, k = 0 or 1.
+              If k = 1 the matrix reflect about the anti-diagonal.
+              \n (type), n: n is the dimension of the matrix.
+              \n ['ill-cond', 'eigen']",
               ];
 
 matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong"],
                "inverse" => ["hilb", "hadamard", "cauchy"],
-               "ill-cond" => ["hilb", "cauchy"],
+               "ill-cond" => ["hilb", "cauchy", "frank"],
                "pos-def" => ["hilb", "cauchy", "circul"],
-               "eigen" =>   ["hadamard", "circul", "dingdong"],
+               "eigen" =>   ["hadamard", "circul", "dingdong", "frank"],
                ];
