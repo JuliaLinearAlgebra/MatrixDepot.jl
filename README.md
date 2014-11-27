@@ -131,11 +131,13 @@ julia> matrixdepot("symmetric")
  "hilb"  
  "cauchy"
  "circul"
+ "dingdong"
 
 julia> matrixdepot("ill-cond")
 2-element Array{ASCIIString,1}:
  "hilb"  
  "cauchy"
+ "frank"
 
 julia> matrixdepot("inverse")
 3-element Array{ASCIIString,1}:
