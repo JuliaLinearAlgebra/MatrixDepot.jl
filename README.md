@@ -137,7 +137,7 @@ julia> matrixdepot("ill-cond")
  "hilb"  
  "cauchy"
 
-julia>  matrixdepot("inverse")
+julia> matrixdepot("inverse")
 3-element Array{ASCIIString,1}:
  "hilb"    
  "hadamard"
