@@ -1,5 +1,6 @@
 # Higham Test Matrices
-export hilb, hadamard, cauchy, circul, matrixdict, matrixclass, matrixinfo
+export hilb, hadamard, cauchy, circul, dingdong, matrixdict, 
+matrixclass, matrixinfo
 
 
 #
@@ -68,9 +69,21 @@ circul{T}(v::Vector{T}, n::Int) = circul(v, T[1:n])
 circul{T}(v::Vector{T}) = circul(v, v)
 circul{T}(::Type{T}, k::Int) = circul(T[1:k])
 
+#
+# Dingdong Matrix
+#
+function dingdong{T}(::Type{T}, n::Int)
+    # Compute the dingdong matrix
+    # type: data type
+    # n: the dimension of the matrix
+    D = zeros(T, n, n)
+    [D[i,j] = one(T)/2*(n-i-j+1.5) for i = 1:n, j= 1:n]
+    return D
+end
 
 matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
-              "cauchy" => cauchy, "circul" => circul];
+              "cauchy" => cauchy, "circul" => circul,
+              "dingdong" => dingdong];
 
 matrixinfo = ["hilb" => "Hilbert matrix: 
               \n Input options: 
@@ -93,11 +106,15 @@ matrixinfo = ["hilb" => "Hilbert matrix:
               \n (type), vec: a vector 
               \n (type), dim: the dimension of the matrix
               \n ['symmetric', 'pos-def', 'eigen']",
+              "dingdong" => "Dingdong matrix:
+              \n Input options:
+              \n (type), n:: Int: the dimension of the matrix.
+              \n ['symmetric', 'eigen']",
               ];
 
-matrixclass = ["symmetric" => ["hilb", "cauchy", "circul"],
+matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong"],
                "inverse" => ["hilb", "hadamard", "cauchy"],
                "ill-cond" => ["hilb", "cauchy"],
                "pos-def" => ["hilb", "cauchy", "circul"],
-               "eigen" =>   ["hadamard", "circul"],
+               "eigen" =>   ["hadamard", "circul", "dingdong"],
                ];
