@@ -25,7 +25,7 @@ The only function will be exported is `matrixdepot`.
 ```julia
 julia> ? matrixdepot
 INFO: Loading help data...
-matrixdepot (generic function with 8 methods)
+matrixdepot (generic function with 10 methods)
 ```
 
 Every matrix in the collection is represented by a string `matrix_name`, for
@@ -135,18 +135,20 @@ julia> matrixdepot("symmetric")
  "invhilb"
 
 julia> matrixdepot("ill-cond")
-4-element Array{ASCIIString,1}:
+5-element Array{ASCIIString,1}:
  "hilb"  
  "cauchy"
  "frank"
  "invhilb"
+ "forsythe"
 
 julia> matrixdepot("inverse")
-4-element Array{ASCIIString,1}:
+5-element Array{ASCIIString,1}:
  "hilb"    
  "hadamard"
  "cauchy"
  "invhilb"
+ "forsythe"
 ```  
 
 Given a property, we can loop through all the matrices having this propery
