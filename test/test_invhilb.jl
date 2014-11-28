@@ -1,0 +1,5 @@
+n = rand(1:10)
+A = matrixdepot("invhilb", n)
+@test issym(A)
+@test isposdef(A)
+println("'invhilb' passed test...")
