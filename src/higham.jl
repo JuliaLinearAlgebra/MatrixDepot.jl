@@ -110,10 +110,34 @@ function frank{T}(::Type{T}, n::Int, k::Int)
 end
 frank{T}(::Type{T}, n::Int) = frank(T, n, 0)
 
+#
+# Jordan block
+#
+function jordbloc{T}( n::Int, lambda::T)
+    # Generate a n-by-n jordan block with eigenvalue
+    # lambda
+    J = lambda*eye(T, n) + diagm(ones(T, n-1, 1)[:,1] , 1)
+    return J
+end
+
+#
+# Forsythe Matrix
+#
+function forsythe{T}(::Type{T}, n::Int , alpha, lambda)
+    # Generate the forsythe matrix
+    alpha = convert(T, alpha)
+    lambda = convert(T, lambda)
+    F = jordbloc(n, lambda);
+    F[n,1] = alpha;
+    return F
+end
+forsythe{T}(::Type{T}, n::Int) = forsythe(T, n, sqrt(eps(T)), zero(T))
+
+
 matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
               "cauchy" => cauchy, "circul" => circul,
               "dingdong" => dingdong, "frank" => frank,
-              "invhilb" => invhilb];
+              "invhilb" => invhilb, "forsythe" => forsythe];
 
 matrixinfo = ["hilb" => "Hilbert matrix: 
               \n Input options: 
@@ -150,12 +174,21 @@ matrixinfo = ["hilb" => "Hilbert matrix:
               If k = 1 the matrix reflect about the anti-diagonal.
               \n (type), n: n is the dimension of the matrix.
               \n ['ill-cond', 'eigen']",
+              "forsythe" => "Forsythe matrix:
+              \n Input options:
+              \n (type), n, alpha, lambda: n is the dimension of the matrix.
+              alpha and lambda are scalars.
+              \n (type), n: alpha = sqrt(eps(type)) and lambda = 0.
+              \n ['inverse', 'ill-cond', 'eigen']",
               ];
 
 matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                                "invhilb"],
-               "inverse" => ["hilb", "hadamard", "cauchy", "invhilb"],
-               "ill-cond" => ["hilb", "cauchy", "frank", "invhilb"],
+               "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
+                             "forsythe"],
+               "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
+                              "forsythe"],
                "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
-               "eigen" =>   ["hadamard", "circul", "dingdong", "frank"],
+               "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
+                             "eigen"],
                ];
