@@ -1,5 +1,5 @@
 # Higham Test Matrices
-# Copyright(c) Weijian Zhang
+
 
 #
 # Hilbert Matrix
