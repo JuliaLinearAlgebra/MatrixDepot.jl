@@ -1,20 +1,34 @@
 # Higham Test Matrices
-export hilb, hadamard, cauchy, circul, dingdong, matrixdict, 
-matrixclass, matrixinfo
-
+# Copyright(c) Weijian Zhang
 
 #
 # Hilbert Matrix
 #
 function hilb{T}(::Type{T}, m::Int, n::Int)
     # compute the Hilbert matrix
-    H = zeros(T, m,n)
+    H = zeros(T, m, n)
     for i =1:m, j = 1:n
         H[i,j] = one(T)/ (i + j -1)
     end
     return H
 end
 hilb{T}(::Type{T}, n::Int) = hilb(T, n, n)
+
+#
+# Inverse of Hilbert Matrix
+#
+function invhilb{T}(::Type{T}, n::Int)
+    # compute the inverse of Hilbert matrix
+    # Type: data type
+    # n: the dimension of the matrix
+    Inv = zeros(T, n, n)
+    for i = 1:n, j = 1:n
+        Inv[i,j] = (-1)^(i+j)*(i+j-1)*binomial(n+i-1, n-j)*
+        binomial(n+j-1,n-i)*binomial(i+j-2,i-1)^2
+    end
+    return Inv
+end
+
 
 #
 # Hadamard Matrix
@@ -98,16 +112,21 @@ frank{T}(::Type{T}, n::Int) = frank(T, n, 0)
 
 matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
               "cauchy" => cauchy, "circul" => circul,
-              "dingdong" => dingdong, "frank" => frank];
+              "dingdong" => dingdong, "frank" => frank,
+              "invhilb" => invhilb];
 
 matrixinfo = ["hilb" => "Hilbert matrix: 
               \n Input options: 
               \n (type), dim: the dimension of the matrix
               \n (type), row_dim, col_dim: the row and column dimension 
               \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+              "invhilb" => "Inverse of Hilbert matrix:
+              \n Input options:
+              \n (type), dim: the dimension of the matrix
+              \n ['inverse', 'ill-cond', 'symmetric','pos-def']",
               "hadamard" => "Hadamard matrix: 
               \n Input options: 
-              \n (type), n::Int: the dimension of the matrix, n is a power of 2 
+              \n (type), dim: the dimension of the matrix, n is a power of 2 
               \n ['inverse', 'orthogonal', 'eigen']",
               "cauchy" => "Cauchy matrix: 
               \n Input options: 
@@ -133,9 +152,10 @@ matrixinfo = ["hilb" => "Hilbert matrix:
               \n ['ill-cond', 'eigen']",
               ];
 
-matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong"],
-               "inverse" => ["hilb", "hadamard", "cauchy"],
-               "ill-cond" => ["hilb", "cauchy", "frank"],
-               "pos-def" => ["hilb", "cauchy", "circul"],
+matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
+                               "invhilb"],
+               "inverse" => ["hilb", "hadamard", "cauchy", "invhilb"],
+               "ill-cond" => ["hilb", "cauchy", "frank", "invhilb"],
+               "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
                "eigen" =>   ["hadamard", "circul", "dingdong", "frank"],
                ];
