@@ -127,23 +127,26 @@ collection) having that property.
 
 ```julia
 julia> matrixdepot("symmetric")
-4-element Array{ASCIIString,1}:
+5-element Array{ASCIIString,1}:
  "hilb"  
  "cauchy"
  "circul"
  "dingdong"
+ "invhilb"
 
 julia> matrixdepot("ill-cond")
-3-element Array{ASCIIString,1}:
+4-element Array{ASCIIString,1}:
  "hilb"  
  "cauchy"
  "frank"
+ "invhilb"
 
 julia> matrixdepot("inverse")
-3-element Array{ASCIIString,1}:
+4-element Array{ASCIIString,1}:
  "hilb"    
  "hadamard"
  "cauchy"
+ "invhilb"
 ```  
 
 Given a property, we can loop through all the matrices having this propery
@@ -154,15 +157,15 @@ julia> A = eye(4);
 julia> print("Identity matrix")
 julia> for mat in matrixdepot("inverse")
          print(" x $mat matrix")
-         A = A * matrixdepot(mat, 4)    
+         A *=  matrixdepot(mat, 4)    
        end
-julia> println(" is equal to")
+julia> println(" =")
 julia> A    
-Identity matrix x hilb matrix x hadamard matrix x cauchy matrix is equal to
+Identity matrix x hilb matrix x hadamard matrix x cauchy matrix x invhilb matrix =
 4x4 Array{Float64,2}:
- 1.54861   1.09306   0.849802  0.696925
- 0.833056  0.578056  0.444722  0.362123
- 0.578056  0.3975    0.304087  0.246647
- 0.444722  0.304087  0.231797  0.187548
+ -0.00595238   2.20238   0.047619   1.75    
+ -0.00166667   1.31667   0.0666667  0.616667
+ -0.000714286  0.964286  0.052381   0.316667
+ -0.00037415   0.767007  0.0401361  0.192857
 ```
 
