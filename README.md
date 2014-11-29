@@ -9,7 +9,8 @@ Matrix Depot is a multi-language collection of test matrices.
 To install the package, type
 
 ```julia
-julia> Pkg.clone("git://github.com/weijianzhang/MatrixDepot.jl.git")
+julia> Pkg.update()
+julia> Pkg.clone("MatrixDepot")
 ```
 
 ## Usage
@@ -92,7 +93,7 @@ Hadamard matrix:
                   
 Input options: 
                   
-(type), n::Int: the dimension of the matrix, n is a power of 2 
+(type), dim: the dimension of the matrix, n is a power of 2 
                   
 ['inverse', 'orthogonal', 'eigen']
 ```
