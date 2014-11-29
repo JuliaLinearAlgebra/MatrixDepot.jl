@@ -190,5 +190,5 @@ matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong",
                               "forsythe"],
                "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
                "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
-                             "eigen"],
+                             "forsythe"],
                ];
