@@ -134,6 +134,68 @@ end
 forsythe{T}(::Type{T}, n::Int) = forsythe(T, n, sqrt(eps(T)), zero(T))
 
 
+function oddmagic(n)
+    # compute the magic square of odd orders
+    A = zeros(n,n)
+    i = 1
+    j = (n+1)/2
+    for k = 1:n^2
+        is = i
+        js = j
+        A[i,j] = k
+        i = n - rem(n+1-i,n)
+        j = rem(j,n) + 1
+        if A[i,j] != 0
+            i = rem(is,n) + 1
+            j = js
+        end
+        end
+    return A
+end
+   
+#
+# Magic Matrix
+#
+function magic{T}(::Type{T}, n::Int)
+    # Compute a magic square of order n
+    if mod(n, 2) == 1
+        # n is odd
+        M = oddmagic(n);
+    elseif mod(n, 4) == 0
+        # n is doubly even
+        a = ifloor(mod([1:n], 4)/2)
+        B = broadcast(==, a', a)
+        M = broadcast(+, [1:n:n^2]',[0:n-1])
+        for i = 1:n, j = 1:n
+            B[i,j] == 1 ? M[i,j] = n^2 + 1 - M[i,j] : M[i,j]
+        end
+        
+    else 
+        # n is singly even
+        p = convert(Int, n/2)
+        M = oddmagic(p)
+        M = [M M+2*p^2; M+3*p^2 M+p^2]
+        if n == 2
+            return M
+        end
+        i = [1:p]'
+        k = convert(Int,(n-2)/4)
+        j = [[1:k], [(n-k+2) : n]]
+        println("here")
+        println(i)
+        println([i;i+p])
+        for i_row 
+        M[[i;i+p],j] = M[[i+p;i],j]
+        i = k+1
+        println("hello")
+        j = [1 i]
+        
+        M[[i;i+p],j] = M[[i+p;i],j]
+    end        
+    return M
+end
+
+
 matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
               "cauchy" => cauchy, "circul" => circul,
               "dingdong" => dingdong, "frank" => frank,
