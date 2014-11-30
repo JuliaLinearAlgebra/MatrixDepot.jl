@@ -3,6 +3,28 @@ export matrixdepot
 
 include("higham.jl") #Higham Test matrices
 
+function matrixdepot()
+    # Print information strings 
+    println("Matrices in the Collection:")
+    println("---------------------------")
+    println()
+    for prop in keys(matrixclass)
+        println("Property: ", prop)
+        println("-------------------")
+        count = 0
+        for mat in matrixclass[prop]
+        print(mat, " matrix, ")
+            count += 1
+            if count > 3
+                count = 0
+                print("\n")
+            end
+        end
+        println()
+        println()
+    end
+end
+
 function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int)
     # name is matrix name
     # m is the number of rows
