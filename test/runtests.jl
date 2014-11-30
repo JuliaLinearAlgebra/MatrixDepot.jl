@@ -9,5 +9,6 @@ include("test_dingdong.jl")
 include("test_frank.jl")
 include("test_invhilb.jl")
 include("test_forsythe.jl")
+include("test_magic.jl")
 
 println("Success in all tests.")
