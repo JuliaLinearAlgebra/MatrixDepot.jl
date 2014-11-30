@@ -16,7 +16,17 @@ function matrixdepot{T}(name::String, ::Type{T}, n::Int)
     # n is the dimension of the matrix (square)
     return matrixdict[name](T, n)
 end
-matrixdepot(name::String, n::Int) = matrixdepot(name, Float64, n)
+
+function matrixdepot(name::String, n::Int)
+    # name is the matrix name
+    # n is the dimesion of the matrix
+    # magic square is an exception: Int Array by default.
+    if name == "magic"
+        matrixdepot(name, Int, n)
+    else
+        matrixdepot(name, Float64, n)
+    end
+end
 
 function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha, beta)
     # name is the matrix name

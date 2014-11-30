@@ -134,11 +134,11 @@ end
 forsythe{T}(::Type{T}, n::Int) = forsythe(T, n, sqrt(eps(T)), zero(T))
 
 
-function oddmagic(n)
+function oddmagic{T}(::Type{T}, n::Int)
     # compute the magic square of odd orders
-    A = zeros(n,n)
+    A = zeros(T, n, n)
     i = 1
-    j = (n+1)/2
+    j = div(n+1, 2)
     for k = 1:n^2
         is = i
         js = j
@@ -149,7 +149,7 @@ function oddmagic(n)
             i = rem(is,n) + 1
             j = js
         end
-        end
+    end
     return A
 end
    
@@ -158,38 +158,32 @@ end
 #
 function magic{T}(::Type{T}, n::Int)
     # Compute a magic square of order n
+    # Learnt from Cleve Moler, Experiments with MATLAB, 2011
     if mod(n, 2) == 1
         # n is odd
-        M = oddmagic(n);
+        M = oddmagic(T, n)
     elseif mod(n, 4) == 0
         # n is doubly even
         a = ifloor(mod([1:n], 4)/2)
         B = broadcast(==, a', a)
-        M = broadcast(+, [1:n:n^2]',[0:n-1])
+        M = broadcast(+, T[1:n:n^2]',T[0:n-1])
         for i = 1:n, j = 1:n
-            B[i,j] == 1 ? M[i,j] = n^2 + 1 - M[i,j] : M[i,j]
-        end
-        
+            B[i,j] == 1 ? M[i,j] = n^2 + one(T) - M[i,j] : M[i,j]
+        end        
     else 
         # n is singly even
-        p = convert(Int, n/2)
-        M = oddmagic(p)
+        p = div(n,2)
+        M = oddmagic(T, p)
         M = [M M+2*p^2; M+3*p^2 M+p^2]
         if n == 2
             return M
         end
-        i = [1:p]'
-        k = convert(Int,(n-2)/4)
+        i = [1:p]
+        k = div(n-2, 4)
         j = [[1:k], [(n-k+2) : n]]
-        println("here")
-        println(i)
-        println([i;i+p])
-        for i_row 
         M[[i;i+p],j] = M[[i+p;i],j]
         i = k+1
-        println("hello")
-        j = [1 i]
-        
+        j = [1, i]
         M[[i;i+p],j] = M[[i+p;i],j]
     end        
     return M
@@ -199,7 +193,8 @@ end
 matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
               "cauchy" => cauchy, "circul" => circul,
               "dingdong" => dingdong, "frank" => frank,
-              "invhilb" => invhilb, "forsythe" => forsythe];
+              "invhilb" => invhilb, "forsythe" => forsythe,
+              "magic" => magic];
 
 matrixinfo = ["hilb" => "Hilbert matrix: 
               \n Input options: 
@@ -242,12 +237,16 @@ matrixinfo = ["hilb" => "Hilbert matrix:
               alpha and lambda are scalars.
               \n (type), n: alpha = sqrt(eps(type)) and lambda = 0.
               \n ['inverse', 'ill-cond', 'eigen']",
+              "magic" => "Magic square matrix:
+              \n Input options:
+              \n (type), dim: the dimension of the matrix.
+              \n ['inverse']"
               ];
 
 matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                                "invhilb"],
                "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
-                             "forsythe"],
+                             "forsythe", "magic"],
                "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                               "forsythe"],
                "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
