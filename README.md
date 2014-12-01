@@ -53,33 +53,6 @@ To see all the matrices in the collection, type
 
 ```julia
 julia> matrixdepot()
-Matrices in the Collection:
----------------------------
-
-Property: pos-def
--------------------
-hilb matrix, cauchy matrix, circul matrix, invhilb matrix, 
-
-
-Property: ill-cond
--------------------
-hilb matrix, cauchy matrix, frank matrix, invhilb matrix, 
-forsythe matrix, 
-
-Property: eigen
--------------------
-hadamard matrix, circul matrix, dingdong matrix, frank matrix, 
-forsythe matrix, 
-
-Property: symmetric
--------------------
-hilb matrix, cauchy matrix, circul matrix, dingdong matrix, 
-invhilb matrix, 
-
-Property: inverse
--------------------
-hilb matrix, hadamard matrix, cauchy matrix, invhilb matrix, 
-forsythe matrix, magic matrix, 
 ```
 
 We can generate a Hilbert matrix of size 4 by typing
@@ -205,3 +178,6 @@ Identity matrix x hilb matrix x hadamard matrix x cauchy matrix x invhilb matrix
  -0.00037415   0.767007  0.0401361  0.192857
 ```
 
+## Documentation
+
+More details can be found [here](http://matrixdepot.github.io/doc/juliadoc.html).
