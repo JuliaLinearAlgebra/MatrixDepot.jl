@@ -140,22 +140,6 @@ julia> matrixdepot("symmetric")
  "circul"
  "dingdong"
  "invhilb"
-
-julia> matrixdepot("ill-cond")
-5-element Array{ASCIIString,1}:
- "hilb"  
- "cauchy"
- "frank"
- "invhilb"
- "forsythe"
-
-julia> matrixdepot("inverse")
-5-element Array{ASCIIString,1}:
- "hilb"    
- "hadamard"
- "cauchy"
- "invhilb"
- "forsythe"
 ```  
 
 Given a property, we can loop through all the matrices having this propery
