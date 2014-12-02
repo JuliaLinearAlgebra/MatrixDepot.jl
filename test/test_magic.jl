@@ -1,7 +1,8 @@
 n = rand(1:10)
 M = matrixdepot("magic", n)
-
-@test sum(M,1) == sum(M,2)'
+if n != 2 # no magic matrix of order 2
+    @test sum(M,1) == sum(M,2)'
+end
 k = rand(1:n)
 @test sum(M,1)[k] == sum(M,2)'[k]
 # diagnoal == antidiagnoal
