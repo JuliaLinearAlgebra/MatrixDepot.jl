@@ -7,13 +7,15 @@ a = convert(T, 3)
 b = convert(T, 4)
 @test matrixdepot("forsythe", T, n, 3, 4) == matrixdepot("forsythe", n, a, b)
 
+if n != 1 # this test does not apply for n = 1
+    A = zeros(T, n, n)
+    for i = 1:n, j = 1:n
+        A[i,j] = j == i ? b : 
+                  j == i + 1 ? 1.0 : 
+                  (i == n && j == 1)? a : 0.0
+    end
 
-A = zeros(T, n, n)
-for i = 1:n, j = 1:n
-    A[i,j] = j == i ? b : 
-             j == i + 1 ? 1.0 : 
-             (i == n && j == 1)? a : 0.0
+    @test_approx_eq matrixdepot("forsythe", n, a, b) A
 end
-@test_approx_eq matrixdepot("forsythe", n, a, b) A
 println("'forsythe' passed test...")
 
