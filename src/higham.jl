@@ -189,12 +189,20 @@ function magic{T}(::Type{T}, n::Int)
     return M
 end
 
+#
+# Grcar Matrix
+#
+function grcar{T}(::Type{T}, n::Int, k::Int = 3)
+    # Compute grcar matrix
+    G = tril(triu(ones(T, n,n)), k) - diagm(ones(T, n-1), -1)
+    return G
+end
 
 matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
               "cauchy" => cauchy, "circul" => circul,
               "dingdong" => dingdong, "frank" => frank,
               "invhilb" => invhilb, "forsythe" => forsythe,
-              "magic" => magic];
+              "magic" => magic, "grcar" => grcar];
 
 matrixinfo = ["hilb" => "Hilbert matrix: 
               \n Input options: 
@@ -240,7 +248,13 @@ matrixinfo = ["hilb" => "Hilbert matrix:
               "magic" => "Magic square matrix:
               \n Input options:
               \n (type), dim: the dimension of the matrix.
-              \n ['inverse']"
+              \n ['inverse']",
+              "grcar" => "Grcar Matrix:
+              \n Input options:
+              \n (type), dim, k: dim is the dimension of the matrix and 
+              k is the number of superdiagonals.
+              \n (type), dim: the dimension of the matrix.
+              \n ['eigen']",
               ];
 
 matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
@@ -251,5 +265,5 @@ matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong",
                               "forsythe"],
                "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
                "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
-                             "forsythe"],
+                             "forsythe", "grcar"],
                ];
