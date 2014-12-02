@@ -1,6 +1,8 @@
 # Matrix Depot for Julia
 
-Matrix Depot is a multi-language collection of test matrices.
+Matrix Depot is a test matrix collection. See for example 
+[this paper] (http://www.ma.man.ac.uk/~higham/mctoolbox/toolbox.pdf)
+if you are not sure why we need test matices.
 
 [![Build Status](https://travis-ci.org/weijianzhang/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/weijianzhang/MatrixDepot.jl)
 
