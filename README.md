@@ -164,4 +164,4 @@ Identity matrix x hilb matrix x hadamard matrix x cauchy matrix x invhilb matrix
 
 ## Documentation
 
-More details can be found [here](http://nbviewer.ipython.org/github/matrixdepot/matrixdepot.github.io/blob/master/doc/juliadoc.ipynb).
+More details can be found [here](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb).
