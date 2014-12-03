@@ -60,6 +60,16 @@ function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha, beta)
 end
 matrixdepot(name::String, n::Int, alpha, beta) = matrixdepot(name, Float64, n, alpha, beta)
 
+function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int, alpha, k::Int)
+    # name is the matrix name
+    # m, n are row and column dimensions of the matrix
+    # alpha is a scalar
+    # k is int
+    return matrixdict[name](T, m, n, alpha, k)
+end
+matrixdepot(name::String, m::Int, n::Int, alpha, k::Int) = matrixdepot(name, Float64, m, n, alpha, k)
+
+
 function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T})
     # name: matrix name
     # x,y : vectors

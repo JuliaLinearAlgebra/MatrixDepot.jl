@@ -199,15 +199,21 @@ function grcar{T}(::Type{T}, n::Int, k::Int = 3)
 end
 
 #
-# 
+# Triw Matrix
 #
-
+function triw{T}(::Type{T}, m::Int, n::Int, alpha, k::Int)
+    alpha = convert(T, alpha)
+    A = tril(eye(T, m,n) + alpha * triu(ones(T, m,n), 1), k)
+    return A
+end
+triw{T}(::Type{T}, n::Int) = triw(T, n, n,  -1, n-1)
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
                           "invhilb" => invhilb, "forsythe" => forsythe,
-                          "magic" => magic, "grcar" => grcar);
+                          "magic" => magic, "grcar" => grcar,
+                          "triw" => triw);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -261,15 +267,23 @@ matrixinfo =
              k is the number of superdiagonals.
              \n (type), dim: the dimension of the matrix.
              \n ['eigen']",
+             "triw" => "Triw Matrix:
+             \n Input options:
+             \n (type), row_dim, col_dim, alpha, k: row_dim and col_dim 
+             are row and column dimension of the matrix. alpha is a 
+             scalar representing the entries on the superdiagonals. 
+             k is the number superdiagonals.
+             \n (type), dim 
+             \n ['inverse', 'ill-cond']",
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
-                           "forsythe", "magic"],
+                           "forsythe", "magic", "triw"],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
-                            "forsythe"],
+                            "forsythe", "triw"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar"],
