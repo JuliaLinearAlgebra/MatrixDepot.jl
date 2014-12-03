@@ -50,7 +50,7 @@ parameters depending on `matrix_name`.
 
 
 | Matrices                  | String    | Matrices       | String    |
-|---------------------------|-----------|----------------|-----------|
+|:-------------------------:|:---------:|:--------------:|:---------:|
 | Circul Matrix             | "circul"  | Frank Matrix   | "frank"   | 
 | Hilbert Matrix            | "hilb"    | Grcar Matrix   | "grcar"   |
 | Inverse of Hilbert Matrix | "invhilb" | Dingdong Matrix| "dingdong"|
