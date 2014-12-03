@@ -1,0 +1,3 @@
+# ignore IJulia Notebook and org 
+*.ipynb
+*.org
