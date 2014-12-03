@@ -1,11 +1,10 @@
 # Matrix Depot for Julia
 
-Matrix Depot is a test matrix collection. See for example 
-[this paper] (http://www.ma.man.ac.uk/~higham/mctoolbox/toolbox.pdf)
-if you are not sure why we need test matices.
+Matrix Depot is a test matrix collection.
 
 [![Build Status](https://travis-ci.org/weijianzhang/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/weijianzhang/MatrixDepot.jl)
 
+  
 ## Install
 
 To install the package, type
@@ -48,6 +47,21 @@ parameters depending on `matrix_name`.
 
 * `matrixdepot(property_name)` returns a list of matrices with the property
 `property_name`.
+
+
+| Matrices                  | String    |
+|---------------------------|-----------|
+| Circul Matrix             | "circul"  |
+| Hilbert Matrix            | "hilb"    |
+| Inverse of Hilbert Matrix | "invhilb" |
+| Hadamard Matrix           | "hadamard"|
+| Cauchy Matrix             | "cauchy"  |
+| Frank Matrix              | "frank"   |
+| Grcar Matrix              | "grcar"   |
+| Dingdong Matrix           | "dingdong"|
+| Magic Matrix              | "magic"   |
+| Forsythe Matrix           | "forsythe"|
+
 
 ## Examples
 
