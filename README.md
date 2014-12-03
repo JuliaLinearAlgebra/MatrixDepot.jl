@@ -49,18 +49,13 @@ parameters depending on `matrix_name`.
 `property_name`.
 
 
-| Matrices                  | String    |
-|---------------------------|-----------|
-| Circul Matrix             | "circul"  |
-| Hilbert Matrix            | "hilb"    |
-| Inverse of Hilbert Matrix | "invhilb" |
-| Hadamard Matrix           | "hadamard"|
-| Cauchy Matrix             | "cauchy"  |
-| Frank Matrix              | "frank"   |
-| Grcar Matrix              | "grcar"   |
-| Dingdong Matrix           | "dingdong"|
-| Magic Matrix              | "magic"   |
-| Forsythe Matrix           | "forsythe"|
+| Matrices                  | String    | Matrices       | String    |
+|---------------------------|-----------|----------------|-----------|
+| Circul Matrix             | "circul"  | Frank Matrix   | "frank"   | 
+| Hilbert Matrix            | "hilb"    | Grcar Matrix   | "grcar"   |
+| Inverse of Hilbert Matrix | "invhilb" | Dingdong Matrix| "dingdong"|
+| Hadamard Matrix           | "hadamard"| Magic Matrix   | "magic"   |
+| Cauchy Matrix             | "cauchy"  | Forsythe Matrix| "forsythe"|
 
 
 ## Examples
