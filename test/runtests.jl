@@ -11,5 +11,6 @@ include("test_invhilb.jl")
 include("test_forsythe.jl")
 include("test_magic.jl")
 include("test_grcar.jl")
+include("test_triw.jl")
 
 println("Success in all tests.")
