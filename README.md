@@ -56,7 +56,7 @@ parameters depending on `matrix_name`.
 | Inverse of Hilbert Matrix | "invhilb" | Dingdong Matrix| "dingdong"|
 | Hadamard Matrix           | "hadamard"| Magic Matrix   | "magic"   |
 | Cauchy Matrix             | "cauchy"  | Forsythe Matrix| "forsythe"|
-
+| Triw Matrix               | "triw"    |                |           |
 
 ## Examples
 
