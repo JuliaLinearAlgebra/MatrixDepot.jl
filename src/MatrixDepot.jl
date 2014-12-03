@@ -1,4 +1,6 @@
 module MatrixDepot
+using Compat # support v3 and v4 
+
 export matrixdepot
 
 include("higham.jl") #Higham Test matrices

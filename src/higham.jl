@@ -38,7 +38,7 @@ function hadamard{T}(::Type{T}, n::Int)
     if n < 1
         lgn = 0
     else
-        lgn = iround(log2(n))
+        lgn = @compat round(Integer, log2(n))
     end
     2^lgn != n && throw(ArgumentError("n must be positive integer and a power of 2"))
     
@@ -198,72 +198,79 @@ function grcar{T}(::Type{T}, n::Int, k::Int = 3)
     return G
 end
 
-matrixdict = ["hilb" => hilb, "hadamard" => hadamard, 
-              "cauchy" => cauchy, "circul" => circul,
-              "dingdong" => dingdong, "frank" => frank,
-              "invhilb" => invhilb, "forsythe" => forsythe,
-              "magic" => magic, "grcar" => grcar];
+#
+# 
+#
 
-matrixinfo = ["hilb" => "Hilbert matrix: 
-              \n Input options: 
-              \n (type), dim: the dimension of the matrix
-              \n (type), row_dim, col_dim: the row and column dimension 
-              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
-              "invhilb" => "Inverse of Hilbert matrix:
-              \n Input options:
-              \n (type), dim: the dimension of the matrix
-              \n ['inverse', 'ill-cond', 'symmetric','pos-def']",
-              "hadamard" => "Hadamard matrix: 
-              \n Input options: 
-              \n (type), dim: the dimension of the matrix, n is a power of 2 
-              \n ['inverse', 'orthogonal', 'eigen']",
-              "cauchy" => "Cauchy matrix: 
-              \n Input options: 
-              \n (type), vec1, vec2: two vectors 
-              \n (type), vec: a vector
-              \n (type), dim: the dimension of the matrix
-              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
-              "circul" => "Circul matrix: 
-              \n Input options: 
-              \n (type), vec, col_dim: a vector and the column dimension 
-              \n (type), vec: a vector 
-              \n (type), dim: the dimension of the matrix
-              \n ['symmetric', 'pos-def', 'eigen']",
-              "dingdong" => "Dingdong matrix:
-              \n Input options:
-              \n (type), n: the dimension of the matrix.
-              \n ['symmetric', 'eigen']",
-              "frank" => "Frank matrix:
-              \n Input options:
-              \n (type), n, k: n is the dimension of the matrix, k = 0 or 1.
-              If k = 1 the matrix reflect about the anti-diagonal.
-              \n (type), n: n is the dimension of the matrix.
-              \n ['ill-cond', 'eigen']",
-              "forsythe" => "Forsythe matrix:
-              \n Input options:
-              \n (type), n, alpha, lambda: n is the dimension of the matrix.
-              alpha and lambda are scalars.
-              \n (type), n: alpha = sqrt(eps(type)) and lambda = 0.
-              \n ['inverse', 'ill-cond', 'eigen']",
-              "magic" => "Magic square matrix:
-              \n Input options:
-              \n (type), dim: the dimension of the matrix.
-              \n ['inverse']",
-              "grcar" => "Grcar Matrix:
-              \n Input options:
-              \n (type), dim, k: dim is the dimension of the matrix and 
-              k is the number of superdiagonals.
-              \n (type), dim: the dimension of the matrix.
-              \n ['eigen']",
-              ];
 
-matrixclass = ["symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
-                               "invhilb"],
-               "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
-                             "forsythe", "magic"],
-               "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
-                              "forsythe"],
-               "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
-               "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
-                             "forsythe", "grcar"],
-               ];
+matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
+                          "cauchy" => cauchy, "circul" => circul,
+                          "dingdong" => dingdong, "frank" => frank,
+                          "invhilb" => invhilb, "forsythe" => forsythe,
+                          "magic" => magic, "grcar" => grcar);
+
+matrixinfo = 
+@compat Dict("hilb" => "Hilbert matrix: 
+             \n Input options: 
+             \n (type), dim: the dimension of the matrix
+             \n (type), row_dim, col_dim: the row and column dimension 
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+             "invhilb" => "Inverse of Hilbert matrix:
+             \n Input options:
+             \n (type), dim: the dimension of the matrix
+             \n ['inverse', 'ill-cond', 'symmetric','pos-def']",
+             "hadamard" => "Hadamard matrix: 
+             \n Input options: 
+             \n (type), dim: the dimension of the matrix, n is a power of 2 
+             \n ['inverse', 'orthogonal', 'eigen']",
+             "cauchy" => "Cauchy matrix: 
+             \n Input options: 
+             \n (type), vec1, vec2: two vectors 
+             \n (type), vec: a vector
+             \n (type), dim: the dimension of the matrix
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+             "circul" => "Circul matrix: 
+             \n Input options: 
+             \n (type), vec, col_dim: a vector and the column dimension 
+             \n (type), vec: a vector 
+             \n (type), dim: the dimension of the matrix
+             \n ['symmetric', 'pos-def', 'eigen']",
+             "dingdong" => "Dingdong matrix:
+             \n Input options:
+             \n (type), n: the dimension of the matrix.
+             \n ['symmetric', 'eigen']",
+             "frank" => "Frank matrix:
+             \n Input options:
+             \n (type), n, k: n is the dimension of the matrix, k = 0 or 1.
+             If k = 1 the matrix reflect about the anti-diagonal.
+             \n (type), n: n is the dimension of the matrix.
+             \n ['ill-cond', 'eigen']",
+             "forsythe" => "Forsythe matrix:
+             \n Input options:
+             \n (type), n, alpha, lambda: n is the dimension of the matrix.
+             alpha and lambda are scalars.
+             \n (type), n: alpha = sqrt(eps(type)) and lambda = 0.
+             \n ['inverse', 'ill-cond', 'eigen']",
+             "magic" => "Magic square matrix:
+             \n Input options:
+             \n (type), dim: the dimension of the matrix.
+             \n ['inverse']",
+             "grcar" => "Grcar Matrix:
+             \n Input options:
+             \n (type), dim, k: dim is the dimension of the matrix and 
+             k is the number of superdiagonals.
+             \n (type), dim: the dimension of the matrix.
+             \n ['eigen']",
+             );
+
+matrixclass = 
+@compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
+                             "invhilb"],
+             "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
+                           "forsythe", "magic"],
+             "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
+                            "forsythe"],
+             "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
+             "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
+                           "forsythe", "grcar"],
+               );
