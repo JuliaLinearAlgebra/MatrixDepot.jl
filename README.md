@@ -49,7 +49,7 @@ parameters depending on `matrix_name`.
 `property_name`.
 
 
-| Matrices                  | String    | Matrices       | String    |
+| Matrices                  | Strings   | Matrices       | Strings   |
 |:-------------------------:|:---------:|:--------------:|:---------:|
 | Circul Matrix             | "circul"  | Frank Matrix   | "frank"   | 
 | Hilbert Matrix            | "hilb"    | Grcar Matrix   | "grcar"   |
