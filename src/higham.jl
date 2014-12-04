@@ -208,12 +208,21 @@ function triw{T}(::Type{T}, m::Int, n::Int, alpha, k::Int)
 end
 triw{T}(::Type{T}, n::Int) = triw(T, n, n,  -1, n-1)
 
+#
+# Moler Matrix
+#
+function moler{T}(::Type{T}, n::Int, alpha = -1.)
+    alpha = convert(T, alpha)
+    M = triw(T, n, n, alpha, n - 1)' * triw(T, n, n, alpha, n -1 ) 
+    return M
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
                           "invhilb" => invhilb, "forsythe" => forsythe,
                           "magic" => magic, "grcar" => grcar,
-                          "triw" => triw);
+                          "triw" => triw, "moler" => moler);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -275,16 +284,23 @@ matrixinfo =
              k is the number superdiagonals.
              \n (type), dim 
              \n ['inverse', 'ill-cond']",
+             "moler" => "Moler Matrix:
+             \n Input options:
+             \n (type), dim, alpha: dim is the dimension of the matrix,
+             alpha is a scalar.
+             \n (type), dim: alpha = -1.
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
-                             "invhilb"],
+                             "invhilb", "moler"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
-                           "forsythe", "magic", "triw"],
+                           "forsythe", "magic", "triw", "moler"],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
-                            "forsythe", "triw"],
-             "pos-def" => ["hilb", "cauchy", "circul", "invhilb"],
+                            "forsythe", "triw", "moler"],
+             "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
+                           "moler"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar"],
                );

@@ -35,6 +35,14 @@ function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int)
 end
 matrixdepot(name::String, m::Int, n::Int) = matrixdepot(name, Float64, m, n)
 
+function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha::FloatingPoint)
+    # name: matrix name
+    # n: dimension of the matrix
+    # alpha : scalar
+    return matrixdepot[name](T, n, alpha)
+end
+
+
 function matrixdepot{T}(name::String, ::Type{T}, n::Int)
     # name is the matrix name
     # n is the dimension of the matrix (square)
