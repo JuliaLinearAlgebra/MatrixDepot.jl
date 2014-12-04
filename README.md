@@ -48,7 +48,7 @@ parameters depending on `matrix_name`.
 * `matrixdepot(property_name)` returns a list of matrices with the property
 `property_name`.
 
-## Matrices in the Collection
+### Matrices in the Collection
 
 | Matrices                  | Strings   | Matrices       | Strings   |
 |:-------------------------:|:---------:|:--------------:|:---------:|
