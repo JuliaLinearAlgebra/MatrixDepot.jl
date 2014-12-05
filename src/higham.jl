@@ -217,12 +217,22 @@ function moler{T}(::Type{T}, n::Int, alpha = -1.)
     return M
 end
 
+#
+# Pascal Matrix
+#
+function pascal{T}(::Type{T}, n::Int)
+    P = zeros(T, n,n)
+    [P[i,j] = binomial(i+j-2, j-1) for i = 1:n, j= 1:n]
+    return P
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
                           "invhilb" => invhilb, "forsythe" => forsythe,
                           "magic" => magic, "grcar" => grcar,
-                          "triw" => triw, "moler" => moler);
+                          "triw" => triw, "moler" => moler,
+                          "pascal" => pascal);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -290,17 +300,21 @@ matrixinfo =
              alpha is a scalar.
              \n (type), dim: alpha = -1.
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
-             );
+             "pascal" => "Pascal Matrix:
+             \n Input options:
+             \n (type), dim: the dimension of the matrix.
+             \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']"
+);
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
-                             "invhilb", "moler"],
+                             "invhilb", "moler", "pascal"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
-                           "forsythe", "magic", "triw", "moler"],
+                           "forsythe", "magic", "triw", "moler", "pascal"],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
-                            "forsythe", "triw", "moler"],
+                            "forsythe", "triw", "moler", "pascal"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
-                           "moler"],
+                           "moler", "pascal"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
-                           "forsythe", "grcar"],
+                           "forsythe", "grcar", "pascal"],
                );
