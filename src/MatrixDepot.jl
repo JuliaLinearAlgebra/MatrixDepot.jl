@@ -52,8 +52,8 @@ end
 function matrixdepot(name::String, n::Int)
     # name is the matrix name
     # n is the dimesion of the matrix
-    # magic square is an exception: Int Array by default.
-    if name == "magic"
+    # magic square and pascal matrix are exceptions: Int Array by default.
+    if name in  ["magic", "pascal"]
         matrixdepot(name, Int, n)
     else
         matrixdepot(name, Float64, n)
