@@ -27,7 +27,7 @@ The only function will be exported is `matrixdepot`.
 ```julia
 julia> ? matrixdepot
 INFO: Loading help data...
-matrixdepot (generic function with 10 methods)
+matrixdepot (generic function with 14 methods)
 ```
 
 Every matrix in the collection is represented by a string `matrix_name`, for
