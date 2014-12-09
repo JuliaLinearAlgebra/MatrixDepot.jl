@@ -1,0 +1,7 @@
+n = rand(1:10)
+m = rand(1:20)
+A = matrixdepot("pei", n, m)
+B = ones(n,n)
+@test issym(A)
+@test_approx_eq matrixdepot("pei", n) - triu(B) - tril(B) zeros(n,n)
+println("'pei' passed test...") 

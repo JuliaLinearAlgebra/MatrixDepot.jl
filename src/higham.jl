@@ -249,6 +249,10 @@ kahan{T}(::Type{T}, n::Int) = kahan(T, n, n, 1.2, 25.)
 #
 # Pei Matrix
 #
+function pei{T}(::Type{T}, n::Int, alpha = 1)
+    alpha = convert(T, alpha)
+    return alpha*eye(T, n, n) + ones(T, n, n)
+end
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -256,7 +260,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "invhilb" => invhilb, "forsythe" => forsythe,
                           "magic" => magic, "grcar" => grcar,
                           "triw" => triw, "moler" => moler,
-                          "pascal" => pascal, "kahan" => kahan);
+                          "pascal" => pascal, "kahan" => kahan,
+                          "pei" => pei, );
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -335,19 +340,25 @@ matrixinfo =
              \n (type), dim, theta, pert: dim is the dimension of the matrix.
              \n (type), dim
              \n ['inverse', 'ill-cond']" ,
+             "pei" => "Pei Matrix:
+             \n Input options:
+             \n (type), dim, alpha: dim is the dimension of the matrix.
+             alpha is a scalar.
+             \n (type), dim
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
 );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
-                             "invhilb", "moler", "pascal"],
+                             "invhilb", "moler", "pascal", "pei", ],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
-                           "kahan",],
+                           "kahan", "pei", ],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
-                            "kahan",],
+                            "kahan","pei", ],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
-                           "moler", "pascal"],
+                           "moler", "pascal", "pei",],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal"],
                );
