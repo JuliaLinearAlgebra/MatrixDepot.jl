@@ -254,6 +254,22 @@ function pei{T}(::Type{T}, n::Int, alpha = 1)
     return alpha*eye(T, n, n) + ones(T, n, n)
 end
 
+# 
+# Vandermonde Matrix
+#
+function vand{T}(p::Vector{T}, n::Int)
+    # n: number of rows
+    # p: a vector
+    m = length(p)
+    V = ones(T, m, n)
+    for i = 1:n
+        V[:,i] = p.^(i-1)
+    end
+    return V
+end
+vand{T}(::Type{T}, n::Int) = vand(T[1:n], n)
+vand{T}(p::Vector{T}, v::Vector{T}) = vand(p, length(v))
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -261,7 +277,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "magic" => magic, "grcar" => grcar,
                           "triw" => triw, "moler" => moler,
                           "pascal" => pascal, "kahan" => kahan,
-                          "pei" => pei, );
+                          "pei" => pei, "vand" => vand);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -346,17 +362,24 @@ matrixinfo =
              alpha is a scalar.
              \n (type), dim
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
-);
+             "vand" => "Vandermonde Matrix:
+             \n Input options:
+             \n vec, dim: vec is a vector, dim is the number of 
+             columns.
+             \n vec
+             \n (type), dim
+             \n ['inverse', 'ill-cond']",
+             );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", ],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
-                           "kahan", "pei", ],
+                           "kahan", "pei", "vand"],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
-                            "kahan","pei", ],
+                            "kahan","pei", "vand"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei",],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",

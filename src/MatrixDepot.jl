@@ -95,9 +95,10 @@ function matrixdepot{T}(name::String, x::Vector{T}, n::Int)
     # name: matrix name
     # x: a vector
     # the column dimension of the matrix
-    return matrixdic[name](x,n)
+    return matrixdict[name](x,n)
 end
 
+ 
 function matrixdepot(name::String)
     # name is the matrix name
     if name in keys(matrixinfo)
