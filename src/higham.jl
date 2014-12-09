@@ -246,6 +246,10 @@ end
 kahan{T}(::Type{T}, n::Int, theta, pert) = kahan(T, n, n, theta, pert)
 kahan{T}(::Type{T}, n::Int) = kahan(T, n, n, 1.2, 25.)
 
+#
+# Pei Matrix
+#
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
