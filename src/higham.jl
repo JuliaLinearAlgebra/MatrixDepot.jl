@@ -270,6 +270,15 @@ end
 vand{T}(::Type{T}, n::Int) = vand(T[1:n], n)
 vand{T}(p::Vector{T}, v::Vector{T}) = vand(p, length(v))
 
+#
+# Involutory Matrix
+#
+function invol{T}(::Type{T}, n::Int)
+    A = hilb(T, n)
+    d = -n
+    A[:,1] = d*A[:, 1]
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
