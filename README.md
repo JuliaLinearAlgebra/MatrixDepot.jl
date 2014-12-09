@@ -58,7 +58,7 @@ parameters depending on `matrix_name`.
 | Hadamard Matrix           | "hadamard"| Magic Matrix   | "magic"   |
 | Cauchy Matrix             | "cauchy"  | Forsythe Matrix| "forsythe"|
 | Triw Matrix               | "triw"    | Moler Matrix   | "moler"   |
-| Pascal Matrix             | "pascal"  |                |           |
+| Pascal Matrix             | "pascal"  | Kahan Matrix   | "kahan"   |
 
 ## Examples
 
