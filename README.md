@@ -50,16 +50,16 @@ parameters depending on `matrix_name`.
 
 ### Matrices in the Collection
 
-| Matrices                  | Strings   | Matrices       | Strings   |
-|:-------------------------:|:---------:|:--------------:|:---------:|
-| Circul Matrix             | "circul"  | Frank Matrix   | "frank"   | 
-| Hilbert Matrix            | "hilb"    | Grcar Matrix   | "grcar"   |
-| Inverse of Hilbert Matrix | "invhilb" | Dingdong Matrix| "dingdong"|
-| Hadamard Matrix           | "hadamard"| Magic Matrix   | "magic"   |
-| Cauchy Matrix             | "cauchy"  | Forsythe Matrix| "forsythe"|
-| Triw Matrix               | "triw"    | Moler Matrix   | "moler"   |
-| Pascal Matrix             | "pascal"  | Kahan Matrix   | "kahan"   |
-| Pei Matrix                | "pei"     |
+| Matrices                  | Strings   | Matrices          | Strings   |
+|:-------------------------:|:---------:|:-----------------:|:---------:|
+| Circul Matrix             | "circul"  | Frank Matrix      | "frank"   | 
+| Hilbert Matrix            | "hilb"    | Grcar Matrix      | "grcar"   |
+| Inverse of Hilbert Matrix | "invhilb" | Dingdong Matrix   | "dingdong"|
+| Hadamard Matrix           | "hadamard"| Magic Matrix      | "magic"   |
+| Cauchy Matrix             | "cauchy"  | Forsythe Matrix   | "forsythe"|
+| Triw Matrix               | "triw"    | Moler Matrix      | "moler"   |
+| Pascal Matrix             | "pascal"  | Kahan Matrix      | "kahan"   |
+| Pei Matrix                | "pei"     | Vandermonde Matrix| "vand"    |
 
 ## Examples
 
