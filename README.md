@@ -59,6 +59,7 @@ parameters depending on `matrix_name`.
 | Cauchy Matrix             | "cauchy"  | Forsythe Matrix| "forsythe"|
 | Triw Matrix               | "triw"    | Moler Matrix   | "moler"   |
 | Pascal Matrix             | "pascal"  | Kahan Matrix   | "kahan"   |
+| Pei Matrix                | "pei"     |
 
 ## Examples
 
