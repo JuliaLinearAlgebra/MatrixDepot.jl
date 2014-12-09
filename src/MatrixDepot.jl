@@ -77,6 +77,12 @@ function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int, alpha, k::Int)
 end
 matrixdepot(name::String, m::Int, n::Int, alpha, k::Int) = matrixdepot(name, Float64, m, n, alpha, k)
 
+function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int, alpha::FloatingPoint, theta::FloatingPoint)
+    # name: matrix name
+    # m, n are row and column dimensions of the matrix
+    # alpha and theta are scalars
+    return matrixdepot[name](T, m, n, alpha, theta)
+end
 
 function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T})
     # name: matrix name

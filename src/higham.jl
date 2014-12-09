@@ -226,6 +226,13 @@ function pascal{T}(::Type{T}, n::Int)
     return P
 end
 
+# 
+# Kahan Matrix
+#
+function kahan{T}(::Type{T}, m::Int, n::Int, theta::FloatingPoint, pert::FloatingPoint)
+    
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
