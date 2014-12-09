@@ -229,9 +229,22 @@ end
 # 
 # Kahan Matrix
 #
-function kahan{T}(::Type{T}, m::Int, n::Int, theta::FloatingPoint, pert::FloatingPoint)
-    
+function kahan{T}(::Type{T}, m::Int, n::Int, theta, pert)
+    theta = convert(T, theta)
+    pert = convert(T, pert)
+    s = sin(theta)
+    c = cos(theta)
+    dim = min(m,n)
+    A = zeros(T, m, n)
+    for i = 1:m, j = 1:n
+        i > dim ? A[i,j] = zero(T) :
+        i > j   ? A[i,j] = zero(T) : 
+        i==j    ? A[i,j] = s^(i-1)+pert*eps(T)*(m-i+1) : A[i,j] = -c*s^(i-1)
+    end
+    return A        
 end
+kahan{T}(::Type{T}, n::Int, theta, pert) = kahan(T, n, n, theta, pert)
+kahan{T}(::Type{T}, n::Int) = kahan(T, n, n, 1.2, 25.)
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -239,7 +252,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "invhilb" => invhilb, "forsythe" => forsythe,
                           "magic" => magic, "grcar" => grcar,
                           "triw" => triw, "moler" => moler,
-                          "pascal" => pascal);
+                          "pascal" => pascal, "kahan" => kahan);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -310,16 +323,25 @@ matrixinfo =
              "pascal" => "Pascal Matrix:
              \n Input options:
              \n (type), dim: the dimension of the matrix.
-             \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']"
+             \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']",
+             "kahan" => "Kahan Matrix:
+             \n Input options:
+             \n (type), m, n, theta, pert: m, n are the row and column 
+             dimensions of the matrix. theta and pert are scalars.
+             \n (type), dim, theta, pert: dim is the dimension of the matrix.
+             \n (type), dim
+             \n ['inverse', 'ill-cond']" ,
 );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
-                           "forsythe", "magic", "triw", "moler", "pascal"],
+                           "forsythe", "magic", "triw", "moler", "pascal",
+                           "kahan",],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
-                            "forsythe", "triw", "moler", "pascal"],
+                            "forsythe", "triw", "moler", "pascal",
+                            "kahan",],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
