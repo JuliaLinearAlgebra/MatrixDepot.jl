@@ -364,8 +364,7 @@ matrixinfo =
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              "vand" => "Vandermonde Matrix:
              \n Input options:
-             \n vec, dim: vec is a vector, dim is the number of 
-             columns.
+             \n vec, dim: vec is a vector, dim is the number of columns.
              \n vec
              \n (type), dim
              \n ['inverse', 'ill-cond']",
