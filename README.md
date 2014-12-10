@@ -60,6 +60,7 @@ parameters depending on `matrix_name`.
 | Triw Matrix               | "triw"    | Moler Matrix      | "moler"   |
 | Pascal Matrix             | "pascal"  | Kahan Matrix      | "kahan"   |
 | Pei Matrix                | "pei"     | Vandermonde Matrix| "vand"    |
+| Involutory Matrix         | "invol"   |
 
 ## Examples
 
