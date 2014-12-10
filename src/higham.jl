@@ -316,6 +316,9 @@ end
 # Lotkin Matrix
 #
 function lotkin{T}(::Type{T}, n::Int)
+    A = hilb(T, n)
+    A[1,:] = ones(T,n)'
+    return A
 end
 
 
@@ -327,7 +330,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "triw" => triw, "moler" => moler,
                           "pascal" => pascal, "kahan" => kahan,
                           "pei" => pei, "vand" => vand,
-                          "invol" => invol, "chebspec" => chebspec, );
+                          "invol" => invol, "chebspec" => chebspec, 
+                          "lotkin" => lotkin,);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -427,7 +431,11 @@ matrixinfo =
              \n (type), dim, k: dim is the dimension of the matrix and 
              k = 0 or 1.
              \n (type), dim
-             \n ['eigen']"
+             \n ['eigen']",
+             "lotkin" => "Lotkin Matrix:
+             \n Input options:
+             \n (type), dim: dim is the dimension of the matrix.
+             \n ['inverse', 'ill-cond', 'eigen']",
              );
 
 matrixclass = 
@@ -435,12 +443,13 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei", ],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
-                           "kahan", "pei", "vand", "invol",],
+                           "kahan", "pei", "vand", "invol", "lotkin",],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
-                            "kahan","pei", "vand", "invol",],
+                            "kahan","pei", "vand", "invol", "lotkin",],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei",],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
-                           "forsythe", "grcar", "pascal", "invol","chebspec",],
+                           "forsythe", "grcar", "pascal", "invol","chebspec",
+                           "lotkin",],
                );
