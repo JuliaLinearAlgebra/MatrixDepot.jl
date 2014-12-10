@@ -360,6 +360,7 @@ function minij{T}(::Type{T}, n::Int)
     return A
 end
 
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -370,7 +371,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "pei" => pei, "vand" => vand,
                           "invol" => invol, "chebspec" => chebspec, 
                           "lotkin" => lotkin, "clement" => clement,
-                          "fiedler" => fiedler, "minij" => minij);
+                          "fiedler" => fiedler, "minij" => minij,
+                          );
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
