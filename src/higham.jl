@@ -284,6 +284,34 @@ function invol{T}(::Type{T}, n::Int)
     return A
 end
 
+#
+# Chebyshev spectral differetiation matrix.
+#
+function chebspec{T}(::Type{T}, n::Int, k::Int = 0)
+    # k = 0 or 1
+    k == 1 ? n = n + 1 : none
+    c = ones(T, n)
+    c[1] = 2. 
+    c[2:n-1] = one(T)
+    c[n] = 2.
+    x = ones(T, n)
+    
+    A = zeros(T, n, n)
+    # Compute the chebyshev points
+    for i = 1:n
+        x[i] = cos (pi * (i - 1) / (n - 1))
+    end
+    
+    for j = 1:n, i = 1:n
+        i != j ? A[i,j] = (-1)^(i+j) * c[i] / (c[j] * (x[i] - x[j])) :
+        i == 1 ? A[i,i] = (2 * (n -1)^2 + 1) / 6 : 
+        i == n ? A[i,i] = - (2 * (n-1)^2 + 1) / 6 :
+        A[i,i] = - 0.5 * x[i] / (1 - x[i]^2)
+    end
+    k == 1 ? A = A[2:n, 2:n] : none
+    return A 
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -292,7 +320,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "triw" => triw, "moler" => moler,
                           "pascal" => pascal, "kahan" => kahan,
                           "pei" => pei, "vand" => vand,
-                          "invol" => invol,);
+                          "invol" => invol, "chebspec" => chebspec, );
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -387,6 +415,12 @@ matrixinfo =
              \n Input options:
              \n (type), dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']",
+             "chebspec" => "Chebyshev spectral differentiation matrix:
+             \n Input options:
+             \n (type), dim, k: dim is the dimension of the matrix and 
+             k = 0 or 1.
+             \n (type), dim
+             \n ['eigen']"
              );
 
 matrixclass = 
@@ -401,5 +435,5 @@ matrixclass =
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei",],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
-                           "forsythe", "grcar", "pascal", "invol",],
+                           "forsythe", "grcar", "pascal", "invol","chebspec",],
                );
