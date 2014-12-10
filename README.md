@@ -61,7 +61,7 @@ parameters depending on `matrix_name`.
 | Pascal Matrix             | "pascal"  | Kahan Matrix             | "kahan"   |
 | Pei Matrix                | "pei"     | Vandermonde Matrix       | "vand"    |
 | Involutory Matrix         | "invol"   | Cheb. spec. diff. Matrix | "chebspec"| 
-| Lotkin Matrix             | "lotkin"  |
+| Lotkin Matrix             | "lotkin"  | Clement Matrix           | "clement" |
 
 ## Examples
 
@@ -181,3 +181,12 @@ Identity matrix x hilb matrix x hadamard matrix x cauchy matrix x invhilb matrix
 ## Documentation
 
 More details can be found [here](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb).
+
+## Reference
+
+- Nicholas J. Higham
+  "Algorithm 694 A Collection of Test Matrices in MATLAB"
+  *ACM Trans. Math. Software *
+  vol. 17. (1991), pp 289-305
+  [[pdf]](http://www.maths.manchester.ac.uk/~higham/narep/narep172.pdf)
+  [[doi]](https://dx.doi.org/10.1145/114697.116805)
