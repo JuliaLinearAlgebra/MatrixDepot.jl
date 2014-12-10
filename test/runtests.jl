@@ -19,5 +19,6 @@ include("test_pei.jl")
 include("test_vand.jl")
 include("test_invol.jl")
 include("test_chebspec.jl")
+include("test_lotkin.jl")
 
 println("Success in all tests.")
