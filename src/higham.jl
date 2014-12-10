@@ -312,6 +312,13 @@ function chebspec{T}(::Type{T}, n::Int, k::Int = 0)
     return A 
 end
 
+#
+# Lotkin Matrix
+#
+function lotkin{T}(::Type{T}, n::Int)
+end
+
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
