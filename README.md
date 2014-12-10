@@ -62,6 +62,7 @@ parameters depending on `matrix_name`.
 | Pei Matrix                | "pei"     | Vandermonde Matrix       | "vand"    |
 | Involutory Matrix         | "invol"   | Cheb. spec. diff. Matrix | "chebspec"| 
 | Lotkin Matrix             | "lotkin"  | Clement Matrix           | "clement" |
+| Fiedler Matrix            | "fiedler" |
 
 ## Examples
 
