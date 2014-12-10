@@ -89,7 +89,9 @@ function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T})
     # x,y : vectors
     return matrixdict[name](x,y)
 end
-matrixdepot{T}(name::String, x::Vector{T}) = matrixdepot(name, x, x)
+function matrixdepot{T}(name::String, x::Vector{T})
+    return matrixdict[name](x)
+end
 
 function matrixdepot{T}(name::String, x::Vector{T}, n::Int)
     # name: matrix name
