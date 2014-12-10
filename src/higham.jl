@@ -277,6 +277,11 @@ function invol{T}(::Type{T}, n::Int)
     A = hilb(T, n)
     d = -n
     A[:,1] = d*A[:, 1]
+    for i = 1:n-1
+        d = -(n+i)*(n-i)*d/(i*i)
+        A[i+1,:] = d*A[i+1,:]
+    end
+    return A
 end
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
@@ -286,7 +291,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "magic" => magic, "grcar" => grcar,
                           "triw" => triw, "moler" => moler,
                           "pascal" => pascal, "kahan" => kahan,
-                          "pei" => pei, "vand" => vand);
+                          "pei" => pei, "vand" => vand,
+                          "invol" => invol,);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -377,6 +383,10 @@ matrixinfo =
              \n vec
              \n (type), dim
              \n ['inverse', 'ill-cond']",
+             "invol" => "Involutory Matrix:
+             \n Input options:
+             \n (type), dim: dim is the dimension of the matrix.
+             \n ['inverse', 'ill-cond', 'eigen']",
              );
 
 matrixclass = 
@@ -384,12 +394,12 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei", ],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
-                           "kahan", "pei", "vand"],
+                           "kahan", "pei", "vand", "invol",],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
-                            "kahan","pei", "vand"],
+                            "kahan","pei", "vand", "invol",],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei",],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
-                           "forsythe", "grcar", "pascal"],
+                           "forsythe", "grcar", "pascal", "invol",],
                );
