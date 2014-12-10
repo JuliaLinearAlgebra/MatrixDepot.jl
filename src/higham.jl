@@ -351,6 +351,15 @@ function fiedler{T}(v::Vector{T})
 end
 fiedler{T}(::Type{T}, n::Int) = fiedler(T[1:n])
 
+#
+# MIN[I,J] Matrix
+#
+function minij{T}(::Type{T}, n::Int)
+    A = zeros(T, n, n)
+    [A[i,j] = min(i,j) for i = 1:n, j = 1:n]
+    return A
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -361,7 +370,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "pei" => pei, "vand" => vand,
                           "invol" => invol, "chebspec" => chebspec, 
                           "lotkin" => lotkin, "clement" => clement,
-                          "fiedler" => fiedler,);
+                          "fiedler" => fiedler, "minij" => minij);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -476,24 +485,28 @@ matrixinfo =
              "fiedler" => "Fiedler Matrix:
              \n Input options:
              \n vec: vec is a vector.
-             \n dim: dim the dimension of the matrix.
+             \n (type), dim: dim is the dimension of the matrix.
              \n ['inverse', 'symmetric', 'eigen']",
+             "minij" => "MIN[I,J] Matrix:
+             \n Input options:
+             \n (type), dim: dim is the dimension of the matrix.
+             \n ['inverse', 'symmetric', 'pos-def', 'eigen']",
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", 
-                             "clement", "fiedler", ],
+                             "clement", "fiedler", "minij", ],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
-                           "clement", "fiedler", ],
+                           "clement", "fiedler", "minij", ],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
-                           "moler", "pascal", "pei",],
+                           "moler", "pascal", "pei", "minij", ],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
-                           "lotkin", "clement", "fiedler", ],
+                           "lotkin", "clement", "fiedler", "minij",],
                );
