@@ -61,6 +61,7 @@ parameters depending on `matrix_name`.
 | Pascal Matrix             | "pascal"  | Kahan Matrix             | "kahan"   |
 | Pei Matrix                | "pei"     | Vandermonde Matrix       | "vand"    |
 | Involutory Matrix         | "invol"   | Cheb. spec. diff. Matrix | "chebspec"| 
+| Lotkin Matrix             | "lotkin"  |
 
 ## Examples
 
