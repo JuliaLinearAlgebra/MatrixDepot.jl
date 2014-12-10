@@ -1,6 +1,6 @@
-# Matrix Depot for Julia
+# Matrix Depot 
 
-Matrix Depot is a test matrix collection.
+A test matrix collection for Julia.
 
 [![Build Status](https://travis-ci.org/weijianzhang/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/weijianzhang/MatrixDepot.jl)
 
