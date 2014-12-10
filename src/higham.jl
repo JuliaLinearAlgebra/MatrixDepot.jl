@@ -321,6 +321,24 @@ function lotkin{T}(::Type{T}, n::Int)
     return A
 end
 
+#
+# Clement Matrix
+#
+function clement{T}(::Type{T}, n::Int, k::Int = 0)
+    # construct Tridiagonal matrix
+    # n is the dimension of the matrix
+    # k = 0 or 1
+    n = n -1
+    x = T[n:-1:1]
+    z = T[1:n]
+    if k == 0
+        A = Tridiagonal(x,zeros(T,n+1),z)
+    else
+        y = sqrt(x.*z)
+        A = SymTridiagonal(zeros(T,n+1), y)
+    end
+    return A
+end
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -331,7 +349,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "pascal" => pascal, "kahan" => kahan,
                           "pei" => pei, "vand" => vand,
                           "invol" => invol, "chebspec" => chebspec, 
-                          "lotkin" => lotkin,);
+                          "lotkin" => lotkin, "clement" => clement);
 
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
@@ -436,14 +454,23 @@ matrixinfo =
              \n Input options:
              \n (type), dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']",
+             "clement" => "Clement Matrix:
+             \n Input options:
+             \n (type), dim, k: dim is the dimension of the matrix. 
+             If k = 0, the matrix is Tridiagonal. If k = 1, the matrix 
+             is SymTridiagonal.
+             \n (type), dim: k = 0
+             \n ['inverse', 'symmetric', 'eigen']",
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
-                             "invhilb", "moler", "pascal", "pei", ],
+                             "invhilb", "moler", "pascal", "pei", 
+                             "clement",],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
-                           "kahan", "pei", "vand", "invol", "lotkin",],
+                           "kahan", "pei", "vand", "invol", "lotkin",
+                           "clement", ],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",],
@@ -451,5 +478,5 @@ matrixclass =
                            "moler", "pascal", "pei",],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
-                           "lotkin",],
+                           "lotkin", "clement", ],
                );
