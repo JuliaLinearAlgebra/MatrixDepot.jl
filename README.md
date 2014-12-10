@@ -188,7 +188,7 @@ More details can be found [here](http://nbviewer.ipython.org/github/weijianzhang
 
 - Nicholas J. Higham,
   "Algorithm 694 A Collection of Test Matrices in MATLAB",
-  *ACM Trans. Math. Software *,
+  *ACM Trans. Math. Software*,
   vol. 17. (1991), pp 289-305
   [[pdf]](http://www.maths.manchester.ac.uk/~higham/narep/narep172.pdf)
   [[doi]](https://dx.doi.org/10.1145/114697.116805)
