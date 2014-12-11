@@ -328,6 +328,9 @@ function clement{T}(::Type{T}, n::Int, k::Int = 0)
     # construct Tridiagonal matrix
     # n is the dimension of the matrix
     # k = 0 or 1
+    if n == 1 # handle the 1-d case.
+        return zeros(T, 1, 1)
+    end
     n = n -1
     x = T[n:-1:1]
     z = T[1:n]
