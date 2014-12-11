@@ -163,21 +163,22 @@ julia> matrixdepot("symmetric")
 Given a property, we can loop through all the matrices having this propery
 
 ```julia
- # Multiply all matrices of the class "inverse"
+ # # Multiply all matrices of the class "symmetric" and "ill-cond"
 julia> A = eye(4);
 julia> print("Identity matrix")
-julia> for mat in matrixdepot("inverse")
+julia> for mat in intersect( matrixdepot("symmetric"), matrixdepot("ill-cond"))
          print(" x $mat matrix")
          A *=  matrixdepot(mat, 4)    
        end
 julia> println(" =")
 julia> A    
-Identity matrix x hilb matrix x hadamard matrix x cauchy matrix x invhilb matrix =
+Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x pascal matrix x pei matrix =
+
 4x4 Array{Float64,2}:
- -0.00595238   2.20238   0.047619   1.75    
- -0.00166667   1.31667   0.0666667  0.616667
- -0.000714286  0.964286  0.052381   0.316667
- -0.00037415   0.767007  0.0401361  0.192857
+ 168.558   183.996   211.354   254.145
+ 120.813   131.73    151.566   183.0  
+  95.3167  103.881   119.602   144.652
+  78.9881   86.0622   99.1235  120.0  
 ```
 
 ## Documentation
