@@ -7,10 +7,14 @@ A test matrix collection for Julia.
   
 ## Install
 
-To install the package, type
+To install the release version, type
 
 ```julia
-julia> Pkg.update()
+julia> Pkg.add("MatrixDepot")
+```
+To install the latest development version, type
+
+```julia
 julia> Pkg.clone("MatrixDepot")
 ```
 
@@ -27,7 +31,7 @@ The only function will be exported is `matrixdepot`.
 ```julia
 julia> ? matrixdepot
 INFO: Loading help data...
-matrixdepot (generic function with 14 methods)
+matrixdepot (generic function with 15 methods)
 ```
 
 Every matrix in the collection is represented by a string `matrix_name`, for
