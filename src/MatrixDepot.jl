@@ -7,22 +7,17 @@ include("higham.jl") #Higham Test matrices
 
 function matrixdepot()
     # Print information strings 
-    println("Matrices in the Collection:")
-    println("---------------------------")
     println()
-    for prop in keys(matrixclass)
-        println("Property: ", prop)
-        println("-------------------")
-        count = 0
-        for mat in matrixclass[prop]
-        print(mat, " matrix, ")
-            count += 1
-            if count > 3
-                count = 0
-                print("\n")
+    println("          | symmetric |  inverse  | ill-cond  |  pos-def  |  eigen    |")
+    for mat in keys(matrixdict)
+        @printf "%10s|" mat
+        for prop in ["symmetric", "inverse", "ill-cond", "pos-def", "eigen"]
+            if mat in matrixclass[prop]
+                print("     *     |")
+            else
+                print("           |")
             end
         end
-        println()
         println()
     end
 end
