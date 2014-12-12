@@ -102,9 +102,10 @@ function matrixdepot{T}(name::String, x::Vector{T}, n::Int)
     return matrixdict[name](x,n)
 end
 
- 
+# Return information strings if name is a matrix name. 
+# Retuen a list of matrix names if name is a property. 
 function matrixdepot(name::String)
-    # name is the matrix name
+    # name is the matrix name or matrix properties
     if name in keys(matrixinfo)
         println(matrixinfo[name])
     elseif name in keys(matrixclass)
@@ -112,6 +113,20 @@ function matrixdepot(name::String)
     else
         println("Your matrix or class is not included in Matrix Depot.")
     end
+end
+
+# Return a list of matrix names with common properties
+# when multiple properties are given.
+function matrixdepot(prop1::String, otherprops::String...)
+    if length(otherprops) == 0
+        matrixdepot(prop1)
+    else
+        commonprop = matrixdepot(prop1)
+        for prop in otherprops
+            commonprop = intersect(commonprop, matrixdepot(prop))
+        end        
+    end
+    return commonprop
 end
 
 end # end module
