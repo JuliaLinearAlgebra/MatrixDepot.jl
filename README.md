@@ -42,6 +42,8 @@ The properties of the matrices in the collection are also symbolized by strings
 `propertry_name`. For example, the class of the symmetric matrices is symbolized
 by `"symmetric"`.
 
+* `matrixdepot()` returns a list of all the matrices in the collection.
+
 * `matrixdepot(matrix_name, p1, p2, ...)` returns a matrix specified by the
 query `matrix_name`. `matrix_name` is a query string. `p1, p2, ...` are input
 parameters depending on `matrix_name`.
@@ -49,8 +51,8 @@ parameters depending on `matrix_name`.
 * `matrixdepot(matrix_name)` returns the parameter options and the properties of
 `matrix_name`.
 
-* `matrixdepot(property_name)` returns a list of matrices with the property
-`property_name`.
+* `matrixdepot(prop1, prop2, ...)` returns a list of matrices with the property
+`prop1`, `prop2`, etc.
 
 ### Matrices in the Collection
 
@@ -151,38 +153,57 @@ julia> matrixdepot("hilb", Float16, 5, 3)
 ```
 
 By typing a matrix name, we can see what properties that matrix have.
-Conversely, if we type a property, we can see all the matrices (in the
-collection) having that property.
+Conversely, if we type a property (or properties), we can see all the 
+matrices (in the collection) having that property (or properties).
 
 ```julia
 julia> matrixdepot("symmetric")
-5-element Array{ASCIIString,1}:
- "hilb"  
- "cauchy"
- "circul"
+12-element Array{ASCIIString,1}:
+ "hilb"    
+ "cauchy"  
+ "circul"  
  "dingdong"
+ "invhilb" 
+ "moler"   
+ "pascal"  
+ "pei"     
+ "clement" 
+ "fiedler" 
+ "minij"   
+ "tridiag" 
+
+julia> matrixdepot("inverse", "ill-cond", "symmetric")
+7-element Array{ASCIIString,1}:
+ "hilb"   
+ "cauchy" 
  "invhilb"
+ "moler"  
+ "pascal" 
+ "pei"    
+ "tridiag"
 ```  
 
-Given a property, we can loop through all the matrices having this propery
+Given a property (or properites), we can loop through all the matrices 
+having this propery (or properties)
 
 ```julia
- # # Multiply all matrices of the class "symmetric" and "ill-cond"
-julia> A = eye(4);
+# Multiply all matrices of the class "symmetric", "ill-cond" and "inverse".
+julia> A = eye(4)
 julia> print("Identity matrix")
-julia> for mat in intersect( matrixdepot("symmetric"), matrixdepot("ill-cond"))
-         print(" x $mat matrix")
-         A *=  matrixdepot(mat, 4)    
+julia> for mat in matrixdepot("symmetric", "ill-cond", "inverse")
+           print(" x $mat matrix")
+           A = A * full(matrixdepot(mat, 4))
        end
 julia> println(" =")
-julia> A    
-Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x pascal matrix x pei matrix =
+julia> A
+   
+Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x pascal matrix x pei matrix x tridiag matrix =
 
 4x4 Array{Float64,2}:
- 168.558   183.996   211.354   254.145
- 120.813   131.73    151.566   183.0  
-  95.3167  103.881   119.602   144.652
-  78.9881   86.0622   99.1235  120.0  
+ 153.12    -11.919    -15.4345   296.937
+ 109.896    -8.91857  -11.5976   214.433
+  86.7524   -7.15714   -9.32857  169.702
+  71.9139   -5.98707   -7.81497  140.876 
 ```
 
 ## Documentation
