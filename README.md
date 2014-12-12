@@ -67,7 +67,7 @@ parameters depending on `matrix_name`.
 | Involutory Matrix         | "invol"   | Cheb. spec. diff. Matrix | "chebspec"| 
 | Lotkin Matrix             | "lotkin"  | Clement Matrix           | "clement" |
 | Fiedler Matrix            | "fiedler" | MIN[I,J] Matrix          | "minij"   |
-| Binomial Matrix           | "binomial"|                          |           |
+| Binomial Matrix           | "binomial"| Tridiagonal Matrix       | "tridiag" |
 
 ## Examples
 
