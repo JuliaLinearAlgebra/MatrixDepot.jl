@@ -382,7 +382,9 @@ function tridiag{T}(x::Vector{T}, y::Vector{T}, z::Vector{T})
     return Tridiagonal(x,y,z)
 end
 # Toeplitz tridiagonal matrix
-tridiag{T}(::Type{T}, n::Int, x::Int, y::Int, z::Int) = tridiag(x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
+tridiag{T}(::Type{T}, n::Int, x::Int, y::Int, z::Int) = 
+n == 1 ? y*ones(T,1,1) : 
+         tridiag(x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
 tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1) 
     
 
