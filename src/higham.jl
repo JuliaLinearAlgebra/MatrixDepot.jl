@@ -375,6 +375,17 @@ function binomialm{T}(::Type{T}, n::Int)
     return L*D*U
 end
 
+# 
+# Tridiagonal Matrix
+#
+function tridiag{T}(x::Vector{T}, y::Vector{T}, z::Vector{T})
+    return Tridiagonal(x,y,z)
+end
+# Toeplitz tridiagonal matrix
+tridiag{T}(::Type{T}, n::Int, x::Int, y::Int, z::Int) = tridiag(x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
+tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1) 
+    
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -386,7 +397,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "invol" => invol, "chebspec" => chebspec, 
                           "lotkin" => lotkin, "clement" => clement,
                           "fiedler" => fiedler, "minij" => minij,
-                          "binomial" => binomialm
+                          "binomial" => binomialm, "tridiag" => tridiag, 
                           );
 
 matrixinfo = 
@@ -512,22 +523,33 @@ matrixinfo =
              \n Input options:
              \n (type), dim: dim is the dimension of the matrix.
              \n ['']",
+             "tridiag" => "Tridiagonal Matrix:
+             \n Input options:
+             \n v1, v2, v3: v1 and v3 are sub- superdiagonal vectors.
+             v2 is the diagonal vector.
+             \n (type), dim, x, y, z: dim is the dimension of the matrix. x, y, z are
+             scalars. x and z are sub- superdiagonal elements, y is diagonal 
+             element.
+             \n (type), dim: x = -1, y = 2, z = -1.
+             \n ['inverse', 'ill-cond', 'pos-def', 'eigen']",             
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", 
-                             "clement", "fiedler", "minij", ],
+                             "clement", "fiedler", "minij", "tridiag",],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
-                           "clement", "fiedler", "minij", ],
+                           "clement", "fiedler", "minij", "tridiag", ],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
-                            "kahan","pei", "vand", "invol", "lotkin",],
+                            "kahan","pei", "vand", "invol", "lotkin",
+                            "tridiag", ],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
-                           "moler", "pascal", "pei", "minij", ],
+                           "moler", "pascal", "pei", "minij", "tridiag"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
-                           "lotkin", "clement", "fiedler", "minij",],
+                           "lotkin", "clement", "fiedler", "minij",
+                           "tridiag"],
                );

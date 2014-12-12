@@ -80,6 +80,12 @@ function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int, alpha, theta)
     return matrixdepot[name](T, m, n, alpha, theta)
 end
 
+function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T}, z::Vector{T})
+    # name: matrix name
+    # x, y, z: vectors
+    return matrixdict[name](x,y,z)
+end
+
 function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T})
     # name: matrix name
     # x,y : vectors
