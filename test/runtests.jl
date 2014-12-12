@@ -23,5 +23,6 @@ include("test_lotkin.jl")
 include("test_clement.jl")
 include("test_fiedler.jl")
 include("test_minij.jl")
+include("test_binomial.jl")
 
 println("Success in all tests.")

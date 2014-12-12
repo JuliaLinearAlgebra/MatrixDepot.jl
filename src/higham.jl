@@ -363,6 +363,17 @@ function minij{T}(::Type{T}, n::Int)
     return A
 end
 
+#
+# Binomial Matrix
+#
+function binomialm{T}(::Type{T}, n::Int)
+    # Mulitiple of involutory matrix
+    L = Array(T, n, n)
+    D = Diagonal((-2).^[0:n-1])
+    [L[i,j] = binomial(i-1, j-1) for i = 1:n, j = 1:n]
+    U = L[n:-1:1, n:-1:1]
+    return L*D*U
+end
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -375,6 +386,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "invol" => invol, "chebspec" => chebspec, 
                           "lotkin" => lotkin, "clement" => clement,
                           "fiedler" => fiedler, "minij" => minij,
+                          "binomial" => binomialm
                           );
 
 matrixinfo = 
@@ -496,6 +508,10 @@ matrixinfo =
              \n Input options:
              \n (type), dim: dim is the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen']",
+             "binomial" => "Binomial Matrix:
+             \n Input options:
+             \n (type), dim: dim is the dimension of the matrix.
+             \n ['']",
              );
 
 matrixclass = 
