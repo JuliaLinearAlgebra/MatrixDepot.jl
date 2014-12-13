@@ -81,8 +81,7 @@ parameters depending on `matrix_name`.
 
 * `"pos-def"`: the matrix is symmetric postive definite for some parameter values.
 
-* `"eigen"`: the eigensystem of the matrix has some known results (explicit 
-formulas for eigenvalues, eigenvectors, bounds of eigenvalues, etc).
+* `"eigen"`: the eigensystem of the matrix has some known results.
 
 ## Examples
 
