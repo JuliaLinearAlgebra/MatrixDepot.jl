@@ -71,6 +71,19 @@ parameters depending on `matrix_name`.
 | Fiedler Matrix            | "fiedler" | MIN[I,J] Matrix          | "minij"   |
 | Binomial Matrix           | "binomial"| Tridiagonal Matrix       | "tridiag" |
 
+### Matrix properties in the Collection
+
+* `"symmetric"`: the matrix is symmetric for some parameter values.
+
+* `"inverse"`: the inverse of the matrix is known explicitly.
+
+* `"ill-cond"`: the matrix is ill-conditioned for some parameter values.
+
+* `"pos-def"`: the matrix is symmetric postive definite for some parameter values.
+
+* `"eigen"`: the eigensystem of the matrix has some known results (explicit 
+formulas for eigenvalues, eigenvectors, bounds of eigenvalues, etc).
+
 ## Examples
 
 To see all the matrices in the collection, type
