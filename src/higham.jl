@@ -387,6 +387,14 @@ n == 1 ? y*ones(T,1,1) :
          tridiag(x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
 tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1) 
     
+#
+# Lehmer Matrix
+#
+function lehmer{T}(::Type{T}, n::Int)
+    A = Array(T, n, n)
+    [A[i,j] = min(i,j) / max(i,j) for i = 1:n, j = 1:n]
+    return A
+end
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -399,7 +407,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "invol" => invol, "chebspec" => chebspec, 
                           "lotkin" => lotkin, "clement" => clement,
                           "fiedler" => fiedler, "minij" => minij,
-                          "binomial" => binomialm, "tridiag" => tridiag, 
+                          "binomial" => binomialm, "tridiag" => tridiag,
+                          "lehmer" => lehmer
                           );
 
 matrixinfo = 
@@ -533,23 +542,30 @@ matrixinfo =
              scalars. x and z are sub- superdiagonal elements, y is diagonal 
              element.
              \n (type), dim: x = -1, y = 2, z = -1.
-             \n ['inverse', 'ill-cond', 'pos-def', 'eigen']",             
+             \n ['inverse', 'ill-cond', 'pos-def', 'eigen']",
+             "lehmer" => "Lehmer Matrix:
+             \n Input options: 
+             \n (type), dim: the dimension of the matrix.
+             \n ['inverse', 'symmetric', 'pos-def']",
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", 
-                             "clement", "fiedler", "minij", "tridiag",],
+                             "clement", "fiedler", "minij", "tridiag",
+                             "lehmer", ],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
-                           "clement", "fiedler", "minij", "tridiag", ],
+                           "clement", "fiedler", "minij", "tridiag", 
+                           "lehmer", ],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", ],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
-                           "moler", "pascal", "pei", "minij", "tridiag"],
+                           "moler", "pascal", "pei", "minij", "tridiag",
+                           "lehmer",],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
