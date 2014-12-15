@@ -70,6 +70,7 @@ parameters depending on `matrix_name`.
 | Lotkin Matrix             | "lotkin"  | Clement Matrix           | "clement" |
 | Fiedler Matrix            | "fiedler" | MIN[I,J] Matrix          | "minij"   |
 | Binomial Matrix           | "binomial"| Tridiagonal Matrix       | "tridiag" |
+| Lehmer Matrix             | "lehmer"  |                          |           |
 
 ### Matrix properties in the Collection
 
