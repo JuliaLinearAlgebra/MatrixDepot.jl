@@ -1,7 +1,7 @@
 module MatrixDepot
 using Compat # support v3 and v4 
 
-export matrixdepot, @addproperty
+export matrixdepot, @addproperty, @rmproperty
 
 include("higham.jl") #Higham Test matrices
 include("user.jl") #user defined properties
@@ -135,10 +135,10 @@ end
 #addproperty
 function addproperty(ex)
     propname = string(ex.args[1])
-    !(propname in keys(matrixclass)) || throw(ParseError("$propname is an existing property."))
-    !(propname in keys(usermatrixclass)) || throw (ParseError("You have defined property $propname."))
+    !(propname in keys(matrixclass)) || throw(ArgumentError("$propname is an existing property."))
+    !(propname in keys(usermatrixclass)) || throw (ArgumentError("You have defined property $propname."))
     for matname in eval(ex.args[2])
-        matname in keys(matrixdict) || throw(ParseError("$matname is not in the collection."))
+        matname in keys(matrixdict) || throw(ArgumentError("$matname is not in the collection."))
     end
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
@@ -148,13 +148,39 @@ function addproperty(ex)
         newprop *= "\"" * str * "\", "
     end
     newprop = newprop * "],\n" * s[end-3:end]
-    write(iofile, newprop);
-    close(iofile)
+    try
+        write(iofile, newprop);
+    finally
+        close(iofile)
+    end
 end
-
 
 macro addproperty(ex)
     esc(addproperty(ex))
+end
+
+function rmproperty(ex)
+    propname = string(ex)
+    !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
+    propname in keys(usermatrixclass) || throw (ArgumentError("Can not find property $propname."))
+   
+    user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
+    s = readall(user)
+    iofile = open(user, "w")
+    rg = Regex("""\"""" * eval(propname) * ".+")
+    key = search(s, rg) # locate the propname in user.jl to remove.
+    start_char = key[1] # the start of the line
+    end_char = key[end] # the end of the line
+    s = s[1:start_char - 1] * s[end_char+1:end]
+    try
+        write(iofile, s);
+    finally
+        close(iofile)
+    end
+end
+
+macro rmproperty(ex)
+    esc(rmproperty(ex))
 end
 
 end # end module
