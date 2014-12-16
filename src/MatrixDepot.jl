@@ -4,6 +4,7 @@ using Compat # support v3 and v4
 export matrixdepot, @addproperty
 
 include("higham.jl") #Higham Test matrices
+include("user.jl") #user defined properties
 
 function matrixdepot()
     # Print information strings 
@@ -130,15 +131,20 @@ function matrixdepot(prop1::String, otherprops::String...)
 end
 
 #addproperty
+function addproperty(ex)
+    # !(string(ex.args[1]) in keys(matrixclass)) || throw(ParseError("This is an existing Property.")) 
+    user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
+    s = readall(user)
+    iofile = open(user, "w")
+    newprop = s[1:end-3] * "\""  * string(ex.args[1]) * "\" => " * string(ex.args[2]) * "\n" * s[end-3:end]
+    write(iofile, newprop);
+    close(iofile)
+end
+
+
+
 macro addproperty(ex)
-    quote
-        user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
-        s = readall(user)
-        iofile = open(user, "w")
-        newprop = s * string($(esc(ex))) * "\n"
-        write(iofile, newprop);
-        close(iofile)
-    end
+    esc(addproperty(ex))
 end
 
 end # end module
