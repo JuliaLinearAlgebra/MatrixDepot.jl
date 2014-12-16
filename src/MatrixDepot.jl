@@ -134,12 +134,16 @@ end
 
 #addproperty
 function addproperty(ex)
-    !(string(ex.args[1]) in [ keys(matrixclass), keys(usermatrixclass)]) || 
-                              throw(ParseError("This is an existing Property.")) 
+    propname = string(ex.args[1])
+    !(propname in keys(matrixclass)) || throw(ParseError("$propname is an existing property."))
+    !(propname in keys(usermatrixclass)) || throw (ParseError("You have defined property $propname."))
+    for matname in eval(ex.args[2])
+        matname in keys(matrixdict) || throw(ParseError("$matname is not in the collection."))
+    end
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
-    newprop = s[1:end-3] * "\""  * string(ex.args[1]) * "\" => [" 
+    newprop = s[1:end-3] * "\""  * propname * "\" => [" 
     for str in eval(ex.args[2])
         newprop *= "\"" * str * "\", "
     end
