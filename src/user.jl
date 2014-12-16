@@ -1,1 +1,16 @@
-ASCIIString["hilb","cauchy","circul","invhilb","moler","pascal","pei","minij","tridiag","lehmer"]ASCIIString["hilb","cauchy","circul","invhilb","moler","pascal","pei","minij","tridiag","lehmer"]ASCIIString["pascal","tridiag"]
+usermatrixclass = 
+@compat Dict(
+
+
+
+"myclass" => ["pascal","hilb","pei","grcar"],
+
+"myclass2" => ["magic","pei"],
+
+"myclass" => ["kahan"],
+
+"symmetric" => ["hello"],
+
+"symmet" => ["hello"],
+
+);

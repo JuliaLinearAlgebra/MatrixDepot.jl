@@ -111,6 +111,8 @@ function matrixdepot(name::String)
         println(matrixinfo[name])
     elseif name in keys(matrixclass)
         return matrixclass[name]
+    elseif name in keys(usermatrixclass)
+        return usermatrixclass[name]
     else
         println("Your matrix or class is not included in Matrix Depot.")
     end
@@ -132,15 +134,15 @@ end
 
 #addproperty
 function addproperty(ex)
-    # !(string(ex.args[1]) in keys(matrixclass)) || throw(ParseError("This is an existing Property.")) 
+    !(string(ex.args[1]) in [ keys(matrixclass), keys(usermatrixclass)]) || 
+                              throw(ParseError("This is an existing Property.")) 
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
-    newprop = s[1:end-3] * "\""  * string(ex.args[1]) * "\" => " * string(ex.args[2]) * "\n" * s[end-3:end]
+    newprop = s[1:end-3] * "\""  * string(ex.args[1]) * "\" => " * string(ex.args[2]) * ",\n" * s[end-3:end]
     write(iofile, newprop);
     close(iofile)
 end
-
 
 
 macro addproperty(ex)
