@@ -139,7 +139,11 @@ function addproperty(ex)
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
-    newprop = s[1:end-3] * "\""  * string(ex.args[1]) * "\" => " * string(ex.args[2]) * ",\n" * s[end-3:end]
+    newprop = s[1:end-3] * "\""  * string(ex.args[1]) * "\" => [" 
+    for str in eval(ex.args[2])
+        newprop *= "\"" * str * "\", "
+    end
+    newprop = newprop * "],\n" * s[end-3:end]
     write(iofile, newprop);
     close(iofile)
 end

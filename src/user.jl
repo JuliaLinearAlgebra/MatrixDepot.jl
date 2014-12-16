@@ -1,16 +1,11 @@
-usermatrixclass = 
+usermatrixclass =
 @compat Dict(
 
 
 
-"myclass" => ["pascal","hilb","pei","grcar"],
 
-"myclass2" => ["magic","pei"],
+"newclass" => ["cauchy", "hilb", ],
 
-"myclass" => ["kahan"],
-
-"symmetric" => ["hello"],
-
-"symmet" => ["hello"],
+"spd" => ["hilb", "cauchy", "circul", "invhilb", "moler", "pascal", "pei", "minij", "tridiag", "lehmer", ],
 
 );
