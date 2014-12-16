@@ -1,0 +1,1 @@
+ASCIIString["hilb","cauchy","circul","invhilb","moler","pascal","pei","minij","tridiag","lehmer"]ASCIIString["hilb","cauchy","circul","invhilb","moler","pascal","pei","minij","tridiag","lehmer"]ASCIIString["pascal","tridiag"]

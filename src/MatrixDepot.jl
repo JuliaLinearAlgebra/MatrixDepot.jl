@@ -1,7 +1,7 @@
 module MatrixDepot
 using Compat # support v3 and v4 
 
-export matrixdepot
+export matrixdepot, @addproperty
 
 include("higham.jl") #Higham Test matrices
 
@@ -127,6 +127,18 @@ function matrixdepot(prop1::String, otherprops::String...)
         end        
     end
     return commonprop
+end
+
+#addproperty
+macro addproperty(ex)
+    quote
+        user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
+        s = readall(user)
+        iofile = open(user, "w")
+        newprop = s * string($(esc(ex))) * "\n"
+        write(iofile, newprop);
+        close(iofile)
+    end
 end
 
 end # end module
