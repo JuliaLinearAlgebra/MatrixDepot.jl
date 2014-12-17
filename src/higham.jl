@@ -396,6 +396,16 @@ function lehmer{T}(::Type{T}, n::Int)
     return A
 end
 
+#
+# Parter Matrix
+#
+function parter{T}(::Type{T}, n::Int)
+    A = Array(T, n, n)
+    [A[i,j] = one(T) / (i - j + 0.5) for i = 1:n, j = 1:n]
+    return A
+end
+
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -408,7 +418,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "lotkin" => lotkin, "clement" => clement,
                           "fiedler" => fiedler, "minij" => minij,
                           "binomial" => binomialm, "tridiag" => tridiag,
-                          "lehmer" => lehmer
+                          "lehmer" => lehmer, "parter" => parter,
                           );
 
 matrixinfo = 
@@ -547,6 +557,10 @@ matrixinfo =
              \n Input options: 
              \n (type), dim: the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def']",
+             "parter" => "Parter Matrix:
+             \n Input options:
+             \n (type), dim: the dimension of the matrix.
+             \n ['eigen']",
              );
 
 matrixclass = 
@@ -569,5 +583,5 @@ matrixclass =
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
-                           "tridiag"],
+                           "tridiag", "parter", ],
                );
