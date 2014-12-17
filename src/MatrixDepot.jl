@@ -21,6 +21,19 @@ function matrixdepot()
         end
         println()
     end
+    if length(usermatrixclass) != 0
+        println()
+        println("New Properties:")
+        println()
+        for prop in keys(usermatrixclass)
+            print(prop, " = [ ")
+            for mat in usermatrixclass[prop]
+                print(mat, ", ")
+            end
+            print("] \n")
+            println()
+        end
+    end
 end
 
 function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int)
@@ -143,7 +156,7 @@ function addproperty(ex)
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
-    newprop = s[1:end-3] * "\""  * propname * "\" => [" 
+    newprop = s[1:end-4] * "\""  * propname * "\" => [" 
     for str in eval(ex.args[2])
         newprop *= "\"" * str * "\", "
     end
