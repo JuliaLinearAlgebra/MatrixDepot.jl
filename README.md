@@ -56,7 +56,7 @@ depending on `matrix_name`.
 * `matrixdepot(prop1, prop2, ...)` returns a list of matrices with the property
 `prop1`, `prop2`, etc.
 
-You can define your own properties using the macro `@addproperty` and 
+We can define our own properties using the macro `@addproperty` and 
 remove a defined property using `@rmproperty`.
 
 * `@addproperty property_name = ["matrix1", "matrix2", "matrix3"]`
