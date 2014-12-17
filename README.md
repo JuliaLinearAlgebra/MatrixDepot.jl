@@ -46,9 +46,9 @@ by `"symmetric"`.
 
 * `matrixdepot()` returns a list of all the matrices in the collection.
 
-* `matrixdepot(matrix_name, p1, p2, ...)` returns a matrix specified by the
-query `matrix_name`. `matrix_name` is a query string. `p1, p2, ...` are input
-parameters depending on `matrix_name`.
+* `matrixdepot(matrix_name, p1, p2, ...)` returns a matrix specified
+by the query string `matrix_name`.`p1, p2, ...` are input parameters
+depending on `matrix_name`.
 
 * `matrixdepot(matrix_name)` returns the parameter options and the properties of
 `matrix_name`.
@@ -124,8 +124,8 @@ julia> matrixdepot("circul", 5)
  2.0  3.0  4.0  5.0  1.0
 ```
 
-If we are not sure about the paramters or properties of a matrix, we can type
-the matrix name
+We can type the matrix name to see the paramter options and matrix
+properties.
 
 ```julia
 julia> matrixdepot("hilb")
@@ -150,7 +150,7 @@ Input options:
 ['inverse', 'orthogonal', 'eigen']
 ```
 
-From the information given by `matrixdepot("hilb")`, we notice that we
+From the information given by `matrixdepot("hilb")`, we observe that we
 can create a 4-by-6 rectanglular Hilbert matrix by
 
 ```julia
