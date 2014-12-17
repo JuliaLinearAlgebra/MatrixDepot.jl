@@ -79,7 +79,7 @@ remove a defined property using `@rmproperty`.
 | Lotkin Matrix             | "lotkin"  | Clement Matrix           | "clement" |
 | Fiedler Matrix            | "fiedler" | MIN[I,J] Matrix          | "minij"   |
 | Binomial Matrix           | "binomial"| Tridiagonal Matrix       | "tridiag" |
-| Lehmer Matrix             | "lehmer"  |                          |           |
+| Lehmer Matrix             | "lehmer"  | Parter Matrix            | "parter"  |
 
 ### Matrix properties in the Collection
 
