@@ -1,4 +1,4 @@
-![logo](https://github.com/weijianzhang/MatrixDepot.jl/blob/higham/doc/matrixdepot.png =30x30)
+![logo](doc/matrixdepot.png =30x30)
 
 # Matrix Depot 
 
