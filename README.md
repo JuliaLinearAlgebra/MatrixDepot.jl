@@ -1,4 +1,4 @@
-![logo](doc/matrixdepot.png =30x30)
+![logo](doc/matrixdepot.png)
 
 # Matrix Depot 
 
