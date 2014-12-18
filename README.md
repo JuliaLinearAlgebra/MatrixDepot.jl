@@ -1,6 +1,4 @@
-![logo](doc/logo1.png)
-
-# Matrix Depot 
+# Matrix Depot ![logo](doc/logo2.png) 
 
 A test matrix collection for Julia.
 
