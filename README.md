@@ -1,4 +1,4 @@
-![logo](doc/matrixdepot.png)
+![logo](doc/logo1.png)
 
 # Matrix Depot 
 
@@ -8,7 +8,7 @@ A test matrix collection for Julia.
 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_release.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=release)
 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_nightly.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=nightly)
 
-  
+ 
 ## Install
 
 To install the release version, type
