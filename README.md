@@ -80,6 +80,7 @@ remove a defined property using `@rmproperty`.
 | Fiedler Matrix            | "fiedler" | MIN[I,J] Matrix          | "minij"   |
 | Binomial Matrix           | "binomial"| Tridiagonal Matrix       | "tridiag" |
 | Lehmer Matrix             | "lehmer"  | Parter Matrix            | "parter"  |
+| Chow Matrix               | "chow"    |                          |           |
 
 ### Matrix properties in the Collection
 
