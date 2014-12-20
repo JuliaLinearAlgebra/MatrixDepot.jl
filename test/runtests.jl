@@ -27,5 +27,6 @@ include("test_binomial.jl")
 include("test_tridiag.jl")
 include("test_lehmer.jl")
 include("test_parter.jl")
+include("test_chow.jl")
 
 println("Success in all tests.")
