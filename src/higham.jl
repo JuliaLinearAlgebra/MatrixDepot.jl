@@ -405,6 +405,25 @@ function parter{T}(::Type{T}, n::Int)
     return A
 end
 
+#
+# Chow Matrix
+#
+function chow{T}(::Type{T}, n::Int, alpha, delta)
+    A = zeros(T, n, n)
+    alpha = convert(T, alpha)
+    delta = convert(T, delta)
+    for i = 1:n, j = 1:n
+        if i == j - 1 
+            A[i,j] = one(T)
+        elseif i == j
+            A[i,j] = alpha + delta
+        elseif j + 1 <= i 
+            A[i,j] = alpha^(i + 1 - j)
+        end
+    end
+    return A
+end
+chow{T}(::Type{T}, n::Int) = chow(T, n, 1, 0)
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -419,6 +438,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "fiedler" => fiedler, "minij" => minij,
                           "binomial" => binomialm, "tridiag" => tridiag,
                           "lehmer" => lehmer, "parter" => parter,
+                          "chow" => chow,
                           );
 
 matrixinfo = 
@@ -561,6 +581,13 @@ matrixinfo =
              \n Input options:
              \n (type), dim: the dimension of the matrix.
              \n ['eigen']",
+             "chow" => "Chow Matrix:
+             \n Input options:
+             \n (type), dim, alpha, delta: dim is dimension of the matrix. 
+             alpha, delta are scalars such that A[i,i] = alpha + delta and 
+             A[i,j] = alpha^(i + 1 -j) for j + 1 <= i.
+             \n (type), dim: alpha = 1, delta = 0.
+             \n ['eigen']",
              );
 
 matrixclass = 
@@ -583,5 +610,5 @@ matrixclass =
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
-                           "tridiag", "parter", ],
+                           "tridiag", "parter", "chow", ],
                );
