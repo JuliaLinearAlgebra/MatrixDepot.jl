@@ -425,6 +425,62 @@ function chow{T}(::Type{T}, n::Int, alpha, delta)
 end
 chow{T}(::Type{T}, n::Int) = chow(T, n, 1, 0)
 
+#
+# newsign: newsign(0) = 1
+#
+function newsign(x)
+    x == 0 ? y = 1 : y = sign(x)
+    return y
+end
+
+#
+# Random Correlation Matrix
+#
+# Reference: Numerically Stable Generation of Correlation Matrices
+# and Their Factors. Philip Davies and Nicholas Higham, 
+# BIT Numerical Mathematics, 2000, Vol 40. Issue 4, pp 640-651
+#
+function randcorr{T}(::Type{T}, n::Int)
+    x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
+    x = n * x / sum(x) # x has nonnegtive elements.
+    A = diagm(x)
+    Q, R = qr(randn(n,n));
+    Q = Q*diagm(sign(diag(R))) # form a random orthogonal matrix.
+    A = Q*A*Q'
+    
+    a = diag(A)
+    l = find(a .< 1)
+    g = find(a .> 1)
+    
+    # Apply Given rotation to set A[i,i] = 1
+    while length(l) > 0 && length(g) > 0
+        k =  @compat ceil(Integer, rand()*length(l))
+        h =  @compat ceil(Integer, rand()*length(g))
+        i = l[k]
+        j = g[h]
+        if i > j
+            i,j = j,i
+        end
+        alpha = sqrt(A[i,j]^2 - (a[i] - 1)*(a[j] - 1))
+        # take sign to avoid cancellation.
+        t = (A[i,j] + newsign(A[i,j]) * alpha) / (a[j] - 1)
+        c = 1/ sqrt(1 + t^2)
+        s = t*c
+        
+        A[:, [i,j]] = A[:, [i,j]] * [c s; -s c]
+        A[[i,j], :] = [c -s; s c] * A[[i,j], :]
+        
+        A[i,i] = 1
+        a = diag(A)
+        l = find(a.<1)
+        g = find(a.>1)
+    end
+    [A[i,i] = 1 for i = 1:n]
+    return (A + A')/2
+
+end
+
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -438,7 +494,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "fiedler" => fiedler, "minij" => minij,
                           "binomial" => binomialm, "tridiag" => tridiag,
                           "lehmer" => lehmer, "parter" => parter,
-                          "chow" => chow,
+                          "chow" => chow, "randcorr" => randcorr,
                           );
 
 matrixinfo = 
@@ -588,13 +644,17 @@ matrixinfo =
              A[i,j] = alpha^(i + 1 -j) for j + 1 <= i.
              \n (type), dim: alpha = 1, delta = 0.
              \n ['eigen']",
+             "randcorr" => "Random Correlation Matrix:
+             \n Input options:
+             \n (type), dim: the dimension of the matrix.
+             \n ['symmetric']",
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", 
                              "clement", "fiedler", "minij", "tridiag",
-                             "lehmer", ],
+                             "lehmer", "randcorr",],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
