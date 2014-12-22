@@ -489,10 +489,7 @@ function poisson{T}(::Type{T}, n::Int)
     return kron(A,S) + kron(S,A)
 end
 
-#
-# Dorr Matrix
-#
-    
+     
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
