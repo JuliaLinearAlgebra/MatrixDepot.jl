@@ -30,5 +30,6 @@ include("test_parter.jl")
 include("test_chow.jl")
 include("test_randcorr.jl")
 include("test_poisson.jl")
+include("test_neumann.jl")
 
 println("Success in all tests.")

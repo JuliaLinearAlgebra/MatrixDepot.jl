@@ -493,7 +493,10 @@ end
 # Neumann Matrix
 #     
 function neumann{T}(::Type{T}, n::Int)
-    S = full(tridiag(T,n))
+    if n == 1
+        return 4 * ones(T, 1,1) #handle 1-d case.
+    end
+    S = full(tridiag(T, n))
     S[1,2] = -2
     S[n, n-1] = -2
     A = speye(T, n)
