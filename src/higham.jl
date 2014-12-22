@@ -440,11 +440,12 @@ end
 # and Their Factors. Philip Davies and Nicholas Higham, 
 # BIT Numerical Mathematics, 2000, Vol 40. Issue 4, pp 640-651
 #
+# limit: only generate matrix of type Float64
 function randcorr{T}(::Type{T}, n::Int)
     x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
     x = n * x / sum(x) # x has nonnegtive elements.
     A = diagm(x)
-    Q, R = qr(randn(n,n));
+    Q, R = qr(randn(n,n)); 
     Q = Q*diagm(sign(diag(R))) # form a random orthogonal matrix.
     A = Q*A*Q'
     
