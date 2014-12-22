@@ -29,5 +29,6 @@ include("test_lehmer.jl")
 include("test_parter.jl")
 include("test_chow.jl")
 include("test_randcorr.jl")
+include("test_poisson.jl")
 
 println("Success in all tests.")
