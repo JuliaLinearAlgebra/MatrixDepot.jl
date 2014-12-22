@@ -480,6 +480,19 @@ function randcorr{T}(::Type{T}, n::Int)
 
 end
 
+#
+# Poisson Matrix
+#
+function poisson{T}(::Type{T}, n::Int)
+    S = full(tridiag(T, n))
+    A = speye(T, n)
+    return kron(A,S) + kron(S,A)
+end
+
+#
+# Dorr Matrix
+#
+    
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -495,6 +508,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "binomial" => binomialm, "tridiag" => tridiag,
                           "lehmer" => lehmer, "parter" => parter,
                           "chow" => chow, "randcorr" => randcorr,
+                          "poisson" => poisson, 
                           );
 
 matrixinfo = 
@@ -647,28 +661,32 @@ matrixinfo =
              "randcorr" => "Random Correlation Matrix:
              \n Input options:
              \n (type), dim: the dimension of the matrix.
-             \n ['symmetric']",
+             \n ['symmetric', 'pos-semidef']",
+             "poisson" => "Poisson Matrix:
+             \n Input options:
+             \n (type), n: the dimension of the matirx is n^2.
+             \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']",
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", 
                              "clement", "fiedler", "minij", "tridiag",
-                             "lehmer", "randcorr",],
+                             "lehmer", "randcorr", "poisson",],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
                            "clement", "fiedler", "minij", "tridiag", 
-                           "lehmer", ],
+                           "lehmer", "poisson", ],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", ],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei", "minij", "tridiag",
-                           "lehmer",],
+                           "lehmer", "poisson"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
-                           "tridiag", "parter", "chow", ],
+                           "tridiag", "parter", "chow", "poisson"],
                );
