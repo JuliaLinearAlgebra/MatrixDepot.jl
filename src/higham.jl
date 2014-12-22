@@ -489,7 +489,16 @@ function poisson{T}(::Type{T}, n::Int)
     return kron(A,S) + kron(S,A)
 end
 
-     
+#
+# Neumann Matrix
+#     
+function neumann{T}(::Type{T}, n::Int)
+    S = full(tridiag(T,n))
+    S[1,2] = -2
+    S[n, n-1] = -2
+    A = speye(T, n)
+    return kron(S,A) + kron(A,S)
+end
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -505,7 +514,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "binomial" => binomialm, "tridiag" => tridiag,
                           "lehmer" => lehmer, "parter" => parter,
                           "chow" => chow, "randcorr" => randcorr,
-                          "poisson" => poisson, 
+                          "poisson" => poisson, "neumann" => neumann, 
                           );
 
 matrixinfo = 
@@ -663,6 +672,9 @@ matrixinfo =
              \n Input options:
              \n (type), n: the dimension of the matirx is n^2.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']",
+             "neumann" => "Neumann Matrix:
+             \n (type), n: the dimension of the matrix is n^2.
+             \n ['eigen', 'sparse']",
              );
 
 matrixclass = 
@@ -685,5 +697,5 @@ matrixclass =
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
-                           "tridiag", "parter", "chow", "poisson"],
+                           "tridiag", "parter", "chow", "poisson", "neumann",],
                );

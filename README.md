@@ -81,7 +81,7 @@ remove a defined property using `@rmproperty`.
 | Binomial Matrix           | "binomial"| Tridiagonal Matrix       | "tridiag" |
 | Lehmer Matrix             | "lehmer"  | Parter Matrix            | "parter"  |
 | Chow Matrix               | "chow"    | Random Correlation Matrix| "randcorr"|
-| Poisson Matrix            | "poisson" |                          |           |
+| Poisson Matrix            | "poisson" | Neumann Matrix           | "neumann" |
 
 ### Matrix properties in the Collection
 
