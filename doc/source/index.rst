@@ -6,16 +6,19 @@
 
 
 Matrix Depot
-============
+------------
 
 .. image:: logo1.png 
 
 A test matrix collection for Julia.
 
-.. toctree::
+.. toctree:: 
    :maxdepth: 2
 
    matrices.rst
+
+Usage
+-----
 
 Every matrix in the collection is represented by a string
 ``matrix_name``, for example, the Cauchy matrix is represented by
