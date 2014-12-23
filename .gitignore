@@ -3,3 +3,5 @@
 *.org
 # ignore generated files from Sphinx
 _build
+_static
+_templates
