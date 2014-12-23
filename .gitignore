@@ -1,3 +1,5 @@
 # ignore IJulia Notebook and org 
 *.ipynb
 *.org
+# ignore generated files from Sphinx
+_build
