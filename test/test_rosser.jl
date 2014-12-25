@@ -21,4 +21,10 @@ e2 = [500, 510]
 e1 = eigvals(matrixdepot("rosser", 4, 2, 1))
 e2 = [0.1, 1000, 1019.9, 1020]
 @test_approx_eq_eps e1 e2 1e-2
+
+e1 = eigvals(matrixdepot("rosser", 16, 2, 1))
+e2 = [-1020, -1020, 0, 0, 0.098, 0.098, 1000, 1000, 1000, 1000, 1000, 
+      1020, 1020, 1020, 1020, 1020]
+@test_approx_eq_eps e1 e2 1e+1
+
 println("'rosser' passed test...")

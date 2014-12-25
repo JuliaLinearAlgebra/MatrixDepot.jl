@@ -529,16 +529,19 @@ function rosser{T}(::Type{T}, n::Int, a, b)
     2^lgn != n && throw(ArgumentError("n must be positive integer and a power of 2."))
     
     if n == 2
+        #eigenvalues are 500, 510 
         B = T[101 1; 1 101]
         P = T[2 1;1 -2]
         A = P'*B*P
     elseif n == 4
+        # eigenvalues are 0.1, 1019.9, 1020, 1020 for a = 2 and b = 1 
         B = zeros(T, n, n)
         B[1,1], B[1,4], B[4,1], B[4,4] = 101, 1, 1, 101;
         B[2,2], B[2,3], B[3,2], B[3,3] = 1, 10, 10, 101;
         P = P_block(T, a, b, b, a)
         A = P' * B * P
     elseif n == 8
+        # eigenvalues are 1020, 1020, 1000, 1000, 0.098, 0, -1020
         B = zeros(T, n, n)
         B[1,1], B[6,1], B[2,2], B[8,2] = 102, 1, 101, 1;
         B[3,3], B[7,3] = 98, 14;
@@ -549,32 +552,32 @@ function rosser{T}(::Type{T}, n::Int, a, b)
     else
         lgn = lgn - 2
         halfn = @compat round(Integer, n/2)
+        # using Sylvester's method
         P = P_block(T, a, b, b, a)
         m = 4
         for i in 1:lgn
             P = [P zeros(T, m, m); zeros(T, m, m) P]
             m = m * 2
         end
+        # mix 4 2-by-2 matrices (with close eigenvalues) into a large nxn matrix.
         B_list = T[102, 1, 1, - 102, 101, 1, 1, 101, 1, 10, 10, 101, 98, 14, 14, 2]
         B = zeros(T, n, n) 
-        j = 1
+        j, k = 1, 5
         for i in 1:(halfn + 1)
-            indexend = halfn + i - 1
-            list_start = j
-            list_end = j + 3
-            println("start = ", list_start, "end = ", list_end)
+            indexend = halfn -1 + i
+            list_start = k
+            list_end = k + 3
+            
             if list_start > 16 || list_end > 16 
-                j = 1
+                k = 1
                 list_start = 1
                 list_end = 4
             end
             B[j,j], B[j,indexend], B[indexend, j], B[indexend, indexend] = B_list[list_start:list_end]
-            j = j + 4
-           # println(B)
+            j = j + 1
+            k = k + 4
         end
-        println(B)
-        A = P' * B * P
-        
+        A = P' * B * P        
     end
         
     return A
@@ -768,7 +771,7 @@ matrixinfo =
              a and b are scalars. For dim = 8, a = 2 and b = 1, the generated 
              matrix is the test matrix used by Rosser.
              \n (type), dim: a = b = rand(1:5)
-             \n ['eigen']",
+             \n ['eigen', 'ill-cond']",
              );
 
 matrixclass = 
@@ -784,7 +787,7 @@ matrixclass =
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
-                            "tridiag", ],
+                            "tridiag", "rosser"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson"],
