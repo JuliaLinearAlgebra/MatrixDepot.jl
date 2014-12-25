@@ -528,6 +528,10 @@ function rosser{T}(::Type{T}, n::Int, a, b)
     end
     2^lgn != n && throw(ArgumentError("n must be positive integer and a power of 2."))
     
+    if n == 1 # handle 1-d case
+        return 611 * ones(T, 1, 1)
+    end
+
     if n == 2
         #eigenvalues are 500, 510 
         B = T[101 1; 1 101]
