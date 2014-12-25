@@ -562,6 +562,7 @@ function rosser{T}(::Type{T}, n::Int, a, b)
             indexend = halfn + i - 1
             list_start = j
             list_end = j + 3
+            println("start = ", list_start, "end = ", list_end)
             if list_start > 16 || list_end > 16 
                 j = 1
                 list_start = 1
@@ -569,8 +570,11 @@ function rosser{T}(::Type{T}, n::Int, a, b)
             end
             B[j,j], B[j,indexend], B[indexend, j], B[indexend, indexend] = B_list[list_start:list_end]
             j = j + 4
+           # println(B)
         end
+        println(B)
         A = P' * B * P
+        
     end
         
     return A
