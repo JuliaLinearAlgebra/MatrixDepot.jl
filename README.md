@@ -233,7 +233,9 @@ Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x 
 
 ## Documentation
 
-More details can be found [here](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb).
+[Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
+
+[More examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb).
 
 ## References
 
