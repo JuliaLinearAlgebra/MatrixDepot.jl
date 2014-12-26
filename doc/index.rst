@@ -34,11 +34,11 @@ Install
 
 To install the release version, type::
 
-  Pkg.add("MatrixDepot")
+  julia> Pkg.add("MatrixDepot")
 
 To install the latest development version, type::
 
-  Pkg.clone("MatrixDepot")
+  julia> Pkg.clone("MatrixDepot")
 
 .. _usage:
 
