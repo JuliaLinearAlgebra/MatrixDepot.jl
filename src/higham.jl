@@ -800,4 +800,6 @@ matrixclass =
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
                            "rosser"],
+             # minor properties
+             "sparse" => ["poisson", "neumann"],
                );
