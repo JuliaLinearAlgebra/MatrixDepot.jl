@@ -6,14 +6,32 @@ Matrices in the Collection
 
  
 * :term:`circul`
+* :term:`dingdong`
 * :term:`frank`
 * :term:`grcar`
 * :term:`hilb`
+* :term:`invhilb`
 * :term:`rosser`
 
 
 .. glossary::
    :sorted:
+
+   dingdong
+      Dingdong matrix is symmetric Hankel matrix invented by Dr. F. N. Ris
+      of IBM, Thomas J Watson Research Centre. The eigenvalues cluster 
+      around :math:`\pi/2` and :math:`-\pi/2` [nash90]_. 
+
+      .. image:: images/dingdong.png
+
+      .. [nash90] J.C. Nash, Compact Numerical Methods for Computers: Linear
+		  Algebra and Function Minimisation, second edition, Adam Hilger, 
+		  Bristol, 1990 (Appendix 1).
+
+   invhilb
+      Inverse of the Hilbert Matrix.
+
+      .. image:: images/invhilb.png
 
    grcar
       Grcar matrix is a Toeplitz matrix with sensitive eigenvalues. The
