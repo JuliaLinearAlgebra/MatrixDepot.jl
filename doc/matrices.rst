@@ -9,16 +9,32 @@ Matrices in the Collection
 * :term:`dingdong`
 * :term:`frank`
 * :term:`grcar`
+* :term:`hadamard`
 * :term:`hilb`
 * :term:`invhilb`
+* :term:`magic`
 * :term:`rosser`
 
 
 .. glossary::
    :sorted:
 
+   magic
+      The magic matrix is a matrix with integer entries such that the 
+      row elements, column elements, diagonal elements and anti-diagonal 
+      elements all add up to the same number. 
+
+      .. image:: images/magic.png
+
+   hadamard
+      The Hadamard matrix is a square matrix whose entries are 1 or -1. It 
+      was named after Jacques Hadamard. The rows of a Hadamard matrix 
+      are orthogonal. 
+      
+      .. image:: images/hadamard.png
+
    dingdong
-      Dingdong matrix is symmetric Hankel matrix invented by Dr. F. N. Ris
+      The Dingdong matrix is symmetric Hankel matrix invented by Dr. F. N. Ris
       of IBM, Thomas J Watson Research Centre. The eigenvalues cluster 
       around :math:`\pi/2` and :math:`-\pi/2` [nash90]_. 
 
@@ -34,7 +50,7 @@ Matrices in the Collection
       .. image:: images/invhilb.png
 
    grcar
-      Grcar matrix is a Toeplitz matrix with sensitive eigenvalues. The
+      The Grcar matrix is a Toeplitz matrix with sensitive eigenvalues. The
       image below is a 200-by-200 Grcar matrix used in [nrt92]_.
 
       .. image:: images/grcar.png
@@ -44,7 +60,7 @@ Matrices in the Collection
 		 Matrix Anal. Appl., 13 (1992), pp. 796-825.
 
    frank
-      Frank matrix is an upper Hessenberg matrix with determinant 1. 
+      The Frank matrix is an upper Hessenberg matrix with determinant 1. 
       The eigenvalues are real, positive and very ill conditioned [vara86]_.  
 
       .. image:: images/frank.png
