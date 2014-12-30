@@ -4,9 +4,10 @@
 Matrices in the Collection 
 --------------------------
 
- 
+* :term:`cauchy` 
 * :term:`circul`
 * :term:`dingdong`
+* :term:`forsythe`
 * :term:`frank`
 * :term:`grcar`
 * :term:`hadamard`
@@ -18,6 +19,24 @@ Matrices in the Collection
 
 .. glossary::
    :sorted:
+
+   forsythe
+      The Forsythe matrix is a n-by-n perturbed Jordan block. 
+
+      .. image:: images/forsythe.png
+
+
+   cauchy
+      The Cauchy matrix is an m-by-n matrix with :math:`(i,j)` element
+      
+      .. math::
+	 
+	 \frac{1}{x_i - y_i}, \quad x_i - y_i \ne 0,
+
+      where :math:`x_i` and :math:`y_i` are elements of vectors :math:`x` 
+      and :math:`y`.
+      
+      .. image:: images/cauchy.png
 
    magic
       The magic matrix is a matrix with integer entries such that the 
