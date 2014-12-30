@@ -105,6 +105,8 @@ function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T})
     # x,y : vectors
     return matrixdict[name](x,y)
 end
+
+
 function matrixdepot{T}(name::String, x::Vector{T})
     return matrixdict[name](x)
 end
