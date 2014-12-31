@@ -6,7 +6,12 @@
 | Julia 0.4 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_nightly.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=nightly)
 
 A test matrix collection for Julia.
- 
+
+* [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
+
+* [Examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb).
+
+
 ## Install
 
 To install the release version, type
@@ -230,12 +235,6 @@ Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x 
   86.7524   -7.15714   -9.32857  169.702
   71.9139   -5.98707   -7.81497  140.876 
 ```
-
-## Documentation
-
-[Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
-
-[More examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb).
 
 ## References
 
