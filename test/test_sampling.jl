@@ -1,4 +1,4 @@
-n = rand(1:n)
+n = rand(1:7)
 @test matrixdepot("sampling", n) == matrixdepot("sampling", Float64, n)
 
 A = matrixdepot("sampling", n)
