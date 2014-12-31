@@ -14,11 +14,29 @@ Matrices in the Collection
 * :term:`hilb`
 * :term:`invhilb`
 * :term:`magic`
+* :term:`moler`
 * :term:`rosser`
-
+* :term:`triw`
 
 .. glossary::
    :sorted:
+
+   moler
+      The Moler matrix is a symmetric positive definite matrix. It has
+      one small eigenvalue.
+
+      .. image:: images/moler.png
+
+
+   triw
+      Upper triangular matrices discussed by Wilkinson and others [gowi76]_.
+
+      .. image:: images/triw.png
+
+      .. [gowi76] G.H. Golub and J.H. Wilkinson, Ill-conditioned eigensystems
+		  and the computation of the Jordan canonical form, SIAM Review,
+		  18(4), (1976), pp. 578-619.
+      
 
    forsythe
       The Forsythe matrix is a n-by-n perturbed Jordan block. 
