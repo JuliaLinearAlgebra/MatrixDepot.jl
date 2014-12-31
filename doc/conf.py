@@ -102,26 +102,29 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinxdoc'
+html_theme = 'agogo'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-# html_theme_options = {}
+html_theme_options = {"bgcolor":"#BFAF80", "linkcolor":"#59323C",
+                      "headerbg":"#363635", "footerbg":"#363635",
+                      "headercolor1":"#260126", "headercolor2":"#260126",
+                      "headerlinkcolor": "#83BF17"}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = "Matrix Depot: A Test Matrix Collection"
+html_title = "Matrix Depot: A Test Matrix Collection"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = MatrixDepot.jl
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "images/logo_white.png"
+# html_logo = "logo2.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
