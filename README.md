@@ -9,7 +9,7 @@ A test matrix collection for Julia.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
-* [Examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb).
+* [Examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb)
 
 
 ## Install
