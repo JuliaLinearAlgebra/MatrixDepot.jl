@@ -16,10 +16,20 @@ Matrices in the Collection
 * :term:`magic`
 * :term:`moler`
 * :term:`rosser`
+* :term:`sampling`
 * :term:`triw`
 
 .. glossary::
    :sorted:
+
+   sampling
+      Matrices with application in sampling theory. A n-by-n nonsymmetric matrix
+      with eigenvalues :math:`0, 1, 2, \ldots, n-1` [botr07]_. 
+
+      .. image:: images/sampling.png
+
+      .. [botr07]  L. Bondesson and I. Traat, A Nonsymmetric Matrix with Integer
+		   Eigenvalues, Linear and Multilinear Algebra, 55(3)(2007), pp. 239-247.
 
    moler
       The Moler matrix is a symmetric positive definite matrix. It has
