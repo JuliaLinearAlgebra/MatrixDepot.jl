@@ -592,6 +592,33 @@ rosser{T}(::Type{T}, n::Int) = rosser(T, n, rand(1:5), rand(1:5))
 # Wilkinson Matrix
 #
 
+
+#
+# Matrix with application in sampling theory
+#
+function sampling{T}(x::Vector{T})
+    n = length(x)
+    A = zeros(T, n, n)
+    for j = 1:n, i = 1:n
+        if i != j
+            A[i,j] = x[i] / (x[i] - x[j])
+        end
+    end
+    d = sum(A, 2)
+    A = A + diagm(d[:])
+    return A
+end
+#
+# special probability case
+# see: 
+#   L. Bondesson and I. Traat, A Nonsymmetric Matrix with Integer
+#   Eigenvalues, Linear and Multilinear Algebra, 55(3)(2007), pp. 239-247.
+#
+function sampling{T}(::Type{T}, n::Int)
+    p = T[1:n] / n
+    return sampling(p)
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -607,7 +634,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "lehmer" => lehmer, "parter" => parter,
                           "chow" => chow, "randcorr" => randcorr,
                           "poisson" => poisson, "neumann" => neumann, 
-                          "rosser" => rosser,
+                          "rosser" => rosser, "sampling" => sampling,
                           );
 
 matrixinfo = 
@@ -776,6 +803,11 @@ matrixinfo =
              matrix is the test matrix used by Rosser.
              \n (type), dim: a = b = rand(1:5)
              \n ['eigen', 'ill-cond']",
+             "sampling" => "Matrices with Application in Sampling Theory:
+             \n Input options:
+             \n vec: vec is a vector with no repeated elements.
+             \n (type), dim: the dimension of the matrix. 
+             \n ['eigen']",
              );
 
 matrixclass = 
@@ -799,7 +831,7 @@ matrixclass =
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
-                           "rosser"],
+                           "rosser", "sampling"],
              # minor properties
              "sparse" => ["poisson", "neumann"],
                );
