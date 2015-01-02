@@ -13,8 +13,10 @@ Matrices in the Collection
 * :term:`hadamard`
 * :term:`hilb`
 * :term:`invhilb`
+* :term:`kahan`
 * :term:`magic`
 * :term:`moler`
+* :term:`pascal`
 * :term:`rosser`
 * :term:`sampling`
 * :term:`triw`
@@ -22,8 +24,33 @@ Matrices in the Collection
 .. glossary::
    :sorted:
 
-   pascal
+   kahan
+      The Kahan matrix is a upper trapezoidal matrix, i.e., the 
+      :math:`(i,j)` element is equal to 0 if :math:`i > j`. The useful
+      range of ``theta`` is :math:`0 < theta < \pi`. The diagonal is 
+      perturbed by ``pert*eps()*diagm([n:-1:1])``.
+
+
+      .. image:: images/kahan.png
+
+
+   pascal 
+      The Pascal matrix's anti-diagonals form the Pascal's
+      triangle:: 
       
+        julia> matrixdepot("pascal", 6)
+	6x6 Array{Int64,2}:
+	1  1   1   1    1    1
+	1  2   3   4    5    6
+	1  3   6  10   15   21
+	1  4  10  20   35   56
+	1  5  15  35   70  126
+	1  6  21  56  126  252
+ 
+      See [high02]_ (28.4).
+
+	    
+      .. image:: images/pascal.png
 
 
    sampling

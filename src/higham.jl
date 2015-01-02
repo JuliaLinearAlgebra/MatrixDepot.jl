@@ -712,7 +712,7 @@ matrixinfo =
              \n (type), m, n, theta, pert: m, n are the row and column 
              dimensions of the matrix. theta and pert are scalars.
              \n (type), dim, theta, pert: dim is the dimension of the matrix.
-             \n (type), dim
+             \n (type), dim: theta = 1.2, pert = 25.
              \n ['inverse', 'ill-cond']" ,
              "pei" => "Pei Matrix:
              \n Input options:
