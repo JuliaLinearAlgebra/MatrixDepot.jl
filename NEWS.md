@@ -2,5 +2,8 @@
 
 v0.1
 ----
-* Add new matrices: Rosser
+* Add new matrices: rosser, sampling
+
+* Sphinx documentation
+
 

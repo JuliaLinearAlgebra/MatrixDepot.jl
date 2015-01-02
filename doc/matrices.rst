@@ -22,6 +22,10 @@ Matrices in the Collection
 .. glossary::
    :sorted:
 
+   pascal
+      
+
+
    sampling
       Matrices with application in sampling theory. A n-by-n nonsymmetric matrix
       with eigenvalues :math:`0, 1, 2, \ldots, n-1` [botr07]_. 
