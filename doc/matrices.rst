@@ -27,11 +27,29 @@ Matrices in the Collection
    :sorted:
 
    vand
-      The Vandermonde matrix
+      The Vandermonde matrix is defined in terms of scalars 
+      :math:`\alpha_0, \alpha_1, \ldots, \alpha_n` by 
+
+      .. math::
+
+	      V(\alpha_0, \ldots, \alpha_n) = \begin{bmatrix}
+                                               1 & 1 & \cdots & 1 \\
+					       \alpha_0 & \alpha_1 & \cdots & \alpha_n \\
+					       \vdots   & \vdots   &        & \vdots   \\
+					       \alpha_0^n  & \alpha_1^n & \cdots & \alpha_n^n \\
+			                       \end{bmatrix}.
+       
+      The inverse and determinant are known explicitly [high02]_. 
+
+      .. image:: images/vand.png
 
    pei
-      The Pei matrix 
+      The Pei matrix is a symmetric matrix with known inversison [pei62]_. 
 
+      .. image:: images/pei.png
+
+      .. [pei62] M.L. Pei, A test matrix for inversion procedures, Comm. ACM, 5 (1962), pp. 508.
+		 
    kahan
       The Kahan matrix is a upper trapezoidal matrix, i.e., the 
       :math:`(i,j)` element is equal to 0 if :math:`i > j`. The useful
