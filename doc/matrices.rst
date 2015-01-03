@@ -17,12 +17,20 @@ Matrices in the Collection
 * :term:`magic`
 * :term:`moler`
 * :term:`pascal`
+* :term:`pei`
 * :term:`rosser`
 * :term:`sampling`
 * :term:`triw`
+* :term:`vand`
 
 .. glossary::
    :sorted:
+
+   vand
+      The Vandermonde matrix
+
+   pei
+      The Pei matrix 
 
    kahan
       The Kahan matrix is a upper trapezoidal matrix, i.e., the 

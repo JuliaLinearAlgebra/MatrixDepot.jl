@@ -4,27 +4,21 @@
    contain the root `toctree` directive.
 
 
-.. image:: logo1.png
-   :align: right
-
 .. toctree:: 
    :hidden:
 
    matrices.rst
+   examples.rst
+
+MatrixDepot.jl
+==============
 
 **Contents:**
 
 * :ref:`install` 
 * :ref:`usage` 
 * :ref:`matrices` 
-
-`MatrixDepot.jl`_ is a test matrix collection for julia. Examples of 
-usage can be found `here`_.
-
-
-.. _MatrixDepot.jl: https://github.com/weijianzhang/MatrixDepot.jl
-.. _here: http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb
-
+* :ref:`examples` 
 
 
 .. _install:
