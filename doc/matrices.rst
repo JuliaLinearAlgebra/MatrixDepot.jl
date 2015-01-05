@@ -13,6 +13,7 @@ Matrices in the Collection
 * :term:`hadamard`
 * :term:`hilb`
 * :term:`invhilb`
+* :term:`invol`
 * :term:`kahan`
 * :term:`magic`
 * :term:`moler`
@@ -25,6 +26,17 @@ Matrices in the Collection
 
 .. glossary::
    :sorted:
+
+   invol
+      An involutory matrix, i.e., a matrix that is its own inverse. 
+      See [hoca63]_ 
+
+      .. image:: images/invol.png
+
+      .. [hoca63] A.S. Householder and J.A. Carpenter, The singular 
+		  values of involutory and idempotent matrices, Numer. 
+		  Math. 5 (1963), pp. 234-237.
+      
 
    vand
       The Vandermonde matrix is defined in terms of scalars 
