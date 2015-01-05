@@ -4,7 +4,8 @@
 Matrices in the Collection 
 --------------------------
 
-* :term:`cauchy` 
+* :term:`cauchy`
+* :term:`chebspec` 
 * :term:`circul`
 * :term:`dingdong`
 * :term:`forsythe`
@@ -27,9 +28,18 @@ Matrices in the Collection
 .. glossary::
    :sorted:
 
+   chebspec 
+      Chebyshev spectral differentiation matrix. 
+      If ``k = 0``,the generated matrix is nilpotent and a vector with 
+      all one entries is a null vector. If ``k = 1``, the generated matrix
+      is nonsingular and well-conditioned. Its eigenvalues have negative 
+      real parts.
+
+      .. image:: images/chebspec.png
+
    invol
       An involutory matrix, i.e., a matrix that is its own inverse. 
-      See [hoca63]_ 
+      See [hoca63]_.
 
       .. image:: images/invol.png
 
