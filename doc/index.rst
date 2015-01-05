@@ -9,6 +9,7 @@
 
    matrices.rst
    examples.rst
+   properties.rst
 
 MatrixDepot.jl
 ==============
@@ -18,8 +19,13 @@ MatrixDepot.jl
 * :ref:`install` 
 * :ref:`usage` 
 * :ref:`matrices` 
+* :ref:`properties`
 * :ref:`examples` 
 
+MatrixDepot.jl is an open source test matrix collection for Julia.
+Source and license information can be found at `GitHub`_.
+
+.. _GitHub: https://github.com/weijianzhang/MatrixDepot.jl
 
 .. _install:
 
