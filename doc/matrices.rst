@@ -1,13 +1,16 @@
 
 .. _matrices:
 
-Matrices in the Collection 
---------------------------
+Matrices  
+========
 
+* :term:`binomial`
 * :term:`cauchy`
 * :term:`chebspec` 
 * :term:`circul`
+* :term:`clement`
 * :term:`dingdong`
+* :term:`fiedler`
 * :term:`forsythe`
 * :term:`frank`
 * :term:`grcar`
@@ -16,17 +19,98 @@ Matrices in the Collection
 * :term:`invhilb`
 * :term:`invol`
 * :term:`kahan`
+* :term:`lehmer`
+* :term:`lotkin`
 * :term:`magic`
+* :term:`minij`
 * :term:`moler`
+* :term:`parter`
 * :term:`pascal`
 * :term:`pei`
 * :term:`rosser`
 * :term:`sampling`
+* :term:`tridiag`
 * :term:`triw`
 * :term:`vand`
 
 .. glossary::
    :sorted:
+
+   parter
+      The Parter matrix is a Toeplitz and Cauchy matrix with singular values near
+      :math:`\pi` [part86]_. 
+
+      .. image:: images/parter.png
+
+      .. [part86] S. V. Parter, On the distribution of the singular values
+		  of Toeplitz matrices, Linear Algebra and Appl., 80 (1986),
+		  pp. 115-130.
+
+   lehmer
+      The Lehmer matrix is a symmetric positive definite matrix. It is 
+      totally nonnegative. The inverse is tridiagonal and explicitly known 
+      [neto58]_.
+
+      .. image:: images/lehmer.png
+     
+      .. [neto58] M. Newman and J. Todd, The evaluation of matrix inversion
+		  programs, J. Soc. Indust. Appl. Math, 6 (1958), pp. 466-476.
+
+
+   tridiag
+      A group of tridiagonal matrices. ``matrixdepot("tridiagonal", n)``
+      generate a tridiagonal matrix with 1 on the diagonal and -2 on the 
+      upper- lower- diagonal, which is a symmetric positive definite M-matrix.
+
+      .. image:: images/tridiag.png
+
+   binomial
+      A binomial matrix that arose from the example in [bmsz01]_.
+      The matrix is a multiple of involutory matrix.
+
+      .. image:: images/binomial.png
+
+      .. [bmsz01] G. Boyd, C.A. Micchelli, G. Strang and D.X. Zhou,
+		  Binomial matrices, Adv. in Comput. Math., 14 (2001), pp 379-391.
+ 
+
+   minij
+      A matrix with :math:`(i,j)` entry ``min(i,j)``. It is a symmetric
+      positive definite matrix. The eigenvalues and eigenvectors are 
+      known explicitly. Its inverse is tridiagonal. 
+
+      .. image:: images/minij.png
+
+
+   clement
+      The Clement matrix [clem59]_ is a Tridiagonal matrix with zero diagonal entries.
+      If ``k = 1``, the matrix is symmetric.
+      
+      .. image:: images/clement.png
+		 
+      .. [clem59] P.A. Clement, A class of triple-diagonal matrices for test
+		  purposes, SIAM Review, 1 (1959), pp. 50-52.
+
+   fiedler
+      The Fiedler matrix is symmetric matrix with a dominant positive eigenvalue
+      and all the other eigenvalues are negative. For explicit formulas for 
+      the inverse and determinant, see [todd77]_.
+
+      .. image:: images/fiedler.png
+
+      .. [todd77] J. Todd, Basic Numerical Mathematics, Vol. 2: Numerical Algebra,
+		  Birkhauser, Basel, and Academic Press, New York, 1977, pp. 159.
+
+
+   lotkin
+      The Lotkin matrix is the Hilbert matrix with its first row altered
+      to all ones. It is unsymmetric, ill-conditioned and has many negative
+      eigenvalues of small magnitude [lotk55]_.
+
+      .. image:: images/lotkin.png
+      
+      .. [lotk55] M. Lotkin, A set of test matrices, MTAC, 9, (1955), pp. 153-161.
+
 
    chebspec 
       Chebyshev spectral differentiation matrix. 
