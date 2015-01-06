@@ -5,12 +5,14 @@
 | Julia 0.3 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_release.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=release)
 | Julia 0.4 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_nightly.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=nightly)
 
-A test matrix collection for Julia.
+A test matrix collection for Julia. See [Matrices](http://matrixdepotjl.readthedocs.org/en/latest/matrices.html#matrices)
+for all the matrices in the collection. 
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
 * [Examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb)
 
+* [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
 
 ## Install
 
@@ -25,83 +27,7 @@ To install the latest development version, type
 julia> Pkg.clone("MatrixDepot")
 ```
 
-## Usage
-
-First load the package:
-
-```julia
-julia> using MatrixDepot
-```
-
-The only function will be exported is `matrixdepot`.
-
-```julia
-julia> ? matrixdepot
-INFO: Loading help data...
-matrixdepot (generic function with 15 methods)
-```
-
-Every matrix in the collection is represented by a string `matrix_name`, for
-example, the Cauchy matrix is represented by `"cauchy"` and the Hilbert matrix
-is represented by `"hilb"`.
-
-The properties of the matrices in the collection are also symbolized by strings
-`propertry_name`. For example, the class of the symmetric matrices is symbolized
-by `"symmetric"`.
-
-* `matrixdepot()` returns a list of all the matrices in the collection.
-
-* `matrixdepot(matrix_name, p1, p2, ...)` returns a matrix specified
-by the query string `matrix_name`.`p1, p2, ...` are input parameters
-depending on `matrix_name`.
-
-* `matrixdepot(matrix_name)` returns the parameter options and the properties of
-`matrix_name`.
-
-* `matrixdepot(prop1, prop2, ...)` returns a list of matrices with the property
-`prop1`, `prop2`, etc.
-
-We can define our own properties using the macro `@addproperty` and 
-remove a defined property using `@rmproperty`.
-
-* `@addproperty property_name = ["matrix1", "matrix2", "matrix3"]`
-
-* `@rmproperty property_name`
-
-### Matrices in the Collection
-
-| Matrices                  | Strings   | Matrices                 | Strings   |
-|:-------------------------:|:---------:|:------------------------:|:---------:|
-| Circul Matrix             | "circul"  | Frank Matrix             | "frank"   | 
-| Hilbert Matrix            | "hilb"    | Grcar Matrix             | "grcar"   |
-| Inverse of Hilbert Matrix | "invhilb" | Dingdong Matrix          | "dingdong"|
-| Hadamard Matrix           | "hadamard"| Magic Matrix             | "magic"   |
-| Cauchy Matrix             | "cauchy"  | Forsythe Matrix          | "forsythe"|
-| Triw Matrix               | "triw"    | Moler Matrix             | "moler"   |
-| Pascal Matrix             | "pascal"  | Kahan Matrix             | "kahan"   |
-| Pei Matrix                | "pei"     | Vandermonde Matrix       | "vand"    |
-| Involutory Matrix         | "invol"   | Cheb. spec. diff. Matrix | "chebspec"| 
-| Lotkin Matrix             | "lotkin"  | Clement Matrix           | "clement" |
-| Fiedler Matrix            | "fiedler" | MIN[I,J] Matrix          | "minij"   |
-| Binomial Matrix           | "binomial"| Tridiagonal Matrix       | "tridiag" |
-| Lehmer Matrix             | "lehmer"  | Parter Matrix            | "parter"  |
-| Chow Matrix               | "chow"    | Random Correlation Matrix| "randcorr"|
-| Poisson Matrix            | "poisson" | Neumann Matrix           | "neumann" |
-| Rosser Matrix             | "rosser"  |                          |           |
-
-### Matrix properties in the Collection
-
-* `"symmetric"`: the matrix is symmetric for some parameter values.
-
-* `"inverse"`: the inverse of the matrix is known explicitly.
-
-* `"ill-cond"`: the matrix is ill-conditioned for some parameter values.
-
-* `"pos-def"`: the matrix is symmetric postive definite for some parameter values.
-
-* `"eigen"`: the eigensystem of the matrix has some known results.
-
-## Examples
+## Basic Usage
 
 To see all the matrices in the collection, type
 

@@ -588,10 +588,6 @@ function rosser{T}(::Type{T}, n::Int, a, b)
 end
 rosser{T}(::Type{T}, n::Int) = rosser(T, n, rand(1:5), rand(1:5))
 
-#
-# Wilkinson Matrix
-#
-
 
 #
 # Matrix with application in sampling theory
