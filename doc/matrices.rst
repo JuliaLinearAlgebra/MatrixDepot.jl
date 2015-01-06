@@ -7,6 +7,7 @@ Matrices
 * :term:`binomial`
 * :term:`cauchy`
 * :term:`chebspec` 
+* :term:`chow`
 * :term:`circul`
 * :term:`clement`
 * :term:`dingdong`
@@ -24,17 +25,53 @@ Matrices
 * :term:`magic`
 * :term:`minij`
 * :term:`moler`
+* :term:`neumann`
 * :term:`parter`
 * :term:`pascal`
 * :term:`pei`
+* :term:`poisson`
+* :term:`randcorr`
 * :term:`rosser`
 * :term:`sampling`
 * :term:`tridiag`
 * :term:`triw`
 * :term:`vand`
 
+
 .. glossary::
    :sorted:
+
+   neumann
+      A singular matrix from the discrete Neumann problem. This matrix
+      is sparse and the null space is formed by a vector of ones [plem76]_.
+
+      .. image:: images/neumann.png
+
+      .. [plem76] R.J. Plemmons, Regular splittings and the discrete Neumann
+		  problem, Numer. Math., 25 (1976), pp. 153-161.
+
+
+   poisson
+      A block tridiagonal matrix from Poisson's equation. This matrix is
+      sparse, symmetric positive definite and has known eigenvalues. 
+
+      .. image:: images/poisson.png
+
+   randcorr
+      A random correlation matrix is a symmetric positive semidefinite 
+      matrix with 1s on the diagonal.
+
+      .. image:: images/randcorr.png
+
+
+   chow
+      The Chow matrix is a singular Toeplitz lower Hessenberg matrix. The
+      eigenvalues are known explicitly [chow69]_.
+
+      .. image:: images/chow.png
+ 
+      .. [chow69] T.S. Chow, A class of Hessenberg matrices with known 
+		  eigenvalues and inverses, SIAM Review, 11 (1969), pp. 391-395.
 
    parter
       The Parter matrix is a Toeplitz and Cauchy matrix with singular values near
