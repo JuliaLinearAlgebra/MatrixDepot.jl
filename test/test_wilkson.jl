@@ -8,4 +8,9 @@ A = matrixdepot("wilkinson", n)
 
 @test_approx_eq diag(full(A),1) ones(Float64, n - 1)
 
+# symmetric along antidiagonal
+@test issym(full(A)[n:-1:1,:])
+
 println("'wilkson' passed test...")
+
+
