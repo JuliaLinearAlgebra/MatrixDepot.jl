@@ -33,5 +33,6 @@ include("test_poisson.jl")
 include("test_neumann.jl")
 include("test_rosser.jl")
 include("test_sampling.jl")
+include("test_wilkson.jl")
 
 println("Success in all tests.")

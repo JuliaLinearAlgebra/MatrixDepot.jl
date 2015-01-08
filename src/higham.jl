@@ -615,6 +615,15 @@ function sampling{T}(::Type{T}, n::Int)
     return sampling(p)
 end
 
+#
+# Wilkinson Matrix
+#
+function wilkinson{T}(::Type{T}, n::Int)
+    m = (n-1)/2
+    A = Tridiagonal(ones(T,n-1), abs(T[-m:m]), ones(T, n-1))
+    return A
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -631,6 +640,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "chow" => chow, "randcorr" => randcorr,
                           "poisson" => poisson, "neumann" => neumann, 
                           "rosser" => rosser, "sampling" => sampling,
+                          "wilkinson" => wilkinson, 
                           );
 
 matrixinfo = 
@@ -804,13 +814,17 @@ matrixinfo =
              \n vec: vec is a vector with no repeated elements.
              \n (type), dim: the dimension of the matrix. 
              \n ['eigen']",
+             "wilkinson" => "Wilkinson Matrix:
+             \n Input options:
+             \n (type), dim: the dimension of the matrix.
+             \n ['symmetric', 'eigen']"
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", 
                              "clement", "fiedler", "minij", "tridiag",
-                             "lehmer", "randcorr", "poisson",],
+                             "lehmer", "randcorr", "poisson", "wilkinson"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
@@ -827,7 +841,7 @@ matrixclass =
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
-                           "rosser", "sampling"],
+                           "rosser", "sampling", "wilkinson"],
              # minor properties
              "sparse" => ["poisson", "neumann"],
                );
