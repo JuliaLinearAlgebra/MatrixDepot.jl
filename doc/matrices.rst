@@ -36,10 +36,18 @@ Matrices
 * :term:`tridiag`
 * :term:`triw`
 * :term:`vand`
-
+* :term:`wilkinson`
 
 .. glossary::
    :sorted:
+
+   wilkinson
+      The Wilkinson matrix is a symmetric tridiagonal matrix with pairs
+      of nearly equal eigenvalues. The most frequently used case is 
+      ``matrixdepot("wilkinson", 21)``.
+
+      .. image:: images/wilkinson.png
+
 
    neumann
       A singular matrix from the discrete Neumann problem. This matrix
