@@ -2,7 +2,7 @@
 
 v0.1
 ----
-* Add new matrices.
+* New matrices
 
 	rosser: a matrix with close eigenvalues.
 
@@ -12,11 +12,11 @@ v0.1
 
 	
 
-## Todo List
+v0.1.1 (Coming Soon)
+--------------------
 
-* Matrices to add:
+* New matrices
 
-	wilkinson
+	wilkinson: Wilkinson's eigenvalue test matrix. 
 
-	rando
 
