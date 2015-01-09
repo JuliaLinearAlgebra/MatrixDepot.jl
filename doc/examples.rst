@@ -41,7 +41,7 @@ To see all the matrices in the collection, type
          grcar|           |           |           |           |     *     |
 
 
-The meanings of the column heading are as follows:
+The meaning of the column heading is as follows:
 
 -  ``"symmetric"``: the matrix is symmetric for some parameter values.
 
