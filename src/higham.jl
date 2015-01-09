@@ -619,6 +619,9 @@ end
 # Wilkinson Matrix
 #
 function wilkinson{T}(::Type{T}, n::Int)
+    if n == 1 # handle 1-d case
+        return ones(T, 1, 1)
+    end
     m = (n-1)/2
     A = Tridiagonal(ones(T,n-1), abs(T[-m:m]), ones(T, n-1))
     return A
