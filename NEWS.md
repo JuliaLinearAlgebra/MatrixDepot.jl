@@ -15,8 +15,11 @@ v0.1
 v0.1.1 (Coming Soon)
 --------------------
 
-* New matrices
+* New matrices 
 
 	wilkinson: Wilkinson's eigenvalue test matrix. 
 
+* Optimized Vandermonde matrix generation for better performance
+
+	Thanks to @synapticarbors and @stevengj
 
