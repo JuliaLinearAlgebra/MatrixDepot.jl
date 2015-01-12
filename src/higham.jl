@@ -261,9 +261,14 @@ function vand{T}(p::Vector{T}, n::Int)
     # n: number of rows
     # p: a vector
     m = length(p)
-    V = ones(T, m, n)
-    for i = 1:n
-        V[:,i] = p.^(i-1)
+    V = Array(T, m, n)
+    for j = 1:m
+        @inbounds V[j, 1] = 1
+    end
+    for i = 2:n
+        for j = 1:m
+            @inbounds V[j,i] = p[j] * V[j,i-1]
+        end
     end
     return V
 end
