@@ -23,3 +23,10 @@ v0.1.1 (Coming Soon)
 
 	Thanks to @synapticarbors and @stevengj
 
+
+TODO
+----
+
+* rando, randsvd
+
+	
