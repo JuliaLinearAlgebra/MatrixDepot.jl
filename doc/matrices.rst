@@ -31,6 +31,7 @@ Matrices
 * :term:`pei`
 * :term:`poisson`
 * :term:`randcorr`
+* :term:`rando`
 * :term:`rosser`
 * :term:`sampling`
 * :term:`tridiag`
@@ -40,6 +41,12 @@ Matrices
 
 .. glossary::
    :sorted:
+
+   rando
+     A random matrix with entries -1, 0 or 1.
+
+     .. image:: images/rando.png
+
 
    wilkinson
       The Wilkinson matrix is a symmetric tridiagonal matrix with pairs
