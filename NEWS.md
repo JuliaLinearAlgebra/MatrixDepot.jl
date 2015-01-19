@@ -19,6 +19,10 @@ v0.1.1 (Coming Soon)
 
 	wilkinson: Wilkinson's eigenvalue test matrix. 
 
+* New property
+
+	random: the matrix is random.
+
 * Optimized Vandermonde matrix generation for better performance
 
 	Thanks to @synapticarbors and @stevengj
