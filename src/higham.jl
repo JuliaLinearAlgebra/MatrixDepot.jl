@@ -638,10 +638,17 @@ end
 function rando{T}(::Type{T}, m::Int, n::Int, k::Int)
     A = Array(T, m, n)    
     if k == 1
-        @compat copy!(A, floor(T, rand(m,n) + .5))
+        copy!(A, floor(rand(m,n) + .5))
+    elseif k == 2
+        copy!(A, 2 * floor(rand(m,n) + .5) - one(T))
+    elseif k == 3
+        copy!(A, round(3 * rand(m,n) - 1.5))
+    else
+        error("invalid k value.")
     end
+    return A
 end
-rando{T}(::Type{T}, m::Int, n::Int) = rando(T, m, n, 1)
+rando{T}(::Type{T}, n::Int, k::Int) = rando(T, n, n, k)
 rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
