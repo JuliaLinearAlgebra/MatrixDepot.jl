@@ -651,6 +651,14 @@ end
 rando{T}(::Type{T}, n::Int, k::Int) = rando(T, n, n, k)
 rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
 
+#
+# Random matrix with pre-assigned singular values
+#
+function randsvd{T}(::Type{T}, n::Int, kappa, mode::Int)
+    
+end
+
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -667,7 +675,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "chow" => chow, "randcorr" => randcorr,
                           "poisson" => poisson, "neumann" => neumann, 
                           "rosser" => rosser, "sampling" => sampling,
-                          "wilkinson" => wilkinson, "rando" => rando, 
+                          "wilkinson" => wilkinson, "rando" => rando,
+                          "randsvd" => randsvd,
                           );
 
 matrixinfo = 
@@ -686,14 +695,14 @@ matrixinfo =
              \n ['inverse', 'orthogonal', 'eigen']",
              "cauchy" => "Cauchy matrix: 
              \n Input options: 
-             \n (type), vec1, vec2: two vectors 
-             \n (type), vec: a vector
+             \n vec1, vec2: two vectors 
+             \n vec: a vector
              \n (type), dim: the dimension of the matrix
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              "circul" => "Circul matrix: 
              \n Input options: 
-             \n (type), vec, col_dim: a vector and the column dimension 
-             \n (type), vec: a vector 
+             \n vec, n: a vector and the column dimension 
+             \n vec: a vector 
              \n (type), dim: the dimension of the matrix
              \n ['symmetric', 'pos-def', 'eigen']",
              "dingdong" => "Dingdong matrix:
@@ -836,7 +845,7 @@ matrixinfo =
              matrix is the test matrix used by Rosser.
              \n (type), dim: a = b = rand(1:5)
              \n ['eigen', 'ill-cond', 'random']",
-             "sampling" => "Matrices with Application in Sampling Theory:
+             "sampling" => "Matrix with Application in Sampling Theory:
              \n Input options:
              \n vec: vec is a vector with no repeated elements.
              \n (type), dim: the dimension of the matrix. 
@@ -852,8 +861,16 @@ matrixinfo =
              k = 2: entries are -1 or 1.
              k = 3: entries are -1, 0 or 1.
              \n (type), n, k
-             \n (type), n
+             \n (type), n: k = 1
              \n ['random']",
+             "randsvd" => "Random Matrix with Pre-assigned Singular Values:
+             \n Input options:
+             \n (type), n, kappa, mode: n is the dimension of the matrix.
+             kappa is the condition number of the matrix.
+             mode = 1: one large singular value.
+             mode = 2: one small singular value.
+             mode = 3: 
+             \n ['ill-cond', 'random']"
              );
 
 matrixclass = 
@@ -869,7 +886,7 @@ matrixclass =
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
-                            "tridiag", "rosser"],
+                            "tridiag", "rosser", "randsvd"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson"],
@@ -880,5 +897,5 @@ matrixclass =
                            "rosser", "sampling", "wilkinson"],
              # minor properties
              "sparse" => ["poisson", "neumann"],
-             "random" => ["rosser", "rando", "randcorr"]
+             "random" => ["rosser", "rando", "randcorr", "randsvd"],
                );
