@@ -632,6 +632,18 @@ function wilkinson{T}(::Type{T}, n::Int)
     return A
 end
 
+#
+# Random matrix with element -1, 0, 1
+#
+function rando{T}(::Type{T}, m::Int, n::Int, k::Int)
+    A = Array(T, m, n)    
+    if k == 1
+        @compat copy!(A, floor(T, rand(m,n) + .5))
+    end
+end
+rando{T}(::Type{T}, m::Int, n::Int) = rando(T, m, n, 1)
+rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -648,7 +660,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "chow" => chow, "randcorr" => randcorr,
                           "poisson" => poisson, "neumann" => neumann, 
                           "rosser" => rosser, "sampling" => sampling,
-                          "wilkinson" => wilkinson, 
+                          "wilkinson" => wilkinson, "rando" => rando, 
                           );
 
 matrixinfo = 
@@ -801,7 +813,7 @@ matrixinfo =
              "randcorr" => "Random Correlation Matrix:
              \n Input options:
              \n (type), dim: the dimension of the matrix.
-             \n ['symmetric', 'pos-semidef']",
+             \n ['symmetric', 'pos-semidef', 'random']",
              "poisson" => "Poisson Matrix:
              \n Input options:
              \n (type), n: the dimension of the matirx is n^2.
@@ -816,7 +828,7 @@ matrixinfo =
              a and b are scalars. For dim = 8, a = 2 and b = 1, the generated 
              matrix is the test matrix used by Rosser.
              \n (type), dim: a = b = rand(1:5)
-             \n ['eigen', 'ill-cond']",
+             \n ['eigen', 'ill-cond', 'random']",
              "sampling" => "Matrices with Application in Sampling Theory:
              \n Input options:
              \n vec: vec is a vector with no repeated elements.
@@ -825,7 +837,16 @@ matrixinfo =
              "wilkinson" => "Wilkinson Matrix:
              \n Input options:
              \n (type), dim: the dimension of the matrix.
-             \n ['symmetric', 'eigen']"
+             \n ['symmetric', 'eigen']",
+             "rando" => "Random Matrix with Element -1, 0, 1:
+             \n Input options:
+             \n (type), m, n, k: m and n are row and column dimensions, 
+             k = 1: entries are 0 or 1.
+             k = 2: entries are -1 or 1.
+             k = 3: entries are -1, 0 or 1.
+             \n (type), n, k
+             \n (type), n
+             \n ['random']",
              );
 
 matrixclass = 
@@ -852,4 +873,5 @@ matrixclass =
                            "rosser", "sampling", "wilkinson"],
              # minor properties
              "sparse" => ["poisson", "neumann"],
+             "random" => ["rosser", "rando", "randcorr"]
                );

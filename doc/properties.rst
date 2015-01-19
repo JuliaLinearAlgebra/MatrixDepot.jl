@@ -32,3 +32,5 @@ Other Properties
    sparse
       The matrix is sparse.
 
+   random
+      The matrix is random.
