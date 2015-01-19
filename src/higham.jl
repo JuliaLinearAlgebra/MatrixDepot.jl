@@ -445,14 +445,14 @@ end
 # and Their Factors. Philip Davies and Nicholas Higham, 
 # BIT Numerical Mathematics, 2000, Vol 40. Issue 4, pp 640-651
 #
-# limit: only generate matrix of type Float64
+# limitation: only generate matrix of type Float64
 function randcorr{T}(::Type{T}, n::Int)
     x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
     x = n * x / sum(x) # x has nonnegtive elements.
     A = diagm(x)
-    Q, R = qr(randn(n,n)); 
-    Q = Q*diagm(sign(diag(R))) # form a random orthogonal matrix.
-    A = Q*A*Q'
+    F = qrfact(randn(n,n)); 
+    Q = F[:Q]*diagm(sign(diag(F[:R]))) # form a random orthogonal matrix.
+    copy!(A, Q*A*Q')
     
     a = diag(A)
     l = find(a .< 1)
@@ -655,7 +655,17 @@ rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
 # Random matrix with pre-assigned singular values
 #
 function randsvd{T}(::Type{T}, n::Int, kappa, mode::Int)
-    
+    kappa >= 1 || throw(ArgumentError("Condition number must be at least 1."))
+    kappa = convert(T, kappa)
+    if mode == 3 
+        factor = kappa^(-1/(n-1))
+        sigma = factor.^[0:n-1]
+    elseif mode = 4 
+        sigma = ones(n) - [0:n-1]'/(n-1)*(1 - 1/kappa)
+    end
+    F = qrfact(randn(n,n));
+    Q = F[:Q]*diagm(sign(diag(F[:R])))
+    return Q'*Diagonal(sigma)*Q
 end
 
 
@@ -869,7 +879,11 @@ matrixinfo =
              kappa is the condition number of the matrix.
              mode = 1: one large singular value.
              mode = 2: one small singular value.
-             mode = 3: 
+             mode = 3: geometrically distributed singular values.
+             mode = 4: arithmetrically distributed singular values.
+             mode = 5: random singular values with  unif. dist. logarithm.
+             \n (type), n, kappa: mode = 3
+             \n (type), n: kappa = sqrt(1/eps()), mode = 3.
              \n ['ill-cond', 'random']"
              );
 
