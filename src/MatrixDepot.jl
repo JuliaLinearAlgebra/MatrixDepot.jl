@@ -129,7 +129,7 @@ function matrixdepot(name::String)
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
     else
-        println("Your matrix or class is not included in Matrix Depot.")
+        error("Your matrix or class is not included in Matrix Depot.")
     end
 end
 
