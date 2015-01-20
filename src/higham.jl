@@ -902,14 +902,15 @@ matrixinfo =
              mode = 5: random singular values with  unif. dist. logarithm.
              \n (type), n, kappa: mode = 3
              \n (type), n: kappa = sqrt(1/eps()), mode = 3.
-             \n ['ill-cond', 'random']"
+             \n ['symmetric', 'ill-cond', 'random']"
              );
 
 matrixclass = 
 @compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
                              "invhilb", "moler", "pascal", "pei", 
                              "clement", "fiedler", "minij", "tridiag",
-                             "lehmer", "randcorr", "poisson", "wilkinson"],
+                             "lehmer", "randcorr", "poisson", "wilkinson",
+                             "randsvd"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
