@@ -19,6 +19,10 @@ v0.1.1 (Coming Soon)
 
 	wilkinson: Wilkinson's eigenvalue test matrix. 
 
+	rando: random matrix with entries -1, 0 or 1.
+
+	randsvd: random matrix with pre-assigned singular values.
+
 * New property
 
 	random: the matrix is random.
@@ -28,9 +32,5 @@ v0.1.1 (Coming Soon)
 	Thanks to @synapticarbors and @stevengj
 
 
-TODO
-----
-
-* rando, randsvd
 
 	
