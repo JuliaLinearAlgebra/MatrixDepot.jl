@@ -54,7 +54,6 @@ Matrices
 
       .. image:: images/rando.png
 
-
    wilkinson
       The Wilkinson matrix is a symmetric tridiagonal matrix with pairs
       of nearly equal eigenvalues. The most frequently used case is 
