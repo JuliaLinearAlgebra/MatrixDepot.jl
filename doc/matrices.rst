@@ -32,6 +32,7 @@ Matrices
 * :term:`poisson`
 * :term:`randcorr`
 * :term:`rando`
+* :term:`randsvd`
 * :term:`rosser`
 * :term:`sampling`
 * :term:`tridiag`
@@ -39,13 +40,19 @@ Matrices
 * :term:`vand`
 * :term:`wilkinson`
 
+
 .. glossary::
    :sorted:
 
-   rando
-     A random matrix with entries -1, 0 or 1.
+   randsvd
+      Random matrix with pre-assigned singular values. See [high02]_ (Sec. 28.3).
 
-     .. image:: images/rando.png
+      .. image:: images/randsvd.png
+
+   rando
+      A random matrix with entries -1, 0 or 1.
+
+      .. image:: images/rando.png
 
 
    wilkinson
