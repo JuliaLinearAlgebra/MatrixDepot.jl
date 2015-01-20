@@ -21,11 +21,6 @@ To install the release version, type
 ```julia
 julia> Pkg.add("MatrixDepot")
 ```
-To install the latest development version, type
-
-```julia
-julia> Pkg.clone("MatrixDepot")
-```
 
 ## Basic Usage
 
