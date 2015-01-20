@@ -657,12 +657,28 @@ rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
 function randsvd{T}(::Type{T}, n::Int, kappa, mode::Int)
     kappa >= 1 || throw(ArgumentError("Condition number must be at least 1."))
     kappa = convert(T, kappa)
+
+    if n == 1 # handle 1-d case
+        return ones(T, 1, 1)*kappa
+    end
+
     if mode == 3 
         factor = kappa^(-1/(n-1))
         sigma = factor.^[0:n-1]
-    elseif mode = 4 
-        sigma = ones(n) - [0:n-1]'/(n-1)*(1 - 1/kappa)
+    elseif mode == 4 
+        sigma = ones(T, n) - T[0:n-1]/(n-1)*(1 - 1/kappa)
+    elseif mode == 5
+        sigma = exp(-rand(n) * log(kappa))
+    elseif mode == 2
+        sigma = ones(T, n)
+        sigma[n] = one(T)/kappa
+    elseif mode == 1
+        sigma = ones(n)./kappa
+        sigma[1] = one(T)
+    else
+        error("invalid mode value.")
     end
+
     F = qrfact(randn(n,n));
     Q = F[:Q]*diagm(sign(diag(F[:R])))
     return Q'*Diagonal(sigma)*Q
