@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = rand(2:10)
 
 A = matrixdepot("wilkinson", n)
 

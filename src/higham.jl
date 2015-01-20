@@ -681,9 +681,11 @@ function randsvd{T}(::Type{T}, n::Int, kappa, mode::Int)
 
     F = qrfact(randn(n,n));
     Q = F[:Q]*diagm(sign(diag(F[:R])))
+
     return Q'*Diagonal(sigma)*Q
 end
-
+randsvd{T}(::Type{T}, n::Int, kappa) = randsvd(T, n, kappa, 3)
+randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps()))
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
