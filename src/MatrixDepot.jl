@@ -9,7 +9,7 @@ include("user.jl") #user defined properties
 function matrixdepot()
     # Print information strings 
     println()
-    println("          | symmetric |  inverse  | ill-cond  |  pos-def  |  eigen    |")
+    println("          | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |")
     for mat in keys(matrixdict)
         @printf "%10s|" mat
         for prop in ["symmetric", "inverse", "ill-cond", "pos-def", "eigen"]
