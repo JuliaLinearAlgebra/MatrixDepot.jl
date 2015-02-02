@@ -1,7 +1,7 @@
 ## Matrix Depot Release Notes
 
-v0.1
-----
+v0.1.0
+------
 * New matrices
 
 	rosser: a matrix with close eigenvalues.
@@ -32,5 +32,10 @@ v0.1.1
 	Thanks to @synapticarbors and @stevengj
 
 
+v0.1.2 (Coming soon)
+--------------------
 
-	
+* New matrices
+
+	(todo) ohess: random orthogonal upper Hessenberg matrix
+	(todo) kms: Kac-Murdock-Szego Toeplitz matrix
