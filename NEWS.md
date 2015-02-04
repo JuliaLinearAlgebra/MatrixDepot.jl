@@ -40,3 +40,7 @@ v0.1.2 (Coming soon)
 	(todo) ohess: random orthogonal upper Hessenberg matrix
 		
 	(todo) kms: Kac-Murdock-Szego Toeplitz matrix
+
+* Others
+
+	fix test error for randsvd. 
