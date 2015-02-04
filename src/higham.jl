@@ -687,6 +687,22 @@ end
 randsvd{T}(::Type{T}, n::Int, kappa) = randsvd(T, n, kappa, 3)
 randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps()))
 
+#
+# Random orthogonal upper Hessenberg matrix
+#
+function rohess{T}(::Type{T}, n::Int)
+    x = rand(n-1)*2*pi
+    H = eye(n)
+    H[n,n] = sign(randn())
+    for i = n:-1:2
+        theta = x[i-1]
+        c = cos(theta)
+        s = sin(theta)
+        H[[i-1, i], :] = [c*H[i-1,:] + s*H[i,:]] -s*H[i-1, :] + c*H[i,:]]
+    end
+    return H
+end
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -704,7 +720,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "poisson" => poisson, "neumann" => neumann, 
                           "rosser" => rosser, "sampling" => sampling,
                           "wilkinson" => wilkinson, "rando" => rando,
-                          "randsvd" => randsvd,
+                          "randsvd" => randsvd, "rohess" => rohess,
                           );
 
 matrixinfo = 
@@ -902,7 +918,11 @@ matrixinfo =
              mode = 5: random singular values with  unif. dist. logarithm.
              \n (type), n, kappa: mode = 3
              \n (type), n: kappa = sqrt(1/eps()), mode = 3.
-             \n ['symmetric', 'ill-cond', 'random']"
+             \n ['symmetric', 'ill-cond', 'random']",
+             "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
+             \n Input options:
+             \n (type), n : n is the dimension of the matrix.
+             \n ['random']"
              );
 
 matrixclass = 
@@ -930,5 +950,5 @@ matrixclass =
                            "rosser", "sampling", "wilkinson"],
              # minor properties
              "sparse" => ["poisson", "neumann"],
-             "random" => ["rosser", "rando", "randcorr", "randsvd"],
+             "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess"],
                );
