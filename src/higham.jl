@@ -692,13 +692,13 @@ randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps()))
 #
 function rohess{T}(::Type{T}, n::Int)
     x = rand(n-1)*2*pi
-    H = eye(n)
+    H = eye(T, n)
     H[n,n] = sign(randn())
     for i = n:-1:2
         theta = x[i-1]
-        c = cos(theta)
-        s = sin(theta)
-        H[[i-1, i], :] = [c*H[i-1,:] + s*H[i,:]] -s*H[i-1, :] + c*H[i,:]]
+        c = convert(T, cos(theta))
+        s = convert(T, sin(theta))
+        H[[i-1, i], :] = [c*H[i-1, :] + s*H[i, :], -s*H[i-1, :] + c*H[i, :]]
     end
     return H
 end
