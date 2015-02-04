@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = rand(2:10)
 
 kappa = rand(1:6)
 mode = rand(1:5)
