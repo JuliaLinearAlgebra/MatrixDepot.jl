@@ -33,6 +33,7 @@ Matrices
 * :term:`randcorr`
 * :term:`rando`
 * :term:`randsvd`
+* :term:`rohess`
 * :term:`rosser`
 * :term:`sampling`
 * :term:`tridiag`
@@ -43,6 +44,12 @@ Matrices
 
 .. glossary::
    :sorted:
+
+   rohess
+      A random orthogonal upper Hessenberg matrix. The matrix is 
+      constructed via a product of Givens rotations.
+
+      .. image:: images/rohess.png
 
    randsvd
       Random matrix with pre-assigned singular values. See [high02]_ (Sec. 28.3).
