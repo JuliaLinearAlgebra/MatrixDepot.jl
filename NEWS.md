@@ -37,7 +37,7 @@ v0.1.2 (Coming soon)
 
 * New matrices
 
-	(todo) ohess: random orthogonal upper Hessenberg matrix
+	rohess: random orthogonal upper Hessenberg matrix
 		
 	(todo) kms: Kac-Murdock-Szego Toeplitz matrix
 
