@@ -37,5 +37,6 @@ include("test_wilkinson.jl")
 include("test_rando.jl")
 include("test_randsvd.jl")
 include("test_rohess.jl")
+include("test_kms.jl")
 
 println("Success in all tests.")
