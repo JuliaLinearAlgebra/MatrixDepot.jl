@@ -703,6 +703,20 @@ function rohess{T}(::Type{T}, n::Int)
     return H
 end
 
+#
+# KMS (Kac-Murdock-Szego) Toeplitz matrix
+#
+
+function kms{T}(::Type{T}, n::Int, rho)
+    A = Array(T, n, n)
+    [A[i,j] = rho^(abs(i-j)) for i = 1:n, j = 1:n]
+    if typeof(rho) <: Complex
+        A = conj(tril(A, -1)) + triu(A)
+    end
+    return A
+end
+kms{T}(::Type{T}, n::Int) = kms(T, n, convert(T, 0.5))
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -721,6 +735,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "rosser" => rosser, "sampling" => sampling,
                           "wilkinson" => wilkinson, "rando" => rando,
                           "randsvd" => randsvd, "rohess" => rohess,
+                          "kms" => kms
                           );
 
 matrixinfo = 
@@ -922,7 +937,12 @@ matrixinfo =
              "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
              \n Input options:
              \n (type), n : n is the dimension of the matrix.
-             \n ['random']"
+             \n ['random']",
+             "kms" => "Kac-Murdock-Szego Toeplitz Matrix:
+             \n (type), n, rho: n is the dimension of the matrix, rho is a 
+             scalar such that A[i,j] = rho^(abs(i-j)).
+             \n (type), n: rho = 0.5
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']"
              );
 
 matrixclass = 
@@ -930,19 +950,19 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei", 
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                             "randsvd"],
+                             "randsvd", "kms"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
                            "clement", "fiedler", "minij", "tridiag", 
-                           "lehmer", "poisson", ],
+                           "lehmer", "poisson", "kms" ],
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
-                            "tridiag", "rosser", "randsvd"],
+                            "tridiag", "rosser", "randsvd", "kms"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei", "minij", "tridiag",
-                           "lehmer", "poisson"],
+                           "lehmer", "poisson", "kms"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
