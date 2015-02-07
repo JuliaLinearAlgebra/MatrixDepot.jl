@@ -32,14 +32,14 @@ v0.1.1
 	Thanks to @synapticarbors and @stevengj
 
 
-v0.1.2 (Coming soon)
---------------------
+v0.1.2 (Coming Soon)
+---------------------
 
 * New matrices
 
 	rohess: random orthogonal upper Hessenberg matrix
 		
-	(todo) kms: Kac-Murdock-Szego Toeplitz matrix
+	kms: Kac-Murdock-Szego Toeplitz matrix
 
 * Others
 

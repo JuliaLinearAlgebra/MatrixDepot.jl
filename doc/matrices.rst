@@ -47,7 +47,7 @@ Matrices
    :sorted:
 
    kms 
-      A Kac-Murdock-Szego Toeplitz matrix [tren89]_.
+      Kac-Murdock-Szego Toeplitz matrix [tren89]_.
 
       .. image:: images/kms.png
 
