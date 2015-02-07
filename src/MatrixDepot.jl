@@ -44,13 +44,13 @@ function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int)
 end
 matrixdepot(name::String, m::Int, n::Int) = matrixdepot(name, Float64, m, n)
 
-function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha::FloatingPoint)
+function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha)
     # name: matrix name
     # n: dimension of the matrix
     # alpha : scalar
-    return matrixdepot[name](T, n, alpha)
+    return matrixdict[name](T, n, alpha)
 end
-
+matrixdepot(name::String, n::Int, alpha) = matrixdepot(name, typeof(alpha), n, alpha)
 
 function matrixdepot{T}(name::String, ::Type{T}, n::Int)
     # name is the matrix name

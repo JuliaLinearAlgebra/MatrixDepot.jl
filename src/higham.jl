@@ -707,7 +707,7 @@ end
 # KMS (Kac-Murdock-Szego) Toeplitz matrix
 #
 
-function kms{T}(::Type{T}, n::Int, rho)
+function kms{T}(::Type{T}, n::Int, rho)    
     A = Array(T, n, n)
     [A[i,j] = rho^(abs(i-j)) for i = 1:n, j = 1:n]
     if typeof(rho) <: Complex
