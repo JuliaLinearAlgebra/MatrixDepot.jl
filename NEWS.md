@@ -32,8 +32,8 @@ v0.1.1
 	Thanks to @synapticarbors and @stevengj
 
 
-v0.1.2 (Coming Soon)
----------------------
+v0.1.2 
+------
 
 * New matrices
 
