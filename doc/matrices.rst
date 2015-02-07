@@ -20,6 +20,7 @@ Matrices
 * :term:`invhilb`
 * :term:`invol`
 * :term:`kahan`
+* :term:`kms`
 * :term:`lehmer`
 * :term:`lotkin`
 * :term:`magic`
@@ -44,6 +45,16 @@ Matrices
 
 .. glossary::
    :sorted:
+
+   kms 
+      A Kac-Murdock-Szego Toeplitz matrix [tren89]_.
+
+      .. image:: images/kms.png
+
+      .. [tren89] W.F. Trench, Numerical solution of the eigenvalue
+                  problem for Hermitian Toeplitz matrices,
+                  SIAM J. Matrix Analysis and Appl., 10 (1989),
+                  pp. 135-146 
 
    rohess
       A random orthogonal upper Hessenberg matrix. The matrix is 
