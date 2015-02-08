@@ -164,7 +164,11 @@ function magic{T}(::Type{T}, n::Int)
         M = oddmagic(T, n)
     elseif mod(n, 4) == 0
         # n is doubly even
-        a = @compat floor(Integer, mod([1:n], 4)/2)
+        if VERSION < v"0.4.0-dev+1827"
+            a = ifloor(mod([1:n], 4)/2)
+        else
+            a = floor(Integer, mod([1:n], 4)/2)
+        end
         B = broadcast(==, a', a)
         M = broadcast(+, T[1:n:n^2]',T[0:n-1])
         for i = 1:n, j = 1:n
