@@ -40,11 +40,23 @@ Matrices
 * :term:`tridiag`
 * :term:`triw`
 * :term:`vand`
+* :term:`wathen`
 * :term:`wilkinson`
 
 
 .. glossary::
    :sorted:
+
+   wathen 
+      Wathen Matrix is a sparse, symmetric positive, random matrix arose 
+      from the finite element method [wath87]_. The generated matrix 
+      is the consistent mass matrix for a regular
+      `nx-by-ny` grid of 8-nodes.
+
+      .. image:: images/wathen.png
+
+      .. [wath87] A.J. Wathen, Realistic eigenvalue bounds for the Galerkin
+		  mass matrix, IMA J. Numer. Anal., 7 (1987), pp. 449-457.
 
    kms 
       Kac-Murdock-Szego Toeplitz matrix [tren89]_.
