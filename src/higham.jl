@@ -721,6 +721,56 @@ function kms{T}(::Type{T}, n::Int, rho)
 end
 kms{T}(::Type{T}, n::Int) = kms(T, n, convert(T, 0.5))
 
+#
+# Wathen matrix
+# A finite element matrix (sparse random entries).
+# Reference:
+# A.J. Wathen, Realistic eigenvalue bounds for the Galerkin
+# mass matrix, IMA J, Numer. Anal., 7 (1987), pp. 449-457
+#
+function wathen{T}(::Type{T}, nx::Int, ny::Int)
+    rho = Array(T, nx, ny)
+    e1 = T[6 -6 2 -8;-6 32 -6 20;2 -6 6 -6;-8 20 -6 32]
+    e2 = T[3 -8 2 -6;-8 16 -8 20;2 -8 3 -8;-6 20 -8 16]
+    e = [e1 e2; e2' e1]/45
+    n = 3 * nx * ny + 2 * nx + 2 * ny + 1
+    ntriplets = nx*ny*64
+    I = zeros(T, ntriplets)
+    J = zeros(T, ntriplets)
+    X = zeros(T, ntriplets)
+    ntriplets = 0
+    copy!(rho, 100*rand(nx, ny))
+    node = zeros(T, 8)
+    
+    for j = 1:ny
+        for i = 1:nx
+            
+            node[1] = 3 * j * nx + 2 * i + 2 * j + 1
+            node[2] = node[1] - 1
+            node[3] = node[2] - 1
+            node[4] = (3 * j - 1) * nx + 2 * j + i - 1
+            node[5] = (3 * j - 3) * nx + 2 * j + 2 * i - 3
+            node[6] = node[5] + 1
+            node[7] = node[5] + 2
+            node[8] = node[4] + 1
+            
+            em = rho[i,j] * e
+            
+            for krow = 1:8
+                for kcol = 1:8
+                    ntriplets = ntriplets + 1
+                    I[ntriplets] = node[krow]
+                    J[ntriplets] = node[kcol]
+                    X[ntriplets] = em[krow, kcol]
+                end
+            end
+            
+        end
+    end        
+    return sparse(I, J, X, n, n)
+end
+
+
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
@@ -739,7 +789,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "rosser" => rosser, "sampling" => sampling,
                           "wilkinson" => wilkinson, "rando" => rando,
                           "randsvd" => randsvd, "rohess" => rohess,
-                          "kms" => kms
+                          "kms" => kms, "wathen" => wathen
                           );
 
 matrixinfo = 
@@ -946,7 +996,11 @@ matrixinfo =
              \n (type), n, rho: n is the dimension of the matrix, rho is a 
              scalar such that A[i,j] = rho^(abs(i-j)).
              \n (type), n: rho = 0.5
-             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']"
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+             "wathen" => "Wathen Matrix:
+             \n (type), nx, ny: the dimension of the matrix is equal to
+             3 * nx * ny + 2 * nx * ny + 1. 
+             \n ['symmetric', 'pos-def', 'eigen', 'random', 'sparse']"
              );
 
 matrixclass = 
@@ -954,7 +1008,7 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei", 
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                             "randsvd", "kms"],
+                             "randsvd", "kms", "wathen"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
@@ -966,13 +1020,14 @@ matrixclass =
                             "tridiag", "rosser", "randsvd", "kms"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
                            "moler", "pascal", "pei", "minij", "tridiag",
-                           "lehmer", "poisson", "kms"],
+                           "lehmer", "poisson", "kms", "wathen"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
-                           "rosser", "sampling", "wilkinson"],
+                           "rosser", "sampling", "wilkinson","wathen"],
              # minor properties
-             "sparse" => ["poisson", "neumann"],
-             "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess"],
+             "sparse" => ["poisson", "neumann", "wathen"],
+             "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess", 
+                          "wathen"],
                );
