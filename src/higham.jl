@@ -768,7 +768,7 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
     end    
     return sparse(Irow, Jrow, Xrow, n, n)
 end
-
+wathen{T}(::Type{T}, n::Int) = wathen(T, n, n)
 
 matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
                           "cauchy" => cauchy, "circul" => circul,
@@ -794,211 +794,212 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
 matrixinfo = 
 @compat Dict("hilb" => "Hilbert matrix: 
              \n Input options: 
-             \n (type), dim: the dimension of the matrix
-             \n (type), row_dim, col_dim: the row and column dimension 
+             \n [type,] dim: the dimension of the matrix
+             \n [type,] row_dim, col_dim: the row and column dimension 
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              "invhilb" => "Inverse of Hilbert matrix:
              \n Input options:
-             \n (type), dim: the dimension of the matrix
+             \n [type,] dim: the dimension of the matrix
              \n ['inverse', 'ill-cond', 'symmetric','pos-def']",
              "hadamard" => "Hadamard matrix: 
              \n Input options: 
-             \n (type), dim: the dimension of the matrix, n is a power of 2 
+             \n [type,] dim: the dimension of the matrix, n is a power of 2 
              \n ['inverse', 'orthogonal', 'eigen']",
              "cauchy" => "Cauchy matrix: 
              \n Input options: 
              \n vec1, vec2: two vectors 
              \n vec: a vector
-             \n (type), dim: the dimension of the matrix
+             \n [type,] dim: the dimension of the matrix
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              "circul" => "Circul matrix: 
              \n Input options: 
              \n vec, n: a vector and the column dimension 
              \n vec: a vector 
-             \n (type), dim: the dimension of the matrix
+             \n [type,] dim: the dimension of the matrix
              \n ['symmetric', 'pos-def', 'eigen']",
              "dingdong" => "Dingdong matrix:
              \n Input options:
-             \n (type), n: the dimension of the matrix.
+             \n [type,] n: the dimension of the matrix.
              \n ['symmetric', 'eigen']",
              "frank" => "Frank matrix:
              \n Input options:
-             \n (type), n, k: n is the dimension of the matrix, k = 0 or 1.
+             \n [type,] n, k: n is the dimension of the matrix, k = 0 or 1.
              If k = 1 the matrix reflect about the anti-diagonal.
-             \n (type), n: n is the dimension of the matrix.
+             \n [type,] n: n is the dimension of the matrix.
              \n ['ill-cond', 'eigen']",
              "forsythe" => "Forsythe matrix:
              \n Input options:
-             \n (type), n, alpha, lambda: n is the dimension of the matrix.
+             \n [type,] n, alpha, lambda: n is the dimension of the matrix.
              alpha and lambda are scalars.
-             \n (type), n: alpha = sqrt(eps(type)) and lambda = 0.
+             \n [type,] n: alpha = sqrt(eps(type)) and lambda = 0.
              \n ['inverse', 'ill-cond', 'eigen']",
              "magic" => "Magic square matrix:
              \n Input options:
-             \n (type), dim: the dimension of the matrix.
+             \n [type,] dim: the dimension of the matrix.
              \n ['inverse']",
              "grcar" => "Grcar Matrix:
              \n Input options:
-             \n (type), dim, k: dim is the dimension of the matrix and 
+             \n [type,] dim, k: dim is the dimension of the matrix and 
              k is the number of superdiagonals.
-             \n (type), dim: the dimension of the matrix.
+             \n [type,] dim: the dimension of the matrix.
              \n ['eigen']",
              "triw" => "Triw Matrix:
              \n Input options:
-             \n (type), row_dim, col_dim, alpha, k: row_dim and col_dim 
+             \n [type,] row_dim, col_dim, alpha, k: row_dim and col_dim 
              are row and column dimension of the matrix. alpha is a 
              scalar representing the entries on the superdiagonals. 
              k is the number superdiagonals.
-             \n (type), dim 
+             \n [type,] dim 
              \n ['inverse', 'ill-cond']",
              "moler" => "Moler Matrix:
              \n Input options:
-             \n (type), dim, alpha: dim is the dimension of the matrix,
+             \n [type,] dim, alpha: dim is the dimension of the matrix,
              alpha is a scalar.
-             \n (type), dim: alpha = -1.
+             \n [type,] dim: alpha = -1.
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              "pascal" => "Pascal Matrix:
              \n Input options:
-             \n (type), dim: the dimension of the matrix.
+             \n [type,] dim: the dimension of the matrix.
              \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']",
              "kahan" => "Kahan Matrix:
              \n Input options:
-             \n (type), m, n, theta, pert: m, n are the row and column 
+             \n [type,] m, n, theta, pert: m, n are the row and column 
              dimensions of the matrix. theta and pert are scalars.
-             \n (type), dim, theta, pert: dim is the dimension of the matrix.
-             \n (type), dim: theta = 1.2, pert = 25.
+             \n [type,] dim, theta, pert: dim is the dimension of the matrix.
+             \n [type,] dim: theta = 1.2, pert = 25.
              \n ['inverse', 'ill-cond']" ,
              "pei" => "Pei Matrix:
              \n Input options:
-             \n (type), dim, alpha: dim is the dimension of the matrix.
+             \n [type,] dim, alpha: dim is the dimension of the matrix.
              alpha is a scalar.
-             \n (type), dim
+             \n [type,] dim
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              "vand" => "Vandermonde Matrix:
              \n Input options:
              \n vec, dim: vec is a vector, dim is the number of columns.
              \n vec
-             \n (type), dim
+             \n [type,] dim
              \n ['inverse', 'ill-cond']",
              "invol" => "Involutory Matrix:
              \n Input options:
-             \n (type), dim: dim is the dimension of the matrix.
+             \n [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']",
              "chebspec" => "Chebyshev spectral differentiation matrix:
              \n Input options:
-             \n (type), dim, k: dim is the dimension of the matrix and 
+             \n [type,] dim, k: dim is the dimension of the matrix and 
              k = 0 or 1.
-             \n (type), dim
+             \n [type,] dim
              \n ['eigen']",
              "lotkin" => "Lotkin Matrix:
              \n Input options:
-             \n (type), dim: dim is the dimension of the matrix.
+             \n [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']",
              "clement" => "Clement Matrix:
              \n Input options:
-             \n (type), dim, k: dim is the dimension of the matrix. 
+             \n [type,] dim, k: dim is the dimension of the matrix. 
              If k = 0, the matrix is Tridiagonal. If k = 1, the matrix 
              is SymTridiagonal.
-             \n (type), dim: k = 0
+             \n [type,] dim: k = 0
              \n ['inverse', 'symmetric', 'eigen']",
              "fiedler" => "Fiedler Matrix:
              \n Input options:
              \n vec: vec is a vector.
-             \n (type), dim: dim is the dimension of the matrix.
+             \n [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'symmetric', 'eigen']",
              "minij" => "MIN[I,J] Matrix:
              \n Input options:
-             \n (type), dim: dim is the dimension of the matrix.
+             \n [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen']",
              "binomial" => "Binomial Matrix:
              \n Input options:
-             \n (type), dim: dim is the dimension of the matrix.
+             \n [type,] dim: dim is the dimension of the matrix.
              \n ['']",
              "tridiag" => "Tridiagonal Matrix:
              \n Input options:
              \n v1, v2, v3: v1 and v3 are sub- superdiagonal vectors.
              v2 is the diagonal vector.
-             \n (type), dim, x, y, z: dim is the dimension of the matrix. x, y, z are
+             \n [type,] dim, x, y, z: dim is the dimension of the matrix. x, y, z are
              scalars. x and z are sub- superdiagonal elements, y is diagonal 
              element.
-             \n (type), dim: x = -1, y = 2, z = -1.
+             \n [type,] dim: x = -1, y = 2, z = -1.
              \n ['inverse', 'ill-cond', 'pos-def', 'eigen']",
              "lehmer" => "Lehmer Matrix:
              \n Input options: 
-             \n (type), dim: the dimension of the matrix.
+             \n [type,] dim: the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def']",
              "parter" => "Parter Matrix:
              \n Input options:
-             \n (type), dim: the dimension of the matrix.
+             \n [type,] dim: the dimension of the matrix.
              \n ['eigen']",
              "chow" => "Chow Matrix:
              \n Input options:
-             \n (type), dim, alpha, delta: dim is dimension of the matrix. 
+             \n [type,] dim, alpha, delta: dim is dimension of the matrix. 
              alpha, delta are scalars such that A[i,i] = alpha + delta and 
              A[i,j] = alpha^(i + 1 -j) for j + 1 <= i.
-             \n (type), dim: alpha = 1, delta = 0.
+             \n [type,] dim: alpha = 1, delta = 0.
              \n ['eigen']",
              "randcorr" => "Random Correlation Matrix:
              \n Input options:
-             \n (type), dim: the dimension of the matrix.
+             \n [type,] dim: the dimension of the matrix.
              \n ['symmetric', 'pos-semidef', 'random']",
              "poisson" => "Poisson Matrix:
              \n Input options:
-             \n (type), n: the dimension of the matirx is n^2.
+             \n [type,] n: the dimension of the matirx is n^2.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']",
              "neumann" => "Neumann Matrix:
-             \n (type), n: the dimension of the matrix is n^2.
+             \n [type,] n: the dimension of the matrix is n^2.
              \n ['eigen', 'sparse']",
              "rosser" => "Rosser Matrix:
              \n Input options:
-             \n (type), dim, a, b: dim is the dimension of the matrix.
+             \n [type,] dim, a, b: dim is the dimension of the matrix.
              dim must be a power of 2.
              a and b are scalars. For dim = 8, a = 2 and b = 1, the generated 
              matrix is the test matrix used by Rosser.
-             \n (type), dim: a = b = rand(1:5)
+             \n [type,] dim: a = b = rand(1:5)
              \n ['eigen', 'ill-cond', 'random']",
              "sampling" => "Matrix with Application in Sampling Theory:
              \n Input options:
              \n vec: vec is a vector with no repeated elements.
-             \n (type), dim: the dimension of the matrix. 
+             \n [type,] dim: the dimension of the matrix. 
              \n ['eigen']",
              "wilkinson" => "Wilkinson Matrix:
              \n Input options:
-             \n (type), dim: the dimension of the matrix.
+             \n [type,] dim: the dimension of the matrix.
              \n ['symmetric', 'eigen']",
              "rando" => "Random Matrix with Element -1, 0, 1:
              \n Input options:
-             \n (type), m, n, k: m and n are row and column dimensions, 
+             \n [type,] m, n, k: m and n are row and column dimensions, 
              k = 1: entries are 0 or 1.
              k = 2: entries are -1 or 1.
              k = 3: entries are -1, 0 or 1.
-             \n (type), n, k
-             \n (type), n: k = 1
+             \n [type,] n, k
+             \n [type,] n: k = 1
              \n ['random']",
              "randsvd" => "Random Matrix with Pre-assigned Singular Values:
              \n Input options:
-             \n (type), n, kappa, mode: n is the dimension of the matrix.
+             \n [type,] n, kappa, mode: n is the dimension of the matrix.
              kappa is the condition number of the matrix.
              mode = 1: one large singular value.
              mode = 2: one small singular value.
              mode = 3: geometrically distributed singular values.
              mode = 4: arithmetrically distributed singular values.
              mode = 5: random singular values with  unif. dist. logarithm.
-             \n (type), n, kappa: mode = 3
-             \n (type), n: kappa = sqrt(1/eps()), mode = 3.
+             \n [type,] n, kappa: mode = 3
+             \n [type,] n: kappa = sqrt(1/eps()), mode = 3.
              \n ['symmetric', 'ill-cond', 'random']",
              "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
              \n Input options:
-             \n (type), n : n is the dimension of the matrix.
+             \n [type,] n : n is the dimension of the matrix.
              \n ['random']",
              "kms" => "Kac-Murdock-Szego Toeplitz Matrix:
-             \n (type), n, rho: n is the dimension of the matrix, rho is a 
+             \n [type,] n, rho: n is the dimension of the matrix, rho is a 
              scalar such that A[i,j] = rho^(abs(i-j)).
-             \n (type), n: rho = 0.5
+             \n [type,] n: rho = 0.5
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
              "wathen" => "Wathen Matrix:
-             \n (type), nx, ny: the dimension of the matrix is equal to
-             3 * nx * ny + 2 * nx * ny + 1. 
+             \n [type,] nx, ny: the dimension of the matrix is equal to
+             3 * nx * ny + 2 * nx * ny + 1.
+             \n [type,] n: nx = ny = n. 
              \n ['symmetric', 'pos-def', 'eigen', 'random', 'sparse']"
              );
 
