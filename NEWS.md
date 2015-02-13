@@ -44,3 +44,18 @@ v0.1.2
 * Others
 
 	fix test error for randsvd. 
+
+
+v0.1.3
+------
+
+* New matrices
+
+    wathen: a sparse symmetric positive random matrix arose from the
+    finite element method
+
+* Style the output information
+
+	
+	
+  
