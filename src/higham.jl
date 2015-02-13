@@ -729,17 +729,16 @@ kms{T}(::Type{T}, n::Int) = kms(T, n, convert(T, 0.5))
 # mass matrix, IMA J, Numer. Anal., 7 (1987), pp. 449-457
 #
 function wathen{T}(::Type{T}, nx::Int, ny::Int)
-    rho = Array(T, nx, ny)
     e1 = T[6 -6 2 -8;-6 32 -6 20;2 -6 6 -6;-8 20 -6 32]
     e2 = T[3 -8 2 -6;-8 16 -8 20;2 -8 3 -8;-6 20 -8 16]
-    e = [e1 e2; e2' e1]/45
+    e3 = [e1 e2; e2' e1]/45
     n = 3 * nx * ny + 2 * nx + 2 * ny + 1
-    ntriplets = nx*ny*64
-    I = zeros(T, ntriplets)
-    J = zeros(T, ntriplets)
-    X = zeros(T, ntriplets)
+    ntriplets = nx * ny * 64
+    Irow = zeros(Int, ntriplets)
+    Jrow = zeros(Int, ntriplets)
+    Xrow = zeros(T, ntriplets)
     ntriplets = 0
-    copy!(rho, 100*rand(nx, ny))
+    rho = 100 * rand(nx, ny)
     node = zeros(T, 8)
     
     for j = 1:ny
@@ -754,20 +753,20 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
             node[7] = node[5] + 2
             node[8] = node[4] + 1
             
-            em = rho[i,j] * e
+            em = convert(T, rho[i,j]) * e3
             
             for krow = 1:8
                 for kcol = 1:8
-                    ntriplets = ntriplets + 1
-                    I[ntriplets] = node[krow]
-                    J[ntriplets] = node[kcol]
-                    X[ntriplets] = em[krow, kcol]
+                    ntriplets +=  1
+                    Irow[ntriplets] = node[krow]
+                    Jrow[ntriplets] = node[kcol]
+                    Xrow[ntriplets] = em[krow, kcol]
                 end
             end
             
         end
-    end        
-    return sparse(I, J, X, n, n)
+    end    
+    return sparse(Irow, Jrow, Xrow, n, n)
 end
 
 
