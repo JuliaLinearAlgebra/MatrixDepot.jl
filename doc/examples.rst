@@ -11,34 +11,45 @@ To see all the matrices in the collection, type
 
 .. parsed-literal::
 
-    
-              | symmetric |  inverse  | ill-cond  |  pos-def  |  eigen    |
-          vand|           |     *     |     *     |           |           |
-         frank|           |           |     *     |           |     *     |
-         minij|     *     |     *     |           |     *     |     *     |
-       clement|     *     |     *     |           |           |     *     |
-       tridiag|     *     |     *     |     *     |     *     |     *     |
-        circul|     *     |           |           |     *     |     *     |
-      dingdong|     *     |           |           |           |     *     |
-      hadamard|           |     *     |           |           |     *     |
-         moler|     *     |     *     |     *     |     *     |           |
-         invol|           |     *     |     *     |           |     *     |
-       fiedler|     *     |     *     |           |           |     *     |
-      binomial|           |           |           |           |           |
-        lehmer|     *     |     *     |           |     *     |           |
-       invhilb|     *     |     *     |     *     |     *     |           |
-        lotkin|           |     *     |     *     |           |     *     |
-          triw|           |     *     |     *     |           |           |
-         magic|           |     *     |           |           |           |
-         kahan|           |     *     |     *     |           |           |
-        pascal|     *     |     *     |     *     |     *     |     *     |
-      chebspec|           |           |           |           |     *     |
-          hilb|     *     |     *     |     *     |     *     |           |
-        cauchy|     *     |     *     |     *     |     *     |           |
-           pei|     *     |     *     |     *     |     *     |           |
-        parter|           |           |           |           |     *     |
-      forsythe|           |     *     |     *     |           |     *     |
-         grcar|           |           |           |           |     *     |
+          | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |
+       kms|     *     |     *     |     *     |     *     |           |
+      vand|           |     *     |     *     |           |           |
+   poisson|     *     |     *     |           |     *     |     *     |
+     frank|           |           |     *     |           |     *     |
+     minij|     *     |     *     |           |     *     |     *     |
+   clement|     *     |     *     |           |           |     *     |
+   tridiag|     *     |     *     |     *     |     *     |     *     |
+    circul|     *     |           |           |     *     |     *     |
+  dingdong|     *     |           |           |           |     *     |
+  hadamard|           |     *     |           |           |     *     |
+     moler|     *     |     *     |     *     |     *     |           |
+     invol|           |     *     |     *     |           |     *     |
+   fiedler|     *     |     *     |           |           |     *     |
+  binomial|           |           |           |           |           |
+    lehmer|     *     |     *     |           |     *     |           |
+    rohess|           |           |           |           |           |
+   invhilb|     *     |     *     |     *     |     *     |           |
+    lotkin|           |     *     |     *     |           |     *     |
+ wilkinson|     *     |           |           |           |     *     |
+      triw|           |     *     |     *     |           |           |
+   randsvd|     *     |           |     *     |           |           |
+    rosser|           |           |     *     |           |     *     |
+     rando|           |           |           |           |           |
+     magic|           |     *     |           |           |           |
+     kahan|           |     *     |     *     |           |           |
+    pascal|     *     |     *     |     *     |     *     |     *     |
+  chebspec|           |           |           |           |     *     |
+      chow|           |           |           |           |     *     |
+  sampling|           |           |           |           |     *     |
+      hilb|     *     |     *     |     *     |     *     |           |
+    cauchy|     *     |     *     |     *     |     *     |           |
+    wathen|     *     |           |           |     *     |     *     |
+       pei|     *     |     *     |     *     |     *     |           |
+    parter|           |           |           |           |     *     |
+  forsythe|           |     *     |     *     |           |     *     |
+  randcorr|     *     |           |           |           |           |
+   neumann|           |           |           |           |     *     |
+     grcar|           |           |           |           |     *     |
 
 
 The meaning of the column heading is as follows:
@@ -59,7 +70,7 @@ The meaning of the column heading is as follows:
 
 We can generate a Hilbert matrix of size 4 by typing
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("hilb", 4)
 
@@ -77,7 +88,7 @@ We can generate a Hilbert matrix of size 4 by typing
 
 and generate a circul matrix of size 5 by
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("circul", 5)
 
@@ -97,42 +108,44 @@ and generate a circul matrix of size 5 by
 We can type the matrix name to see the parameter options or matrix
 properties.
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("hilb")
 
 .. parsed-literal::
 
-    Hilbert matrix: 
-                 
-     Input options: 
-                 
-     (type), dim: the dimension of the matrix
-                 
-     (type), row_dim, col_dim: the row and column dimension 
-                 
-     ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+   Hilbert matrix: 
+             
+    Input options: 
+             
+    [type,] dim: the dimension of the matrix
+             
+    [type,] row_dim, col_dim: the row and column dimension 
+             
+    ['inverse', 'ill-cond', 'symmetric', 'pos-def']
 
 
-.. code:: python
+
+.. code:: julia
 
     matrixdepot("hadamard")
 
 .. parsed-literal::
 
-    Hadamard matrix: 
-                 
-     Input options: 
-                 
-     (type), dim: the dimension of the matrix, n is a power of 2 
-                 
-     ['inverse', 'orthogonal', 'eigen']
+   Hadamard matrix: 
+             
+    Input options: 
+             
+    [type,] dim: the dimension of the matrix, n is a power of 2 
+             
+    ['inverse', 'orthogonal', 'eigen']
+
 
 
 From the information given, we notice that we can create a 4-by-6
 rectanglular Hilbert matrix by
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("hilb", 4, 6)
 
@@ -150,7 +163,7 @@ rectanglular Hilbert matrix by
 
 We can aslo specify the data type
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("hilb", Float16, 5, 3)
 
@@ -171,7 +184,7 @@ By inputing a matrix name, we can see what properties that matrix have.
 Conversely, if we input a property (or properties), we can see all the
 matrices (in the collection) having that property (or properties).
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("symmetric")
 
@@ -179,23 +192,28 @@ matrices (in the collection) having that property (or properties).
 
 .. parsed-literal::
 
-    12-element Array{ASCIIString,1}:
-     "hilb"    
-     "cauchy"  
-     "circul"  
-     "dingdong"
-     "invhilb" 
-     "moler"   
-     "pascal"  
-     "pei"     
-     "clement" 
-     "fiedler" 
-     "minij"   
-     "tridiag" 
+   19-element Array{ASCIIString,1}:
+    "hilb"     
+    "cauchy"   
+    "circul"   
+    "dingdong" 
+    "invhilb"  
+    "moler"    
+    "pascal"   
+    "pei"      
+    "clement"  
+    "fiedler"  
+    "minij"    
+    "tridiag"  
+    "lehmer"   
+    "randcorr" 
+    "poisson"  
+    "wilkinson"
+    "randsvd"  
+    "kms"      
+    "wathen" 
 
-
-
-.. code:: python
+.. code:: julia
 
     matrixdepot("symmetric", "ill-cond")
 
@@ -214,7 +232,7 @@ matrices (in the collection) having that property (or properties).
 
 
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("inverse", "ill-cond", "symmetric")
 
@@ -236,7 +254,7 @@ matrices (in the collection) having that property (or properties).
 Given a property, we can loop through all the matrices having this
 propery
 
-.. code:: python
+.. code:: julia
 
     # Multiply all matrices of the class "symmetric" and "ill-cond" and "inverse"
     A = eye(4)
@@ -267,7 +285,7 @@ propery
 
 The loop above can also be written as
 
-.. code:: python
+.. code:: julia
 
     A = eye(4)
     print("Identity matrix")
@@ -301,7 +319,7 @@ User Defined Properties
 We can define properties in MatrixDepot. Since each property in Matrix
 Depot is a list of strings, you can simply do, for example,
 
-.. code:: python
+.. code:: julia
 
     spd = matrixdepot("symmetric", "pos-def")
 
@@ -323,7 +341,7 @@ Depot is a list of strings, you can simply do, for example,
 
 
 
-.. code:: python
+.. code:: julia
 
     myprop = ["lehmer", "cauchy", "hilb"]
 
@@ -340,7 +358,7 @@ Depot is a list of strings, you can simply do, for example,
 
 Then use it in your tests like
 
-.. code:: python
+.. code:: julia
 
     for matrix in myprop
         A = matrixdepot(matrix, 6)
@@ -359,7 +377,7 @@ Then use it in your tests like
 To add a property permanently for future use, we put the macro
 ``@addproperty`` at the beginning.
 
-.. code:: python
+.. code:: julia
 
     @addproperty myfav = ["lehmer", "cauchy", "hilb"]
 
@@ -371,7 +389,7 @@ To add a property permanently for future use, we put the macro
 
 
 
-.. code:: python
+.. code:: julia
 
     @addproperty spd = matrixdepot("symmetric", "pos-def")
 
@@ -385,7 +403,7 @@ To add a property permanently for future use, we put the macro
 
 We need to **restart** Julia to see the changes. Type
 
-.. code:: python
+.. code:: julia
 
     matrixdepot()
 
@@ -429,7 +447,7 @@ We need to **restart** Julia to see the changes. Type
 
 Notice new defined properties have been included. We can use them as
 
-.. code:: python
+.. code:: julia
 
     matrixdepot("myfav")
 
@@ -447,7 +465,7 @@ Notice new defined properties have been included. We can use them as
 We can remove a property using the macro ``@rmproperty``. As before, we
 need to **restart** Julia to see the changes.
 
-.. code:: python
+.. code:: julia
 
     @rmproperty myfav
 
@@ -459,7 +477,7 @@ need to **restart** Julia to see the changes.
 
 
 
-.. code:: python
+.. code:: julia
 
     matrixdepot()
 
@@ -504,7 +522,7 @@ More Examples
 
 An interesting test matrix is magic square. It can be generated as
 
-.. code:: python
+.. code:: julia
 
     M = matrixdepot("magic", 5)
 
@@ -521,7 +539,7 @@ An interesting test matrix is magic square. It can be generated as
 
 
 
-.. code:: python
+.. code:: julia
 
     sum(M,1)
 
@@ -534,7 +552,7 @@ An interesting test matrix is magic square. It can be generated as
 
 
 
-.. code:: python
+.. code:: julia
 
     sum(M,2)
 
@@ -551,7 +569,7 @@ An interesting test matrix is magic square. It can be generated as
 
 
 
-.. code:: python
+.. code:: julia
 
     sum(diag(M))
 
@@ -563,7 +581,7 @@ An interesting test matrix is magic square. It can be generated as
 
 
 
-.. code:: python
+.. code:: julia
 
     p = [5:-1:1]
     sum(diag(M[:,p]))
@@ -578,7 +596,7 @@ An interesting test matrix is magic square. It can be generated as
 
 Pascal Matrix can be generated as
 
-.. code:: python
+.. code:: julia
 
     P = matrixdepot("pascal", 6)
 
@@ -599,7 +617,7 @@ Pascal Matrix can be generated as
 Notice the Cholesky factor of the Pascal matrix has Pascal's triangle
 rows.
 
-.. code:: python
+.. code:: julia
 
     chol(P)
 
