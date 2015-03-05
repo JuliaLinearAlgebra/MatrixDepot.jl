@@ -14,6 +14,9 @@ function matrixdepot()
         end
         println()
     end
+    # use readdir to output file names 
+    # use split to handle sdfj.mat
+    # 
     if length(usermatrixclass) != 0
         println()
         println("New Properties:")
@@ -121,6 +124,8 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
+        # if name is data/
+        # readdata with MAT.jl
     else
         error("Your matrix or class is not included in Matrix Depot.")
     end
