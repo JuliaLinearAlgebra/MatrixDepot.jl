@@ -1,37 +1,44 @@
 # Download data from the University of Florida Sparse Matrix Collection
 
-function download_data()
-    isfile("matrices.html") || download("http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html", "matrices.html")
+const topurl = "http://www.cise.ufl.edu/research/sparse/"
+const datadir = joinpath(Pkg.dir("MatrixDepot"), "data")
+
+
+function downloaddata(dlurl = string(topurl, "matrices/list_by_id.html"))    
+    matrices = string(datadir, "/matrices.html")
+    isfile(matrices) || download(dlurl, matrices)
     matrixdata = {}
-    open("matrices.html") do f
+    open(matrices) do f
         for line in readlines(f)
-            if contains(line, "MAT</a>")
-                collection_name, matrix_name   # split the data
-                push!(matrixdata, (collection_name, matrix_name)) 
+            if contains(line, """MAT</a>""")
+                collectionname, matrixname = split(split(line, '"')[2], '/')[end-1:end]
+                matrixname = split(matrixname, '.')[1]
+                push!(matrixdata, (collectionname, matrixname)) 
             end
         end
     end
     return matrixdata
 end
 
-function update_data()
-    if isfile("matrices.html")
-        # remove it 
-        download("http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html", "matrices.html")
-    end
-end
-
-
-function download_matrix(name)
-    matrixdata = download_data()
-    collection_name, matrix_name = split('/')
-    if (collection_name, matrix_name) in matrixdata
-        fn = string(, ".mat") # combine to string
-        if !isfile(fn)
-            url = "$fn"
-            
+# downloadsparse
+# --------------
+# downloadsparse(NAME) download a matrix from UF sparse matrix collection
+# where NAME is a string of collection name + '/' + matrix name.
+#
+# Example
+# -------
+# download("HB/1138_bus")
+#
+function downloadsparse(name)
+    matrixdata = downloaddata()
+    collectionname, matrixname = split(name, '/')
+    if (collectionname, matrixname) in matrixdata
+        fn = string(matrixname, ".mat") # file name 
+        dlfname = string(datadir, '/', fn)
+        if !isfile(dlfname)
+            url = string(topurl, "mat", '/', collectionname, '/', "$fn")
             try 
-                download(url, fn)
+                download(url, dlfname)
             catch
                 error("fail to download $fn")
             end

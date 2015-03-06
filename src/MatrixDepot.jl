@@ -1,11 +1,20 @@
 module MatrixDepot
 using Compat # support v3 and v4 
 
-export matrixdepot, @addproperty, @rmproperty
+export 
+
+# main function
+matrixdepot, 
+
+@addproperty, @rmproperty,
+
+# download
+downloadsparse
+
 
 include("matrixdepot.jl")    # main functions 
 include("higham.jl")      # test matrices
 include("user.jl")        # user defined properties
-
+include("download.jl")    # download data from the UF sparse matrix collection
 
 end # end module

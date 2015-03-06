@@ -16,7 +16,7 @@ function matrixdepot()
     end
     # use readdir to output file names 
     # use split to handle sdfj.mat
-    # 
+    # use DataStructures orderdict for matrixdict
     if length(usermatrixclass) != 0
         println()
         println("New Properties:")
