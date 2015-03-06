@@ -5,8 +5,8 @@
 | Julia 0.3 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_release.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=release)
 | Julia 0.4 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_nightly.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=nightly)
 
-A test matrix collection for Julia. See [Matrices](http://matrixdepotjl.readthedocs.org/en/latest/matrices.html#matrices)
-for all the matrices in the collection. 
+An Extensible test matrix collection for Julia: varying dimensional matrices
+as well as an interface to the University of Florida sparse matrix collection.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
@@ -155,6 +155,19 @@ Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x 
  109.896    -8.91857  -11.5976   214.433
   86.7524   -7.15714   -9.32857  169.702
   71.9139   -5.98707   -7.81497  140.876 
+```
+## Interface to UF Sparse Matrix Collection
+
+Use ``downloadsparse`` to download a test matrix from UF collection.
+For example,
+
+```julia
+julia> downloadsparse("HB/illc1850")
+```
+When download is complete, we can generate it using
+
+```julia
+julia> matrixdepot("illc1850")
 ```
 
 ## References
