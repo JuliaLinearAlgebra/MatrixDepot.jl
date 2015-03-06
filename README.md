@@ -5,8 +5,7 @@
 | Julia 0.3 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_release.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=release)
 | Julia 0.4 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_nightly.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=nightly)
 
-An Extensible test matrix collection for Julia: varying dimensional matrices
-as well as an interface to the University of Florida sparse matrix collection.
+An Extensible test matrix collection for Julia.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
@@ -156,10 +155,11 @@ Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x 
   86.7524   -7.15714   -9.32857  169.702
   71.9139   -5.98707   -7.81497  140.876 
 ```
-## Interface to UF Sparse Matrix Collection
+## Interface to the UF Sparse Matrix Collection
 
-Use ``downloadsparse`` to download a test matrix from UF collection.
-For example,
+Use ``downloadsparse`` to download a test matrix from the
+UF Sparse Matrix Collection: http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.
+For example:
 
 ```julia
 julia> downloadsparse("HB/illc1850")
@@ -168,6 +168,22 @@ When download is complete, we can generate it using
 
 ```julia
 julia> matrixdepot("illc1850")
+```
+and check matrix information using
+
+```julia
+julia> matrixdepot("illc1850", :info)
+Dict{ASCIIString,Any} with 10 entries:
+  "name"   => "HB/illc1850"
+  "A"      => …
+  "author" => "M. Saunders"
+  "kind"   => "least squares problem"
+  "Zeros"  => …
+  "b"      => [64.06762598…
+  "title"  => "UNSYMMETRIC LEAST-SQUARES PROBLEM.                  SAUNDERS 1979."
+  "id"     => 170.0
+  "date"   => "1979"
+  "ed"     => "I. Duff, R. Grimes, J. Lewis"
 ```
 
 ## References
@@ -178,3 +194,9 @@ julia> matrixdepot("illc1850")
   vol. 17. (1991), pp 289-305
   [[pdf]](http://www.maths.manchester.ac.uk/~higham/narep/narep172.pdf)
   [[doi]](https://dx.doi.org/10.1145/114697.116805)
+
+- T.A. Davis and Y. Hu,
+  "The University of Florida Sparse Matrix Collection",
+  *ACM Transaction on Mathematical Software*,
+  vol. 38, Issue 1, (2011), pp 1:1-1:25
+  [[pdf]](http://www.cise.ufl.edu/research/sparse/techreports/matrices.pdf)
