@@ -155,6 +155,19 @@ function matrixdepot(name::String)
     end
 end
 
+# return info for UF sparse matrices
+function matrixdepot(name::String, s::Symbol)
+    if s == :info
+        filename = string(name, ".mat")
+        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
+        pathfilename = string(matdatadir, '/', filename)
+        matdata = matread(pathfilename)
+        return matdata["Problem"]
+    else
+        error("use symbol :info")
+    end
+end
+
 # Return a list of matrix names with common properties
 # when multiple properties are given.
 function matrixdepot(prop1::String, otherprops::String...)
