@@ -3,7 +3,7 @@
 const topurl = "http://www.cise.ufl.edu/research/sparse/"
 const datadir = joinpath(Pkg.dir("MatrixDepot"), "data")
 
-
+# download id.html and store matrixdata as a list of tuples
 function downloaddata(dlurl = string(topurl, "matrices/list_by_id.html"))    
     matrices = string(datadir, "/matrices.html")
     isfile(matrices) || download(dlurl, matrices)
@@ -27,14 +27,15 @@ end
 #
 # Example
 # -------
-# download("HB/1138_bus")
+# downloadsparse("HB/1138_bus")
+# downloadsparse("Pajek/GD98_a")
 #
 function downloadsparse(name)
     matrixdata = downloaddata()
     collectionname, matrixname = split(name, '/')
     if (collectionname, matrixname) in matrixdata
         fn = string(matrixname, ".mat") # file name 
-        dlfname = string(datadir, '/', fn)
+        dlfname = string(datadir, '/', "mat", '/', fn)
         if !isfile(dlfname)
             url = string(topurl, "mat", '/', collectionname, '/', "$fn")
             try 
@@ -43,5 +44,8 @@ function downloadsparse(name)
                 error("fail to download $fn")
             end
         end
-    end            
+    else
+        error("can not find $collectionname/$matrixname in database")
+    end
 end
+

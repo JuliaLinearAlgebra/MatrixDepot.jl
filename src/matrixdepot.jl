@@ -14,9 +14,19 @@ function matrixdepot()
         end
         println()
     end
-    # use readdir to output file names 
-    # use split to handle sdfj.mat
-    # use DataStructures orderdict for matrixdict
+
+    # Print UF sparse matrix files
+    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
+    matvec = readdir(matdatadir)
+    println()
+    for file in matvec
+        filename = split(file, '.')[1]
+        @printf "%10s|" filename 
+        print("  UF sparse matrix")
+        println()
+    end
+    
+    # print user defined properties
     if length(usermatrixclass) != 0
         println()
         println("New Properties:")
