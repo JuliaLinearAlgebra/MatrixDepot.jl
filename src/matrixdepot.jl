@@ -1,4 +1,16 @@
+# return a list of file names in matrix database
+function filenamevec()
+    namevec = {}
+    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
+    matvec = readdir(matdatadir)
+    for file in matvec
+        filename = split(file, '.')[1]
+        push!(namevec, filename)
+    end
+    return namevec
+end
 
+# print info about all matrices in the collection
 function matrixdepot()
     # Print information strings 
     println()
@@ -16,12 +28,9 @@ function matrixdepot()
     end
 
     # Print UF sparse matrix files
-    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
-    matvec = readdir(matdatadir)
     println()
-    for file in matvec
-        filename = split(file, '.')[1]
-        @printf "%10s|" filename 
+    for file in filenamevec()
+        @printf "%10s|" file
         print("  UF sparse matrix")
         println()
     end
@@ -124,6 +133,7 @@ function matrixdepot{T}(name::String, x::Vector{T}, n::Int)
     return matrixdict[name](x,n)
 end
 
+
 # Return information strings if name is a matrix name. 
 # Retuen a list of matrix names if name is a property. 
 function matrixdepot(name::String)
@@ -134,8 +144,12 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-        # if name is data/
-        # readdata with MAT.jl
+    elseif name in filenamevec()
+        filename = string(name, ".mat")
+        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
+        pathfilename = string(matdatadir, '/', filename)
+        matdata = matread(pathfilename)
+        return (matdata["Problem"])["A"]
     else
         error("Your matrix or class is not included in Matrix Depot.")
     end
