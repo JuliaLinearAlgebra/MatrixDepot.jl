@@ -157,9 +157,10 @@ Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x 
 ```
 ## Interface to the UF Sparse Matrix Collection
 
-Use ``downloadsparse`` to download a test matrix from the
-UF Sparse Matrix Collection: http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.
-For example:
+Use ``downloadsparse`` to download a test matrix from the University
+of Florida Sparse Matrix Collection:
+http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.  For
+example:
 
 ```julia
 julia> downloadsparse("HB/illc1850")
