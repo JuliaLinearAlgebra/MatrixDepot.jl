@@ -13,7 +13,7 @@ matrixdepot,
 downloadsparse, updatesparse
 
 
-include("matrixdepot.jl")    # main functions 
+include("matrixfuns.jl")    # main functions 
 include("higham.jl")      # test matrices
 include("user.jl")        # user defined properties
 include("download.jl")    # download data from the UF sparse matrix collection
