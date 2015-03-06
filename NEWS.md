@@ -56,6 +56,13 @@ v0.1.3
 
 * Style the output information
 
-	
-	
+
+v0.2.0 and v0.2.1
+-----------------
+
+* Include an interface to the UF Sparse Matrix Collection
+
+
+
+
   
