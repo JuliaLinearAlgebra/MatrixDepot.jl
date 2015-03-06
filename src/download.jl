@@ -20,6 +20,15 @@ function downloaddata(dlurl = string(topurl, "matrices/list_by_id.html"))
     return matrixdata
 end
 
+# update database from the website
+function updatesparse()
+    matrices = string(datadir, "/matrices.html")
+    if isfile(matrices)
+        rm(matrices)
+        download(string(topurl, "matrices/list_by_id.html"), matrices)
+    end        
+end
+
 # downloadsparse
 # --------------
 # downloadsparse(NAME) download a matrix from UF sparse matrix collection

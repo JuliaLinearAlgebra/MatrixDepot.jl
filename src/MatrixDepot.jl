@@ -10,7 +10,7 @@ matrixdepot,
 @addproperty, @rmproperty,
 
 # download
-downloadsparse
+downloadsparse, updatesparse
 
 
 include("matrixdepot.jl")    # main functions 
