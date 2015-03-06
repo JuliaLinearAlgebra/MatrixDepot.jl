@@ -1,5 +1,6 @@
 module MatrixDepot
 using Compat # support v3 and v4 
+using MAT
 
 export 
 
