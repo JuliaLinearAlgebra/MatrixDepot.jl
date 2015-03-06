@@ -8,7 +8,7 @@ Before downloading test matrices, we should first update the database::
   julia> updatesparse()
 
 Use ``downloadsparse`` to download a test matrix from the
-UF Sparse Matrix Collection: http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.
+`UF Sparse Matrix Collection <http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html>`_.
 For example::
 
   julia> downloadsparse("HB/illc1850")
