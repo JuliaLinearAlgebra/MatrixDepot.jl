@@ -40,4 +40,7 @@ include("test_rohess.jl")
 include("test_kms.jl")
 include("test_wathen.jl")
 
+# try download and read matrices from UF sparse matrix collection
+include("ufsparse.jl")  
+
 println("Success in all tests.")
