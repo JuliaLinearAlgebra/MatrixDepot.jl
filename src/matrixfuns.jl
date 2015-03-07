@@ -14,9 +14,9 @@ end
 function matrixdepot()
     # Print information strings 
     println()
-    println("          | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |")
+    println("            | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |")
     for mat in keys(matrixdict)
-        @printf "%10s|" mat
+        @printf "%12s|" mat
         for prop in ["symmetric", "inverse", "ill-cond", "pos-def", "eigen"]
             if mat in matrixclass[prop]
                 print("     *     |")
@@ -30,7 +30,7 @@ function matrixdepot()
     # Print UF sparse matrix files
     println()
     for file in filenamevec()
-        @printf "%10s|" file
+        @printf "%12s|" file
         print("  UF sparse matrix")
         println()
     end
