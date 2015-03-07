@@ -13,6 +13,11 @@ For example::
 
   julia> downloadsparse("HB/illc1850")
 
+.. note:: 
+   ``matrixdepot()`` displays all the matrices in the collection, 
+   including the newly downloaded matrices.
+	  
+
 When download is complete, we can generate it using::
 
   julia> matrixdepot("illc1850")
