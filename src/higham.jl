@@ -656,38 +656,73 @@ rando{T}(::Type{T}, n::Int, k::Int) = rando(T, n, n, k)
 rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
 
 #
+# Pre-multiply by random orthogonal matrix
+#
+function qmult!{T}(A::Matrix{T})
+    n, m = size(A)
+    
+    d = zeros(T, n)
+    for k = n-1:-1:1    
+
+        # generate random Householder transformation
+        x = randn(n-k+1)
+        s = norm(x)
+        sgn = sign(x[1]) + (x[1]==0)
+        s = sgn * s
+        d[k] = -sgn
+        x[1] = x[1] + s
+        beta = s * x[1]
+        
+        # apply the transformation to A
+        y = x'*A[k:n, :];
+        A[k:n, :] = A[k:n, :] - x * (y /beta)
+    end
+
+    # tidy up signs
+    for i=1:n-1
+        A[i, :] = d[i] * A[i, :]
+    end
+    A[n, :] = A[n, :] * sign(randn())
+    return A
+end
+
+#
 # Random matrix with pre-assigned singular values
 #
-function randsvd{T}(::Type{T}, n::Int, kappa, mode::Int)
+function randsvd{T}(::Type{T}, m::Int, n::Int, kappa, mode::Int)
     kappa >= 1 || throw(ArgumentError("Condition number must be at least 1."))
     kappa = convert(T, kappa)
 
-    if n == 1 # handle 1-d case
+    p = min(m,n)
+    if p == 1 # handle 1-d case
         return ones(T, 1, 1)*kappa
     end
 
     if mode == 3 
-        factor = kappa^(-1/(n-1))
-        sigma = factor.^[0:n-1]
+        factor = kappa^(-1/(p-1))
+        sigma = factor.^[0:p-1]
     elseif mode == 4 
-        sigma = ones(T, n) - T[0:n-1]/(n-1)*(1 - 1/kappa)
+        sigma = ones(T, p) - T[0:p-1]/(p-1)*(1 - 1/kappa)
     elseif mode == 5
-        sigma = exp(-rand(n) * log(kappa))
+        sigma = exp(-rand(p) * log(kappa))
     elseif mode == 2
-        sigma = ones(T, n)
-        sigma[n] = one(T)/kappa
+        sigma = ones(T, p)
+        sigma[p] = one(T)/kappa
     elseif mode == 1
-        sigma = ones(n)./kappa
+        sigma = ones(p)./kappa
         sigma[1] = one(T)
     else
         error("invalid mode value.")
     end
+    
+    A = zeros(T, m, n)
+    A[1:p, 1:p] = diagm(sigma)
+    A = qmult!(A')
+    A = qmult!(A')
 
-    F = qrfact(randn(n,n));
-    Q = F[:Q]*diagm(sign(diag(F[:R])))
-
-    return Q'*Diagonal(sigma)*Q
+    return A
 end
+randsvd{T}(::Type{T}, n::Int, kappa, mode) = randsvd(T, n, n, kappa, mode)
 randsvd{T}(::Type{T}, n::Int, kappa) = randsvd(T, n, kappa, 3)
 randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps()))
 
@@ -977,16 +1012,17 @@ matrixinfo =
              \n ['random']",
              "randsvd" => "Random Matrix with Pre-assigned Singular Values:
              \n Input options:
-             \n [type,] n, kappa, mode: n is the dimension of the matrix.
+             \n [type,] m, n, kappa, mode: m, n are the dimensions of the matrix.
              kappa is the condition number of the matrix.
              mode = 1: one large singular value.
              mode = 2: one small singular value.
              mode = 3: geometrically distributed singular values.
              mode = 4: arithmetrically distributed singular values.
              mode = 5: random singular values with  unif. dist. logarithm.
+             \n [type,] n, kappa, mode: m = n
              \n [type,] n, kappa: mode = 3
              \n [type,] n: kappa = sqrt(1/eps()), mode = 3.
-             \n ['symmetric', 'ill-cond', 'random']",
+             \n ['ill-cond', 'random']",
              "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
              \n Input options:
              \n [type,] n : n is the dimension of the matrix.
@@ -1008,7 +1044,7 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei", 
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                             "randsvd", "kms", "wathen"],
+                              "kms", "wathen"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
