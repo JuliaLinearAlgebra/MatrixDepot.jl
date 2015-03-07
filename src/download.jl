@@ -42,9 +42,11 @@ end
 function downloadsparse(name)
     matrixdata = downloaddata()
     collectionname, matrixname = split(name, '/')
-    if (collectionname, matrixname) in matrixdata
-        fn = string(matrixname, ".mat") # file name 
-        dlfname = string(datadir, '/', "mat", '/', fn)
+
+    # check if the matrix is in the database
+    if (collectionname, matrixname) in matrixdata  
+        fn = string(matrixname, ".mat")              # file name 
+        dlfname = string(datadir, '/', "mat", '/', collectionname, '_' ,fn)
         if !isfile(dlfname)
             url = string(topurl, "mat", '/', collectionname, '/', "$fn")
             try 
