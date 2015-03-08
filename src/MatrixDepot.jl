@@ -12,10 +12,10 @@ matrixdepot,
 # download
 downloadsparse, updatesparse
 
-
+include("mmreader.jl")      # Matrix Market format reader  
 include("matrixfuns.jl")    # main functions 
-include("higham.jl")      # test matrices
-include("user.jl")        # user defined properties
-include("download.jl")    # download data from the UF sparse matrix collection
+include("higham.jl")        # test matrices
+include("user.jl")          # user defined properties
+include("download.jl")      # download data from the UF sparse matrix collection
 
 end # end module
