@@ -1,6 +1,6 @@
 n = rand(2:10)
 
-kappa = rand(1:6)
+kappa = rand(2:6)
 mode = rand(1:5)
 
 
