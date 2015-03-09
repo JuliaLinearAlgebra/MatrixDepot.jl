@@ -1,11 +1,12 @@
-# return a list of file names in matrix database
-function filenamevec()
+# return a list of file names without suffix in the directory
+# e.g. filenames(mm) and filenames(uf)
+function filenames(directory::String)
     if VERSION < v"0.4.0-dev+2197"
         namevec = {}
     else
         namevec = []
     end
-    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
+    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "$directory")
     matvec = readdir(matdatadir)
     for file in matvec
         filename = split(file, '.')[1]
@@ -13,6 +14,7 @@ function filenamevec()
     end
     return namevec
 end
+
 
 # print info about all matrices in the collection
 function matrixdepot()
@@ -33,7 +35,7 @@ function matrixdepot()
 
     # Print UF sparse matrix files
     println()
-    for file in filenamevec()
+    for file in filenames("mat")
         @printf "%12s|" file
         print("  UF sparse matrix")
         println()
@@ -148,7 +150,7 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif name in filenamevec()
+    elseif name in filenames("mat")
         filename = string(name, ".mat")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
         pathfilename = string(matdatadir, '/', filename)
