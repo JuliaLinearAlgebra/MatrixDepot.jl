@@ -4,10 +4,14 @@ const topurl = "http://www.cise.ufl.edu/research/sparse/"
 const datadir = joinpath(Pkg.dir("MatrixDepot"), "data")
 
 # download id.html and store matrixdata as a list of tuples
-function downloaddata(dlurl = string(topurl, "matrices/list_by_id.html"))    
+function downloadUFdata(dlurl = string(topurl, "matrices/list_by_id.html"))    
     matrices = string(datadir, "/matrices.html")
     isfile(matrices) || download(dlurl, matrices)
-    matrixdata = {}
+    if VERSION < v"0.4.0-dev+2197"
+        matrixdata = {}
+    else
+        matrixdata = []
+    end
     open(matrices) do f
         for line in readlines(f)
             if contains(line, """MAT</a>""")
@@ -60,3 +64,6 @@ function downloadsparse(name)
     end
 end
 
+function downloadMM(name)
+
+end

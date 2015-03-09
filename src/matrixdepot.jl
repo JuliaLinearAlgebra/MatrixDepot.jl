@@ -1,6 +1,10 @@
 # return a list of file names in matrix database
 function filenamevec()
-    namevec = {}
+    if VERSION < v"0.4.0-dev+2197"
+        namevec = {}
+    else
+        namevec = []
+    end
     matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
     matvec = readdir(matdatadir)
     for file in matvec
