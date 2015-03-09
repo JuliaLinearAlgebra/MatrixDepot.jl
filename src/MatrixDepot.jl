@@ -1,16 +1,12 @@
 module MatrixDepot
 using Compat # support v3 and v4 
-using MAT
 
 export 
 
 # main function
 matrixdepot, 
 
-@addproperty, @rmproperty,
-
-# download
-downloadsparse, updatesparse
+@addproperty, @rmproperty
 
 include("mmreader.jl")      # Matrix Market format reader  
 include("matrixdepot.jl")   # main functions 
