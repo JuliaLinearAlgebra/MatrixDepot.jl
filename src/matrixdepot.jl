@@ -1,7 +1,12 @@
-# return a list of file names in matrix database
-function filenamevec()
-    namevec = {}
-    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
+# return a list of file names without suffix in the directory
+# e.g. filenames(mm) and filenames(uf)
+function filenames(directory::String)
+    if VERSION < v"0.4.0-dev+2197"
+        namevec = {}
+    else
+        namevec = []
+    end
+    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "$directory")
     matvec = readdir(matdatadir)
     for file in matvec
         filename = split(file, '.')[1]
@@ -9,6 +14,7 @@ function filenamevec()
     end
     return namevec
 end
+
 
 # print info about all matrices in the collection
 function matrixdepot()
@@ -29,9 +35,17 @@ function matrixdepot()
 
     # Print UF sparse matrix files
     println()
-    for file in filenamevec()
+    for file in filenames("uf")
         @printf "%12s|" file
         print("  UF sparse matrix")
+        println()
+    end
+
+    # Print Matrix Market matrix files
+    println()
+    for file in filenames("mm")
+        @printf "%12s|" file
+        print("  NIST Matrix Market matrix")
         println()
     end
     
@@ -144,27 +158,37 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif name in filenamevec()
-        filename = string(name, ".mat")
-        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
-        pathfilename = string(matdatadir, '/', filename)
+    elseif name in filenames("uf")
+        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
+        pathfilename = string(matdatadir, '/', name, ".mat")
         matdata = matread(pathfilename)
-        return (matdata["Problem"])["A"]
+        return matdata["Problem"]
+    elseif name in filenames("mm")
+        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
+        pathfilename = string(matdatadir, '/', name, ".mtx")
+        return MatrixMarket.mmread(pathfilename, true)
     else
         error("Your matrix or class is not included in Matrix Depot.")
     end
 end
 
-# return info for UF sparse matrices
-function matrixdepot(name::String, s::Symbol)
-    if s == :info
-        filename = string(name, ".mat")
-        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
-        pathfilename = string(matdatadir, '/', filename)
-        matdata = matread(pathfilename)
-        return matdata["Problem"]
+# return info for matrix data
+function matrixdepot(name::String, method::Symbol)
+    if method == :r
+        if name in filenames("uf")
+            matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
+            pathfilename = string(matdatadir, '/', name, ".mat")
+            matdata = matread(pathfilename)
+            return (matdata["Problem"])["A"]
+
+        elseif name in filenames("mm") 
+            matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
+            pathfilename = string(matdatadir, '/', name, ".mtx")
+            return MatrixMarket.mmread(pathfilename)
+            
+        end
     else
-        error("use symbol :info")
+        error("use Symbol :r to read matrices")
     end
 end
 
