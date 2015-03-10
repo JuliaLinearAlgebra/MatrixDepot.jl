@@ -73,39 +73,43 @@ end
 # --------------
 # get(NAME) download a matrix from UF sparse matrix collection
 # where NAME is a string of collection name + '/' + matrix name.
+# 
+# get(NAME, collection = :MM) download a matrix from Matrix Market
+# where NAME is string of collection name + '/' + set name + '/' + matrix name.
 #
 # Example
 # -------
-# get("HB/1138_bus", collection = :UF)
-# get("Pajek/GD98_a")
-# get("")
+# MatrixDepot.get("HB/1138_bus", collection = :UF)
+# MatrixDepot.get("Pajek/GD98_a")
+# MatrixDepot.get("SPARSKIT/fidap/fidap020", collection =:MM)
 #
 function get(name; collection::Symbol = :UF)
+    matrixdata = downloaddata()
     if collection == :UF
-
+        collectionname, matrixname = split(name, '/')
+        (collectionname, matrixname) in matrixdata || 
+                            error("can not find $collectionname\$matrixname in UF sparse matrix collection")
+        fn = string(matrixname, ".tar.gz")
+        dirfn = string(DATA_DIR, '/', "uf", '/', fn)
+        url = string(UF_URL, "MM", '/', collectionname, '/', fn)
+       
     elseif collection == :MM
-
+        collectionname, setname, matrixname = split(name, '/')
+        (collectioname, setname, matrixname) in matrixdata ||
+                            error("can not find $collectionname\$setname\$matrixname in Matrix Market")
+        fn = string(matrixname, ".mtx.gz")
+        dirfn = string(DATA_DIR, '/', "mm", '/', fn)
+        url = "ftp://math.nist.gov/pub/MatrixMarket2/$collectionname/$setname/$matrixname.mtx.gz"
     else
         error("unknown collection $(collection)")
     end
 
-    matrixdata = downloaddata()
-    collectionname, matrixname = split(name, '/')
-    
-    # check if the matrix is in the database
-    if (collectionname, matrixname) in matrixdata  
-        fn = string(matrixname, ".mat")              # file name 
-        dlfname = string(DATA_DIR, '/', "mat", '/', collectionname, '_' ,fn)
-        if !isfile(dlfname)
-            url = string(UF_URL, "mat", '/', collectionname, '/', "$fn")
-            try 
-                download(url, dlfname)
-            catch
-                error("fail to download $fn")
-            end
-        end
-    else
-        error("can not find $collectionname/$matrixname in database")
+    !isfile(dirfn) || error("file name $fn already exists")    
+    try 
+        download(url, dirfn)
+    catch
+        error("fail to download $fn")
     end
+    
 end
 

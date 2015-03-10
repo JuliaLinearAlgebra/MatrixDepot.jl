@@ -35,9 +35,17 @@ function matrixdepot()
 
     # Print UF sparse matrix files
     println()
-    for file in filenames("mat")
+    for file in filenames("uf")
         @printf "%12s|" file
         print("  UF sparse matrix")
+        println()
+    end
+
+    # Print Matrix Market matrix files
+    println()
+    for file in filenames("mm")
+        @printf "%12s|" file
+        print("  NIST Matrix Market matrix")
         println()
     end
     
