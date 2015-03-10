@@ -1,7 +1,7 @@
-# This is a simple modification of function mmread in MatrixMarket.jl 
+# This is a modification of function mmread in MatrixMarket.jl 
 # (https://github.com/JuliaSparse/MatrixMarket.jl)
 
-function mmreader(filename::String, infoonly::Bool=false)
+function mmreader(mmfile::IO, infoonly::Bool=false)
 #   Reads the contents of the Matrix Market file 'filename' into a matrix,
 #   which will be either sparse or dense, depending on the Matrix Market format
 #   indicated by 'coordinate' (coordinate sparse storage), or 'array' (dense
@@ -10,13 +10,13 @@ function mmreader(filename::String, infoonly::Bool=false)
 #   If infoonly is true (default: false), only information on the size and
 #   structure is returned from reading the header. The actual data for the
 #   matrix elements are not parsed.
-    mmfile = open(filename,"r")
+#    mmfile = open(filename,"r")
 
     #Read first line
     firstline = chomp(readline(mmfile))
     tokens = split(firstline)
-    length(tokens)==5 || throw(ParseError(string("Not enough words on first line: ", ll)))
-    tokens[1]=="%%MatrixMarket" || throw(ParseError(string("Not a valid MatrixMarket header:", ll)))
+    length(tokens)==5 || throw(ParseError(string("Not enough words on first line: ", firstline)))
+    tokens[1]=="%%MatrixMarket" || throw(ParseError(string("Not a valid MatrixMarket header:", firstline)))
     (head1, rep, field, symm) = map(lowercase, tokens[2:5])
     head1=="matrix" || throw(ParseError("Unknown MatrixMarket data type: $head1 (only \"matrix\" is supported)"))
     eltype = field=="real"    ? Float64 :
