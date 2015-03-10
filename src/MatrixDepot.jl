@@ -10,8 +10,7 @@ export
 matrixdepot, 
 
 @addproperty, @rmproperty
-
-include("mmreader.jl")      # Matrix Market format reader  
+ 
 include("matrixdepot.jl")   # main functions 
 include("higham.jl")        # test matrices
 include("user.jl")          # user defined properties

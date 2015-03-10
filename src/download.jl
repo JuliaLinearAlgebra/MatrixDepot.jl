@@ -70,7 +70,7 @@ function update()
 end
 
 
-function gunzip(fname; collection::Symbol = :UF)
+function gunzip(fname)
     endswith(fname, ".gz") || error("gunzip: $fname: unknown suffix")
  
     destname = split(fname, ".gz")[1]
@@ -99,42 +99,45 @@ end
 # MatrixDepot.get("SPARSKIT/fidap/fidap020", collection =:MM)
 #
 function get(name; collection::Symbol = :UF)
-    matrixdata = downloaddata()
-     
+         
     if collection == :UF
+        matrixdata = downloaddata()
         collectionname, matrixname = split(name, '/')
         (collectionname, matrixname) in matrixdata || 
                             error("can not find $collectionname\$matrixname in UF sparse matrix collection")
         fn = string(matrixname, ".mat")
        
-        url = string(UF_URL, "MAT", '/', collectionname, '/', fn)
+        url = string(UF_URL, "mat", '/', collectionname, '/', fn)
         dirfn = string(DATA_DIR, '/', "uf",'/',fn)
 
     elseif collection == :MM
+        matrixdata = downloaddata(collection =:MM)
         collectionname, setname, matrixname = split(name, '/')
-        (collectioname, setname, matrixname) in matrixdata ||
-                            error("can not find $collectionname\$setname\$matrixname in Matrix Market")
+        (collectionname, setname, matrixname) in matrixdata ||
+                            error("can not find $collectionname/$setname/$matrixname in Matrix Market")
         fn = string(matrixname, ".mtx.gz")
         url = "ftp://math.nist.gov/pub/MatrixMarket2/$collectionname/$setname/$matrixname.mtx.gz"
-         dirfn = string(DATA_DIR, '/', fn)
+        dirfn = string(DATA_DIR, '/',"mm", '/', fn)
     else
         error("unknown collection $(collection)")
     end
 
    
-    !isfile(dirfn) || error("file $fn already exists")    
-    try 
-        download(url, dirfn)
-    catch
-        error("fail to download $fn")
+    if !isfile(dirfn)     
+        try 
+            download(url, dirfn)
+        catch
+            error("fail to download $fn")
+        end
     end
-
     
     if collection == :MM
-        filename = gunzip(dirfn)
-        source = string(DATA_DIR, '/', filename)
-        dest = string(DATA_DIR, '/', "mm", '/')
-        mv(source, dest)
+        collectionname, setname, matrixname = split(name, '/')
+        fn = string(matrixname, ".mtx")
+        if !isfile(fn)
+            gunzip(dirfn)
+        end
+        rm(dirfn)
     end
     
 end

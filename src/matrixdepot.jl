@@ -159,26 +159,36 @@ function matrixdepot(name::String)
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
     elseif name in filenames("uf")
-        filename = string(name, ".tar.gz")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-        pathfilename = string(matdatadir, '/', filename)
-        io = gzopen(pathfilename, "r")
-        return mmreader(io)
+        pathfilename = string(matdatadir, '/', name, ".mat")
+        matdata = matread(pathfilename)
+        return matdata["Problem"]
+    elseif name in filenames("mm")
+        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
+        pathfilename = string(matdatadir, '/', name, ".mtx")
+        return MatrixMarket.mmread(pathfilename, true)
     else
         error("Your matrix or class is not included in Matrix Depot.")
     end
 end
 
-# return info for UF sparse matrices
-function matrixdepot(name::String, s::Symbol)
-    if s == :info
-        filename = string(name, ".mat")
-        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
-        pathfilename = string(matdatadir, '/', filename)
-        matdata = matread(pathfilename)
-        return matdata["Problem"]
+# return info for matrix data
+function matrixdepot(name::String, method::Symbol)
+    if method == :r
+        if name in filenames("uf")
+            matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
+            pathfilename = string(matdatadir, '/', name, ".mat")
+            matdata = matread(pathfilename)
+            return (matdata["Problem"])["A"]
+
+        elseif name in filenames("mm") 
+            matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
+            pathfilename = string(matdatadir, '/', name, ".mtx")
+            return MatrixMarket.mmread(pathfilename)
+            
+        end
     else
-        error("use symbol :info")
+        error("use Symbol :r to read matrices")
     end
 end
 
