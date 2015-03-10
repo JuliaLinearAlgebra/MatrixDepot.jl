@@ -15,6 +15,7 @@ function filenames(directory::String)
     return namevec
 end
 
+matdata = [filenames("mm"), filenames("uf")]
 
 # print info about all matrices in the collection
 function matrixdepot()
