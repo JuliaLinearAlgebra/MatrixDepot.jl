@@ -158,12 +158,12 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif name in filenames("mat")
-        filename = string(name, ".mat")
-        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mat")
+    elseif name in filenames("uf")
+        filename = string(name, ".tar.gz")
+        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, '/', filename)
-        matdata = matread(pathfilename)
-        return (matdata["Problem"])["A"]
+        io = gzopen(pathfilename, "r")
+        return mmreader(io)
     else
         error("Your matrix or class is not included in Matrix Depot.")
     end
