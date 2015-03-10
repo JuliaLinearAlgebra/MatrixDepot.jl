@@ -128,7 +128,7 @@ a test matrix from NIST Matrix Market: http://math.nist.gov/MatrixMarket/.
 For example,
 
 ```julia
-MatrixDepot.get("Harwell-Boeing/lanpro/nos5", collection = :MM)
+julia> MatrixDepot.get("Harwell-Boeing/lanpro/nos5", collection = :MM)
 ```
 
 See documentation for more details.
