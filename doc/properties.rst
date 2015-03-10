@@ -34,3 +34,7 @@ Other Properties
 
    random
       The matrix is random.
+
+   data
+      Matrix data downloaded from UF sparse matrix collection or
+      NIST Matrix Market. 
