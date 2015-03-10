@@ -89,25 +89,26 @@ julia> matrixdepot("symmetric")
  "tridiag" 
 ```
 
-## Interface to the UF Sparse Matrix Collection
+## Interface to the UF Sparse Matrix Collection and NIST Matrix Market
 
-Use ``downloadsparse`` to download a test matrix from the University
-of Florida Sparse Matrix Collection:
+Use ``MatrixDepot.get(NAME)``, where ``NAME`` is ``collection
+name + '/' + matrix name``, to download a test matrix from the University of
+Florida Sparse Matrix Collection:
 http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.  For
 example:
 
 ```julia
-julia> downloadsparse("HB/illc1850")
+julia> MatrixDepot.get("HB/illc1850")
 ```
 When download is complete, we can generate it using
 
 ```julia
-julia> matrixdepot("illc1850")
+julia> matrixdepot("illc1850", :r)
 ```
 and check matrix information using
 
 ```julia
-julia> matrixdepot("illc1850", :info)
+julia> matrixdepot("illc1850")
 Dict{ASCIIString,Any} with 10 entries:
   "name"   => "HB/illc1850"
   "A"      => …
@@ -120,6 +121,17 @@ Dict{ASCIIString,Any} with 10 entries:
   "date"   => "1979"
   "ed"     => "I. Duff, R. Grimes, J. Lewis"
 ```
+
+Use ``MatrixDepot.get(NAME, collection = :MM)``, where ``NAME`` is
+``collection name + '/' + set name + '/' + matrix name`` to download
+a test matrix from NIST Matrix Market: http://math.nist.gov/MatrixMarket/.
+For example,
+
+```julia
+MatrixDepot.get("Harwell-Boeing/lanpro/nos5", collection = :MM)
+```
+
+See documentation for more details.
 
 ## References
 
