@@ -10,7 +10,7 @@
    matrices.rst
    examples.rst
    properties.rst
-   ufsparse.rst
+   interface.rst
 
 MatrixDepot.jl
 ==============
@@ -22,7 +22,7 @@ MatrixDepot.jl
 * :ref:`matrices` 
 * :ref:`properties`
 * :ref:`examples` 
-* :ref:`ufsparse`
+* :ref:`interfaces`
 
 MatrixDepot.jl is an open source test matrix collection for Julia.
 Source and license information can be found at `GitHub`_.
@@ -125,23 +125,30 @@ matrices is symbolized by ``"symmetric"``.
     "pei"    
     "tridiag"
 
-.. function:: downloadsparse(name)
+.. function:: MatrixDepot.get(name [, collection =:UF])
 
-    Download a matrix from the UF sparse matrix collection, where ``name``
-    is a string of collection name + ``/`` + matrix name. For example::
+    Download a matrix from test matrix collections, where
+    ``name`` is a string of collection name + ``/`` + matrix name if
+    ``collection = :UF`` (UF Sparse Matrix Collection) and ``name`` is
+    collection name + ``/`` + set name + ``/`` + matrix name if
+    ``collection = :MM`` (Matrix Market). For example::
       
-      julia> downloadsparse("HB/illc1850")
+      julia> MatrixDepot.get("HB/illc1850")
+      julia> MatrixDepot.get("Harwell-Boeing/lanpro/nos5", collection = :MM)
+      
+
+.. function:: MatrixDepot.update()
+
+    Update matrix collection database from the web server.
 
 
-.. function:: updatesparse()
+.. function:: matrixdepot(name)
 
-    Update the UF sparse matrix collection database from the web server.
+    Output matrix information, where ``name`` is a matrix data.
 
+.. function:: matrixdepot(name, :r)
 
-.. function:: matrixdepot(name, :info)
-
-    Output matrix information, where ``name`` is a UF sparse matrix.
-
+    Read the matrix data given by ``name``.
 
 We can define our own properties using the macro ``@addproperty`` and
 remove a defined property using ``@rmproperty``.
