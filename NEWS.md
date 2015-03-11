@@ -62,6 +62,13 @@ v0.2.0 and v0.2.1
 
 * Include an interface to the UF Sparse Matrix Collection
 
+v0.2.2
+------
+
+* Include an interface to NIST Matrix Market
+
+* reimplement ransvd to include rectangular case
+
 
 
 

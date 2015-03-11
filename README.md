@@ -147,3 +147,8 @@ See documentation for more details.
   *ACM Transaction on Mathematical Software*,
   vol. 38, Issue 1, (2011), pp 1:1-1:25
   [[pdf]](http://www.cise.ufl.edu/research/sparse/techreports/matrices.pdf)
+
+- R.F. Boisvert, R. Pozo, K. A. Remington, R. F. Barrett, & J. Dongarra,
+  " Matrix Market: a web resource for test matrix collections",
+  *Quality of Numerical Software* (1996) (pp. 125-137).
+  [[pdf]](ftp://ftp.idsa.prd.fr/pub/mirrors/netlib/utk/people/JackDongarra/pdf/matrixmarket.pdf)
