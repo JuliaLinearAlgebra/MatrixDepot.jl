@@ -161,12 +161,12 @@ function matrixdepot(name::String)
         return usermatrixclass[name]
     elseif name in filenames("uf")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-        pathfilename = string(matdatadir, '/', name, ".mat")
+        pathfilename = string(matdatadir, "/", name, ".mat")
         matdata = matread(pathfilename)
         return matdata["Problem"]
     elseif name in filenames("mm")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
-        pathfilename = string(matdatadir, '/', name, ".mtx")
+        pathfilename = string(matdatadir, "/", name, ".mtx")
         return MatrixMarket.mmread(pathfilename, true)
     else
         error("Your matrix or class is not included in Matrix Depot.")
@@ -178,13 +178,13 @@ function matrixdepot(name::String, method::Symbol)
     if method == :r
         if name in filenames("uf")
             matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-            pathfilename = string(matdatadir, '/', name, ".mat")
+            pathfilename = string(matdatadir, "/", name, ".mat")
             matdata = matread(pathfilename)
             return (matdata["Problem"])["A"]
 
         elseif name in filenames("mm") 
             matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
-            pathfilename = string(matdatadir, '/', name, ".mtx")
+            pathfilename = string(matdatadir, "/", name, ".mtx")
             return MatrixMarket.mmread(pathfilename)
             
         end
