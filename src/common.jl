@@ -167,7 +167,11 @@ function matrixdepot(name::String)
     elseif name in filenames("mm")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
         pathfilename = string(matdatadir, "/", name, ".mtx")
-        return MatrixMarket.mmread(pathfilename, true)
+        if VERSION < v"0.4.0-dev+2197"
+            return MatrixMarket.mmread(pathfilename, true)
+        else
+            return MatrixMarket.mmread(ASCIIString(pathfilename), true)
+        end
     else
         error("Your matrix or class is not included in Matrix Depot.")
     end
@@ -185,7 +189,11 @@ function matrixdepot(name::String, method::Symbol)
         elseif name in filenames("mm") 
             matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
             pathfilename = string(matdatadir, "/", name, ".mtx")
-            return MatrixMarket.mmread(pathfilename)
+            if VERSION < v"0.4.0-dev+2197"
+                return MatrixMarket.mmread(pathfilename)
+            else
+                return MatrixMarket.mmread(ASCIIString(pathfilename))
+            end
             
         end
     else
