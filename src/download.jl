@@ -70,16 +70,17 @@ function update()
 end
 
 
-function gunzip(fname, newname)
+function gunzip(fname)
     endswith(fname, ".gz") || error("gunzip: $fname: unknown suffix")
-    
-    fn = string(newname, ".mtx")
-    open(fn, "w") do f
+ 
+    destname = split(fname, ".gz")[1]
+
+    open(destname, "w") do f
         GZip.open(fname) do g
             write(f, readall(g))
         end
     end
-    fn
+    destname
 end
 
 
@@ -137,7 +138,7 @@ function get(name::String, newname::String; collection::Symbol = :UF)
     if collection == :MM
         fn = string(newname, ".mtx")
         if !isfile(fn) 
-            gunzip(dirfn, newname)
+            gunzip(dirfn)
         end
         rm(dirfn)
     end
