@@ -106,7 +106,7 @@ function get(name::String, newname::String; collection::Symbol = :UF)
         matrixdata = downloaddata()
         collectionname, matrixname = split(name, '/')
         (collectionname, matrixname) in matrixdata || 
-                            error("can not find $collectionname\$matrixname in UF sparse matrix collection")
+                            error("can not find $collectionname/$matrixname in UF sparse matrix collection")
         fn = string(newname, ".mat")
        
         url = string(UF_URL, "mat", '/', collectionname, '/', matrixname, ".mat")
