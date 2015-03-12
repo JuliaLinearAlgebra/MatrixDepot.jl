@@ -70,17 +70,16 @@ function update()
 end
 
 
-function gunzip(fname)
+function gunzip(fname, newname)
     endswith(fname, ".gz") || error("gunzip: $fname: unknown suffix")
- 
-    destname = split(fname, ".gz")[1]
-
-    open(destname, "w") do f
+    
+    fn = string(newname, ".mtx")
+    open(fn, "w") do f
         GZip.open(fname) do g
             write(f, readall(g))
         end
     end
-    destname
+    fn
 end
 
 
@@ -98,47 +97,57 @@ end
 # MatrixDepot.get("Pajek/GD98_a")
 # MatrixDepot.get("SPARSKIT/fidap/fidap020", collection =:MM)
 #
-function get(name; collection::Symbol = :UF)
+function get(name::String, newname::String; collection::Symbol = :UF)
          
     if collection == :UF
         matrixdata = downloaddata()
         collectionname, matrixname = split(name, '/')
         (collectionname, matrixname) in matrixdata || 
                             error("can not find $collectionname\$matrixname in UF sparse matrix collection")
-        fn = string(matrixname, ".mat")
+        fn = string(newname, ".mat")
        
-        url = string(UF_URL, "mat", '/', collectionname, '/', fn)
+        url = string(UF_URL, "mat", '/', collectionname, '/', matrixname, ".mat")
         dirfn = string(DATA_DIR, '/', "uf",'/',fn)
-
+        old_dirfn = dirfn
     elseif collection == :MM
         matrixdata = downloaddata(collection =:MM)
         collectionname, setname, matrixname = split(name, '/')
         (collectionname, setname, matrixname) in matrixdata ||
                             error("can not find $collectionname/$setname/$matrixname in Matrix Market")
-        fn = string(matrixname, ".mtx.gz")
+        fn = string(newname, ".mtx.gz")
         url = "ftp://math.nist.gov/pub/MatrixMarket2/$collectionname/$setname/$matrixname.mtx.gz"
         dirfn = string(DATA_DIR, '/',"mm", '/', fn)
+        old_dirfn = string(DATA_DIR, '/',"mm", '/', newname, ".mtx" )
     else
         error("unknown collection $(collection)")
     end
 
    
-    if !isfile(dirfn)     
-        try 
-            download(url, dirfn)
-        catch
-            error("fail to download $fn")
-        end
+    !isfile(ord_dirfn) || error("file $fn exists, try rename it with MatrixDepot.get(name, newname, collection)")    
+    try 
+        download(url, dirfn)
+    catch
+        error("fail to download $fn")
     end
     
+    
     if collection == :MM
-        collectionname, setname, matrixname = split(name, '/')
-        fn = string(matrixname, ".mtx")
-        if !isfile(fn)
-            gunzip(dirfn)
+        fn = string(newname, ".mtx")
+        if !isfile(fn) 
+            gunzip(dirfn, newname)
         end
         rm(dirfn)
     end
     
 end
+
+function get(name::String; collection::Symbol = :UF)
+    if collection == :UF
+        collectionname, matrixname = split(name, '/')
+        get(name, matrixname)
+    elseif collection == :MM
+        collectionname, setname, matrixname = split(name, '/')
+        get(name, matrixname, collection = :MM)
+    end
+end 
 
