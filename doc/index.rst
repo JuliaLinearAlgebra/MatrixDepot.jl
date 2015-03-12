@@ -125,13 +125,16 @@ matrices is symbolized by ``"symmetric"``.
     "pei"    
     "tridiag"
 
-.. function:: MatrixDepot.get(name [, collection =:UF])
+.. function:: MatrixDepot.get(name [,newname] [, collection =:UF])
 
     Download a matrix from test matrix collections, where
     ``name`` is a string of collection name + ``/`` + matrix name if
     ``collection = :UF`` (UF Sparse Matrix Collection) and ``name`` is
     collection name + ``/`` + set name + ``/`` + matrix name if
-    ``collection = :MM`` (Matrix Market). For example::
+    ``collection = :MM`` (Matrix Market). 
+    If ``newname`` is present, the downloaded matrix will be renamed to 
+    ``newname``.
+    For example::
       
       julia> MatrixDepot.get("HB/illc1850")
       julia> MatrixDepot.get("Harwell-Boeing/lanpro/nos5", collection = :MM)

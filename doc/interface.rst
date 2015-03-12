@@ -94,4 +94,6 @@ The way to generate a matrix from NIST Matrix Market and check matrix
 information are the same as above.
  
 
-
+.. note::
+   If duplicate names are present, you can rename it with 
+   ``MatrixDepot.get(NAME, NEWNAME, collection)``.
