@@ -91,6 +91,8 @@ end
 # get(NAME, collection = :MM) download a matrix from Matrix Market
 # where NAME is string of collection name + '/' + set name + '/' + matrix name.
 #
+# get(NAME, NEWNAME, collecion) download a matrix and rename it to newname. 
+#
 # Example
 # -------
 # MatrixDepot.get("HB/1138_bus", collection = :UF)
@@ -123,9 +125,10 @@ function get(name::String, newname::String; collection::Symbol = :UF)
     end
 
    
-    !isfile(ord_dirfn) || error("file $fn exists, try rename it with MatrixDepot.get(name, newname, collection)")    
+    !isfile(old_dirfn) || error("file $fn exists, try rename it with MatrixDepot.get(name, newname, collection)")    
     try 
         download(url, dirfn)
+        println("download:", dirfn)
     catch
         error("fail to download $fn")
     end
