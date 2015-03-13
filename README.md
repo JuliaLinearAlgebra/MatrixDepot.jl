@@ -5,13 +5,18 @@
 | Julia 0.3 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_release.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=release)
 | Julia 0.4 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_nightly.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=nightly)
 
-An Extensible test matrix collection for Julia.
+An extensible test matrix collection for Julia.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
 * [Examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb)
 
 * [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
+
+**NOTE:** currently we use MAT.jl to read the downloaded UF sparse 
+ matrices. If you are running MatrixDepot on Julia v0.4, you will
+ see a few lines of warnings. We are aiming to improve the matrix
+ data reader soon. 
 
 ## Install
 
