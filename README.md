@@ -11,6 +11,8 @@ An extensible test matrix collection for Julia.
 
 * [Examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb)
 
+* [Demo](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/MatrixDepot_Demo.ipynb)
+
 * [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
 
 **NOTE:** currently we use MAT.jl to read the downloaded UF sparse 
