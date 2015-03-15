@@ -222,7 +222,7 @@ function addproperty(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname is an existing property."))
     !(propname in keys(usermatrixclass)) || throw (ArgumentError("You have defined property $propname."))
     for matname in eval(ex.args[2])
-        matname in keys(matrixdict) || throw(ArgumentError("$matname is not in the collection."))
+        matname in keys(matrixdict) || matname in matdata() || throw(ArgumentError("$matname is not in the collection."))
     end
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
