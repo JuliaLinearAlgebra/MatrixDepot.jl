@@ -1,6 +1,6 @@
-# ignore IJulia Notebook and org 
-*.ipynb
+# ignore org
 *.org
+
 # ignore generated files from Sphinx
 _build
 _static
