@@ -23,7 +23,7 @@ function matrixdepot()
     # Print information strings 
     println()
     println("            | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |")
-    for mat in keys(matrixdict)
+    for mat in sort(collect(keys(matrixdict))) # display in alphabetical order
         @printf "%12s|" mat
         for prop in ["symmetric", "inverse", "ill-cond", "pos-def", "eigen"]
             if mat in matrixclass[prop]
