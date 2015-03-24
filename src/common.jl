@@ -178,6 +178,17 @@ function matrixdepot(name::String)
     end
 end
 
+# access matrices by number
+function matrixdepot(num::Int)
+    matrixstrings = sort(collect(keys(matrixdict)))
+    n = length(matrixstrings)
+    if num > n
+        error("There are $(n) parameterized matrices, but you ask for the $(num)-th ")
+    end
+    return matrixstrings[num]
+end
+
+
 # return info for matrix data
 function matrixdepot(name::String, method::Symbol)
     if method == :r
