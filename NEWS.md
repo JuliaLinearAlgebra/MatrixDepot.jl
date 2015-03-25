@@ -70,6 +70,21 @@ v0.2.2
 * reimplement ransvd to include rectangular case
 
 
+TODO
+----
+
+* citation: provide reference information for matrices in the collection
+
+* matrix reader: move to MatrixMarket reader for all the downloaded matrices
+  in the collection
+
+* add test matrices from Regularization toolbox?
+
+* add a subcollection for symmetric quasi-definite linear system?
+
+
+
+
 
 
   
