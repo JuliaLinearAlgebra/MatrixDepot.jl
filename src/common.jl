@@ -188,6 +188,13 @@ function matrixdepot(num::Int)
     return matrixstrings[num]
 end
 
+function matrixdepot(I::UnitRange{Int})
+    matrixnamelist = ASCIIString[] 
+    for i in I
+        push!(matrixnamelist, matrixdepot(i))
+    end
+    return matrixnamelist        
+end
 
 # return info for matrix data
 function matrixdepot(name::String, method::Symbol)
