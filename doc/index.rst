@@ -125,6 +125,30 @@ matrices is symbolized by ``"symmetric"``.
     "pei"    
     "tridiag"
 
+.. function:: matrixdepot(num)
+
+   Access matrix by number. For example::
+     
+     julia> matrixdepot(3)
+     "chebspec"
+
+.. function:: matrixdepot(num1:num2)
+
+   Access matrix by ``UnitRange{Int64}``. For example::
+
+     julia> matrixdepot(3:12)
+     10-element Array{ASCIIString,1}:
+     "chebspec"
+     "chow"    
+     "circul"  
+     "clement" 
+     "dingdong"
+     "fiedler" 
+     "forsythe"
+     "frank"   
+     "grcar"   
+     "hadamard"
+
 .. function:: MatrixDepot.get(name [,newname] [, collection =:UF])
 
     Download a matrix from test matrix collections, where
