@@ -130,14 +130,14 @@ function get(name::String; collection::Symbol = :UF)
         error("unknown collection $(collection)")
     end
 
-    if !isfile(dirfn)
-        try 
-            download(url, dirfn)
-            println("download:", dirfn)
-        catch
-            error("fail to download $fn")
-        end
-    end    
+    !isfile(string(dir, uzfn)) || error("file $(uzfn) exits, no need to download")
+    try 
+        download(url, dirfn)
+        println("download:", dirfn)
+    catch
+        error("fail to download $fn")
+    end
+        
         
     if !isfile(diruzfn) 
         gunzip(dirfn)
@@ -145,9 +145,10 @@ function get(name::String; collection::Symbol = :UF)
     rm(dirfn)
     
     if collection == :UF
-        run(`tar -vxf $(dir)/$(matrixname).tar`)
+        run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
         cp("$(diruzfn)", "$(dir)/$(uzfn)")
-       # rm(diruzfn)
+        rm(string(dir,'/', matrixname, ".tar"))
+        rm(string(dir, '/', matrixname), recursive=true)
     end
     
 end
