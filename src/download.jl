@@ -102,6 +102,9 @@ end
 function get(name::String; collection::Symbol = :UF)
          
     if collection == :UF
+        if !isdir(string(DATA_DIR, '/', "uf"))
+            mkdir(string(DATA_DIR, '/', "uf"))
+        end
         matrixdata = downloaddata()
         collectionname, matrixname = split(name, '/')
         (collectionname, matrixname) in matrixdata || 
@@ -118,14 +121,19 @@ function get(name::String; collection::Symbol = :UF)
         diruzfn = string(dir, matrixname, '/', uzfn)
 
     elseif collection == :MM
+        if !isdir(string(DATA_DIR, '/', "mm"))
+            mkdir(string(DATA_DIR, '/', "mm"))
+        end
         matrixdata = downloaddata(collection =:MM)
         collectionname, setname, matrixname = split(name, '/')
         (collectionname, setname, matrixname) in matrixdata ||
                             error("can not find $collectionname/$setname/$matrixname in Matrix Market")
         fn = string(matrixname, ".mtx.gz")
+        uzfn = string(matrixname, ".mtx")
         url = "ftp://math.nist.gov/pub/MatrixMarket2/$collectionname/$setname/$matrixname.mtx.gz"
-        dirfn = string(DATA_DIR, '/',"mm", '/', fn)
-        old_dirfn = string(DATA_DIR, '/',"mm", '/', matrixname, ".mtx" )
+        dir = string(DATA_DIR, '/', "mm", '/') 
+        dirfn = string(dir, fn)
+        diruzfn = string(dir, uzfn)
     else
         error("unknown collection $(collection)")
     end

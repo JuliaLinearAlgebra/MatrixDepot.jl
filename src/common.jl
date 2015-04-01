@@ -36,19 +36,25 @@ function matrixdepot()
     end
 
     # Print UF sparse matrix files
-    println()
-    for file in filenames("uf")
-        @printf "%12s|" file
-        print("  UF sparse matrix")
+    if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
         println()
+        for col in filenames("uf")
+            for mat in filenames("uf/$(col)")            
+                @printf "%25s|" string(col, '/', mat)
+                print("  UF sparse matrix")
+                println()
+            end
+        end
     end
 
     # Print Matrix Market matrix files
-    println()
-    for file in filenames("mm")
-        @printf "%12s|" file
-        print("  NIST Matrix Market matrix")
+    if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
         println()
+        for file in filenames("mm")
+            @printf "%25s|" file
+            print("  NIST Matrix Market matrix")
+            println()
+        end
     end
     
     # print user defined properties
@@ -160,11 +166,14 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif name in filenames("uf")
+    elseif '/' in name  # this could cause a bug in filename has '/'
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-        pathfilename = string(matdatadir, "/", name, ".mat")
-        matdata = matread(pathfilename)
-        return matdata["Problem"]
+        pathfilename = string(matdatadir, "/", name, ".mtx")
+        if VERSION < v"0.4.0-dev+2197"
+            return MatrixMarket.mmread(pathfilename, true)
+        else
+            return MatrixMarket.mmread(ASCIIString(pathfilename), true)
+        end
     elseif name in filenames("mm")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
         pathfilename = string(matdatadir, "/", name, ".mtx")
@@ -196,25 +205,23 @@ function matrixdepot(I::UnitRange{Int})
     return matrixnamelist        
 end
 
-# return info for matrix data
+# generate the required matrix
 function matrixdepot(name::String, method::Symbol)
     if method == :r
-        if name in filenames("uf")
+        if '/' in name
             matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-            pathfilename = string(matdatadir, "/", name, ".mat")
-            matdata = matread(pathfilename)
-            return (matdata["Problem"])["A"]
-
+            
         elseif name in filenames("mm") 
             matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
-            pathfilename = string(matdatadir, "/", name, ".mtx")
-            if VERSION < v"0.4.0-dev+2197"
-                return MatrixMarket.mmread(pathfilename)
-            else
-                return MatrixMarket.mmread(ASCIIString(pathfilename))
-            end
-            
+
         end
+        pathfilename = string(matdatadir, "/", name, ".mtx")
+        if VERSION < v"0.4.0-dev+2197"
+            return MatrixMarket.mmread(pathfilename)
+        else
+            return MatrixMarket.mmread(ASCIIString(pathfilename))
+        end            
+        
     else
         error("use Symbol :r to read matrices")
     end
