@@ -16,8 +16,6 @@ function filenames(directory::String)
 end
 
 
-matdata() = [filenames("uf"), filenames("mm")]
-
 # print info about all matrices in the collection
 function matrixdepot()
     # Print information strings 
@@ -166,7 +164,7 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif '/' in name  # this could cause a bug in filename has '/'
+    elseif '/' in name  # this could cause a bug if other matrix name has '/'
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
         if VERSION < v"0.4.0-dev+2197"
@@ -174,14 +172,16 @@ function matrixdepot(name::String)
         else
             return MatrixMarket.mmread(ASCIIString(pathfilename), true)
         end
-    elseif name in filenames("mm")
-        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
-        pathfilename = string(matdatadir, "/", name, ".mtx")
-        if VERSION < v"0.4.0-dev+2197"
-            return MatrixMarket.mmread(pathfilename, true)
-        else
-            return MatrixMarket.mmread(ASCIIString(pathfilename), true)
+    elseif name == "data"
+        namelist = String[]
+        if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
+            for col in filenames("uf")
+                for mat in filenames("uf/$(col)")
+                    push!(namelist, string(col,'/',mat))
+                end
+            end
         end
+        return namelist
     else
         error("Your matrix or class is not included in Matrix Depot.")
     end
@@ -208,13 +208,7 @@ end
 # generate the required matrix
 function matrixdepot(name::String, method::Symbol)
     if method == :r
-        if '/' in name
-            matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-            
-        elseif name in filenames("mm") 
-            matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
-
-        end
+        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
         if VERSION < v"0.4.0-dev+2197"
             return MatrixMarket.mmread(pathfilename)

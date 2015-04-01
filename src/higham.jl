@@ -1065,6 +1065,5 @@ matrixclass =
              # minor properties
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess", 
-                          "wathen"],
-             "data" => matdata()  # matrix data from UF or Matrix Market
+                          "wathen"]
                );
