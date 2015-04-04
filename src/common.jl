@@ -1,11 +1,9 @@
 # return a list of file names without suffix in the directory
 # e.g. filenames(mm) and filenames(uf)
 function filenames(directory::String)
-    if VERSION < v"0.4.0-dev+2197"
-        namevec = {}
-    else
-        namevec = []
-    end
+
+    namevec = String[]
+ 
     matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "$directory")
     matvec = readdir(matdatadir)
     for file in matvec
@@ -169,11 +167,9 @@ function matrixdepot(name::String)
            error("matrix data $(name) is not included, try MatrixDepot.get(\"$(name)\").")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
-        if VERSION < v"0.4.0-dev+2197"
-            return MatrixMarket.mmread(pathfilename, true)
-        else
-            return MatrixMarket.mmread(ASCIIString(pathfilename), true)
-        end
+
+        println(ufinfo(pathfilename))
+        return 
         
     elseif name == "data" # deal with the property "data"
         namelist = String[]
@@ -213,11 +209,8 @@ function matrixdepot(name::String, method::Symbol)
     if method == :r
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
-        if VERSION < v"0.4.0-dev+2197"
-            return MatrixMarket.mmread(pathfilename)
-        else
-            return MatrixMarket.mmread(ASCIIString(pathfilename))
-        end            
+
+        return MatrixMarket.mmread(pathfilename)
         
     else
         error("use Symbol :r to read matrices")
