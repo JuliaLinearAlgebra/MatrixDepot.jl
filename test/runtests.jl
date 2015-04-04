@@ -40,7 +40,15 @@ include("test_rohess.jl")
 include("test_kms.jl")
 include("test_wathen.jl")
 
-# try read matrix data
-include("interface.jl")  
+
+tests = [
+         "download",
+         ]
+
+for t in tests
+    tp = joinpath(Pkg.dir("MatrixDepot"), "test", "$(t).jl")
+    println("running $(tp) ...")
+    include(tp)
+end
 
 println("Success in all tests.")
