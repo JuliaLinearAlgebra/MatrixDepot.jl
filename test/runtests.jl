@@ -43,6 +43,8 @@ include("test_wathen.jl")
 
 tests = [
          "download",
+         "number",
+         "property",
          ]
 
 for t in tests
