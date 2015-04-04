@@ -38,7 +38,7 @@ function matrixdepot()
         println()
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")            
-                @printf "%25s|" string(col, '/', mat)
+                @printf "%20s|" string(col, '/', mat)
                 print("  UF sparse matrix")
                 println()
             end
@@ -49,7 +49,7 @@ function matrixdepot()
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
         println()
         for file in filenames("mm")
-            @printf "%25s|" file
+            @printf "%20s|" file
             print("  NIST Matrix Market matrix")
             println()
         end
@@ -164,7 +164,7 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif '/' in name  # this could cause a bug if other matrix name has '/'
+    elseif (split(name, '/')[1], split(name, '/')[2]) in downloaddata()
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
         if VERSION < v"0.4.0-dev+2197"
@@ -172,7 +172,8 @@ function matrixdepot(name::String)
         else
             return MatrixMarket.mmread(ASCIIString(pathfilename), true)
         end
-    elseif name == "data"
+        
+    elseif name == "data" # deal with the property "data"
         namelist = String[]
         if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
             for col in filenames("uf")
