@@ -1,32 +1,30 @@
-# Download data from UF Sparse Matrix Collection and NIST Matrix Market
 
-const UF_URL = "http://www.cise.ufl.edu/research/sparse/"  # UF Sparse Matrix collection
+#####################################################
+# Download data from UF Sparse Matrix Collection 
+#####################################################
+const UF_URL = "http://www.cise.ufl.edu/research/sparse/"  
 const DATA_DIR = joinpath(Pkg.dir("MatrixDepot"), "data")
 
 # download html files and store matrix data as a list of tuples
-function downloaddata(; collection::Symbol = :UF, generate_list::Bool = true)
-    if collection == :UF     # UF Sparse matrix collection
-        dlurl = string(UF_URL, "matrices/list_by_id.html")
-        matrices = string(DATA_DIR, "/uf_matrices.html")
-    else 
-        error("unknown collection $collection")
-    end
+function downloaddata(; generate_list::Bool = true)
+    # UF Sparse matrix collection
+    dlurl = string(UF_URL, "matrices/list_by_id.html")
+    matrices = string(DATA_DIR, "/uf_matrices.html")
+
     isfile(matrices) || download(dlurl, matrices)
 
     if generate_list
-        matrixdata = {}
+        matrixdata = Tuple[]
         open(matrices) do f
-            if collection == :UF        
-                for line in readlines(f)
-                    
-                    if contains(line, """MAT</a>""")
-                        collectionname, matrixname = split(split(line, '"')[2], '/')[end-1:end]
-                        matrixname = split(matrixname, '.')[1]
-                        push!(matrixdata, (collectionname, matrixname)) 
-                    end
-
+            
+            for line in readlines(f)
+                
+                if contains(line, """MAT</a>""")
+                    collectionname, matrixname = split(split(line, '"')[2], '/')[end-1:end]
+                    matrixname = split(matrixname, '.')[1]
+                    push!(matrixdata, (collectionname, matrixname)) 
                 end
-        
+
             end
         end
         return matrixdata
@@ -41,7 +39,7 @@ function update()
         rm(uf_matrices)
     end       
 
-    downloaddata(collection =:UF, generate_list = false)
+    downloaddata(generate_list = false)
 
 end
 
@@ -67,33 +65,28 @@ end
 #
 # Example
 # -------
-# MatrixDepot.get("HB/1138_bus", collection = :UF)
-# MatrixDepot.get("Pajek/GD98_a")
-# MatrixDepot.get("SPARSKIT/fidap/fidap020", collection =:MM)
+# MatrixDepot.get("HB/1138_bus")
 #
-function get(name::String; collection::Symbol = :UF)
-         
-    if collection == :UF
-        if !isdir(string(DATA_DIR, '/', "uf"))
-            mkdir(string(DATA_DIR, '/', "uf"))
-        end
-        matrixdata = downloaddata()
-        collectionname, matrixname = split(name, '/')
-        (collectionname, matrixname) in matrixdata || 
-                            error("can not find $collectionname/$matrixname in UF sparse matrix collection")
-        fn = string(matrixname, ".tar.gz")
-        uzfn = string(matrixname, ".mtx")
-        url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
-        
-        dir = string(DATA_DIR, '/', "uf", '/', collectionname, '/')
-        if !isdir(dir)
-            mkdir(string(DATA_DIR, '/', "uf", '/', collectionname))
-        end
-        dirfn = string(dir, fn)
-        diruzfn = string(dir, matrixname, '/', uzfn)
-    else
-        error("unknown collection $(collection)")
+function get(name::String)
+            
+    if !isdir(string(DATA_DIR, '/', "uf"))
+        mkdir(string(DATA_DIR, '/', "uf"))
     end
+    matrixdata = downloaddata()
+    collectionname, matrixname = split(name, '/')
+    (collectionname, matrixname) in matrixdata || 
+       error("can not find $collectionname/$matrixname in UF sparse matrix collection")
+    fn = string(matrixname, ".tar.gz")
+    uzfn = string(matrixname, ".mtx")
+    url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
+        
+    dir = string(DATA_DIR, '/', "uf", '/', collectionname, '/')
+    if !isdir(dir)
+        mkdir(string(DATA_DIR, '/', "uf", '/', collectionname))
+    end
+    dirfn = string(dir, fn)
+    diruzfn = string(dir, matrixname, '/', uzfn)
+
 
     !isfile(string(dir, uzfn)) || error("file $(uzfn) exits, no need to download")
     try 
@@ -109,12 +102,10 @@ function get(name::String; collection::Symbol = :UF)
     end
     rm(dirfn)
     
-    if collection == :UF
-        run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
-        cp("$(diruzfn)", "$(dir)/$(uzfn)")
-        rm(string(dir,'/', matrixname, ".tar"))
-        rm(string(dir, '/', matrixname), recursive=true)
-    end
+    run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
+    cp("$(diruzfn)", "$(dir)/$(uzfn)")
+    rm(string(dir,'/', matrixname, ".tar"))
+    rm(string(dir, '/', matrixname), recursive=true)
     
 end
 
