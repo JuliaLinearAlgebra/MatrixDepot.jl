@@ -70,6 +70,14 @@ v0.2.2
 * reimplement ransvd to include rectangular case
 
 
+v0.2.5 (Coming soon)
+--------------------
+
+* support accessing matrices by number
+
+* order matrices alphabetically 
+
+
 TODO
 ----
 
