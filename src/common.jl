@@ -164,7 +164,9 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif (split(name, '/')[1], split(name, '/')[2]) in downloaddata()
+    elseif '/' in name
+        (split(name, '/')[1], split(name, '/')[2]) in downloaddata() || 
+           error("matrix data $(name) is not included, try MatrixDepot.get(\"$(name)\").")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
         if VERSION < v"0.4.0-dev+2197"
@@ -184,7 +186,7 @@ function matrixdepot(name::String)
         end
         return namelist
     else
-        error("Your matrix or class is not included in Matrix Depot.")
+        error("$(name) is not included in Matrix Depot.")
     end
 end
 
