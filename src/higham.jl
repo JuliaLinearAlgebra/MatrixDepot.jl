@@ -44,7 +44,7 @@ function hadamard{T}(::Type{T}, n::Int)
     
     H = reshape(T[1], 1, 1)
     for i = 1:lgn
-        H = [[H H], [H -H]]
+        H = [[H H]; [H -H]]
     end
     return H
 end
@@ -63,7 +63,7 @@ function cauchy{T}(x::Vector{T}, y::Vector{T})
 end
 
 cauchy{T}(x::Vector{T}) = cauchy(x, x)
-cauchy{T}(::Type{T}, k::Int) = cauchy(T[1:k])
+cauchy{T}(::Type{T}, k::Int) = cauchy(T[1:k;])
 
 #
 # Circul Matrix
@@ -75,7 +75,7 @@ function circul{T}(v::Vector{T}, w::Vector{T})
     m = length(v)
     n = length(w)
     C = zeros(T, m, n)
-    [C[i,j] = v[one(T) + mod(j - i, n)] for i = 1:m, j = 1:n]
+    [C[i,j] = v[1 + mod(j - i, n)] for i = 1:m, j = 1:n]
     return C
 end
 
@@ -103,7 +103,7 @@ function frank{T}(::Type{T}, n::Int, k::Int)
     # type: data type
     # n: the dimension of the matrix
     # k = 0 or 1: k = 1 reflect about the anti-diagonal
-    p = T[n:-1:1];
+    p = T[n:-1:1;];
     F = triu(ones(T, n, 1)*p') + diagm(p[2:n], -1);
     k == 0 ?  F :
     k == 1 ?  F[p,p]' : error("k = 0 or 1, but get ", k)
@@ -182,9 +182,9 @@ function magic{T}(::Type{T}, n::Int)
         if n == 2
             return M
         end
-        i = [1:p]
+        i = [1:p;]
         k = div(n-2, 4)
-        j = [[1:k], [(n-k+2) : n]]
+        j = [[1:k;]; [(n-k+2) : n;]]
         M[[i;i+p],j] = M[[i+p;i],j]
         i = k+1
         j = [1, i]
@@ -276,7 +276,7 @@ function vand{T}(p::Vector{T}, n::Int)
     end
     return V
 end
-vand{T}(::Type{T}, n::Int) = vand(T[1:n], n)
+vand{T}(::Type{T}, n::Int) = vand(T[1:n;], n)
 vand{T}(p::Vector{T}) = vand(p, length(p))
 
 #
@@ -341,8 +341,8 @@ function clement{T}(::Type{T}, n::Int, k::Int = 0)
         return zeros(T, 1, 1)
     end
     n = n -1
-    x = T[n:-1:1]
-    z = T[1:n]
+    x = T[n:-1:1;]
+    z = T[1:n;]
     if k == 0
         A = Tridiagonal(x,zeros(T,n+1),z)
     else
@@ -361,7 +361,7 @@ function fiedler{T}(v::Vector{T})
     A = ones(T, n) * v
     A = abs(A - A.') # nonconjugate transpose
 end
-fiedler{T}(::Type{T}, n::Int) = fiedler(T[1:n])
+fiedler{T}(::Type{T}, n::Int) = fiedler(T[1:n;])
 
 #
 # MIN[I,J] Matrix
@@ -378,7 +378,7 @@ end
 function binomialm{T}(::Type{T}, n::Int)
     # Mulitiple of involutory matrix
     L = Array(T, n, n)
-    D = Diagonal((-2).^[0:n-1])
+    D = Diagonal((-2).^[0:n-1;])
     [L[i,j] = binomial(i-1, j-1) for i = 1:n, j = 1:n]
     U = L[n:-1:1, n:-1:1]
     return L*D*U
@@ -620,7 +620,7 @@ end
 #   Eigenvalues, Linear and Multilinear Algebra, 55(3)(2007), pp. 239-247.
 #
 function sampling{T}(::Type{T}, n::Int)
-    p = T[1:n] / n
+    p = T[1:n;] / n
     return sampling(p)
 end
 
@@ -632,7 +632,7 @@ function wilkinson{T}(::Type{T}, n::Int)
         return ones(T, 1, 1)
     end
     m = (n-1)/2
-    A = Tridiagonal(ones(T,n-1), abs(T[-m:m]), ones(T, n-1))
+    A = Tridiagonal(ones(T,n-1), abs(T[-m:m;]), ones(T, n-1))
     return A
 end
 
@@ -700,9 +700,9 @@ function randsvd{T}(::Type{T}, m::Int, n::Int, kappa, mode::Int)
 
     if mode == 3 
         factor = kappa^(-1/(p-1))
-        sigma = factor.^[0:p-1]
+        sigma = factor.^[0:p-1;]
     elseif mode == 4 
-        sigma = ones(T, p) - T[0:p-1]/(p-1)*(1 - 1/kappa)
+        sigma = ones(T, p) - T[0:p-1;]/(p-1)*(1 - 1/kappa)
     elseif mode == 5
         sigma = exp(-rand(p) * log(kappa))
     elseif mode == 2
@@ -737,7 +737,7 @@ function rohess{T}(::Type{T}, n::Int)
         theta = x[i-1]
         c = convert(T, cos(theta))
         s = convert(T, sin(theta))
-        H[[i-1, i], :] = [c*H[i-1, :] + s*H[i, :], -s*H[i-1, :] + c*H[i, :]]
+        H[[i-1; i], :] = [c*H[i-1, :] + s*H[i, :]; -s*H[i-1, :] + c*H[i, :]]
     end
     return H
 end
