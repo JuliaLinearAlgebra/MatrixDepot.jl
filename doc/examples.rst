@@ -11,46 +11,45 @@ To see all the matrices in the collection, type
 
 .. parsed-literal::
 
-          | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |
-       kms|     *     |     *     |     *     |     *     |           |
-      vand|           |     *     |     *     |           |           |
-   poisson|     *     |     *     |           |     *     |     *     |
-     frank|           |           |     *     |           |     *     |
-     minij|     *     |     *     |           |     *     |     *     |
-   clement|     *     |     *     |           |           |     *     |
-   tridiag|     *     |     *     |     *     |     *     |     *     |
-    circul|     *     |           |           |     *     |     *     |
-  dingdong|     *     |           |           |           |     *     |
-  hadamard|           |     *     |           |           |     *     |
-     moler|     *     |     *     |     *     |     *     |           |
-     invol|           |     *     |     *     |           |     *     |
-   fiedler|     *     |     *     |           |           |     *     |
-  binomial|           |           |           |           |           |
-    lehmer|     *     |     *     |           |     *     |           |
-    rohess|           |           |           |           |           |
-   invhilb|     *     |     *     |     *     |     *     |           |
-    lotkin|           |     *     |     *     |           |     *     |
- wilkinson|     *     |           |           |           |     *     |
-      triw|           |     *     |     *     |           |           |
-   randsvd|     *     |           |     *     |           |           |
-    rosser|           |           |     *     |           |     *     |
-     rando|           |           |           |           |           |
-     magic|           |     *     |           |           |           |
-     kahan|           |     *     |     *     |           |           |
-    pascal|     *     |     *     |     *     |     *     |     *     |
-  chebspec|           |           |           |           |     *     |
-      chow|           |           |           |           |     *     |
-  sampling|           |           |           |           |     *     |
-      hilb|     *     |     *     |     *     |     *     |           |
-    cauchy|     *     |     *     |     *     |     *     |           |
-    wathen|     *     |           |           |     *     |     *     |
-       pei|     *     |     *     |     *     |     *     |           |
-    parter|           |           |           |           |     *     |
-  forsythe|           |     *     |     *     |           |     *     |
-  randcorr|     *     |           |           |           |           |
-   neumann|           |           |           |           |     *     |
-     grcar|           |           |           |           |     *     |
-
+            | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |
+    binomial|           |           |           |           |           |
+      cauchy|     *     |     *     |     *     |     *     |           |
+    chebspec|           |           |           |           |     *     |
+        chow|           |           |           |           |     *     |
+      circul|     *     |           |           |     *     |     *     |
+     clement|     *     |     *     |           |           |     *     |
+    dingdong|     *     |           |           |           |     *     |
+     fiedler|     *     |     *     |           |           |     *     |
+    forsythe|           |     *     |     *     |           |     *     |
+       frank|           |           |     *     |           |     *     |
+       grcar|           |           |           |           |     *     |
+    hadamard|           |     *     |           |           |     *     |
+        hilb|     *     |     *     |     *     |     *     |           |
+     invhilb|     *     |     *     |     *     |     *     |           |
+       invol|           |     *     |     *     |           |     *     |
+       kahan|           |     *     |     *     |           |           |
+         kms|     *     |     *     |     *     |     *     |           |
+      lehmer|     *     |     *     |           |     *     |           |
+      lotkin|           |     *     |     *     |           |     *     |
+       magic|           |     *     |           |           |           |
+       minij|     *     |     *     |           |     *     |     *     |
+       moler|     *     |     *     |     *     |     *     |           |
+     neumann|           |           |           |           |     *     |
+      parter|           |           |           |           |     *     |
+      pascal|     *     |     *     |     *     |     *     |     *     |
+         pei|     *     |     *     |     *     |     *     |           |
+     poisson|     *     |     *     |           |     *     |     *     |
+    randcorr|     *     |           |           |           |           |
+       rando|           |           |           |           |           |
+     randsvd|           |           |     *     |           |           |
+      rohess|           |           |           |           |           |
+      rosser|           |           |     *     |           |     *     |
+    sampling|           |           |           |           |     *     |
+     tridiag|     *     |     *     |     *     |     *     |     *     |
+        triw|           |     *     |     *     |           |           |
+        vand|           |     *     |     *     |           |           |
+      wathen|     *     |           |           |     *     |     *     |
+   wilkinson|     *     |           |           |           |     *     |
 
 The meaning of the column heading is as follows:
 
@@ -75,7 +74,6 @@ We can generate a Hilbert matrix of size 4 by typing
     matrixdepot("hilb", 4)
 
 
-
 .. parsed-literal::
 
     4x4 Array{Float64,2}:
@@ -91,7 +89,6 @@ and generate a circul matrix of size 5 by
 .. code:: julia
 
     matrixdepot("circul", 5)
-
 
 
 .. parsed-literal::
