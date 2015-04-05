@@ -209,8 +209,12 @@ function matrixdepot(name::String, method::Symbol)
     if method == :r
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
-
-        return MatrixMarket.mmread(pathfilename)
+        
+        if VERSION < v"0.4.0-dev+1419"
+            return MatrixMarket.mmread(pathfilename)
+        else
+            return sparse(Base.SparseMatrix.CHOLMOD.Sparse(pathfilename))
+        end
         
     else
         error("use Symbol :r to read matrices")
