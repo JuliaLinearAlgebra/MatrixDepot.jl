@@ -13,8 +13,8 @@ An extensible test matrix collection for Julia.
 
 * [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
 
-**NOTE:** If you are using Windows, you need to install MinGW/MSYS or
-  Cygwin to use the UF sparse matrix collection interface.
+**NOTE:** If you use Windows, you need to install MinGW/MSYS or
+  Cygwin in order to use the UF sparse matrix collection interface.
 
 ## Install
 
@@ -43,20 +43,20 @@ julia> matrixdepot("hilb", 4)
  0.25      0.2       0.166667  0.142857
 ```
 
-We can type the matrix name to see the paramter options and matrix
+We can type the matrix name to see the parameter options and matrix
 properties.
 
 ```julia
 julia> matrixdepot("hilb")
 Hilbert matrix: 
-                  
-Input options: 
-                  
-(type), dim: the dimension of the matrix
-                  
-(type), row_dim, col_dim: the row and column dimension 
-                  
-['inverse', 'ill-cond', 'symmetric', 'pos-def']
+             
+ Input options: 
+             
+ [type,] dim: the dimension of the matrix
+             
+ [type,] row_dim, col_dim: the row and column dimension 
+             
+ ['inverse', 'ill-cond', 'symmetric', 'pos-def']
 ```
 
 We can aslo specify the data type
@@ -77,22 +77,28 @@ matrices (in the collection) having that property (or properties).
 
 ```julia
 julia> matrixdepot("symmetric")
-12-element Array{ASCIIString,1}:
- "hilb"    
- "cauchy"  
- "circul"  
- "dingdong"
- "invhilb" 
- "moler"   
- "pascal"  
- "pei"     
- "clement" 
- "fiedler" 
- "minij"   
- "tridiag" 
+18-element Array{ASCIIString,1}:
+ "hilb"     
+ "cauchy"   
+ "circul"   
+ "dingdong" 
+ "invhilb"  
+ "moler"    
+ "pascal"   
+ "pei"      
+ "clement"  
+ "fiedler"  
+ "minij"    
+ "tridiag"  
+ "lehmer"   
+ "randcorr" 
+ "poisson"  
+ "wilkinson"
+ "kms"      
+ "wathen" 
 ```
 
-## Interface to the UF Sparse Matrix Collection and NIST Matrix Market
+## Interface to the UF Sparse Matrix Collection 
 
 Use ``MatrixDepot.get(NAME)``, where ``NAME`` is ``collection
 name + '/' + matrix name``, to download a test matrix from the University of
@@ -101,38 +107,55 @@ http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.  For
 example:
 
 ```julia
-julia> MatrixDepot.get("HB/illc1850")
+julia> MatrixDepot.get("HB/1138_bus")
 ```
-When download is complete, we can generate it using
+When download is complete, we can check matrix information using
 
 ```julia
-julia> matrixdepot("illc1850", :r)
+julia> matrixdepot("HB/1138_bus")
+%%MatrixMarket matrix coordinate real symmetric
+%----------------------------------------------------------------------
+% UF Sparse Matrix Collection, Tim Davis
+% http://www.cise.ufl.edu/research/sparse/matrices/HB/1138_bus
+% name: HB/1138_bus
+% [S ADMITTANCE MATRIX 1138 BUS POWER SYSTEM, D.J.TYLAVSKY, JULY 1985.]
+% id: 1
+% date: 1985
+% author: D. Tylavsky
+% ed: I. Duff, R. Grimes, J. Lewis
+% fields: title A name id date author ed kind
+% kind: power network problem
+%---------------------------------------------------------------------
 ```
-and check matrix information using
+and generate it with the Symbol ``:r``.
 
 ```julia
-julia> matrixdepot("illc1850")
-Dict{ASCIIString,Any} with 10 entries:
-  "name"   => "HB/illc1850"
-  "A"      => …
-  "author" => "M. Saunders"
-  "kind"   => "least squares problem"
-  "Zeros"  => …
-  "b"      => [64.06762598…
-  "title"  => "UNSYMMETRIC LEAST-SQUARES PROBLEM.                  SAUNDERS 1979."
-  "id"     => 170.0
-  "date"   => "1979"
-  "ed"     => "I. Duff, R. Grimes, J. Lewis"
+julia> matrixdepot("HB/1138_bus", :r)
+1138x1138 Base.LinAlg.Symmetric{Float64,Base.SparseMatrix.SparseMatrixCSC{Float64,Int64}}:
+ 1474.78      0.0       0.0     …   0.0       0.0         0.0    0.0  
+    0.0       9.13665   0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0      69.6147      0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+   -9.01713   0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0     …   0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0      -3.40599   0.0         0.0       0.0         0.0    0.0  
+    ⋮                           ⋱             ⋮                       
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0     …   0.0     -24.3902      0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
+    0.0       0.0       0.0        26.5639    0.0         0.0    0.0  
+    0.0       0.0       0.0     …   0.0      46.1767      0.0    0.0  
+    0.0       0.0       0.0         0.0       0.0     10000.0    0.0  
+    0.0       0.0       0.0         0.0       0.0         0.0  117.647
 ```
 
-Use ``MatrixDepot.get(NAME, collection = :MM)``, where ``NAME`` is
-``collection name + '/' + set name + '/' + matrix name`` to download
-a test matrix from NIST Matrix Market: http://math.nist.gov/MatrixMarket/.
-For example,
+The NIST Matrix Market interface is currently suspended.
 
-```julia
-julia> MatrixDepot.get("Harwell-Boeing/lanpro/nos5", collection = :MM)
-```
 
 See documentation for more details.
 

@@ -79,6 +79,7 @@ v0.2.5 (Coming soon)
 
 * temporarily suspend the NIST Matrix Market interface
 
+* use base Matrix Market reader for Julia 0.4
 
 TODO
 ----
