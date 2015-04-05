@@ -73,9 +73,11 @@ v0.2.2
 v0.2.5 (Coming soon)
 --------------------
 
-* support accessing matrices by number
+* support accessing matrices by number and UnitRange
 
-* order matrices alphabetically 
+* matrices in the collection are ordered alphabetically 
+
+* temporarily suspend the NIST Matrix Market interface
 
 
 TODO

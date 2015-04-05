@@ -9,16 +9,12 @@ An extensible test matrix collection for Julia.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
-* [Examples](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/juliadoc.ipynb)
-  and 
-[Demo](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/MatrixDepot_Demo.ipynb)
+* [Demo](http://nbviewer.ipython.org/github/weijianzhang/MatrixDepot.jl/blob/master/doc/MatrixDepot_Demo.ipynb)
 
 * [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
 
-**NOTE:** currently we use MAT.jl to read the downloaded UF sparse 
- matrices. If you are running MatrixDepot on Julia v0.4, you will
- see a few lines of warnings. We are aiming to improve the matrix
- data reader soon. 
+**NOTE:** If you are using Windows, you need to install MinGW/MSYS or
+  Cygwin to use the UF sparse matrix collection interface.
 
 ## Install
 
