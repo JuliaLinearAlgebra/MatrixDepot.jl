@@ -855,7 +855,10 @@ matrixinfo =
              "dingdong" => "Dingdong matrix:
              \n Input options:
              \n [type,] n: the dimension of the matrix.
-             \n ['symmetric', 'eigen']",
+             \n ['symmetric', 'eigen']
+             \n Reference: J.C. Nash, Compact Numerical Methods for 
+             Computers: Linear Algebra and Function Minimisation, 
+             second edition, Adam Hilger, Bristol, 1990 (Appendix 1).",
              "frank" => "Frank matrix:
              \n Input options:
              \n [type,] n, k: n is the dimension of the matrix, k = 0 or 1.
@@ -877,7 +880,10 @@ matrixinfo =
              \n [type,] dim, k: dim is the dimension of the matrix and 
              k is the number of superdiagonals.
              \n [type,] dim: the dimension of the matrix.
-             \n ['eigen']",
+             \n ['eigen']
+             \n Reference: J.F. Grcar, Operator coefficient methods 
+             for linear equations, Report SAND89-8691, Sandia National 
+             Laboratories, Albuquerque, New Mexico, 1989 (Appendix 2).",
              "triw" => "Triw Matrix:
              \n Input options:
              \n [type,] row_dim, col_dim, alpha, k: row_dim and col_dim 
