@@ -1,5 +1,5 @@
 n = rand(1:10)
-@test matrixdepot("cauchy", n) == matrixdepot("cauchy", Float64[1:n])
+@test matrixdepot("cauchy", n) == matrixdepot("cauchy", Float64[1:n;])
 x = ones(Float64, n) 
 y = x + 2
 A = zeros(Float64, n, n)

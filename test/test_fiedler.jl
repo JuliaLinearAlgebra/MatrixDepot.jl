@@ -1,5 +1,5 @@
 n = rand(1:10)
-@test matrixdepot("fiedler", n) == matrixdepot("fiedler", [1:n])
+@test matrixdepot("fiedler", n) == matrixdepot("fiedler", [1:n;])
 
 A = matrixdepot("fiedler", n)
 

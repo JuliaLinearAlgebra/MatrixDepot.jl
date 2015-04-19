@@ -8,5 +8,5 @@ alpha = 3.0
 A = matrixdepot("triw", Float32, n)
 @test istriu(A)
 # B = A'*A has diagnoal B(i,i) = i  
-@test_approx_eq diag(A'*A) [1. : n]
+@test_approx_eq diag(A'*A) [1. : n;]
 println("'triw' passed test...")
