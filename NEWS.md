@@ -70,8 +70,8 @@ v0.2.2
 * reimplement ransvd to include rectangular case
 
 
-v0.2.5 (Coming soon)
---------------------
+v0.2.5
+------
 
 * support accessing matrices by number and UnitRange
 
@@ -81,10 +81,14 @@ v0.2.5 (Coming soon)
 
 * use base Matrix Market reader for Julia 0.4
 
+
+v0.2.6
+------
+
+* add reference information for test matrices
+
 TODO
 ----
-
-* citation: provide reference information for matrices in the collection
 
 * matrix reader: move to MatrixMarket reader for all the downloaded matrices
   in the collection

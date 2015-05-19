@@ -831,31 +831,47 @@ matrixinfo =
              \n Input options: 
              \n [type,] dim: the dimension of the matrix
              \n [type,] row_dim, col_dim: the row and column dimension 
-             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix, 
+             Amer. Math. Monthly, 90 (1983), pp. 301-312. 
+             N.J. Higham, Accuracy and Stability of Numerical Algorithms, 
+             Society for Industrial and Applied Mathematics, Philadelphia, PA, 
+             USA, 1996; sec. 26.1.",
 
              "invhilb" => "Inverse of Hilbert matrix:
              \n Input options:
              \n [type,] dim: the dimension of the matrix
-             \n ['inverse', 'ill-cond', 'symmetric','pos-def']",
+             \n ['inverse', 'ill-cond', 'symmetric','pos-def']
+             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix, 
+             Amer. Math. Monthly, 90 (1983), pp. 301-312. 
+             N.J. Higham, Accuracy and Stability of Numerical Algorithms, 
+             Society for Industrial and Applied Mathematics, Philadelphia, PA, 
+             USA, 1996; sec. 26.1.",
 
              "hadamard" => "Hadamard matrix: 
              \n Input options: 
              \n [type,] dim: the dimension of the matrix, n is a power of 2 
-             \n ['inverse', 'orthogonal', 'eigen']",
+             \n ['inverse', 'orthogonal', 'eigen']
+             \n Reference: S.W. Golomb and L.D. Baumert, The search for 
+             Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17.",
 
              "cauchy" => "Cauchy matrix: 
              \n Input options: 
              \n vec1, vec2: two vectors 
              \n vec: a vector
              \n [type,] dim: the dimension of the matrix
-             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+             \n Reference:  N.J. Higham, Accuracy and Stability of Numerical Algorithms, 
+             Society for Industrial and Applied Mathematics, Philadelphia, PA, 
+             USA, 1996; sec. 26.1.",
 
              "circul" => "Circul matrix: 
              \n Input options: 
              \n vec, n: a vector and the column dimension 
              \n vec: a vector 
              \n [type,] dim: the dimension of the matrix
-             \n ['symmetric', 'pos-def', 'eigen']",
+             \n ['symmetric', 'pos-def', 'eigen']
+             \n Reference:  P.J. Davis, Circulant Matrices, John Wiley, 1977.",
 
              "dingdong" => "Dingdong matrix:
              \n Input options:
@@ -870,14 +886,18 @@ matrixinfo =
              \n [type,] n, k: n is the dimension of the matrix, k = 0 or 1.
              If k = 1 the matrix reflect about the anti-diagonal.
              \n [type,] n: n is the dimension of the matrix.
-             \n ['ill-cond', 'eigen']",
+             \n ['ill-cond', 'eigen']
+             \n Reference:  W.L. Frank, Computing eigenvalues of complex matrices 
+             by determinant evaluation and by methods of Danilewski and Wielandt, 
+             J. Soc. Indust. Appl. Math., 6 (1958), pp. 378-392 (see pp. 385, 388).",
 
              "forsythe" => "Forsythe matrix:
              \n Input options:
              \n [type,] n, alpha, lambda: n is the dimension of the matrix.
              alpha and lambda are scalars.
              \n [type,] n: alpha = sqrt(eps(type)) and lambda = 0.
-             \n ['inverse', 'ill-cond', 'eigen']",
+             \n ['inverse', 'ill-cond', 'eigen']
+             \n This generator is adapted from Nicholas J. Higham's Test Matrix Toolbox.",
 
              "magic" => "Magic square matrix:
              \n Input options:
@@ -901,19 +921,32 @@ matrixinfo =
              scalar representing the entries on the superdiagonals. 
              k is the number superdiagonals.
              \n [type,] dim 
-             \n ['inverse', 'ill-cond']",
+             \n ['inverse', 'ill-cond']
+             \n Reference:  G.H. Golub and J.H. Wilkinson, Ill-conditioned 
+             eigensystems and the computation of the Jordan canonical form, 
+             SIAM Review, 18(4), 1976, pp. 578-6",
 
              "moler" => "Moler Matrix:
              \n Input options:
              \n [type,] dim, alpha: dim is the dimension of the matrix,
              alpha is a scalar.
              \n [type,] dim: alpha = -1.
-             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+             \n Reference:  J.C. Nash, Compact Numerical Methods for Computers: 
+             Linear Algebra and Function Minimisation, second edition, 
+             Adam Hilger, Bristol, 1990 (Appendix 1).",
 
              "pascal" => "Pascal Matrix:
              \n Input options:
              \n [type,] dim: the dimension of the matrix.
-             \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']",
+             \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']
+             \n Reference: R. Brawer and M. Pirovino, The linear algebra of 
+             the Pascal matrix, Linear Algebra and Appl., 174 (1992), 
+             pp. 13-23 (this paper gives a factorization of L = PASCAL(N,1) 
+             and a formula for the elements of L^k).
+             N.J. Higham, Accuracy and Stability of Numerical Algorithms
+             Society for Industrial and Applied Mathematics, Philadelphia, PA,
+             USA, 1996; sec. 26.4.",
 
              "kahan" => "Kahan Matrix:
              \n Input options:
@@ -947,19 +980,25 @@ matrixinfo =
              "invol" => "Involutory Matrix:
              \n Input options:
              \n [type,] dim: dim is the dimension of the matrix.
-             \n ['inverse', 'ill-cond', 'eigen']",
+             \n ['inverse', 'ill-cond', 'eigen']
+             \n Reference: A.S. Householder and J.A. Carpenter, The 
+             singular values of involutory and of idempotent matrices, 
+             Numer. Math. 5 (1963), pp. 234-237.",
 
              "chebspec" => "Chebyshev spectral differentiation matrix:
              \n Input options:
              \n [type,] dim, k: dim is the dimension of the matrix and 
              k = 0 or 1.
              \n [type,] dim
-             \n ['eigen']",
+             \n ['eigen']
+             \n Reference: L.N. Trefethen and M.R. Trummer, An instability 
+             phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.",
 
              "lotkin" => "Lotkin Matrix:
              \n Input options:
              \n [type,] dim: dim is the dimension of the matrix.
-             \n ['inverse', 'ill-cond', 'eigen']",
+             \n ['inverse', 'ill-cond', 'eigen']
+             \n Reference: M. Lotkin, A set of test matrices, MTAC, 9 (1955), pp. 153-161.",
 
              "clement" => "Clement Matrix:
              \n Input options:
@@ -975,12 +1014,19 @@ matrixinfo =
              \n Input options:
              \n vec: vec is a vector.
              \n [type,] dim: dim is the dimension of the matrix.
-             \n ['inverse', 'symmetric', 'eigen']",
+             \n ['inverse', 'symmetric', 'eigen']
+             \n Reference: G. Szego, Solution to problem 3705, Amer. Math. 
+              Monthly, 43 (1936), pp. 246-259.
+             J. Todd, Basic Numerical Mathematics, Vol. 2: Numerical Algebra,
+             Birkhauser, Basel, and Academic Press, New York, 1977, p. 159.",
 
              "minij" => "MIN[I,J] Matrix:
              \n Input options:
              \n [type,] dim: dim is the dimension of the matrix.
-             \n ['inverse', 'symmetric', 'pos-def', 'eigen']",
+             \n ['inverse', 'symmetric', 'pos-def', 'eigen']
+             \n Reference: J. Fortiana and C. M. Cuadras, A family of matrices,
+             the discretized Brownian bridge, and distance-based regression, 
+             Linear Algebra Appl., 264 (1997), 173-188.  (For the eigensystem of A.)",
 
              "binomial" => "Binomial Matrix:
              \n Input options:
@@ -1037,7 +1083,10 @@ matrixinfo =
              "poisson" => "Poisson Matrix:
              \n Input options:
              \n [type,] n: the dimension of the matirx is n^2.
-             \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']",
+             \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']
+             \n Reference: G.H. Golub and C.F. Van Loan, Matrix Computations, 
+             second edition, Johns Hopkins University Press, Baltimore, 
+             Maryland, 1989 (Section 4.5.4).",
 
              "neumann" => "Neumann Matrix:
              \n [type,] n: the dimension of the matrix is n^2.
@@ -1070,7 +1119,9 @@ matrixinfo =
              "wilkinson" => "Wilkinson Matrix:
              \n Input options:
              \n [type,] dim: the dimension of the matrix.
-             \n ['symmetric', 'eigen']",
+             \n ['symmetric', 'eigen']
+             \n Reference: J.H. Wilkinson, Error analysis of direct methods 
+             of matrix inversion, J. Assoc. Comput. Mach., 8 (1961),  pp. 281-330.",
 
              "rando" => "Random Matrix with Element -1, 0, 1:
              \n Input options:
@@ -1102,13 +1153,18 @@ matrixinfo =
              "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
              \n Input options:
              \n [type,] n : n is the dimension of the matrix.
-             \n ['random']",
+             \n ['random']
+             \n Reference:  W.B. Gragg, The QR algorithm for unitary 
+             Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.",
 
              "kms" => "Kac-Murdock-Szego Toeplitz Matrix:
              \n [type,] n, rho: n is the dimension of the matrix, rho is a 
              scalar such that A[i,j] = rho^(abs(i-j)).
              \n [type,] n: rho = 0.5
-             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']",
+             \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+             \n Reference: W.F. Trench, Numerical solution of the eigenvalue 
+             problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis 
+             and Appl., 10 (1989), pp. 135-146 (and see the references therein).",
 
              "wathen" => "Wathen Matrix:
              \n [type,] nx, ny: the dimension of the matrix is equal to
