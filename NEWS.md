@@ -87,6 +87,8 @@ v0.2.6
 
 * add reference information for test matrices
 
+* update demo
+
 TODO
 ----
 
