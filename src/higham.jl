@@ -79,9 +79,9 @@ function circul{T}(v::Vector{T}, w::Vector{T})
     return C
 end
 
-circul{T}(v::Vector{T}, n::Int) = circul(v, T[1:n])
+circul{T}(v::Vector{T}, n::Int) = circul(v, T[1:n;])
 circul{T}(v::Vector{T}) = circul(v, v)
-circul{T}(::Type{T}, k::Int) = circul(T[1:k])
+circul{T}(::Type{T}, k::Int) = circul(T[1:k;])
 
 #
 # Dingdong Matrix
