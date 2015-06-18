@@ -177,4 +177,4 @@ See documentation for more details.
 - R.F. Boisvert, R. Pozo, K. A. Remington, R. F. Barrett, & J. Dongarra,
   " Matrix Market: a web resource for test matrix collections",
   *Quality of Numerical Software* (1996) (pp. 125-137).
-  [[pdf]](ftp://ftp.idsa.prd.fr/pub/mirrors/netlib/utk/people/JackDongarra/pdf/matrixmarket.pdf)
+  [[pdf]](http://www.netlib.org/utk/people/JackDongarra/pdf/matrixmarket.pdf)
