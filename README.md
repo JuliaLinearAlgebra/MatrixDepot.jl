@@ -59,7 +59,7 @@ Hilbert matrix:
  ['inverse', 'ill-cond', 'symmetric', 'pos-def']
 ```
 
-We can aslo specify the data type
+We can also specify the data type
 
 ```julia
 julia> matrixdepot("hilb", Float16, 5, 3)
