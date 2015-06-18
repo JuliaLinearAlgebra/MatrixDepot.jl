@@ -294,7 +294,7 @@ function invol{T}(::Type{T}, n::Int)
 end
 
 #
-# Chebyshev spectral differetiation matrix.
+# Chebyshev spectral differentiation matrix.
 #
 function chebspec{T}(::Type{T}, n::Int, k::Int = 0)
     # k = 0 or 1
