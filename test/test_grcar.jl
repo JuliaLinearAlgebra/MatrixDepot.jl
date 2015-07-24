@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = rand(3:10)
 @test matrixdepot("grcar", n, 3) == matrixdepot("grcar", n)
 
 A = matrixdepot("grcar", n, n-1)
