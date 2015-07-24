@@ -41,7 +41,7 @@ function hadamard{T}(::Type{T}, n::Int)
         lgn = @compat round(Integer, log2(n))
     end
     2^lgn != n && throw(ArgumentError("n must be positive integer and a power of 2."))
-    
+
     H = reshape(T[1], 1, 1)
     for i = 1:lgn
         H = [[H H]; [H -H]]
@@ -53,7 +53,7 @@ end
 #
 # Cauchy Matrix
 #
-function cauchy{T}(x::Vector{T}, y::Vector{T})    
+function cauchy{T}(x::Vector{T}, y::Vector{T})
     # Compute the cauchy matrix
     m = size(x,1)
     n = size(y,1)
@@ -95,7 +95,7 @@ function dingdong{T}(::Type{T}, n::Int)
     return D
 end
 
-# 
+#
 # Frank Matrix
 #
 function frank{T}(::Type{T}, n::Int, k::Int)
@@ -152,7 +152,7 @@ function oddmagic{T}(::Type{T}, n::Int)
     end
     return A
 end
-   
+
 #
 # Magic Matrix
 #
@@ -173,8 +173,8 @@ function magic{T}(::Type{T}, n::Int)
         M = broadcast(+, T[1:n:n^2;]',T[0:n-1;])
         for i = 1:n, j = 1:n
             B[i,j] == 1 ? M[i,j] = n^2 + one(T) - M[i,j] : M[i,j]
-        end        
-    else 
+        end
+    else
         # n is singly even
         p = div(n,2)
         M = oddmagic(T, p)
@@ -189,7 +189,7 @@ function magic{T}(::Type{T}, n::Int)
         i = k+1
         j = [1, i]
         M[[i;i+p],j] = M[[i+p;i],j]
-    end        
+    end
     return M
 end
 
@@ -217,7 +217,7 @@ triw{T}(::Type{T}, n::Int) = triw(T, n, n,  -1, n-1)
 #
 function moler{T}(::Type{T}, n::Int, alpha = -1.)
     alpha = convert(T, alpha)
-    M = triw(T, n, n, alpha, n - 1)' * triw(T, n, n, alpha, n -1 ) 
+    M = triw(T, n, n, alpha, n - 1)' * triw(T, n, n, alpha, n -1 )
     return M
 end
 
@@ -230,7 +230,7 @@ function pascal{T}(::Type{T}, n::Int)
     return P
 end
 
-# 
+#
 # Kahan Matrix
 #
 function kahan{T}(::Type{T}, m::Int, n::Int, theta, pert)
@@ -242,10 +242,10 @@ function kahan{T}(::Type{T}, m::Int, n::Int, theta, pert)
     A = zeros(T, m, n)
     for i = 1:m, j = 1:n
         i > dim ? A[i,j] = zero(T) :
-        i > j   ? A[i,j] = zero(T) : 
+        i > j   ? A[i,j] = zero(T) :
         i==j    ? A[i,j] = s^(i-1)+pert*eps(T)*(m-i+1) : A[i,j] = -c*s^(i-1)
     end
-    return A        
+    return A
 end
 kahan{T}(::Type{T}, n::Int, theta, pert) = kahan(T, n, n, theta, pert)
 kahan{T}(::Type{T}, n::Int) = kahan(T, n, n, 1.2, 25.)
@@ -258,7 +258,7 @@ function pei{T}(::Type{T}, n::Int, alpha = 1)
     return alpha*eye(T, n, n) + ones(T, n, n)
 end
 
-# 
+#
 # Vandermonde Matrix
 #
 function vand{T}(p::Vector{T}, n::Int)
@@ -300,25 +300,25 @@ function chebspec{T}(::Type{T}, n::Int, k::Int = 0)
     # k = 0 or 1
     k == 1 ? n = n + 1 : none
     c = ones(T, n)
-    c[1] = 2. 
+    c[1] = 2.
     c[2:n-1] = one(T)
     c[n] = 2.
     x = ones(T, n)
-    
+
     A = zeros(T, n, n)
     # Compute the chebyshev points
     for i = 1:n
-        x[i] = cos (pi * (i - 1) / (n - 1))
+        x[i] = cos(pi * (i - 1) / (n - 1))
     end
-    
+
     for j = 1:n, i = 1:n
         i != j ? A[i,j] = (-1)^(i+j) * c[i] / (c[j] * (x[i] - x[j])) :
-        i == 1 ? A[i,i] = (2 * (n -1)^2 + 1) / 6 : 
+        i == 1 ? A[i,i] = (2 * (n -1)^2 + 1) / 6 :
         i == n ? A[i,i] = - (2 * (n-1)^2 + 1) / 6 :
         A[i,i] = - 0.5 * x[i] / (1 - x[i]^2)
     end
     k == 1 ? A = A[2:n, 2:n] : none
-    return A 
+    return A
 end
 
 #
@@ -384,18 +384,18 @@ function binomialm{T}(::Type{T}, n::Int)
     return L*D*U
 end
 
-# 
+#
 # Tridiagonal Matrix
 #
 function tridiag{T}(x::Vector{T}, y::Vector{T}, z::Vector{T})
     return Tridiagonal(x,y,z)
 end
 # Toeplitz tridiagonal matrix
-tridiag{T}(::Type{T}, n::Int, x::Int, y::Int, z::Int) = 
-n == 1 ? y*ones(T,1,1) : 
+tridiag{T}(::Type{T}, n::Int, x::Int, y::Int, z::Int) =
+n == 1 ? y*ones(T,1,1) :
          tridiag(x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
-tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1) 
-    
+tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1)
+
 #
 # Lehmer Matrix
 #
@@ -422,11 +422,11 @@ function chow{T}(::Type{T}, n::Int, alpha, delta)
     alpha = convert(T, alpha)
     delta = convert(T, delta)
     for i = 1:n, j = 1:n
-        if i == j - 1 
+        if i == j - 1
             A[i,j] = one(T)
         elseif i == j
             A[i,j] = alpha + delta
-        elseif j + 1 <= i 
+        elseif j + 1 <= i
             A[i,j] = alpha^(i + 1 - j)
         end
     end
@@ -446,7 +446,7 @@ end
 # Random Correlation Matrix
 #
 # Reference: Numerically Stable Generation of Correlation Matrices
-# and Their Factors. Philip Davies and Nicholas Higham, 
+# and Their Factors. Philip Davies and Nicholas Higham,
 # BIT Numerical Mathematics, 2000, Vol 40. Issue 4, pp 640-651
 #
 # limitation: only generate matrix of type Float64
@@ -454,14 +454,14 @@ function randcorr{T}(::Type{T}, n::Int)
     x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
     x = n * x / sum(x) # x has nonnegtive elements.
     A = diagm(x)
-    F = qrfact(randn(n,n)); 
+    F = qrfact(randn(n,n));
     Q = F[:Q]*diagm(sign(diag(F[:R]))) # form a random orthogonal matrix.
     copy!(A, Q*A*Q')
-    
+
     a = diag(A)
     l = find(a .< 1)
     g = find(a .> 1)
-    
+
     # Apply Given rotation to set A[i,i] = 1
     while length(l) > 0 && length(g) > 0
         k =  @compat ceil(Integer, rand()*length(l))
@@ -476,10 +476,10 @@ function randcorr{T}(::Type{T}, n::Int)
         t = (A[i,j] + newsign(A[i,j]) * alpha) / (a[j] - 1)
         c = 1/ sqrt(1 + t^2)
         s = t*c
-        
+
         A[:, [i,j]] = A[:, [i,j]] * [c s; -s c]
         A[[i,j], :] = [c -s; s c] * A[[i,j], :]
-        
+
         A[i,i] = 1
         a = diag(A)
         l = find(a.<1)
@@ -501,7 +501,7 @@ end
 
 #
 # Neumann Matrix
-#     
+#
 function neumann{T}(::Type{T}, n::Int)
     if n == 1
         return 4 * ones(T, 1,1) #handle 1-d case.
@@ -516,7 +516,7 @@ end
 #
 # Sylvester's orthogonal matrix
 # See Rosser matrix Reference 2.
-# 
+#
 # for a = d = 2, b = c = 1, P_block' * P_block = 10 * Identity
 #
 P_block{T}(::Type{T}, a, b, c, d) = reshape(T[a, b, c, d, b, -a, -d, c, c, d, -a, -b, d, -c, b, -a], 4,4)
@@ -525,7 +525,7 @@ P_block{T}(::Type{T}, a, b, c, d) = reshape(T[a, b, c, d, b, -a, -d, c, c, d, -a
 # Rosser Matrix
 #
 # References:
-# 1. Rosser, Lanczos, Hestenes and Karush, J. Res. Natl. Bur. Stand. Vol. 47 (1951), pp291-297. 
+# 1. Rosser, Lanczos, Hestenes and Karush, J. Res. Natl. Bur. Stand. Vol. 47 (1951), pp291-297.
 # 2. Sylvester, Phil. Mag. ser.4 v.33-34 (1867), pp461
 # For n = 8, a = 2, b = 1, the generated matrix is the test matrix used in reference 1.
 #
@@ -536,18 +536,18 @@ function rosser{T}(::Type{T}, n::Int, a, b)
         lgn = @compat round(Integer, log2(n))
     end
     2^lgn != n && throw(ArgumentError("n must be positive integer and a power of 2."))
-    
+
     if n == 1 # handle 1-d case
         return 611 * ones(T, 1, 1)
     end
 
     if n == 2
-        #eigenvalues are 500, 510 
+        #eigenvalues are 500, 510
         B = T[101 1; 1 101]
         P = T[2 1;1 -2]
         A = P'*B*P
     elseif n == 4
-        # eigenvalues are 0.1, 1019.9, 1020, 1020 for a = 2 and b = 1 
+        # eigenvalues are 0.1, 1019.9, 1020, 1020 for a = 2 and b = 1
         B = zeros(T, n, n)
         B[1,1], B[1,4], B[4,1], B[4,4] = 101, 1, 1, 101;
         B[2,2], B[2,3], B[3,2], B[3,3] = 1, 10, 10, 101;
@@ -574,14 +574,14 @@ function rosser{T}(::Type{T}, n::Int, a, b)
         end
         # mix 4 2-by-2 matrices (with close eigenvalues) into a large nxn matrix.
         B_list = T[102, 1, 1, - 102, 101, 1, 1, 101, 1, 10, 10, 101, 98, 14, 14, 2]
-        B = zeros(T, n, n) 
+        B = zeros(T, n, n)
         j, k = 1, 5
         for i in 1:(halfn + 1)
             indexend = halfn -1 + i
             list_start = k
             list_end = k + 3
-            
-            if list_start > 16 || list_end > 16 
+
+            if list_start > 16 || list_end > 16
                 k = 1
                 list_start = 1
                 list_end = 4
@@ -590,9 +590,9 @@ function rosser{T}(::Type{T}, n::Int, a, b)
             j = j + 1
             k = k + 4
         end
-        A = P' * B * P        
+        A = P' * B * P
     end
-        
+
     return A
 end
 rosser{T}(::Type{T}, n::Int) = rosser(T, n, rand(1:5), rand(1:5))
@@ -615,7 +615,7 @@ function sampling{T}(x::Vector{T})
 end
 #
 # special probability case
-# see: 
+# see:
 #   L. Bondesson and I. Traat, A Nonsymmetric Matrix with Integer
 #   Eigenvalues, Linear and Multilinear Algebra, 55(3)(2007), pp. 239-247.
 #
@@ -640,7 +640,7 @@ end
 # Random matrix with element -1, 0, 1
 #
 function rando{T}(::Type{T}, m::Int, n::Int, k::Int)
-    A = Array(T, m, n)    
+    A = Array(T, m, n)
     if k == 1
         copy!(A, floor(rand(m,n) + .5))
     elseif k == 2
@@ -660,9 +660,9 @@ rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
 #
 function qmult!{T}(A::Matrix{T})
     n, m = size(A)
-    
+
     d = zeros(T, n)
-    for k = n-1:-1:1    
+    for k = n-1:-1:1
 
         # generate random Householder transformation
         x = randn(n-k+1)
@@ -672,7 +672,7 @@ function qmult!{T}(A::Matrix{T})
         d[k] = -sgn
         x[1] = x[1] + s
         beta = s * x[1]
-        
+
         # apply the transformation to A
         y = x'*A[k:n, :];
         A[k:n, :] = A[k:n, :] - x * (y /beta)
@@ -698,10 +698,10 @@ function randsvd{T}(::Type{T}, m::Int, n::Int, kappa, mode::Int)
         return ones(T, 1, 1)*kappa
     end
 
-    if mode == 3 
+    if mode == 3
         factor = kappa^(-1/(p-1))
         sigma = factor.^[0:p-1;]
-    elseif mode == 4 
+    elseif mode == 4
         sigma = ones(T, p) - T[0:p-1;]/(p-1)*(1 - 1/kappa)
     elseif mode == 5
         sigma = exp(-rand(p) * log(kappa))
@@ -714,7 +714,7 @@ function randsvd{T}(::Type{T}, m::Int, n::Int, kappa, mode::Int)
     else
         error("invalid mode value.")
     end
-    
+
     A = zeros(T, m, n)
     A[1:p, 1:p] = diagm(sigma)
     A = qmult!(A')
@@ -746,7 +746,7 @@ end
 # KMS (Kac-Murdock-Szego) Toeplitz matrix
 #
 
-function kms{T}(::Type{T}, n::Int, rho)    
+function kms{T}(::Type{T}, n::Int, rho)
     A = Array(T, n, n)
     [A[i,j] = rho^(abs(i-j)) for i = 1:n, j = 1:n]
     if typeof(rho) <: Complex
@@ -775,10 +775,10 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
     ntriplets = 0
     rho = 100 * rand(nx, ny)
     node = zeros(T, 8)
-    
+
     for j = 1:ny
         for i = 1:nx
-            
+
             node[1] = 3 * j * nx + 2 * i + 2 * j + 1
             node[2] = node[1] - 1
             node[3] = node[2] - 1
@@ -787,9 +787,9 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
             node[6] = node[5] + 1
             node[7] = node[5] + 2
             node[8] = node[4] + 1
-            
+
             em = convert(T, rho[i,j]) * e3
-            
+
             for krow = 1:8
                 for kcol = 1:8
                     ntriplets +=  1
@@ -798,14 +798,14 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
                     Xrow[ntriplets] = em[krow, kcol]
                 end
             end
-            
+
         end
-    end    
+    end
     return sparse(Irow, Jrow, Xrow, n, n)
 end
 wathen{T}(::Type{T}, n::Int) = wathen(T, n, n)
 
-matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard, 
+matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "cauchy" => cauchy, "circul" => circul,
                           "dingdong" => dingdong, "frank" => frank,
                           "invhilb" => invhilb, "forsythe" => forsythe,
@@ -813,62 +813,62 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "triw" => triw, "moler" => moler,
                           "pascal" => pascal, "kahan" => kahan,
                           "pei" => pei, "vand" => vand,
-                          "invol" => invol, "chebspec" => chebspec, 
+                          "invol" => invol, "chebspec" => chebspec,
                           "lotkin" => lotkin, "clement" => clement,
                           "fiedler" => fiedler, "minij" => minij,
                           "binomial" => binomialm, "tridiag" => tridiag,
                           "lehmer" => lehmer, "parter" => parter,
                           "chow" => chow, "randcorr" => randcorr,
-                          "poisson" => poisson, "neumann" => neumann, 
+                          "poisson" => poisson, "neumann" => neumann,
                           "rosser" => rosser, "sampling" => sampling,
                           "wilkinson" => wilkinson, "rando" => rando,
                           "randsvd" => randsvd, "rohess" => rohess,
                           "kms" => kms, "wathen" => wathen
                           );
 
-matrixinfo = 
-@compat Dict("hilb" => "Hilbert matrix: 
-             \n Input options: 
+matrixinfo =
+@compat Dict("hilb" => "Hilbert matrix:
+             \n Input options:
              \n [type,] dim: the dimension of the matrix
-             \n [type,] row_dim, col_dim: the row and column dimension 
+             \n [type,] row_dim, col_dim: the row and column dimension
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix, 
-             Amer. Math. Monthly, 90 (1983), pp. 301-312. 
-             N.J. Higham, Accuracy and Stability of Numerical Algorithms, 
-             Society for Industrial and Applied Mathematics, Philadelphia, PA, 
+             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix,
+             Amer. Math. Monthly, 90 (1983), pp. 301-312.
+             N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 1996; sec. 26.1.",
 
              "invhilb" => "Inverse of Hilbert matrix:
              \n Input options:
              \n [type,] dim: the dimension of the matrix
              \n ['inverse', 'ill-cond', 'symmetric','pos-def']
-             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix, 
-             Amer. Math. Monthly, 90 (1983), pp. 301-312. 
-             N.J. Higham, Accuracy and Stability of Numerical Algorithms, 
-             Society for Industrial and Applied Mathematics, Philadelphia, PA, 
+             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix,
+             Amer. Math. Monthly, 90 (1983), pp. 301-312.
+             N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 1996; sec. 26.1.",
 
-             "hadamard" => "Hadamard matrix: 
-             \n Input options: 
-             \n [type,] dim: the dimension of the matrix, n is a power of 2 
+             "hadamard" => "Hadamard matrix:
+             \n Input options:
+             \n [type,] dim: the dimension of the matrix, n is a power of 2
              \n ['inverse', 'orthogonal', 'eigen']
-             \n Reference: S.W. Golomb and L.D. Baumert, The search for 
+             \n Reference: S.W. Golomb and L.D. Baumert, The search for
              Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17.",
 
-             "cauchy" => "Cauchy matrix: 
-             \n Input options: 
-             \n vec1, vec2: two vectors 
+             "cauchy" => "Cauchy matrix:
+             \n Input options:
+             \n vec1, vec2: two vectors
              \n vec: a vector
              \n [type,] dim: the dimension of the matrix
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference:  N.J. Higham, Accuracy and Stability of Numerical Algorithms, 
-             Society for Industrial and Applied Mathematics, Philadelphia, PA, 
+             \n Reference:  N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 1996; sec. 26.1.",
 
-             "circul" => "Circul matrix: 
-             \n Input options: 
-             \n vec, n: a vector and the column dimension 
-             \n vec: a vector 
+             "circul" => "Circul matrix:
+             \n Input options:
+             \n vec, n: a vector and the column dimension
+             \n vec: a vector
              \n [type,] dim: the dimension of the matrix
              \n ['symmetric', 'pos-def', 'eigen']
              \n Reference:  P.J. Davis, Circulant Matrices, John Wiley, 1977.",
@@ -877,8 +877,8 @@ matrixinfo =
              \n Input options:
              \n [type,] n: the dimension of the matrix.
              \n ['symmetric', 'eigen']
-             \n Reference: J.C. Nash, Compact Numerical Methods for 
-             Computers: Linear Algebra and Function Minimisation, 
+             \n Reference: J.C. Nash, Compact Numerical Methods for
+             Computers: Linear Algebra and Function Minimisation,
              second edition, Adam Hilger, Bristol, 1990 (Appendix 1).",
 
              "frank" => "Frank matrix:
@@ -887,8 +887,8 @@ matrixinfo =
              If k = 1 the matrix reflect about the anti-diagonal.
              \n [type,] n: n is the dimension of the matrix.
              \n ['ill-cond', 'eigen']
-             \n Reference:  W.L. Frank, Computing eigenvalues of complex matrices 
-             by determinant evaluation and by methods of Danilewski and Wielandt, 
+             \n Reference:  W.L. Frank, Computing eigenvalues of complex matrices
+             by determinant evaluation and by methods of Danilewski and Wielandt,
              J. Soc. Indust. Appl. Math., 6 (1958), pp. 378-392 (see pp. 385, 388).",
 
              "forsythe" => "Forsythe matrix:
@@ -906,24 +906,24 @@ matrixinfo =
 
              "grcar" => "Grcar Matrix:
              \n Input options:
-             \n [type,] dim, k: dim is the dimension of the matrix and 
+             \n [type,] dim, k: dim is the dimension of the matrix and
              k is the number of superdiagonals.
              \n [type,] dim: the dimension of the matrix.
              \n ['eigen']
-             \n Reference: J.F. Grcar, Operator coefficient methods 
-             for linear equations, Report SAND89-8691, Sandia National 
+             \n Reference: J.F. Grcar, Operator coefficient methods
+             for linear equations, Report SAND89-8691, Sandia National
              Laboratories, Albuquerque, New Mexico, 1989 (Appendix 2).",
 
              "triw" => "Triw Matrix:
              \n Input options:
-             \n [type,] row_dim, col_dim, alpha, k: row_dim and col_dim 
-             are row and column dimension of the matrix. alpha is a 
-             scalar representing the entries on the superdiagonals. 
+             \n [type,] row_dim, col_dim, alpha, k: row_dim and col_dim
+             are row and column dimension of the matrix. alpha is a
+             scalar representing the entries on the superdiagonals.
              k is the number superdiagonals.
-             \n [type,] dim 
+             \n [type,] dim
              \n ['inverse', 'ill-cond']
-             \n Reference:  G.H. Golub and J.H. Wilkinson, Ill-conditioned 
-             eigensystems and the computation of the Jordan canonical form, 
+             \n Reference:  G.H. Golub and J.H. Wilkinson, Ill-conditioned
+             eigensystems and the computation of the Jordan canonical form,
              SIAM Review, 18(4), 1976, pp. 578-6",
 
              "moler" => "Moler Matrix:
@@ -932,17 +932,17 @@ matrixinfo =
              alpha is a scalar.
              \n [type,] dim: alpha = -1.
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference:  J.C. Nash, Compact Numerical Methods for Computers: 
-             Linear Algebra and Function Minimisation, second edition, 
+             \n Reference:  J.C. Nash, Compact Numerical Methods for Computers:
+             Linear Algebra and Function Minimisation, second edition,
              Adam Hilger, Bristol, 1990 (Appendix 1).",
 
              "pascal" => "Pascal Matrix:
              \n Input options:
              \n [type,] dim: the dimension of the matrix.
              \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']
-             \n Reference: R. Brawer and M. Pirovino, The linear algebra of 
-             the Pascal matrix, Linear Algebra and Appl., 174 (1992), 
-             pp. 13-23 (this paper gives a factorization of L = PASCAL(N,1) 
+             \n Reference: R. Brawer and M. Pirovino, The linear algebra of
+             the Pascal matrix, Linear Algebra and Appl., 174 (1992),
+             pp. 13-23 (this paper gives a factorization of L = PASCAL(N,1)
              and a formula for the elements of L^k).
              N.J. Higham, Accuracy and Stability of Numerical Algorithms
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
@@ -950,7 +950,7 @@ matrixinfo =
 
              "kahan" => "Kahan Matrix:
              \n Input options:
-             \n [type,] m, n, theta, pert: m, n are the row and column 
+             \n [type,] m, n, theta, pert: m, n are the row and column
              dimensions of the matrix. theta and pert are scalars.
              \n [type,] dim, theta, pert: dim is the dimension of the matrix.
              \n [type,] dim: theta = 1.2, pert = 25.
@@ -973,25 +973,25 @@ matrixinfo =
              \n vec
              \n [type,] dim
              \n ['inverse', 'ill-cond']
-             \n Reference: N.J. Higham, Stability analysis of algorithms 
-             for solving confluent Vandermonde-like systems, SIAM J. 
+             \n Reference: N.J. Higham, Stability analysis of algorithms
+             for solving confluent Vandermonde-like systems, SIAM J.
              Matrix Anal. Appl., 11 (1990), pp. 23-41.",
 
              "invol" => "Involutory Matrix:
              \n Input options:
              \n [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']
-             \n Reference: A.S. Householder and J.A. Carpenter, The 
-             singular values of involutory and of idempotent matrices, 
+             \n Reference: A.S. Householder and J.A. Carpenter, The
+             singular values of involutory and of idempotent matrices,
              Numer. Math. 5 (1963), pp. 234-237.",
 
              "chebspec" => "Chebyshev spectral differentiation matrix:
              \n Input options:
-             \n [type,] dim, k: dim is the dimension of the matrix and 
+             \n [type,] dim, k: dim is the dimension of the matrix and
              k = 0 or 1.
              \n [type,] dim
              \n ['eigen']
-             \n Reference: L.N. Trefethen and M.R. Trummer, An instability 
+             \n Reference: L.N. Trefethen and M.R. Trummer, An instability
              phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.",
 
              "lotkin" => "Lotkin Matrix:
@@ -1002,12 +1002,12 @@ matrixinfo =
 
              "clement" => "Clement Matrix:
              \n Input options:
-             \n [type,] dim, k: dim is the dimension of the matrix. 
-             If k = 0, the matrix is Tridiagonal. If k = 1, the matrix 
+             \n [type,] dim, k: dim is the dimension of the matrix.
+             If k = 0, the matrix is Tridiagonal. If k = 1, the matrix
              is SymTridiagonal.
              \n [type,] dim: k = 0
              \n ['inverse', 'symmetric', 'eigen']
-             \n Reference: P.A. Clement, A class of triple-diagonal 
+             \n Reference: P.A. Clement, A class of triple-diagonal
              matrices for test purposes, SIAM Review, 1 (1959), pp. 50-52.",
 
              "fiedler" => "Fiedler Matrix:
@@ -1015,7 +1015,7 @@ matrixinfo =
              \n vec: vec is a vector.
              \n [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'symmetric', 'eigen']
-             \n Reference: G. Szego, Solution to problem 3705, Amer. Math. 
+             \n Reference: G. Szego, Solution to problem 3705, Amer. Math.
               Monthly, 43 (1936), pp. 246-259.
              J. Todd, Basic Numerical Mathematics, Vol. 2: Numerical Algebra,
              Birkhauser, Basel, and Academic Press, New York, 1977, p. 159.",
@@ -1025,7 +1025,7 @@ matrixinfo =
              \n [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen']
              \n Reference: J. Fortiana and C. M. Cuadras, A family of matrices,
-             the discretized Brownian bridge, and distance-based regression, 
+             the discretized Brownian bridge, and distance-based regression,
              Linear Algebra Appl., 264 (1997), 173-188.  (For the eigensystem of A.)",
 
              "binomial" => "Binomial Matrix:
@@ -1038,7 +1038,7 @@ matrixinfo =
              \n v1, v2, v3: v1 and v3 are sub- superdiagonal vectors.
              v2 is the diagonal vector.
              \n [type,] dim, x, y, z: dim is the dimension of the matrix. x, y, z are
-             scalars. x and z are sub- superdiagonal elements, y is diagonal 
+             scalars. x and z are sub- superdiagonal elements, y is diagonal
              element.
              \n [type,] dim: x = -1, y = 2, z = -1.
              \n ['inverse', 'ill-cond', 'pos-def', 'eigen']
@@ -1047,12 +1047,12 @@ matrixinfo =
              New York, 1977, p. 155.",
 
              "lehmer" => "Lehmer Matrix:
-             \n Input options: 
+             \n Input options:
              \n [type,] dim: the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def']
-             \n Reference: M. Newman and J. Todd, The evaluation of 
-             matrix inversion programs, J. Soc. Indust. Appl. Math., 
-             6 (1958), pp. 466-476. 
+             \n Reference: M. Newman and J. Todd, The evaluation of
+             matrix inversion programs, J. Soc. Indust. Appl. Math.,
+             6 (1958), pp. 466-476.
              Solutions to problem E710 (proposed by D.H. Lehmer): The inverse
              of a matrix, Amer. Math. Monthly, 53 (1946), pp. 534-535.",
 
@@ -1062,13 +1062,13 @@ matrixinfo =
              \n ['eigen']
              \n Reference: The MathWorks Newsletter, Volume 1, Issue 1,
              March 1986, page 2. S.V. Parter, On the distribution of the
-             singular values of Toeplitz matrices, Linear Algebra and 
+             singular values of Toeplitz matrices, Linear Algebra and
              Appl., 80 (1986), pp. 115-130.",
 
              "chow" => "Chow Matrix:
              \n Input options:
-             \n [type,] dim, alpha, delta: dim is dimension of the matrix. 
-             alpha, delta are scalars such that A[i,i] = alpha + delta and 
+             \n [type,] dim, alpha, delta: dim is dimension of the matrix.
+             alpha, delta are scalars such that A[i,i] = alpha + delta and
              A[i,j] = alpha^(i + 1 -j) for j + 1 <= i.
              \n [type,] dim: alpha = 1, delta = 0.
              \n ['eigen']
@@ -1084,33 +1084,33 @@ matrixinfo =
              \n Input options:
              \n [type,] n: the dimension of the matirx is n^2.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']
-             \n Reference: G.H. Golub and C.F. Van Loan, Matrix Computations, 
-             second edition, Johns Hopkins University Press, Baltimore, 
+             \n Reference: G.H. Golub and C.F. Van Loan, Matrix Computations,
+             second edition, Johns Hopkins University Press, Baltimore,
              Maryland, 1989 (Section 4.5.4).",
 
              "neumann" => "Neumann Matrix:
              \n [type,] n: the dimension of the matrix is n^2.
              \n ['eigen', 'sparse']
-             \n Reference: R.J. Plemmons, Regular splittings and the 
+             \n Reference: R.J. Plemmons, Regular splittings and the
              discrete Neumann problem, Numer. Math., 25 (1976), pp. 153-161.",
 
              "rosser" => "Rosser Matrix:
              \n Input options:
              \n [type,] dim, a, b: dim is the dimension of the matrix.
              dim must be a power of 2.
-             a and b are scalars. For dim = 8, a = 2 and b = 1, the generated 
+             a and b are scalars. For dim = 8, a = 2 and b = 1, the generated
              matrix is the test matrix used by Rosser.
              \n [type,] dim: a = b = rand(1:5)
              \n ['eigen', 'ill-cond', 'random']
              \n Reference: J.B. Rosser, C. Lanczos, M.R. Hestenes, W. Karush,
-             Separation of close eigenvalues of a real symmetric matrix, 
+             Separation of close eigenvalues of a real symmetric matrix,
              Journal of Research of the National Bureau of Standards, v(47)
              (1951)",
 
              "sampling" => "Matrix with Application in Sampling Theory:
              \n Input options:
              \n vec: vec is a vector with no repeated elements.
-             \n [type,] dim: the dimension of the matrix. 
+             \n [type,] dim: the dimension of the matrix.
              \n ['eigen']
              \n Reference: L. Bondesson and I. Traat, A nonsymmetric matrix
              with integer eigenvalues, linear and multilinear algebra, 55(3)
@@ -1120,12 +1120,12 @@ matrixinfo =
              \n Input options:
              \n [type,] dim: the dimension of the matrix.
              \n ['symmetric', 'eigen']
-             \n Reference: J.H. Wilkinson, Error analysis of direct methods 
+             \n Reference: J.H. Wilkinson, Error analysis of direct methods
              of matrix inversion, J. Assoc. Comput. Mach., 8 (1961),  pp. 281-330.",
 
              "rando" => "Random Matrix with Element -1, 0, 1:
              \n Input options:
-             \n [type,] m, n, k: m and n are row and column dimensions, 
+             \n [type,] m, n, k: m and n are row and column dimensions,
              k = 1: entries are 0 or 1.
              k = 2: entries are -1 or 1.
              k = 3: entries are -1, 0 or 1.
@@ -1146,53 +1146,53 @@ matrixinfo =
              \n [type,] n, kappa: mode = 3
              \n [type,] n: kappa = sqrt(1/eps()), mode = 3.
              \n ['ill-cond', 'random']
-             \n Reference: N.J. Higham, Accuracy and Stability of Numerical 
-             Algorithms, Society for Industrial and Applied Mathematics, 
+             \n Reference: N.J. Higham, Accuracy and Stability of Numerical
+             Algorithms, Society for Industrial and Applied Mathematics,
              Philadelphia, PA, USA, 1996; sec. 26.3.",
 
              "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
              \n Input options:
              \n [type,] n : n is the dimension of the matrix.
              \n ['random']
-             \n Reference:  W.B. Gragg, The QR algorithm for unitary 
+             \n Reference:  W.B. Gragg, The QR algorithm for unitary
              Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.",
 
              "kms" => "Kac-Murdock-Szego Toeplitz Matrix:
-             \n [type,] n, rho: n is the dimension of the matrix, rho is a 
+             \n [type,] n, rho: n is the dimension of the matrix, rho is a
              scalar such that A[i,j] = rho^(abs(i-j)).
              \n [type,] n: rho = 0.5
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference: W.F. Trench, Numerical solution of the eigenvalue 
-             problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis 
+             \n Reference: W.F. Trench, Numerical solution of the eigenvalue
+             problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis
              and Appl., 10 (1989), pp. 135-146 (and see the references therein).",
 
              "wathen" => "Wathen Matrix:
              \n [type,] nx, ny: the dimension of the matrix is equal to
              3 * nx * ny + 2 * nx * ny + 1.
-             \n [type,] n: nx = ny = n. 
+             \n [type,] n: nx = ny = n.
              \n ['symmetric', 'pos-def', 'eigen', 'random', 'sparse']
-             \n Reference: A.J. Wathen, Realistic eigenvalue bounds for 
-             the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987), 
+             \n Reference: A.J. Wathen, Realistic eigenvalue bounds for
+             the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987),
              pp. 449-457."
 
              );
 
-matrixclass = 
-@compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong", 
-                             "invhilb", "moler", "pascal", "pei", 
+matrixclass =
+@compat Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
+                             "invhilb", "moler", "pascal", "pei",
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
                               "kms", "wathen"],
-             "inverse" => ["hilb", "hadamard", "cauchy", "invhilb", 
+             "inverse" => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
-                           "clement", "fiedler", "minij", "tridiag", 
+                           "clement", "fiedler", "minij", "tridiag",
                            "lehmer", "poisson", "kms" ],
-             "ill-cond" => ["hilb", "cauchy", "frank", "invhilb", 
+             "ill-cond" => ["hilb", "cauchy", "frank", "invhilb",
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms"],
-             "pos-def" => ["hilb", "cauchy", "circul", "invhilb", 
+             "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
@@ -1202,6 +1202,6 @@ matrixclass =
                            "rosser", "sampling", "wilkinson","wathen"],
              # minor properties
              "sparse" => ["poisson", "neumann", "wathen"],
-             "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess", 
+             "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen"]
                );

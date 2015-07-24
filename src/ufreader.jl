@@ -3,7 +3,7 @@ function ufinfo(filename)
     mmfile = open(filename,"r")
     info = "\n"
     ll = readline(mmfile)
-    while length(ll) > 0 && ll[1] == '%'       
+    while length(ll) > 0 && ll[1] == '%'
         info = string(info, ll)
         ll = readline(mmfile)
     end

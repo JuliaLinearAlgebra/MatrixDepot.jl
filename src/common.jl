@@ -3,7 +3,7 @@
 function filenames(directory::String)
 
     namevec = String[]
- 
+
     matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "$directory")
     matvec = readdir(matdatadir)
     for file in matvec
@@ -16,7 +16,7 @@ end
 
 # print info about all matrices in the collection
 function matrixdepot()
-    # Print information strings 
+    # Print information strings
     println()
     println("            | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |")
     for mat in sort(collect(keys(matrixdict))) # display in alphabetical order
@@ -35,7 +35,7 @@ function matrixdepot()
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
         println()
         for col in filenames("uf")
-            for mat in filenames("uf/$(col)")            
+            for mat in filenames("uf/$(col)")
                 @printf "%20s|" string(col, '/', mat)
                 print("  UF sparse matrix")
                 println()
@@ -52,7 +52,7 @@ function matrixdepot()
             println()
         end
     end
-    
+
     # print user defined properties
     if length(usermatrixclass) != 0
         println()
@@ -94,7 +94,7 @@ end
 function matrixdepot(name::String, n::Int)
     # name is the matrix name
     # n is the dimesion of the matrix
-    # magic square, Pascal matrix and binomial matrix 
+    # magic square, Pascal matrix and binomial matrix
     # are exceptions: Int Array by default.
     if name in  ["magic", "pascal", "binomial"]
         matrixdepot(name, Int, n)
@@ -152,8 +152,8 @@ function matrixdepot{T}(name::String, x::Vector{T}, n::Int)
 end
 
 
-# Return information strings if name is a matrix name. 
-# Retuen a list of matrix names if name is a property. 
+# Return information strings if name is a matrix name.
+# Retuen a list of matrix names if name is a property.
 function matrixdepot(name::String)
     # name is the matrix name or matrix properties
     if name in keys(matrixinfo)
@@ -163,14 +163,14 @@ function matrixdepot(name::String)
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
     elseif '/' in name
-        (split(name, '/')[1], split(name, '/')[2]) in downloaddata() || 
+        (split(name, '/')[1], split(name, '/')[2]) in downloaddata() ||
            error("matrix data $(name) is not included, try MatrixDepot.get(\"$(name)\").")
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
 
         println(ufinfo(pathfilename))
-        return 
-        
+        return
+
     elseif name == "data" # deal with the property "data"
         namelist = String[]
         if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
@@ -197,11 +197,11 @@ function matrixdepot(num::Int)
 end
 
 function matrixdepot(I::UnitRange{Int})
-    matrixnamelist = ASCIIString[] 
+    matrixnamelist = ASCIIString[]
     for i in I
         push!(matrixnamelist, matrixdepot(i))
     end
-    return matrixnamelist        
+    return matrixnamelist
 end
 
 # generate the required matrix
@@ -209,13 +209,13 @@ function matrixdepot(name::String, method::Symbol)
     if method == :r
         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
         pathfilename = string(matdatadir, "/", name, ".mtx")
-        
+
         if VERSION < v"0.4.0-dev+1419"
             return MatrixMarket.mmread(pathfilename)
         else
             return sparse(Base.SparseMatrix.CHOLMOD.Sparse(pathfilename))
         end
-        
+
     else
         error("use Symbol :r to read matrices")
     end
@@ -230,7 +230,7 @@ function matrixdepot(prop1::String, otherprops::String...)
         commonprop = matrixdepot(prop1)
         for prop in otherprops
             commonprop = intersect(commonprop, matrixdepot(prop))
-        end        
+        end
     end
     return commonprop
 end
@@ -239,14 +239,14 @@ end
 function addproperty(ex)
     propname = string(ex.args[1])
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname is an existing property."))
-    !(propname in keys(usermatrixclass)) || throw (ArgumentError("You have defined property $propname."))
+    !(propname in keys(usermatrixclass)) || throw(ArgumentError("You have defined property $propname."))
     for matname in eval(ex.args[2])
         matname in keys(matrixdict) || matname in matdata() || throw(ArgumentError("$matname is not in the collection."))
     end
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
-    newprop = s[1:end-4] * "\""  * propname * "\" => [" 
+    newprop = s[1:end-4] * "\""  * propname * "\" => ["
     for str in eval(ex.args[2])
         newprop *= "\"" * str * "\", "
     end
@@ -265,8 +265,8 @@ end
 function rmproperty(ex)
     propname = string(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
-    propname in keys(usermatrixclass) || throw (ArgumentError("Can not find property $propname."))
-   
+    propname in keys(usermatrixclass) || throw(ArgumentError("Can not find property $propname."))
+
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
