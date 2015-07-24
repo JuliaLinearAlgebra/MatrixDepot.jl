@@ -13,6 +13,7 @@ matrixdepot,
 include("ufreader.jl")
 include("common.jl")        # main functions
 include("higham.jl")        # test matrices
+include("data.jl")
 include("user.jl")          # user defined properties
 include("download.jl")      # download data from the UF sparse matrix collection
 
