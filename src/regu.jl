@@ -41,7 +41,7 @@ function oscillate{T}(::Type{T}, n::Int, mode::Int)
         Σ = exp(-rand(n) * log(κ))
     elseif mode == 2
         Σ = ones(T, n)
-        Σ[p] = one(T)/κ
+        Σ[n] = one(T)/κ
     elseif mode == 1
         Σ = ones(n)./κ
         Σ[1] = one(T)
