@@ -724,7 +724,7 @@ function randsvd{T}(::Type{T}, m::Int, n::Int, kappa, mode::Int)
 end
 randsvd{T}(::Type{T}, n::Int, kappa, mode) = randsvd(T, n, n, kappa, mode)
 randsvd{T}(::Type{T}, n::Int, kappa) = randsvd(T, n, kappa, 3)
-randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps()))
+randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps(T)))
 
 #
 # Random orthogonal upper Hessenberg matrix

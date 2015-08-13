@@ -16,7 +16,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "rosser" => rosser, "sampling" => sampling,
                           "wilkinson" => wilkinson, "rando" => rando,
                           "randsvd" => randsvd, "rohess" => rohess,
-                          "kms" => kms, "wathen" => wathen
+                          "kms" => kms, "wathen" => wathen,
+                          "oscillate" => oscillate, 
                           );
 
 matrixinfo =
@@ -366,7 +367,24 @@ matrixinfo =
              \n ['symmetric', 'pos-def', 'eigen', 'random', 'sparse']
              \n Reference: A.J. Wathen, Realistic eigenvalue bounds for
              the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987),
-             pp. 449-457."
+             pp. 449-457.",
+
+             "oscillate" => "Oscillating Matrix:
+             \n A matrix A is called oscillating if it is totally 
+             nonnegative and if there exists an integer q > 0 such that 
+             A^q is totally positive.  
+             \n Σ: the singular vaule spectrum of the matrix.
+             \n [type,] n, mode: n is the dimension of the matrix. 
+                 mode = 1: one large singular value.
+                 mode = 2: one small singular value.
+                 mode = 3: geometrically distributed singular values.
+                 mode = 4: arithmetrically distributed singular values.
+                 mode = 5: random singular values with  unif. dist. logarithm.
+             \n [type,] n: mode = 3
+             \n ['symmetric','pos-def', 'random', 'eigen'] 
+             \n Reference: Per Christian Hansen, Test matrices for 
+             regularization methods. SIAM J. SCI. COMPUT Vol 16, 
+             No2, pp 506-512 (1995)." 
 
              );
 
@@ -375,7 +393,7 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei",
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                              "kms", "wathen"],
+                              "kms", "wathen", "oscillate"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
@@ -384,17 +402,19 @@ matrixclass =
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb",
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
-                            "tridiag", "rosser", "randsvd", "kms"],
+                            "tridiag", "rosser", "randsvd", "kms", 
+                            "oscillate"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
-                           "lehmer", "poisson", "kms", "wathen"],
+                           "lehmer", "poisson", "kms", "wathen", "oscillate"],
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
-                           "rosser", "sampling", "wilkinson","wathen"],
+                           "rosser", "sampling", "wilkinson","wathen", 
+                           "oscillate"],
              # minor properties
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
-                          "wathen"]
+                          "wathen", "oscillate"]
                );
