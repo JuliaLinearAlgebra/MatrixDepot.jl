@@ -4,7 +4,7 @@
 # 2. The ith eigenvector, corresponding to λ_i in the above ordering has 
 #    exactly i-1 sign changes. 
 
-mode = rand(1:5) # 5 different modes
+mode = rand(1:4) # 4 different modes
 n = rand(1:10)
 A = matrixdepot("oscillate", n, mode)
 

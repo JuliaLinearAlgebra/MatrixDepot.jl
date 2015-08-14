@@ -49,7 +49,7 @@ Matrices
    :sorted:
 
    oscillate 
-      A matrix :math:`A` is called oscillating :math:`A` is
+      A matrix :math:`A` is called oscillating if :math:`A` is
       totally nonnegative and if there exists an integer q > 0 such 
       that A^q is totally positive. An :math:`n \times n` oscillating 
       matrix :math:`A` satisfies:

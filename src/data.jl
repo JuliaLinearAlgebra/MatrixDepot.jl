@@ -379,7 +379,6 @@ matrixinfo =
                  mode = 2: one small singular value.
                  mode = 3: geometrically distributed singular values.
                  mode = 4: arithmetrically distributed singular values.
-                 mode = 5: random singular values with  unif. dist. logarithm.
              \n [type,] n: mode = 3
              \n ['symmetric','pos-def', 'random', 'eigen'] 
              \n Reference: Per Christian Hansen, Test matrices for 
