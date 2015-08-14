@@ -13,7 +13,7 @@ for i in eva
     @test i > 0
 end
 
-p = sortperm(eva)
+p = sortperm(eva, rev = true)
 evc = evc[:,p]
 
 # compute the number of sign change
