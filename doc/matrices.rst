@@ -27,6 +27,7 @@ Matrices
 * :term:`minij`
 * :term:`moler`
 * :term:`neumann`
+* :term:`oscillate`
 * :term:`parter`
 * :term:`pascal`
 * :term:`pei`
@@ -46,6 +47,37 @@ Matrices
 
 .. glossary::
    :sorted:
+
+   oscillate 
+      A matrix :math:`A` is called oscillating :math:`A` is
+      totally nonnegative and if there exists an integer q > 0 such 
+      that A^q is totally positive. An :math:`n \times n` oscillating 
+      matrix :math:`A` satisfies:
+ 
+      1. :math:`A` has :math:`n` distinct and positive eigenvalues
+	 :math:`\lambda_1 > \lambda_2 > \cdots > \lambda_n > 0`. 
+      2. The :math:`i` th eigenvector,  corresponding to :math:`\lambda_i`
+         in the above ordering, has exactly :math:`i -1` sign changes. 
+
+      This function generates a symmetric oscillating matrix, which is useful 
+      for testing numerical regularization methods [hansen95]_. For example::
+	
+	julia> A = matrixdepot("oscillate", 3)
+	3x3 Array{Float64,2}:
+	0.98694    0.112794   0.0128399 
+	0.112794   0.0130088  0.0014935 
+	0.0128399  0.0014935  0.00017282
+
+	julia> eig(A)
+	([1.4901161192617526e-8,0.00012207031249997533,0.9999999999999983],
+	3x3 Array{Float64,2}:
+	0.0119607   0.113658  -0.993448 
+	-0.215799   -0.969813  -0.113552 
+	0.976365   -0.215743  -0.0129276)
+
+      .. [hansen95] Per Christian Hansen, Test matrices for
+                    regularization methods. SIAM J. SCI. COMPUT Vol 16, No2,
+                    pp 506-512 (1995)
 
    wathen 
       Wathen Matrix is a sparse, symmetric positive, random matrix arose 
