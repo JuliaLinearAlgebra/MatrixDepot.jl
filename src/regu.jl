@@ -19,25 +19,17 @@ function oscillate{T}(Σ::Vector{T})
     return U*diagm(Σ)*U'
 end
         
-#  mode = 1: one large singular value.
-#  mode = 2: one small singular value.
-#  mode = 3: geometrically distributed singular values.
-#  mode = 4: arithmetrically distributed singular values.
-#  mode = 5: random singular values with  unif. dist. logarithm.
+
+#  mode = 1: geometrically distributed singular values.
+#  mode = 2: arithmetrically distributed singular values.
 #  κ = sqrt(1/eps(T)) is the condition number of the matrix.
 function oscillate{T}(::Type{T}, n::Int, mode::Int)
     κ = sqrt(1/eps(T))
-    if mode == 3
+    if mode == 1
         factor = κ^(-1/(n-1))
         Σ = factor.^[0:n-1;]
-    elseif mode == 4
-        Σ = ones(T, n) - T[0:n-1;]/(n-1)*(1 - 1/κ)
     elseif mode == 2
-        Σ = ones(T, n)
-        Σ[n] = one(T)/κ
-    elseif mode == 1
-        Σ = ones(n)./κ
-        Σ[1] = one(T)
+        Σ = ones(T, n) - T[0:n-1;]/(n-1)*(1 - 1/κ)
     else
         error("invalid mode value.")
     end

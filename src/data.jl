@@ -375,11 +375,9 @@ matrixinfo =
              A^q is totally positive.  
              \n Σ: the singular vaule spectrum of the matrix.
              \n [type,] n, mode: n is the dimension of the matrix. 
-                 mode = 1: one large singular value.
-                 mode = 2: one small singular value.
-                 mode = 3: geometrically distributed singular values.
-                 mode = 4: arithmetrically distributed singular values.
-             \n [type,] n: mode = 3
+                 mode = 1: geometrically distributed singular values.
+                 mode = 2: arithmetrically distributed singular values.
+             \n [type,] n: mode = 1
              \n ['symmetric','pos-def', 'random', 'eigen'] 
              \n Reference: Per Christian Hansen, Test matrices for 
              regularization methods. SIAM J. SCI. COMPUT Vol 16, 
