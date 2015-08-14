@@ -32,12 +32,14 @@ Matrices
 * :term:`pascal`
 * :term:`pei`
 * :term:`poisson`
+* :term:`prolate`
 * :term:`randcorr`
 * :term:`rando`
 * :term:`randsvd`
 * :term:`rohess`
 * :term:`rosser`
 * :term:`sampling`
+* :term:`toeplitz`
 * :term:`tridiag`
 * :term:`triw`
 * :term:`vand`
@@ -48,8 +50,47 @@ Matrices
 .. glossary::
    :sorted:
 
+   toeplitz
+     `Toeplitz matrix <https://en.wikipedia.org/wiki/Toeplitz_matrix>`_ is 
+     a matrix in which each descending diagonal from left to right 
+     is constant. For example::
+
+       julia> matrixdepot("toeplitz", [1,2,3,4], [1,4,5,6])
+       4x4 Array{Int64,2}:
+       1  4  5  6
+       2  1  4  5
+       3  2  1  4
+       4  3  2  1
+
+       julia> matrixdepot("toeplitz", [1,2,3,4])
+       4x4 Array{Int64,2}:
+       1  2  3  4
+       2  1  2  3
+       3  2  1  2
+       4  3  2  1
+
+ 
+
+
+   prolate
+      A prolate matrix is a symmetric ill-conditioned Toeplitz matrix
+
+      .. math::
+
+	  A = \begin{bmatrix}
+	      a_0 & a_1 & \cdots \\
+              a_1 & a_0 & \cdots \\
+              \vdots & \vdots & \ddots \\
+              \end{bmatrix}
+
+      such that :math:`a_0= 2w` and :math:`a_k = (\sin 2 \pi wk)/\pi k` for 
+      :math:`k=1,2, \ldots` and :math:`0<w<1/2` [varah93]_.
+
+      .. [varah93] J.M. Varah. The Prolate Matrix. Linear Algebra and Appl.
+                  187:267--278, 1993.
+
    oscillate 
-      A matrix :math:`A` is called oscillating :math:`A` is
+      A matrix :math:`A` is called oscillating if :math:`A` is
       totally nonnegative and if there exists an integer q > 0 such 
       that A^q is totally positive. An :math:`n \times n` oscillating 
       matrix :math:`A` satisfies:

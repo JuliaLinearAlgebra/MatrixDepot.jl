@@ -1,5 +1,15 @@
 ## Matrix Depot Release Notes
 
+v0.2.8
+------
+
+* Add new test matrices
+
+  - `oscillate`: a random test matrix for numerical regularization methods.
+  - `prolate`: a symmtric ill-conditioned Toeplitz matrix.
+  - `toeplitz`: Toeplitz matrix.
+
+
 v0.2.7
 ------
 

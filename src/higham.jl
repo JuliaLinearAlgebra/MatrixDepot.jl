@@ -500,6 +500,31 @@ function poisson{T}(::Type{T}, n::Int)
 end
 
 #
+# Toeplitz Matrix
+#
+function toeplitz{T}(vc::Vector{T}, vr::Vector{T})
+    n = length(vc)
+    length(vr) == n || throw(DimensionMismatch(""))
+    vc[1] == vr[1] || error("The first element of the vectors must be the same.")    
+    A = Array(T, n, n)
+    [i>=j ? A[i,j] = vc[i-j+1]: A[i,j] = vr[j-i+1] for i=1:n, j=1:n]
+    A
+end
+toeplitz{T}(v::Vector{T}) = toeplitz(v, v)
+toeplitz{T}(::Type{T}, n::Int) = toeplitz(T[1:n;])
+
+#
+# Prolate Matrix
+#
+function prolate{T}(::Type{T}, n::Int, w::Real)
+    v = Array(T, n)
+    v[1] = 2*w
+    [v[i] = sin(2*pi*w*i)/pi*i for i = 2:n]
+    return toeplitz(v)
+end
+prolate{T}(::Type{T}, n::Int) = prolate(T, n, 0.25)
+
+#
 # Neumann Matrix
 #
 function neumann{T}(::Type{T}, n::Int)
