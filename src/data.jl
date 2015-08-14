@@ -17,7 +17,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "wilkinson" => wilkinson, "rando" => rando,
                           "randsvd" => randsvd, "rohess" => rohess,
                           "kms" => kms, "wathen" => wathen,
-                          "oscillate" => oscillate, 
+                          "oscillate" => oscillate, "toeplitz" => toeplitz,
+                          "prolate" => prolate,
                           );
 
 matrixinfo =
@@ -370,7 +371,7 @@ matrixinfo =
              pp. 449-457.",
 
              "oscillate" => "Oscillating Matrix:
-             \n A matrix A is called oscillating if it is totally 
+             \n A matrix A is called oscillating if A is totally 
              nonnegative and if there exists an integer q > 0 such that 
              A^q is totally positive.  
              \n Σ: the singular vaule spectrum of the matrix.
@@ -381,8 +382,22 @@ matrixinfo =
              \n ['symmetric','pos-def', 'random', 'eigen'] 
              \n Reference: Per Christian Hansen, Test matrices for 
              regularization methods. SIAM J. SCI. COMPUT Vol 16, 
-             No2, pp 506-512 (1995)." 
+             No2, pp 506-512 (1995).",
 
+             "toeplitz" => "Toeplitz Matrix:
+             \n A Toeplitz matrix is a matrix in which each descending 
+             diagonal from left to right is constant.
+             \n vc, vr: vc and vr are the first row and column of the matrix;
+             \n v: symmatric case, i.e., vc = vr = v;
+             \n [type,] n: the dimension of the matrix is n, v = [1:n] is the first 
+                row and column vector.",
+             
+             "prolate" => "Prolate Matrix:
+             \n A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
+             \n [type,] n, w: the dimension of the matrix is n, w is a real scalar;
+             \n [type,] n: the case when w = 0.25.
+             \n Reference: J.M. Varah. The Prolate Matrix. Linear Algebra and Appl.
+             187:267--278, 1993."
              );
 
 matrixclass =
@@ -390,7 +405,7 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei",
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                              "kms", "wathen", "oscillate"],
+                              "kms", "wathen", "oscillate", "prolate"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
@@ -400,7 +415,7 @@ matrixclass =
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
-                            "oscillate"],
+                            "oscillate", "prolate"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
