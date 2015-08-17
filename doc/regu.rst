@@ -67,9 +67,37 @@ Here is an example::
 Here is a list test problems in the collection:
 
 * :term:`deriv2`
+* :term:`shaw`
 
 .. glossary::
    :sorted:
+
+   shaw
+      One-dimensional image restoration model. This test problem 
+      uses a first-kind Fredholm integral equation to model a one-dimensional
+      image restoration situation. The kernel :math:`K` is given by
+
+      .. math::
+
+           K(s,t) = (\cos(s)+\cos(t))^2\big(\frac{\sin(u)}{u}\big)^2,
+
+      where 
+
+      .. math:: 
+
+           u = \pi(\sin(s) + \sin(t)).
+
+      Both integration intervals are :math:`[-\pi/2, \pi/2]`. The solution
+      :math:`f` is given by
+
+      .. math::
+
+           f(t) = a_1 \exp(-c_1(t-t_1)^2) + a_2 \exp(-c_2(t-t_2)^2).
+
+      :math:`K` and :math:`f` are discretized by simple quadrature to 
+      produce the matrix :math:`A` and the solution vector :math:`x`. 
+      The right-hand :math:`b` is computed by :math:`b=Ax`.
+
       
    deriv2 
       Computation of the second derivative. The kernel :math:`K`
