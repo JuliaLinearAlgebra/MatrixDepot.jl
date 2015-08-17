@@ -46,6 +46,7 @@ tests = [
          "download",
          "number",
          "property",
+         "regu",
          ]
 
 for t in tests

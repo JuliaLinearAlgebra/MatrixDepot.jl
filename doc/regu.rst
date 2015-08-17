@@ -10,15 +10,15 @@ be written as
 
    \int_{0}^1 K(s,t) f(t) dt = g(s), \quad 0 \leq s \leq 1,
 
-where :math:`g` and :math:`K` are known functions and :math:`f` is the
-unknown solution. This is a classical example of a linear ill-posed
-problem, i.e., an arbitrary small perturbation of the data can cause
-an arbitrarily large perturbation of the solution. For example, in
-computerized tomography, :math:`K` is an X-ray source, :math:`f` is
-the object being scanned, and :math:`g` is the measured damping of the
-X-rays. The goal here is to reconstruct the scanned object from
-information about the locations of the X-ray sources and measurements
-of their damping. 
+where :math:`g` and :math:`K` (called kernel) are known functions
+and :math:`f` is the unknown solution. This is a classical example of
+a linear ill-posed problem, i.e., an arbitrary small perturbation of
+the data can cause an arbitrarily large perturbation of the
+solution. For example, in computerized tomography, :math:`K` is an
+X-ray source, :math:`f` is the object being scanned, and :math:`g` is
+the measured damping of the X-rays. The goal here is to reconstruct
+the scanned object from information about the locations of the X-ray
+sources and measurements of their damping.
 
 After discretizations (by the quadrature method or the Galerkin
 method), we obtain a linear system of equations :math:`Ax=b`. The
@@ -71,5 +71,23 @@ Here is a list test problems in the collection:
 .. glossary::
    :sorted:
       
-   deriv2
-      Computation of the second derivative.
+   deriv2 
+      Computation of the second derivative. The kernel :math:`K`
+      is Green's function for the second derivative 
+
+      .. math:: 
+
+           K(s,t) = \begin{cases}
+                    s(t - 1), \quad s < t, \\
+                    t(s - 1), \quad s \geq t, \\
+                    \end{cases}
+
+      and both integration intervals are :math:`[0,1]`. The function 
+      :math:`g` and :math:`f` are given by 
+
+      .. math::
+
+           g(s) = (s^3 - s)/6, \quad f(t) = t.
+
+      The symmetric matrix :math:`A` and vectors :math:`x` and :math:`b` 
+      are computed from :math:`K,f` and :math:`g` using the Galerkin method.
