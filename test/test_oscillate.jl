@@ -5,7 +5,7 @@
 #    exactly i-1 sign changes. 
 
 mode = rand(1:2) # 2 different modes
-n = rand(1:10)
+n = rand(2:10)
 A = matrixdepot("oscillate", n, mode)
 
 eva, evc = eig(A)

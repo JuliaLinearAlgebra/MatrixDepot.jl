@@ -29,7 +29,7 @@ function oscillate{T}(::Type{T}, n::Int, mode::Int)
     end
     return oscillate(Σ)
 end
-oscillate{T}(::Type{T}, n::Int) = oscillate(T, n, 3)
+oscillate{T}(::Type{T}, n::Int) = oscillate(T, n, 2)
 
 
 immutable RegProb{T}
