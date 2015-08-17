@@ -19,6 +19,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "kms" => kms, "wathen" => wathen,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
                           "prolate" => prolate, "deriv2" => deriv2,
+                          "shaw" => shaw,
                           );
 
 matrixinfo =
@@ -409,7 +410,17 @@ matrixinfo =
              \n Input options:
              \n [type,] n: the dimension of the matrix is n.
              \n Reference: P.C. Hansen, Regularization tools: A MATLAB pacakge for 
-             analysis and solution of discrete ill-posed problems."
+             analysis and solution of discrete ill-posed problems. 
+             Numerical Algorithms, 6(1994), pp.1-35",
+
+             "shaw" => "One-Dimensional Image Restoration Model:
+             \n This test problem uses a first-kind Fredholm integral equation
+             to model a one-dimentional image restoration situation.
+             \n Input options:
+             \n [type,] n: the diemsion of the matrix n must be even.
+             \n Reference: C.B. Shaw, Jr., Improvements of the resolution of 
+             an instrument by numerical solution of an integral equation. 
+             J. Math. Ana. Appl. 37 (1972), 83-112."
              );
 
 matrixclass =
@@ -417,7 +428,8 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei",
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                              "kms", "wathen", "oscillate", "prolate"],
+                              "kms", "wathen", "oscillate", "prolate", 
+                             "deriv2", "shaw"],
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
@@ -427,7 +439,7 @@ matrixclass =
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
-                            "oscillate", "prolate", "deriv2"],
+                            "oscillate", "prolate", "deriv2", "shaw"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
@@ -441,5 +453,5 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
-             "regu" => ["deriv2",]
+             "regu" => ["deriv2", "shaw"]
                );

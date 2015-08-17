@@ -39,7 +39,7 @@ immutable RegProb{T}
 end
 
 function show(io::IO, p::RegProb)
-    println(io, "Test problems for Regularization Method")
+    println(io, "Test problems for Regularization Methods")
     println(io, "A:\n", p.A)
     println(io, "b:\n", p.b)
     println(io, "x:\n", p.x)
@@ -106,5 +106,28 @@ end
 # One-Dimensional Image Restoration Model
 # 
 function shaw{T}(::Type{T}, n::Int)
+    mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
+    h = pi/n; A = zeros(T, n, n)
+    
+    # compute A
+    co = cos(-pi/2 + T[.5:n-.5;]*h)
+    psi = pi*sin(-pi/2 + T[.5:n-.5;]*h)
+    for i = 1:div(n,2)
+        for j = i:n-i
+            ss = psi[i] +psi[j]
+            A[i,j] = ((co[i] + co[j])*sin(ss)/ss)^2
+            A[n-j+1, n-i+1] = A[i,j]
+        end
+        A[i, n-i+1] = (2*co[i])^2
+    end
+    A = A + triu(A, 1)'; A = A*h
+    
+    # compute x and b
+    a1 = 2; c1 = 6; t1 = .8
+    a2 = 1; c2 = 2; t2 = -.5
+    x = a1*exp(-c1*(-pi/2 + T[.5:n-.5;]*h - t1).^2) + 
+        a2*exp(-c2*(-pi/2 + T[.5:n-.5;]*h - t2).^2)
+    b = A*x
 
+    return RegProb(A, b, x)
 end

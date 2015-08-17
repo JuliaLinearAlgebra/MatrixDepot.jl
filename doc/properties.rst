@@ -38,3 +38,6 @@ Other Properties
    data
       Matrix data downloaded from UF sparse matrix collection or
       NIST Matrix Market. 
+
+   regu
+      Test problems for Regularization Methods

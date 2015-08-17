@@ -1,7 +1,7 @@
 .. _regu:
 
-Test Problems for Regularization Method
-=======================================
+Test Problems for Regularization Methods
+========================================
 
 A Fredholm integral equation of the first kind (in 1-dimensional) can
 be written as
