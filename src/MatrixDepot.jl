@@ -3,6 +3,8 @@ using Compat # support v3 and v4
 using GZip
 using MatrixMarket
 
+import Base: show
+
 export
 
 # main function

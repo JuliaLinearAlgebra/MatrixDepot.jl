@@ -18,7 +18,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "randsvd" => randsvd, "rohess" => rohess,
                           "kms" => kms, "wathen" => wathen,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
-                          "prolate" => prolate,
+                          "prolate" => prolate, "deriv2" => deriv2,
                           );
 
 matrixinfo =
@@ -353,6 +353,7 @@ matrixinfo =
              Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.",
 
              "kms" => "Kac-Murdock-Szego Toeplitz Matrix:
+             \n Input:
              \n [type,] n, rho: n is the dimension of the matrix, rho is a
              scalar such that A[i,j] = rho^(abs(i-j)).
              \n [type,] n: rho = 0.5
@@ -362,8 +363,9 @@ matrixinfo =
              and Appl., 10 (1989), pp. 135-146 (and see the references therein).",
 
              "wathen" => "Wathen Matrix:
+             \n Input options:
              \n [type,] nx, ny: the dimension of the matrix is equal to
-             3 * nx * ny + 2 * nx * ny + 1.
+             3 * nx * ny + 2 * nx * ny + 1;
              \n [type,] n: nx = ny = n.
              \n ['symmetric', 'pos-def', 'eigen', 'random', 'sparse']
              \n Reference: A.J. Wathen, Realistic eigenvalue bounds for
@@ -373,12 +375,13 @@ matrixinfo =
              "oscillate" => "Oscillating Matrix:
              \n A matrix A is called oscillating if A is totally 
              nonnegative and if there exists an integer q > 0 such that 
-             A^q is totally positive.  
-             \n Σ: the singular vaule spectrum of the matrix.
+             A^q is totally positive.
+             \n Input options:
+             \n Σ: the singular vaule spectrum of the matrix;
              \n [type,] n, mode: n is the dimension of the matrix. 
                  mode = 1: geometrically distributed singular values.
                  mode = 2: arithmetrically distributed singular values.
-             \n [type,] n: mode = 1
+             \n [type,] n: mode = 1.
              \n ['symmetric','pos-def', 'random', 'eigen'] 
              \n Reference: Per Christian Hansen, Test matrices for 
              regularization methods. SIAM J. SCI. COMPUT Vol 16, 
@@ -387,6 +390,7 @@ matrixinfo =
              "toeplitz" => "Toeplitz Matrix:
              \n A Toeplitz matrix is a matrix in which each descending 
              diagonal from left to right is constant.
+             \n Input options:
              \n vc, vr: vc and vr are the first row and column of the matrix;
              \n v: symmatric case, i.e., vc = vr = v;
              \n [type,] n: the dimension of the matrix is n, v = [1:n] is the first 
@@ -394,10 +398,18 @@ matrixinfo =
              
              "prolate" => "Prolate Matrix:
              \n A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
+             \n Input options:
              \n [type,] n, w: the dimension of the matrix is n, w is a real scalar;
              \n [type,] n: the case when w = 0.25.
              \n Reference: J.M. Varah. The Prolate Matrix. Linear Algebra and Appl.
-             187:267--278, 1993."
+             187:267--278, 1993.",
+             
+             "deriv2" => "Computation of the Second Derivative:
+             \n A classical test problem for regularization algorithms.
+             \n Input options:
+             \n [type,] n: the dimension of the matrix is n.
+             \n Reference: P.C. Hansen, Regularization tools: A MATLAB pacakge for 
+             analysis and solution of discrete ill-posed problems."
              );
 
 matrixclass =
@@ -415,7 +427,7 @@ matrixclass =
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
-                            "oscillate", "prolate"],
+                            "oscillate", "prolate", "deriv2"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
@@ -428,5 +440,6 @@ matrixclass =
              # minor properties
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
-                          "wathen", "oscillate"]
+                          "wathen", "oscillate"],
+             "regu" => ["deriv2",]
                );

@@ -1,7 +1,7 @@
 .. _regu:
 
-Test Matrices for Regularization Method
-----------------------------------------
+Test Problems for Regularization Method
+=======================================
 
 A Fredholm integral equation of the first kind (in 1-dimensional) can
 be written as
@@ -31,3 +31,45 @@ defined as::
     x::Vector{T}  # the solution to Ax = b
   end
 
+Here is an example::
+
+  julia> matrixdepot("deriv2") # check information
+  Computation of the Second Derivative:
+             
+  A classical test problem for regularization algorithms.
+             
+  Input options:
+             
+  [type,] n: the dimension of the matrix is n.
+             
+  Reference: P.C. Hansen, Regularization tools: A MATLAB pacakge for 
+             analysis and solution of discrete ill-posed problems.
+
+  
+  julia> r = matrixdepot("deriv2", 3) # generate the test problem
+  Test problems for Regularization Method
+  A:
+  3x3 Array{Float64,2}:
+  -0.0277778   -0.0277778  -0.00925926
+  -0.0277778   -0.0648148  -0.0277778 
+  -0.00925926  -0.0277778  -0.0277778 
+  b:
+  [-0.01514653483985129,-0.03474793286789414,-0.022274315940957783]
+  x:
+  [0.09622504486493762,0.28867513459481287,0.48112522432468807]
+
+  julia> r.A  # generate the matrix A
+  3x3 Array{Float64,2}:
+  -0.0277778   -0.0277778  -0.00925926
+  -0.0277778   -0.0648148  -0.0277778 
+  -0.00925926  -0.0277778  -0.0277778 
+
+Here is a list test problems in the collection:
+
+* :term:`deriv2`
+
+.. glossary::
+   :sorted:
+      
+   deriv2
+      Computation of the second derivative.
