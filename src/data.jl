@@ -20,6 +20,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
                           "prolate" => prolate, "deriv2" => deriv2,
                           "shaw" => shaw, "wing" => wing,
+                          "foxgood" => foxgood
                           );
 
 matrixinfo =
@@ -428,7 +429,16 @@ matrixinfo =
              two real scalars such that 0 < t1 < t2 < 1;
              \n [type,] n: t1 = 1/3 and t2 = 2/3.
              \n Reference: G.M. Wing, A Primer on Integral Equations of the 
-             First Kind, SIAM, 1991, p. 109."
+             First Kind, SIAM, 1991, p. 109.",
+
+             "foxgood" => "Severely Ill-posed Problem Suggested by Fox & Goodwin:
+             This is a model problem discretized by simple quadrature, which does 
+             not satifiy the discrete Picard condition for the small singular 
+             values.
+             \n Input options:
+             \n [type,] n: the dimension of the matrix is n.
+             \n Reference: C.T. H. Baker, The Numerical Treatment of Integral
+             Equations, Clarendon Press, Oxford, 1977, p. 665."
              );
 
 matrixclass =
@@ -448,7 +458,7 @@ matrixclass =
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
                             "oscillate", "prolate", "deriv2", "shaw", 
-                            "wing",],
+                            "wing", "foxgood"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
@@ -462,5 +472,5 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
-             "regu" => ["deriv2", "shaw", "wing"]
+             "regu" => ["deriv2", "shaw", "wing", "foxgood"]
                );

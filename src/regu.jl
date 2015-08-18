@@ -140,7 +140,7 @@ function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real)
     A = zeros(T, n, n); h = 1/n
     
     # compute A
-    sti = ([1:n;]-0.5)*h
+    sti = (T[1:n;]-0.5)*h
     [A[i,:] = h*sti.*exp(-sti[i] * sti.^2) for i = 1:n]
 
     # compute b
@@ -153,3 +153,16 @@ function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real)
     return RegProb(A, b, x)
 end
 wing{T}(::Type{T}, n::Int) = wing(T, n, 1/3, 2/3)
+
+#
+# Severely Ill-posed Problem Suggested by Fox & Goodwin
+#
+function foxgood{T}(::Type{T}, n::Int)
+    h = 1/n; t = h*(T[1:n;] - 0.5)
+
+    A = h*sqrt((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
+    x = t
+    b = ((1+t.^2).^1.5 - t.^3)/3
+
+    return RegProb(A, b, x)
+end

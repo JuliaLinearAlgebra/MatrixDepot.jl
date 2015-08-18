@@ -67,11 +67,20 @@ Here is an example::
 Here is a list test problems in the collection:
 
 * :term:`deriv2`
+* :term:`foxgood`
 * :term:`shaw`
 * :term:`wing`
 
 .. glossary::
    :sorted:
+
+   foxgood
+      A severely ill-posed problem suggested by Fox & Goodwin. This 
+      is a model problem which does not satisfy the discrete Picard
+      condition for the small singular values [baker77]_.
+
+      .. [baker77] C.T.H Baker, The Numerical Treatment of Integral 
+		   Equations, Clarendon Press, Oxford, 1977, p. 665.
 
    wing
       A problem with a discontinuous solution. The kernel :math:`K` is 

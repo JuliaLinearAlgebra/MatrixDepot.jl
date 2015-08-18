@@ -3,6 +3,13 @@
 Examples
 ======== 
 
+Demo
+---- 
+
+`IJulia Notebook`_
+
+.. _IJulia Notebook: https://github.com/weijianzhang/MatrixDepot.jl/blob/master/doc/MatrixDepot_Demo.ipynb
+
 Getting Started
 ---------------
 
