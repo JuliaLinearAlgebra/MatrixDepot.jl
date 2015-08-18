@@ -158,11 +158,12 @@ wing{T}(::Type{T}, n::Int) = wing(T, n, 1/3, 2/3)
 # Severely Ill-posed Problem Suggested by Fox & Goodwin
 #
 function foxgood{T}(::Type{T}, n::Int)
-    h = 1/n; t = h*(T[1:n;] - 0.5)
+    h = 1/n; t = h*(T[1:n;] - one(T)/2)
 
     A = h*sqrt((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
     x = t
-    b = ((1+t.^2).^1.5 - t.^3)/3
+    b = ((one(T)+t.^2).^1.5 - t.^3)/3
+    b = map(T, b)
 
     return RegProb(A, b, x)
 end

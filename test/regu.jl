@@ -16,3 +16,6 @@ rf32 = matrixdepot("shaw", Float32, 2*n)
 r = matrixdepot("wing", n)
 
 @test r.A == matrixdepot("wing", n, 1/3, 2/3).A
+
+r = matrixdepot("foxgood", n)
+rf32 = matrixdepot("foxgood", Float32, n)
