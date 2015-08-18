@@ -162,8 +162,8 @@ function foxgood{T}(::Type{T}, n::Int)
 
     A = h*sqrt((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
     x = t
-    b = ((one(T)+t.^2).^1.5 - t.^3)/3
-    b = map(T, b)
+    b = zeros(T, n)
+    [b[i] = ((one(T) + t[i]^2)^1.5 - t[i]^3)/3 for i in 1:n]
 
     return RegProb(A, b, x)
 end
