@@ -12,3 +12,7 @@ r = matrixdepot("shaw", 2*n)
 @test issym(r.A)
 
 rf32 = matrixdepot("shaw", Float32, 2*n)
+
+r = matrixdepot("wing", n)
+
+@test r.A == matrixdepot("wing", n, 1/3, 2/3).A

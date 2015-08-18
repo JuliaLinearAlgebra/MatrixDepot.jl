@@ -68,9 +68,34 @@ Here is a list test problems in the collection:
 
 * :term:`deriv2`
 * :term:`shaw`
+* :term:`wing`
 
 .. glossary::
    :sorted:
+
+   wing
+      A problem with a discontinuous solution. The kernel :math:`K` is 
+      given by 
+
+      .. math::
+
+	 K(s,t) = t \exp(-st^2),
+
+      with both integration intervals are :math:`[0,1]`.  The functions 
+      :math:`f` and :math:`g` are given as 
+
+      .. math::
+
+	 f(t) = \begin{cases} 
+	         1, \quad t_1 < t < t_2, \\
+		 0, \quad \mbox{otherwise},\\
+                \end{cases}
+	 \quad
+	 g(s) = \frac{\exp(-st_1^2) - \exp(-st_2^2)}{2s}.
+
+      Here :math:`0 < t_1 < t_2 < 1`. The matrix :math:`A` and two
+      vectors :math:`x` and :math:`b` are obtained by Galerkin discretization
+      with orthonormal basis functions defined on a uniform mesh.
 
    shaw
       One-dimensional image restoration model. This test problem 

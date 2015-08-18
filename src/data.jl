@@ -19,7 +19,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "kms" => kms, "wathen" => wathen,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
                           "prolate" => prolate, "deriv2" => deriv2,
-                          "shaw" => shaw,
+                          "shaw" => shaw, "wing" => wing,
                           );
 
 matrixinfo =
@@ -417,10 +417,18 @@ matrixinfo =
              \n This test problem uses a first-kind Fredholm integral equation
              to model a one-dimentional image restoration situation.
              \n Input options:
-             \n [type,] n: the diemsion of the matrix n must be even.
+             \n [type,] n: the dimesion of the matrix n must be even.
              \n Reference: C.B. Shaw, Jr., Improvements of the resolution of 
              an instrument by numerical solution of an integral equation. 
-             J. Math. Ana. Appl. 37 (1972), 83-112."
+             J. Math. Ana. Appl. 37 (1972), 83-112.",
+
+             "wing" => "A Problem with a Discontinuous Solution:
+             \n Input options:
+             \n [type,] n, t1, t2: the dimension of matrix is n. t1 and t2 are 
+             two real scalars such that 0 < t1 < t2 < 1;
+             \n [type,] n: t1 = 1/3 and t2 = 2/3.
+             \n Reference: G.M. Wing, A Primer on Integral Equations of the 
+             First Kind, SIAM, 1991, p. 109."
              );
 
 matrixclass =
@@ -439,7 +447,8 @@ matrixclass =
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
-                            "oscillate", "prolate", "deriv2", "shaw"],
+                            "oscillate", "prolate", "deriv2", "shaw", 
+                            "wing",],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
@@ -453,5 +462,5 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
-             "regu" => ["deriv2", "shaw"]
+             "regu" => ["deriv2", "shaw", "wing"]
                );

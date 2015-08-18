@@ -136,5 +136,20 @@ end
 # A Problem with a Discontinuous Solution
 #
 function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real)
+    t1 < t2 || error("t1 must be smaller than t2")
+    A = zeros(T, n, n); h = 1/n
+    
+    # compute A
+    sti = ([1:n;]-0.5)*h
+    [A[i,:] = h*sti.*exp(-sti[i] * sti.^2) for i = 1:n]
 
+    # compute b
+    b = sqrt(h)*0.5*(exp(-sti*t1^2) - exp(-sti*t2^2))./sti
+
+    # compute x
+    indices = [findfirst(t1 .< sti, true): findlast(t2 .> sti, true);]
+    x = zeros(T,n); x[indices] = sqrt(h)*ones(length(indices))
+
+    return RegProb(A, b, x)
 end
+wing{T}(::Type{T}, n::Int) = wing(T, n, 1/3, 2/3)
