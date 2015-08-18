@@ -178,3 +178,10 @@ See documentation for more details.
   " Matrix Market: a web resource for test matrix collections",
   *Quality of Numerical Software* (1996) (pp. 125-137).
   [[pdf]](http://www.netlib.org/utk/people/JackDongarra/pdf/matrixmarket.pdf)
+
+- Per Christian Hansen,
+  "Test Matrices for Regularization Methods",
+  *SIAM Journal on Scientific Computing*,
+  vol. 16, 2, (1995) pp.506-512.
+  [[pdf]](http://epubs.siam.org/doi/abs/10.1137/0916032)
+  [[doi]](https://dx.doi.org/10.1137/0916032)
