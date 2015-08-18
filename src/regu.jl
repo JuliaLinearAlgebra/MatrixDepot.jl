@@ -131,3 +131,10 @@ function shaw{T}(::Type{T}, n::Int)
 
     return RegProb(A, b, x)
 end
+
+#
+# A Problem with a Discontinuous Solution
+#
+function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real)
+
+end

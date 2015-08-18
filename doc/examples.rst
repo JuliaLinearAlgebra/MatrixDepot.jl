@@ -1,7 +1,10 @@
 .. _examples:
 
 Examples
---------
+======== 
+
+Getting Started
+---------------
 
 To see all the matrices in the collection, type
 
