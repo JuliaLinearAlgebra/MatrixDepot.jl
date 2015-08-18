@@ -8,11 +8,9 @@ Getting Started
 
 To see all the matrices in the collection, type
 
-.. code:: julia
+.. code:: 
 
     matrixdepot()
-
-.. parsed-literal::
 
             | symmetric |  inverse  | ill-cond  |  pos-def  |   eigen   |
     binomial|           |           |           |           |           |
@@ -72,12 +70,9 @@ The meaning of the column heading is as follows:
 
 We can generate a Hilbert matrix of size 4 by typing
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("hilb", 4)
-
-
-.. parsed-literal::
 
     4x4 Array{Float64,2}:
      1.0       0.5       0.333333  0.25    
@@ -89,12 +84,9 @@ We can generate a Hilbert matrix of size 4 by typing
 
 and generate a circul matrix of size 5 by
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("circul", 5)
-
-
-.. parsed-literal::
 
     5x5 Array{Float64,2}:
      1.0  2.0  3.0  4.0  5.0
@@ -108,11 +100,9 @@ and generate a circul matrix of size 5 by
 We can type the matrix name to see the parameter options or matrix
 properties.
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("hilb")
-
-.. parsed-literal::
 
    Hilbert matrix: 
              
@@ -126,11 +116,9 @@ properties.
 
 
 
-.. code:: julia
+.. code::
 
-    matrixdepot("hadamard")
-
-.. parsed-literal::
+   matrixdepot("hadamard")
 
    Hadamard matrix: 
              
@@ -145,13 +133,9 @@ properties.
 From the information given, we notice that we can create a 4-by-6
 rectanglular Hilbert matrix by
 
-.. code:: julia
+.. code::
 
     matrixdepot("hilb", 4, 6)
-
-
-
-.. parsed-literal::
 
     4x6 Array{Float64,2}:
      1.0       0.5       0.333333  0.25      0.2       0.166667
@@ -163,13 +147,9 @@ rectanglular Hilbert matrix by
 
 We can aslo specify the data type
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("hilb", Float16, 5, 3)
-
-
-
-.. parsed-literal::
 
     5x3 Array{Float16,2}:
      1.0      0.5      0.33325
@@ -184,13 +164,9 @@ By inputing a matrix name, we can see what properties that matrix have.
 Conversely, if we input a property (or properties), we can see all the
 matrices (in the collection) having that property (or properties).
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("symmetric")
-
-
-
-.. parsed-literal::
 
    19-element Array{ASCIIString,1}:
     "hilb"     
@@ -213,13 +189,9 @@ matrices (in the collection) having that property (or properties).
     "kms"      
     "wathen" 
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("symmetric", "ill-cond")
-
-
-
-.. parsed-literal::
 
     7-element Array{ASCIIString,1}:
      "hilb"   
@@ -232,13 +204,9 @@ matrices (in the collection) having that property (or properties).
 
 
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("inverse", "ill-cond", "symmetric")
-
-
-
-.. parsed-literal::
 
     7-element Array{ASCIIString,1}:
      "hilb"   
@@ -254,7 +222,7 @@ matrices (in the collection) having that property (or properties).
 Given a property, we can loop through all the matrices having this
 propery
 
-.. code:: julia
+.. code:: 
 
     # Multiply all matrices of the class "symmetric" and "ill-cond" and "inverse"
     A = eye(4)
@@ -266,14 +234,8 @@ propery
     println(" =")
     A    
 
-.. parsed-literal::
-
     Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x pascal matrix x pei matrix x tridiag matrix =
 
-
-
-
-.. parsed-literal::
 
     4x4 Array{Float64,2}:
      153.12    -11.919    -15.4345   296.937
@@ -285,7 +247,7 @@ propery
 
 The loop above can also be written as
 
-.. code:: julia
+.. code::
 
     A = eye(4)
     print("Identity matrix")
@@ -296,14 +258,8 @@ The loop above can also be written as
     println(" =")
     A
 
-.. parsed-literal::
 
     Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x pascal matrix x pei matrix x tridiag matrix =
-
-
-
-
-.. parsed-literal::
 
     4x4 Array{Float64,2}:
      153.12    -11.919    -15.4345   296.937
@@ -319,13 +275,10 @@ User Defined Properties
 We can define properties in MatrixDepot. Since each property in Matrix
 Depot is a list of strings, you can simply do, for example,
 
-.. code:: julia
+.. code:: 
 
     spd = matrixdepot("symmetric", "pos-def")
 
-
-
-.. parsed-literal::
 
     10-element Array{ASCIIString,1}:
      "hilb"   
@@ -341,13 +294,9 @@ Depot is a list of strings, you can simply do, for example,
 
 
 
-.. code:: julia
+.. code::
 
     myprop = ["lehmer", "cauchy", "hilb"]
-
-
-
-.. parsed-literal::
 
     3-element Array{ASCIIString,1}:
      "lehmer"
@@ -358,7 +307,7 @@ Depot is a list of strings, you can simply do, for example,
 
 Then use it in your tests like
 
-.. code:: julia
+.. code:: 
 
     for matrix in myprop
         A = matrixdepot(matrix, 6)
@@ -366,8 +315,6 @@ Then use it in your tests like
         err = norm(A[p,:] - L*U, 1) # 1-norm error
         println("1-norm error for $matrix matrix is ", err)
     end    
-
-.. parsed-literal::
 
     1-norm error for lehmer matrix is 1.1102230246251565e-16
     1-norm error for cauchy matrix is 5.551115123125783e-17
@@ -377,25 +324,17 @@ Then use it in your tests like
 To add a property permanently for future use, we put the macro
 ``@addproperty`` at the beginning.
 
-.. code:: julia
+.. code:: 
 
     @addproperty myfav = ["lehmer", "cauchy", "hilb"]
-
-
-
-.. parsed-literal::
 
     87
 
 
 
-.. code:: julia
+.. code:: 
 
     @addproperty spd = matrixdepot("symmetric", "pos-def")
-
-
-
-.. parsed-literal::
 
     195
 
@@ -403,11 +342,9 @@ To add a property permanently for future use, we put the macro
 
 We need to **restart** Julia to see the changes. Type
 
-.. code:: julia
+.. code:: 
 
     matrixdepot()
-
-.. parsed-literal::
 
     
               | symmetric |  inverse  | ill-cond  |  pos-def  |  eigen    |
@@ -447,13 +384,9 @@ We need to **restart** Julia to see the changes. Type
 
 Notice new defined properties have been included. We can use them as
 
-.. code:: julia
+.. code:: 
 
     matrixdepot("myfav")
-
-
-
-.. parsed-literal::
 
     3-element Array{ASCIIString,1}:
      "lehmer"
@@ -465,24 +398,15 @@ Notice new defined properties have been included. We can use them as
 We can remove a property using the macro ``@rmproperty``. As before, we
 need to **restart** Julia to see the changes.
 
-.. code:: julia
+.. code:: 
 
     @rmproperty myfav
 
-
-
-.. parsed-literal::
-
     153
 
-
-
-.. code:: julia
+.. code:: 
 
     matrixdepot()
-
-.. parsed-literal::
-
     
               | symmetric |  inverse  | ill-cond  |  pos-def  |  eigen    |
           vand|           |     *     |     *     |           |           |
@@ -522,13 +446,9 @@ More Examples
 
 An interesting test matrix is magic square. It can be generated as
 
-.. code:: julia
+.. code:: 
 
     M = matrixdepot("magic", 5)
-
-
-
-.. parsed-literal::
 
     5x5 Array{Int64,2}:
      17  24   1   8  15
@@ -539,26 +459,18 @@ An interesting test matrix is magic square. It can be generated as
 
 
 
-.. code:: julia
+.. code:: 
 
     sum(M,1)
-
-
-
-.. parsed-literal::
 
     1x5 Array{Int64,2}:
      65  65  65  65  65
 
 
 
-.. code:: julia
+.. code:: 
 
     sum(M,2)
-
-
-
-.. parsed-literal::
 
     5x1 Array{Int64,2}:
      65
@@ -569,26 +481,18 @@ An interesting test matrix is magic square. It can be generated as
 
 
 
-.. code:: julia
+.. code:: 
 
     sum(diag(M))
-
-
-
-.. parsed-literal::
 
     65
 
 
 
-.. code:: julia
+.. code:: 
 
     p = [5:-1:1]
     sum(diag(M[:,p]))
-
-
-
-.. parsed-literal::
 
     65
 
@@ -596,13 +500,9 @@ An interesting test matrix is magic square. It can be generated as
 
 Pascal Matrix can be generated as
 
-.. code:: julia
+.. code:: 
 
     P = matrixdepot("pascal", 6)
-
-
-
-.. parsed-literal::
 
     6x6 Array{Int64,2}:
      1  1   1   1    1    1
@@ -617,13 +517,9 @@ Pascal Matrix can be generated as
 Notice the Cholesky factor of the Pascal matrix has Pascal's triangle
 rows.
 
-.. code:: julia
+.. code:: 
 
     chol(P)
-
-
-
-.. parsed-literal::
 
     6x6 Array{Float64,2}:
      1.0  1.0  1.0  1.0  1.0   1.0
