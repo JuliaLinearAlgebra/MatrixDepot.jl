@@ -1,5 +1,23 @@
 ## Matrix Depot Release Notes
 
+v0.3.0 (coming soon)
+---------------------
+
+* Add test problems for regularization methods:
+
+  - `deriv2`
+  - `foxgood`
+  - `shaw`
+  - `wing`
+
+* Reintroduce Matrix Market interface
+
+* Define new functions for test collection interfaces
+
+  - `matrixdepot(name, :get)`: download matrix data `name`.
+  - `matrixdepot(name, :search)`: search matrix data full strings `name`.
+  - `matrixdepot(name, :read)`: read matrix data `name`.
+
 v0.2.8
 ------
 
@@ -13,7 +31,7 @@ v0.2.8
 v0.2.7
 ------
 
-* fix some typos and v0.4 deprecation warnings
+* Fix some typos and v0.4 deprecation warnings
 
 
 v0.2.6

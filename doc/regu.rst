@@ -21,8 +21,10 @@ the scanned object from information about the locations of the X-ray
 sources and measurements of their damping.
 
 After discretizations (by the quadrature method or the Galerkin
-method), we obtain a linear system of equations :math:`Ax=b`. The
-generated test problems in Matrix Depot has type ``RegProb``, which is
+method), we obtain a linear system of equations :math:`Ax=b`. 
+All the regularization test problems are derived from 
+discretizations of a Fredholm integral equation of the first kind.
+Each generated test problem has type ``RegProb``, which is
 defined as::
 
   immutable RegProb{T}
@@ -64,7 +66,7 @@ Here is an example::
   -0.0277778   -0.0648148  -0.0277778 
   -0.00925926  -0.0277778  -0.0277778 
 
-Here is a list test problems in the collection:
+Here is a list of test problems in the collection:
 
 * :term:`deriv2`
 * :term:`foxgood`
