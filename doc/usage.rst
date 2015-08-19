@@ -103,14 +103,14 @@ matrices is symbolized by ``"symmetric"``.
      "grcar"   
      "hadamard"
 
-.. function:: MatrixDepot.get(name)
+.. function:: matrixdepot(name, :get)
 
     Download a matrix from test matrix collections, where
     ``name`` is a string of collection name + ``/`` + matrix name. 
     For example::
       
-      julia> MatrixDepot.get("HB/1138_bus")
-      
+      julia> matrixdepot("HB/1138_bus", :get)
+
 
 .. function:: MatrixDepot.update()
 
@@ -121,7 +121,7 @@ matrices is symbolized by ``"symmetric"``.
 
     Output matrix information, where ``name`` is a matrix data.
 
-.. function:: matrixdepot(name, :r)
+.. function:: matrixdepot(name, :read)
 
     Read the matrix data given by ``name``.
 
