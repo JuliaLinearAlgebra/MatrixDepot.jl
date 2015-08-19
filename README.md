@@ -100,14 +100,14 @@ julia> matrixdepot("symmetric")
 
 ## Interface to the UF Sparse Matrix Collection 
 
-Use ``MatrixDepot.get(NAME)``, where ``NAME`` is ``collection
+Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection
 name + '/' + matrix name``, to download a test matrix from the University of
 Florida Sparse Matrix Collection:
 http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.  For
 example:
 
 ```julia
-julia> MatrixDepot.get("HB/1138_bus")
+julia> matrixdepot("HB/1138_bus", :get)
 ```
 When download is complete, we can check matrix information using
 
@@ -127,7 +127,7 @@ julia> matrixdepot("HB/1138_bus")
 % kind: power network problem
 %---------------------------------------------------------------------
 ```
-and generate it with the Symbol ``:r``.
+and generate it with the Symbol ``:r`` or ``:read``.
 
 ```julia
 julia> matrixdepot("HB/1138_bus", :r)
@@ -154,10 +154,10 @@ julia> matrixdepot("HB/1138_bus", :r)
     0.0       0.0       0.0         0.0       0.0         0.0  117.647
 ```
 
-The NIST Matrix Market interface is currently suspended.
+The NIST Matrix Market interface is similar. See
+[documentation](http://matrixdepotjl.readthedocs.org/en/latest/interface.html#interface-to-nist-matrix-market)
+for more details.
 
-
-See documentation for more details.
 
 ## References
 
