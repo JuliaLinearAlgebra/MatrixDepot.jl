@@ -1,7 +1,7 @@
 ## Matrix Depot Release Notes
 
-v0.3.0 (coming soon)
----------------------
+v0.3.0 
+------
 
 * Add test problems for regularization methods:
 
@@ -15,7 +15,6 @@ v0.3.0 (coming soon)
 * Define new functions for test collection interfaces
 
   - `matrixdepot(name, :get)`: download matrix data `name`.
-  - `matrixdepot(name, :search)`: search matrix data full strings `name`.
   - `matrixdepot(name, :read)`: read matrix data `name`.
 
 v0.2.8
