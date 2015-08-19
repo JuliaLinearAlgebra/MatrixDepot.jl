@@ -44,10 +44,14 @@ function matrixdepot()
 
     # Print Matrix Market matrix files
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
-        for file in filenames("mm")
-            @printf "%20s|" file
-            print("  NIST Matrix Market matrix")
-            println()
+        for col in filenames("mm")
+            for d in filenames("mm/$(col)")
+                for mat in filenames("uf/$(col)/$(d)")
+                    @printf "%20s|" string(col, '/', d, '/', mat)
+                    print("  NIST Matrix Market matrix")
+                    println()
+                end
+            end
         end
     end
 
