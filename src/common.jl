@@ -33,7 +33,6 @@ function matrixdepot()
 
     # Print UF sparse matrix files
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
-        println()
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
                 @printf "%20s|" string(col, '/', mat)
@@ -45,7 +44,6 @@ function matrixdepot()
 
     # Print Matrix Market matrix files
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
-        println()
         for file in filenames("mm")
             @printf "%20s|" file
             print("  NIST Matrix Market matrix")
@@ -162,13 +160,14 @@ function matrixdepot(name::String)
         return matrixclass[name]
     elseif name in keys(usermatrixclass)
         return usermatrixclass[name]
-    elseif '/' in name
-        (split(name, '/')[1], split(name, '/')[2]) in downloaddata() ||
-           error("matrix data $(name) is not included, try MatrixDepot.get(\"$(name)\").")
-        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-        pathfilename = string(matdatadir, "/", name, ".mtx")
+    elseif '/' in name  # print matrix data info
+        namelist = split(name, '/')
+        length(namelist) == 2 ? matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf") :
+                                matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
 
+        pathfilename = string(matdatadir, '/', name, ".mtx")
         println(ufinfo(pathfilename))
+        println("use matrixdepot(\"$name\", :read) to read the data")
         return
 
     elseif name == "data" # deal with the property "data"
@@ -182,7 +181,7 @@ function matrixdepot(name::String)
         end
         return namelist
     else
-        error("$(name) is not included in Matrix Depot.")
+        error("\"$(name)\" is not included in Matrix Depot.")
     end
 end
 
@@ -205,21 +204,32 @@ function matrixdepot(I::UnitRange{Int})
 end
 
 # generate the required matrix
+# method = :read   (or :r) read matrix data
+#          :get    (or :g) download matrix data
+#          :search (or :s) search collection information
 function matrixdepot(name::String, method::Symbol)
-    if method == :r
-        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf")
-        pathfilename = string(matdatadir, "/", name, ".mtx")
+    if method == :r || method == :read
+        length(split(name, '/')) == 2 ? matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf") :
+                                        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
+        pathfilename = string(matdatadir, '/', name, ".mtx")
 
         if VERSION < v"0.4.0-dev+1419"
             return MatrixMarket.mmread(pathfilename)
         else
             return sparse(Base.SparseMatrix.CHOLMOD.Sparse(pathfilename))
         end
-
+    elseif method == :g || method == :get
+        MatrixDepot.get(name)
+    elseif method == :s || method == :search
+        MatrixDepot.search(name)
     else
-        error("use Symbol :r to read matrices")
+        error("unknown symbol $method.
+              use :read (or :r) to read matrix data;
+              use :get  (or :g) to download matrix data;
+              use :search (or :s) to search for collection information.")
     end
 end
+
 
 # Return a list of matrix names with common properties
 # when multiple properties are given.

@@ -1,8 +1,33 @@
+# The implementations are inspired by MatrixMarket.jl
+# https://github.com/JuliaSparse/MatrixMarket.jl
+# The MatrixMarket.jl package is licensed under the MIT Expat License:
+# Copyright (c) 2013: Viral B. Shah.
+
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 #####################################################
 # Download data from UF Sparse Matrix Collection
 #####################################################
 const UF_URL = "http://www.cise.ufl.edu/research/sparse/"
+const MM_URL = "http://math.nist.gov/MatrixMarket/matrices.html"
 const DATA_DIR = joinpath(Pkg.dir("MatrixDepot"), "data")
 
 # download html files and store matrix data as a list of tuples
@@ -10,37 +35,82 @@ function downloaddata(; generate_list::Bool = true)
     # UF Sparse matrix collection
     dlurl = string(UF_URL, "matrices/list_by_id.html")
     matrices = string(DATA_DIR, "/uf_matrices.html")
+    mm_matrices = string(DATA_DIR, "/mm_matrices.html")
 
     isfile(matrices) || download(dlurl, matrices)
+    isfile(mm_matrices) || download(MM_URL, mm_matrices)
 
     if generate_list
-        matrixdata = Tuple[]
+        uf_matrixdata = Tuple[]
+        mm_matrixdata = Tuple[]
         open(matrices) do f
-
             for line in readlines(f)
-
                 if contains(line, """MAT</a>""")
                     collectionname, matrixname = split(split(line, '"')[2], '/')[end-1:end]
                     matrixname = split(matrixname, '.')[1]
-                    push!(matrixdata, (collectionname, matrixname))
+                    push!(uf_matrixdata, (collectionname, matrixname))
                 end
-
             end
         end
-        return matrixdata
+        
+        open(mm_matrices) do f
+            for line in readlines(f)
+                if contains(line, """<A HREF="/MatrixMarket/data/""")
+                    collectionname, setname, matrixname = split(split(line, '"')[2], '/')[4:6]
+                    matrixname = split(matrixname, '.')[1]
+                    push!(mm_matrixdata, (collectionname, setname, matrixname))
+                end
+            end
+        end
+        return uf_matrixdata, mm_matrixdata
     end
 
 end
 
+# given a matrix name, 
+function search(matrixname::String)
+    uf_matrixdata, mm_matrixdata = downloaddata()
+    uf_matrices = String[]
+    mm_matrices = String[]
+    [push!(uf_matrices, m[2]) for m in uf_matrixdata]
+    [push!(mm_matrices, m[3]) for m in mm_matrixdata]
+
+    datalist = String[]
+    if (matrixname in uf_matrices) || (matrixname in mm_matrices)
+        uf_index = findin(uf_matrices, [matrixname])
+        mm_index = findin(mm_matrices, [matrixname])
+        if uf_index != 0
+            for i in uf_index
+                collectionname, matrixname = uf_matrixdata[i]
+                push!(datalist, string(collectionname, '/', matrixname))
+            end
+        end
+        if mm_index != 0
+            for i in mm_index
+                collectionname, setname, matrixname = mm_matrixdata[i]
+                push!(datalist, string(collectionname, '/', setname, '/', matrixname))
+            end
+        end
+        println("Try MatrixDepot.get(`name`), where `name` is one 
+                of the elements in the following Array:")
+        return datalist
+    else
+        error("can not find $matrixname in the database.")
+    end
+end
+
+
 # update database from the websites
 function update()
     uf_matrices = string(DATA_DIR, "/uf_matrices.html")
+    mm_matrices = string(DATA_DIR, "/mm_matrices.html")
     if isfile(uf_matrices)
         rm(uf_matrices)
     end
-
+    if isfile(mm_matrices)
+        rm(mm_matrices)
+    end
     downloaddata(generate_list = false)
-
 end
 
 
@@ -65,48 +135,75 @@ end
 #
 # Example
 # -------
-# MatrixDepot.get("HB/1138_bus")
+# MatrixDepot.get("HB/1138_bus") # uf sparse matrix
+# MatrixDepot.get("1138_bus") # Matrix Market
 #
-function get(name::String)
+function get(name::String)   
 
-    if !isdir(string(DATA_DIR, '/', "uf"))
-        mkdir(string(DATA_DIR, '/', "uf"))
+    isdir(string(DATA_DIR,'/', "uf")) || mkdir(string(DATA_DIR, '/', "uf"))
+    isdir(string(DATA_DIR,'/', "mm")) || mkdir(string(DATA_DIR, '/', "mm"))
+                                               
+    uf_matrixdata, mm_matrixdata = downloaddata()
+
+    namelist = split(name, '/')
+    if length(namelist) == 2 # UF sparse matrix collection
+        collectionname, matrixname = namelist
+        (collectionname, matrixname) in uf_matrixdata ||
+        error("can not find $collectionname/$matrixname in UF sparse matrix collection")
+        fn = string(matrixname, ".tar.gz")
+        uzfn = string(matrixname, ".mtx")
+        url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
+    
+        dir = string(DATA_DIR, '/', "uf", '/', collectionname, '/')
+        if !isdir(dir)
+            mkdir(string(DATA_DIR, '/', "uf", '/', collectionname))
+        end
+        dirfn = string(dir, fn)
+        diruzfn = string(dir, matrixname, '/', uzfn)
+
+        !isfile(string(dir, uzfn)) || error("file $(uzfn) exits, no need to download")
+        
+        try
+            download(url, dirfn)
+            println("download:", dirfn)
+        catch
+            error("fail to download $fn")
+        end
+
+        if !isfile(diruzfn)
+            gunzip(dirfn)
+        end
+        rm(dirfn)
+    
+        run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
+        cp("$(diruzfn)", "$(dir)/$(uzfn)")
+        rm(string(dir,'/', matrixname, ".tar"))
+        rm(string(dir, '/', matrixname), recursive=true)
+
+    elseif length(namelist) == 3 # Matrix Market collection 
+        
+        collectionname, setname, matrixname = namelist
+        mtxfname = string(matrixname, ".mtx")
+        uzfn = string(matrixname, ".mtx.gz")
+
+        dirfn = string(DATA_DIR, '/',"mm", '/', mtxfname)
+        diruzfn = string(DATA_DIR, '/', "mm", '/', uzfn)
+
+        !isfile(dirfn) || error("file $(mtxfname) exits, no need to download")
+        url =  "ftp://math.nist.gov/pub/MatrixMarket2/$collectionname/$setname/$matrixname.mtx.gz"
+
+        try 
+            download(url, diruzfn)
+            println("download:", diruzfn)
+        catch
+            error("fail to download $uzfn")
+        end
+        gunzip(diruzfn)
+        rm(diruzfn)
+
+    elseif length(namelist) == 1
+        search(name)
+    else
+        error("can not find $name")
     end
-    matrixdata = downloaddata()
-    collectionname, matrixname = split(name, '/')
-    (collectionname, matrixname) in matrixdata ||
-       error("can not find $collectionname/$matrixname in UF sparse matrix collection")
-    fn = string(matrixname, ".tar.gz")
-    uzfn = string(matrixname, ".mtx")
-    url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
-
-    dir = string(DATA_DIR, '/', "uf", '/', collectionname, '/')
-    if !isdir(dir)
-        mkdir(string(DATA_DIR, '/', "uf", '/', collectionname))
-    end
-    dirfn = string(dir, fn)
-    diruzfn = string(dir, matrixname, '/', uzfn)
-
-
-    !isfile(string(dir, uzfn)) || error("file $(uzfn) exits, no need to download")
-    try
-        download(url, dirfn)
-        println("download:", dirfn)
-    catch
-        error("fail to download $fn")
-    end
-
-
-    if !isfile(diruzfn)
-        gunzip(dirfn)
-    end
-    rm(dirfn)
-
-    run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
-    cp("$(diruzfn)", "$(dir)/$(uzfn)")
-    rm(string(dir,'/', matrixname, ".tar"))
-    rm(string(dir, '/', matrixname), recursive=true)
-
 end
-
-
