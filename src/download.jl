@@ -91,8 +91,6 @@ function search(matrixname::String)
                 push!(datalist, string(collectionname, '/', setname, '/', matrixname))
             end
         end
-        println("Try MatrixDepot.get(`name`), where `name` is one 
-                of the elements in the following Array:")
         return datalist
     else
         error("can not find $matrixname in the database.")
@@ -185,10 +183,16 @@ function get(name::String)
         collectionname, setname, matrixname = namelist
         mtxfname = string(matrixname, ".mtx")
         uzfn = string(matrixname, ".mtx.gz")
-
-        dirfn = string(DATA_DIR, '/',"mm", '/', mtxfname)
-        diruzfn = string(DATA_DIR, '/', "mm", '/', uzfn)
-
+        
+        dir = string(DATA_DIR, '/', "mm", '/', collectionname)
+        isdir(dir) || mkdir(string(DATA_DIR, '/', "mm", '/', collectionname))
+   
+        dir = string(DATA_DIR, '/', "mm", '/', collectionname, '/', setname)
+        isdir(dir) || mkdir(string(DATA_DIR, '/', "mm", '/', collectionname, '/', setname))
+        
+        dirfn = string(dir, '/',"mm", '/', mtxfname)
+        diruzfn = string(dir, '/', "mm", '/', uzfn)
+        
         !isfile(dirfn) || error("file $(mtxfname) exits, no need to download")
         url =  "ftp://math.nist.gov/pub/MatrixMarket2/$collectionname/$setname/$matrixname.mtx.gz"
 
@@ -202,7 +206,10 @@ function get(name::String)
         rm(diruzfn)
 
     elseif length(namelist) == 1
-        search(name)
+        stringvec = search(name)
+        length(stringvec) == 1 ? matrixdepot(stringvec[1], :get) :
+                println("Try MatrixDepot.get(`name`), where `name` is one 
+                of the elements in the following Array:"); return stringvec
     else
         error("can not find $name")
     end

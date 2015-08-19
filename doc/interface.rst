@@ -1,14 +1,16 @@
 .. _interfaces:
 
-Interface to Test Matrix Collections
-====================================
-
-Interface to the UF Sparse Matrix Collection
----------------------------------------------
+Interface to Test Collections
+=============================
 
 Before downloading test matrices, we should first update the database::
 
   julia> MatrixDepot.update()
+
+
+
+Interface to the UF Sparse Matrix Collection
+---------------------------------------------
 
 Use ``MatrixDepot.get(NAME)``, where ``NAME`` is ``collection name
 +'/' + matrix name``,  to download a test matrix from the
@@ -84,8 +86,8 @@ and generate it with the Symbol ``:r``::
 	[843845, 916428]  =  1.0
 
 
-Interface to NIST Matrix Market (temporarily suspend)
-------------------------------------------------------
+Interface to NIST Matrix Market
+-------------------------------
 
 Use ``MatrixDepot.get(NAME, collection = :MM)``, where ``NAME`` is
 ``collection name + '/' + set name + '/' + matrix name`` to download a
