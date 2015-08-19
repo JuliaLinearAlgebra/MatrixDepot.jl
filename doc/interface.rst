@@ -3,27 +3,44 @@
 Interface to Test Collections
 =============================
 
-Before downloading test matrices, we should first update the database::
+Before downloading test matrices, it is recommended to first update
+the database::
 
   julia> MatrixDepot.update()
-
 
 
 Interface to the UF Sparse Matrix Collection
 ---------------------------------------------
 
-Use ``MatrixDepot.get(NAME)``, where ``NAME`` is ``collection name
+Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection name
 +'/' + matrix name``,  to download a test matrix from the
 `UF Sparse Matrix Collection <http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html>`_.
 For example::
 
-  julia> MatrixDepot.get("SNAP/web-Google")
+  julia> matrixdepot("SNAP/web-Google", :get)
 
 .. note:: 
    ``matrixdepot()`` displays all the matrices in the
    collection, including the newly downloaded matrices. All the matrix 
    data can be found by ``matrixdepot("data")``. 
 	  
+If the matrix name is unique in the collections, we could use
+``matrixdepot(matrix name, :get)`` to download the data. If more than
+one matrix has the same name, a list of options will be returned. For
+example::
+  
+  julia> matrixdepot("epb0", :get)
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  100 83244  100 83244    0     0   109k      0 --:--:-- --:--:-- --:--:--  133k
+  download:/home/weijian/.julia/v0.4/MatrixDepot/data/uf/Averous/epb0.tar.gz
+  epb0/epb0.mtx
+
+  julia> matrixdepot("1138_bus", :get)
+  Try MatrixDepot.get(`name`), where `name` is one of the elements in the following Array:
+  2-element Array{AbstractString,1}:
+  "HB/1138_bus"                    
+  "Harwell-Boeing/psadmit/1138_bus"
 
 When download is complete, we can check matrix information using::
 
@@ -44,7 +61,7 @@ When download is complete, we can check matrix information using::
   %-------------------------------------------------------------------------------
   ...
 
-and generate it with the Symbol ``:r``::
+and generate it with the Symbol ``:r`` or  ``:read`` ::
 
   julia> matrixdepot("SNAP/web-Google", :r)
   916428x916428 sparse matrix with 5105039 Float64 entries:
@@ -89,14 +106,46 @@ and generate it with the Symbol ``:r``::
 Interface to NIST Matrix Market
 -------------------------------
 
-Use ``MatrixDepot.get(NAME, collection = :MM)``, where ``NAME`` is
+Use ``matrixdepot(NAME, :get)``, where ``NAME`` is
 ``collection name + '/' + set name + '/' + matrix name`` to download a
 test matrix from NIST Matrix Market:
 http://math.nist.gov/MatrixMarket/. For example::
 
-  julia> MatrixDepot.get("Harwell-Boeing/lanpro/nos5", collection = :MM)
+  julia> matrixdepot("Harwell-Boeing/lanpro/nos5", :get)
 
-The way to generate a matrix from NIST Matrix Market and check matrix
-information are the same as above.
+If the matrix name is unique, we could also use ``matrixdepot(matrix name, :get)``::
+
+  julia> matrixdepot("bp__1400", :get)
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  100 28192  100 28192    0     0   4665      0  0:00:06  0:00:06 --:--:-- 10004
+  download:/home/weijian/.julia/v0.4/MatrixDepot/data/mm/Harwell-Boeing/smtape/bp__1400.mtx.gz
+
  
+Checking matrix information and generating matrix data are similar to 
+the above case::
 
+  julia> matrixdepot("Harwell-Boeing/smtape/bp__1400")
+
+  %%MatrixMarket matrix coordinate real general
+
+  use matrixdepot("Harwell-Boeing/smtape/bp__1400", :read) to read the data
+
+  julia> matrixdepot("Harwell-Boeing/smtape/bp__1400", :read)
+  822x822 sparse matrix with 4790 Float64 entries:
+	[1  ,   1]  =  1.0
+	[1  ,   2]  =  0.001
+	[26 ,   2]  =  -1.0
+	[1  ,   3]  =  0.6885
+	[25 ,   3]  =  0.9542
+	[692,   3]  =  1.0
+	[718,   3]  =  5.58
+	⋮
+	[202, 820]  =  -1.0
+	[776, 820]  =  1.0
+	[1  , 821]  =  0.4622
+	[25 , 821]  =  0.725
+	[28 , 821]  =  1.0
+	[202, 821]  =  -1.0
+	[796, 821]  =  1.0
+	[2  , 822]  =  1.0

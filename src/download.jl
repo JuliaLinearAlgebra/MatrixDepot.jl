@@ -190,11 +190,11 @@ function get(name::String)
         dir = string(DATA_DIR, '/', "mm", '/', collectionname, '/', setname)
         isdir(dir) || mkdir(string(DATA_DIR, '/', "mm", '/', collectionname, '/', setname))
         
-        dirfn = string(dir, '/',"mm", '/', mtxfname)
-        diruzfn = string(dir, '/', "mm", '/', uzfn)
+        dirfn = string(dir, '/', mtxfname)
+        diruzfn = string(dir, '/', uzfn)
         
         !isfile(dirfn) || error("file $(mtxfname) exits, no need to download")
-        url =  "ftp://math.nist.gov/pub/MatrixMarket2/$collectionname/$setname/$matrixname.mtx.gz"
+        url =  "ftp://math.nist.gov/pub/MatrixMarket2/$(collectionname)/$(setname)/$(matrixname).mtx.gz"
 
         try 
             download(url, diruzfn)
@@ -207,9 +207,12 @@ function get(name::String)
 
     elseif length(namelist) == 1
         stringvec = search(name)
-        length(stringvec) == 1 ? matrixdepot(stringvec[1], :get) :
-                println("Try MatrixDepot.get(`name`), where `name` is one 
-                of the elements in the following Array:"); return stringvec
+        if length(stringvec) == 1
+            return matrixdepot(stringvec[1], :get)
+        else
+            println("Try MatrixDepot.get(`name`), where `name` is one of the elements in the following Array:")
+            return stringvec
+        end
     else
         error("can not find $name")
     end
