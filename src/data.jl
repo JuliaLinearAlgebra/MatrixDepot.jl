@@ -20,7 +20,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
                           "prolate" => prolate, "deriv2" => deriv2,
                           "shaw" => shaw, "wing" => wing,
-                          "foxgood" => foxgood
+                          "foxgood" => foxgood, "heat" => heat 
                           );
 
 matrixinfo =
@@ -438,7 +438,15 @@ matrixinfo =
              \n Input options:
              \n [type,] n: the dimension of the matrix is n.
              \n Reference: C.T. H. Baker, The Numerical Treatment of Integral
-             Equations, Clarendon Press, Oxford, 1977, p. 665."
+             Equations, Clarendon Press, Oxford, 1977, p. 665.",
+
+             "heat" => "Inverse Heat Equation:
+             \n Input options:
+             \n [type,] n, kappa: the dimension of the matrix is n and kappa
+             controls the ill-conditioning of the matrix. (kappa = 5 gives
+             a well-conditioned problem and kappa = 1 gives an ill conditoned 
+             problem);
+             \n [type,] n: kappa = 1."
              );
 
 matrixclass =
@@ -472,5 +480,5 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
-             "regu" => ["deriv2", "shaw", "wing", "foxgood"]
+             "regu" => ["deriv2", "shaw", "wing", "foxgood", "heat"]
                );

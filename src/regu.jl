@@ -167,3 +167,34 @@ function foxgood{T}(::Type{T}, n::Int)
 
     return RegProb(A, b, x)
 end
+
+#
+# Inverse Heat Equation
+#
+function heat{T}(::Type{T}, n::Int, kappa::Real)
+    h = one(T)/n; t = T[h/2:h:1;]
+    c = h/(2*kappa*sqrt(pi))
+    d = one(T)/(4*kappa^2)
+
+    # compute the matrix A
+    k = c*t.^(-1.5).*exp(-d./t)
+    r = zeros(T, length(t)); r[1] = k[1]
+    A = toeplitz(k, r)
+
+    # compute the vectors x and b
+    x = zeros(T, n)
+    for i = 1:div(n,2) # ?can n be odd
+        ti = i*20/n
+        if ti < 2
+            x[i] = 0.75*ti^2/4
+        elseif ti < 3
+            x[i] = 0.75 + (ti - 2)*(3 - ti)
+        else
+            x[i] = 0.75*exp(-(ti - 3)*2)
+        end
+    end
+    x[div(n,2)+1:n] = zeros(T, div(n, 2))
+    b = A*x
+    return RegProb(A, b, x)
+end
+heat{T}(::Type{T}, n::Int) = heat(T, n, 1)
