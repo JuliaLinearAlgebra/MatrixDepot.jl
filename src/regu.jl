@@ -49,6 +49,7 @@ end
 # Regularization tools for MATLAB. 
 # http://www.imm.dtu.dk/~pcha/Regutools/
 #
+# BSD License
 # Copyright (c) 2015, Per Christian Hansen
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
@@ -62,6 +63,7 @@ end
 #     * Neither the name of the DTU Compute nor the names
 #       of its contributors may be used to endorse or promote products derived
 #       from this software without specific prior written permission.
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -185,7 +187,7 @@ function heat{T}(::Type{T}, n::Int, κ::Real)
 
     # compute the vectors x and b
     x = zeros(T, n)
-    for i = 1:div(n,2) # 
+    for i = 1:div(n,2)  
         ti = i*20/n
         if ti < 2
             x[i] = 0.75*ti^2/4
@@ -200,3 +202,33 @@ function heat{T}(::Type{T}, n::Int, κ::Real)
     return RegProb(A, b, x)
 end
 heat{T}(::Type{T}, n::Int) = heat(T, n, 1)
+
+#
+# First Kind Fredholm Integral Equation
+#
+function baart{T}(::Type{T}, n::Int)
+    mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
+    hs = pi/(2*n); ht = T(pi/n); c = one(T)/(3*sqrt(2))
+    A = zeros(T, n, n); ihs = T[0:n;]*hs; n1 = n+1; nh = div(n,2)
+    f3 = exp(ihs[2:n1]) - exp(ihs[1:n])
+    
+    # compute A
+    for j = 1:n
+        f1 = f3; co2 = cos((j - one(T)/2)*ht); co3 = cos(j*ht)
+        f2 = (exp(ihs[2:n1]*co2) - exp(ihs[1:n]*co2))/co2
+        j == nh ? f3 = hs*ones(T, n) : 
+                  f3 = (exp(ihs[2:n1]*co3) - exp(ihs[1:n]*co3))/co3
+        A[:,j] = c*(f1 + 4*f2 + f3)
+    end
+    
+    # compute vector b
+    si = T[.5:.5:n;]*hs; si = sinh(si)./si
+    b = zeros(T, n)
+    b[1] = 1 + 4*si[1] + si[2]
+    b[2:n] = si[2:2:2*n-2] + 4*si[3:2:2*n-1] + si[4:2:2*n]
+    b = b*sqrt(hs)/3
+
+    # compute vector x
+    x = -diff(cos(T[0:n;]*ht))/sqrt(ht)
+    return RegProb(A, b, x)
+end

@@ -20,7 +20,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
                           "prolate" => prolate, "deriv2" => deriv2,
                           "shaw" => shaw, "wing" => wing,
-                          "foxgood" => foxgood, "heat" => heat 
+                          "foxgood" => foxgood, "heat" => heat,
+                          "baart" => baart
                           );
 
 matrixinfo =
@@ -442,11 +443,15 @@ matrixinfo =
 
              "heat" => "Inverse Heat Equation:
              \n Input options:
-             \n [type,] n, kappa: the dimension of the matrix is n and kappa
-             controls the ill-conditioning of the matrix. (kappa = 5 gives
-             a well-conditioned problem and kappa = 1 gives an ill conditoned 
-             problem);
-             \n [type,] n: kappa = 1."
+             \n [type,] n, kappa: the dimension of the matrix is n and n 
+             must be even. kappa controls the ill-conditioning of the matrix. 
+             (kappa = 5 gives a well-conditioned problem and kappa = 1 
+              gives an ill conditoned problem);
+             \n [type,] n: kappa = 1.",
+
+             "baart" => "Fredholm Integral Equation of the Fisrt Kind:
+             \n Input options:
+             \n [type,] n: the dimenstion of the matrix is n."
              );
 
 matrixclass =
@@ -480,5 +485,5 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
-             "regu" => ["deriv2", "shaw", "wing", "foxgood", "heat"]
+             "regu" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart"]
                );
