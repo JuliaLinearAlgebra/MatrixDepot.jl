@@ -171,19 +171,21 @@ end
 #
 # Inverse Heat Equation
 #
-function heat{T}(::Type{T}, n::Int, kappa::Real)
+function heat{T}(::Type{T}, n::Int, κ::Real)
+    mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = one(T)/n; t = T[h/2:h:1;]
-    c = h/(2*kappa*sqrt(pi))
-    d = one(T)/(4*kappa^2)
+    c = h/(2*κ*T(sqrt(pi)))
+    d = one(T)/(4*κ^2)
 
     # compute the matrix A
-    k = c*t.^(-1.5).*exp(-d./t)
-    r = zeros(T, length(t)); r[1] = k[1]
+    m = length(t); k = zeros(T, m)
+    [k[i] = c*t[i]^(-1.5)*exp(-d/t[i]) for i in 1:m]
+    r = zeros(T, m); r[1] = k[1]
     A = toeplitz(k, r)
 
     # compute the vectors x and b
     x = zeros(T, n)
-    for i = 1:div(n,2) # ?can n be odd
+    for i = 1:div(n,2) # 
         ti = i*20/n
         if ti < 2
             x[i] = 0.75*ti^2/4

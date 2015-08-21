@@ -1,5 +1,12 @@
 ## Matrix Depot Release Notes
 
+v0.3.1 (Coming Soon)
+---------------------
+
+* New test problems for regularization methods:
+
+  - `heat`
+
 v0.3.0 
 ------
 
@@ -124,11 +131,6 @@ v0.1.0
 
 TODO
 ----
-
-* matrix reader: move to MatrixMarket reader for all the downloaded matrices
-  in the collection
-
-* add test matrices from Regularization toolbox?
 
 * add a subcollection for symmetric quasi-definite linear system?
 

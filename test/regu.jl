@@ -19,3 +19,6 @@ r = matrixdepot("wing", n)
 
 r = matrixdepot("foxgood", n)
 rf32 = matrixdepot("foxgood", Float32, n)
+
+r = matrixdepot("heat", n)
+rf32 = matrixdepot("heat", Float32, n)
