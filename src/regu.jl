@@ -232,3 +232,35 @@ function baart{T}(::Type{T}, n::Int)
     x = -diff(cos(T[0:n;]*ht))/sqrt(ht)
     return RegProb(A, b, x)
 end
+
+#
+# Phillips's "famous" problem
+#
+function phillips{T}(::Type{T}, n::Int)
+    mod(n, 4) == 0 || error("The dimension of the matrix must be a multiple of 4.")
+
+    # compute A
+    h = 12/n; n4 = div(n, 4); r1 = zeros(T,n)
+    c = cos(T[-1:n4;]*4*pi/n)
+    [r1[i] = h + 9/(h*pi^2)*(2*c[i+1] - c[i] - c[i+2]) for i in 1:n4]
+    r1[n4+1] = h/2 + 9/(h*pi^2)*(cos(4*pi/n)-1)
+    A = toeplitz(r1)
+    
+    # compute the vector b
+    b = zeros(T, n); c = pi/3
+    for i = div(n,2)+1:n
+        t1 = -6 + i*h; t2 = t1 - h
+        b[i] = t1*(6-abs(t1)/2) + 
+               ((3-abs(t1)/2)*sin(c*t1) - 2/c*(cos(c*t1) - one(T)))/c -  
+               t2*(6-abs(t2)/2) -
+               ((3-abs(t2)/2)*sin(c*t2) - 2/c*(cos(c*t2) - one(T)))/c
+        b[n-i+1] = b[i]
+    end
+    b = b/sqrt(h)
+    
+    # compute x
+    x = zeros(T, n)
+    x[2*n4+1:3*n4] = (h + diff(sin(T[0:h:(3+10*eps(T));]*c))/c)/sqrt(h)
+    x[n4+1:2*n4] = x[3*n4:-1:2*n4+1]
+    return RegProb(A, b, x)
+end

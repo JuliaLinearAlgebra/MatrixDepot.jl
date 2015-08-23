@@ -21,7 +21,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "prolate" => prolate, "deriv2" => deriv2,
                           "shaw" => shaw, "wing" => wing,
                           "foxgood" => foxgood, "heat" => heat,
-                          "baart" => baart
+                          "baart" => baart, "phillips" => phillips
                           );
 
 matrixinfo =
@@ -451,6 +451,10 @@ matrixinfo =
 
              "baart" => "Fredholm Integral Equation of the Fisrt Kind:
              \n Input options:
+             \n [type,] n: the dimenstion of the matrix is n.",
+             
+             "phillips" => "Phillips's \"famous\" problem:
+             \n Input options:
              \n [type,] n: the dimenstion of the matrix is n."
              );
 
@@ -471,7 +475,7 @@ matrixclass =
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
                             "oscillate", "prolate", "deriv2", "shaw", 
-                            "wing", "foxgood"],
+                            "wing", "foxgood", "phillips"],
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
@@ -485,5 +489,6 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
-             "regu" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart"]
+             "regu" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
+                        "phillips"]
                );
