@@ -256,7 +256,7 @@ function phillips{T}(::Type{T}, n::Int)
                ((3-abs(t2)/2)*sin(c*t2) - 2/c*(cos(c*t2) - one(T)))/c
         b[n-i+1] = b[i]
     end
-    b = b/sqrt(h)
+    [b[i] = b[i]/sqrt(h) for i=1:n]
     
     # compute x
     x = zeros(T, n)
