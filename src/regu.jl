@@ -176,7 +176,7 @@ end
 function heat{T}(::Type{T}, n::Int, κ::Real)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = one(T)/n; t = T[h/2:h:1;]
-    c = h/(2*κ*T(sqrt(pi)))
+    c = h/(2*κ*sqrt(pi))
     d = one(T)/(4*κ^2)
 
     # compute the matrix A
@@ -208,7 +208,7 @@ heat{T}(::Type{T}, n::Int) = heat(T, n, 1)
 #
 function baart{T}(::Type{T}, n::Int)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
-    hs = pi/(2*n); ht = T(pi/n); c = one(T)/(3*sqrt(2))
+    hs = pi/(2*n); ht = pi/n; c = one(T)/(3*sqrt(2))
     A = zeros(T, n, n); ihs = T[0:n;]*hs; n1 = n+1; nh = div(n,2)
     f3 = exp(ihs[2:n1]) - exp(ihs[1:n])
     
