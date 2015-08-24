@@ -68,13 +68,88 @@ Here is an example::
 
 Here is a list of test problems in the collection:
 
+* :term:`baart`
 * :term:`deriv2`
 * :term:`foxgood`
+* :term:`heat`
+* :term:`phillips`
 * :term:`shaw`
 * :term:`wing`
 
 .. glossary::
    :sorted:
+
+   heat 
+     Inverse heat equation [carasso82]_. It is a Volterra integral equation of
+     the first kind with integration interval :math:`[0,1]`. The
+     kernel :math:`K` is given by 
+
+     .. math::
+
+        K(s,t) = k(s-t),
+
+     where 
+
+     .. math::
+
+	k(t) = \frac{t^{-3/2}}{2\kappa \sqrt{\pi}}\exp\big(-\frac{1}{4\kappa^2t}\big).
+
+     :math:`\kappa` controls the ill-conditioning of the matrix :math:`A`. 
+     :math:`\kappa = 1` (default) gives an ill-conditioned matrix and 
+     :math:`\kappa = 5` gives a well-conditioned matrix. 
+
+     .. [carasso82] A.S. Carasso, Determining surface temperatures
+		    from interior observations,
+		    SIAM J. Appl. Math. 42 (1982), 558-574.
+
+   baart 
+     Discretization of an artificial Fredholm integral equation of
+     the first kind [baart82]_. The kernel :math:`K` is given by 
+
+     .. math::
+
+        K(s,t) = \exp(s \cos (t)).
+
+     The right-hand side :math:`g` and the solution :math:`f` are given by 
+
+     .. math:: 
+
+        g(s)=2\frac{\sin (s)}{s}, \quad f(t) = \sin(t). 
+
+     .. [baart82] M.L. Baart, The use of auto-correlation for pesudo-rank
+		  determination in noisy ill-conditioned linear least-squares
+		  problems, IMA, J. Numer. Anal. 2 (1982), 241-247.
+
+   phillips
+     Phillips's "famous" problem. Discretization of the "famous" Fredholm
+     integral equation of the first kind deviced by D.L. Phillips [phillips62]_. 
+     The kernel :math:`K` and solution :math:`f` are given by
+
+     .. math::
+
+	K(s,t) = \theta(s-t), \quad f(t) = \theta(t),
+
+     where 
+
+     .. math::
+
+	\theta(x) = \begin{cases}
+                     1+\cos(\frac{\pi x}{3}), & |x| < 3, \\
+                     0,            & |x| \geq 3. \\
+                    \end{cases}
+
+     The right-hand side :math:`g` is given by
+
+     .. math::
+
+        g(s) = (6 - |s|)\Big( 1 + \frac{1}{2}\cos\big(\frac{\pi s}{3}\big)\Big) + \frac{9}{2 \pi}\sin\Big(\frac{\pi |s|}{3}\Big).
+
+     Both integration intervals are :math:`[-6,6]`. 
+
+     .. [phillips62] D.L. Phillips, A technique for the numerical solution 
+		     of certain integral equations of the first kind, J. ACM
+		     9 (1962), 84-97.
+
 
    foxgood
       A severely ill-posed problem suggested by Fox & Goodwin. This 

@@ -443,19 +443,27 @@ matrixinfo =
 
              "heat" => "Inverse Heat Equation:
              \n Input options:
-             \n [type,] n, kappa: the dimension of the matrix is n and n 
-             must be even. kappa controls the ill-conditioning of the matrix. 
-             (kappa = 5 gives a well-conditioned problem and kappa = 1 
+             \n [type,] n, κ: the dimension of the matrix is n and n 
+             must be even. κ controls the ill-conditioning of the matrix. 
+             (κ = 5 gives a well-conditioned problem and κ = 1 
               gives an ill conditoned problem);
-             \n [type,] n: kappa = 1.",
+             \n [type,] n: κ = 1.
+             \n Reference: A.S. Carasso, Determining surface temperatures 
+             from interior observations, SIAM J. Appl. Math. 42 (1982), 558-574.",
 
              "baart" => "Fredholm Integral Equation of the Fisrt Kind:
              \n Input options:
-             \n [type,] n: the dimenstion of the matrix is n.",
+             \n [type,] n: the dimenstion of the matrix is n.
+             \n Reference: M.L. Baart, The use of auto-correlation for 
+             pesudo-rank determination in noisy ill-conditioned linear-squares
+             problems, IMA, J. Numer. Anal. 2 (1982), 241-247.",
              
              "phillips" => "Phillips's \"famous\" problem:
              \n Input options:
-             \n [type,] n: the dimenstion of the matrix is n."
+             \n [type,] n: the dimenstion of the matrix is n.
+             \n Reference: D.L. Phillips, A technique for the numerical 
+             solution of certain integral equations of the first kind, J. ACM
+             9 (1962), 84-97."
              );
 
 matrixclass =
