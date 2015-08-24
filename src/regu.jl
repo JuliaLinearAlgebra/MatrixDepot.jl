@@ -209,6 +209,7 @@ heat{T}(::Type{T}, n::Int) = heat(T, n, 1)
 function baart{T}(::Type{T}, n::Int)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     hs = pi/(2*n); ht = pi/n; c = one(T)/(3*sqrt(2))
+    ht = convert(T, ht)
     A = zeros(T, n, n); ihs = T[0:n;]*hs; n1 = n+1; nh = div(n,2)
     f3 = exp(ihs[2:n1]) - exp(ihs[1:n])
     
