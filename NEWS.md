@@ -3,9 +3,11 @@
 v0.3.1 (Coming Soon)
 ---------------------
 
-* New test problems for regularization methods:
+* Add new test problems for regularization methods:
 
   - `heat`
+  - `phillips`
+  - `baart`
 
 v0.3.0 
 ------
