@@ -4,6 +4,47 @@
 Matrix Properties
 =================
 
+Type ``matrixdepot("prop1", "prop2", ...)`` to see all the matrices with 
+property ``prop1``, ``prop2`` etc. For example::
+
+  julia> matrixdepot("symmetric")
+  22-element Array{ASCIIString,1}:
+  "hilb"     
+  "cauchy"   
+  "circul"   
+  "dingdong" 
+  "invhilb"  
+  "moler"    
+  "pascal"   
+  "pei"      
+  "clement"  
+  "fiedler"  
+  ⋮          
+  "randcorr" 
+  "poisson"  
+  "wilkinson"
+  "kms"      
+  "wathen"   
+  "oscillate"
+  "prolate"  
+  "deriv2"   
+  "shaw"     
+
+  julia> matrixdepot("symmetric", "eigen")
+  11-element Array{ASCIIString,1}:
+  "circul"   
+  "dingdong" 
+  "pascal"   
+  "clement"  
+  "fiedler"  
+  "minij"    
+  "tridiag"  
+  "poisson"  
+  "wilkinson"
+  "wathen"   
+  "oscillate"
+
+
 Main Properties
 ---------------
 
