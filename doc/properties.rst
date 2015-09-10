@@ -60,7 +60,7 @@ Main Properties
        The matrix is ill-conditioned for some parameter values.
 
    pos-def
-       The matrix is symmetric postive definite for some parameter values.
+       The matrix is postive definite for some parameter values.
 
    eigen
        The eigensystem of the matrix has some known results.
