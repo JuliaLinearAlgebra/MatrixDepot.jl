@@ -7,8 +7,8 @@
 function hilb{T}(::Type{T}, m::Int, n::Int)
     # compute the Hilbert matrix
     H = zeros(T, m, n)
-    for i =1:m, j = 1:n
-        H[i,j] = one(T)/ (i + j -1)
+    for j = 1:n, i= 1:m
+        @inbounds H[i,j] = one(T)/ (i + j - one(T))
     end
     return H
 end
