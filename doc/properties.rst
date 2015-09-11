@@ -60,7 +60,7 @@ Main Properties
        The matrix is ill-conditioned for some parameter values.
 
    pos-def
-       The matrix is postive definite for some parameter values.
+       The matrix is positive definite for some parameter values.
 
    eigen
        The eigensystem of the matrix has some known results.
@@ -74,7 +74,7 @@ Other Properties
       The matrix is sparse.
 
    random
-      The matrix is random.
+      The matrix has random entries.
 
    data
       Matrix data downloaded from UF sparse matrix collection or
