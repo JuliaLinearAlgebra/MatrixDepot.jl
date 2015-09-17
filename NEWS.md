@@ -3,6 +3,8 @@
 v0.3.2
 ------
 
+* rename `@addproperty` to `@addgroup`
+
 * Todo list
 
 	- simplify `matrixdepot()` display

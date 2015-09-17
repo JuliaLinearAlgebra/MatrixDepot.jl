@@ -58,7 +58,7 @@ function matrixdepot()
     # print user defined properties
     if length(usermatrixclass) != 0
         println()
-        println("New Properties:")
+        println("New Groups:")
         println()
         for prop in keys(usermatrixclass)
             print(prop, " = [ ")
@@ -240,7 +240,7 @@ function matrixdepot(prop1::String, otherprops::String...)
 end
 
 #addproperty
-function addproperty(ex)
+function addgroup(ex)
     propname = string(ex.args[1])
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname is an existing property."))
     !(propname in keys(usermatrixclass)) || throw(ArgumentError("You have defined property $propname."))
@@ -262,11 +262,11 @@ function addproperty(ex)
     end
 end
 
-macro addproperty(ex)
-    esc(addproperty(ex))
+macro addgroup(ex)
+    esc(addgroup(ex))
 end
 
-function rmproperty(ex)
+function rmgroup(ex)
     propname = string(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
     propname in keys(usermatrixclass) || throw(ArgumentError("Can not find property $propname."))
@@ -286,6 +286,6 @@ function rmproperty(ex)
     end
 end
 
-macro rmproperty(ex)
-    esc(rmproperty(ex))
+macro rmgroup(ex)
+    esc(rmgroup(ex))
 end

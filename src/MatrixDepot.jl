@@ -10,7 +10,7 @@ export
 # main function
 matrixdepot,
 
-@addproperty, @rmproperty
+@addgroup, @rmgroup
 
 include("ufreader.jl")
 include("common.jl")        # main functions
