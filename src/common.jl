@@ -20,44 +20,40 @@ function matrixdepot()
     println()
     println("Matrices:")
 
-    i = 1
-    for mat in sort(collect(keys(matrixdict))) 
-        if i < 4
-            i += 1
-            @printf "%12s" mat
-        else
-            i = 1
-            @printf "%12s\n" mat
-        end
-    end
-
-    # Print UF sparse matrix files
+    matrices = collect(keys(matrixdict))
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
-                @printf "%20s|" string(col, '/', mat)
-                print("  UF sparse matrix")
-                println()
+                push!(matrices, string(col, '/', mat))
             end
         end
     end
 
-    # Print Matrix Market matrix files
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
         for col in filenames("mm")
             for d in filenames("mm/$(col)")
                 for mat in filenames("mm/$(col)/$(d)")
-                    @printf "%20s|" string(col, '/', d, '/', mat)
-                    print("  NIST Matrix Market matrix")
-                    println()
+                    push!(matrices, string(col, '/', d, '/', mat))
                 end
             end
         end
     end
 
+    i = 1
+    for mat in sort(matrices) 
+        if i < 4
+            i += 1
+            @printf "%18s" mat
+        else
+            i = 1
+            @printf "%18s\n" mat
+        end
+    end
+    println()
+
     println("Groups:")
-    j = 1
-    
+
+    j = 1    
     groups = collect(keys(matrixclass))
     append!(groups, collect(keys(usermatrixclass)))
     push!(groups, "data")
