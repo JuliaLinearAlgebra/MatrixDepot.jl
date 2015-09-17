@@ -1,7 +1,16 @@
 ## Matrix Depot Release Notes
 
-v0.3.1 (Coming Soon)
----------------------
+v0.3.2
+------
+
+* Todo list
+
+	- simplify `matrixdepot()` display
+	- fix reference error: Nick's book 29.1
+	
+
+v0.3.1 
+------
 
 * Add new test problems for regularization methods:
 

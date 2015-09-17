@@ -93,17 +93,7 @@ function matrixdepot{T}(name::String, ::Type{T}, n::Int)
     return matrixdict[name](T, n)
 end
 
-function matrixdepot(name::String, n::Int)
-    # name is the matrix name
-    # n is the dimesion of the matrix
-    # magic square, Pascal matrix and binomial matrix
-    # are exceptions: Int Array by default.
-    if name in  ["magic", "pascal", "binomial"]
-        matrixdepot(name, Int, n)
-    else
-        matrixdepot(name, Float64, n)
-    end
-end
+matrixdepot(name::String, n::Int) = matrixdepot(name, Float64, n)
 
 function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha, beta)
     # name is the matrix name
