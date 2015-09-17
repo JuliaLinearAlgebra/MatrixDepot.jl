@@ -20,7 +20,7 @@ function matrixdepot()
     println()
     println("Matrices:")
 
-    matrices = collect(keys(matrixdict))
+    matrices = sort(collect(keys(matrixdict)))
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
@@ -40,7 +40,7 @@ function matrixdepot()
     end
 
     i = 1
-    for mat in sort(matrices) 
+    for mat in matrices
         if i < 4
             i += 1
             @printf "%18s" mat
@@ -55,9 +55,9 @@ function matrixdepot()
 
     j = 1    
     groups = collect(keys(matrixclass))
-    append!(groups, collect(keys(usermatrixclass)))
     push!(groups, "data")
     groups = sort(groups)
+    append!(groups, collect(keys(usermatrixclass)))
 
     for name in groups
         if j < 4
