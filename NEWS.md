@@ -1,11 +1,14 @@
 ## Matrix Depot Release Notes
 
-v0.3.2
-------
+v0.3.2 (coming soon)
+---------------------
 
-* rename `@addproperty` to `@addgroup`
+* rename `@addproperty` to `@addgroup` and rename `@rmproperty` to `@rmgroup`
 
-* Todo list
+* set Float64 as the default data type for all the parameterized matrices in
+  the collection. 
+
+* Todo listb
 
 	- simplify `matrixdepot()` display
 	- fix reference error: Nick's book 29.1
