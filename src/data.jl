@@ -497,6 +497,6 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
-             "regu" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
+             "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
                         "phillips"]
                );

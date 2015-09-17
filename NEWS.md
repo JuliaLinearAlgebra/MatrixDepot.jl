@@ -3,7 +3,9 @@
 v0.3.2 (coming soon)
 ---------------------
 
-* rename `@addproperty` to `@addgroup` and rename `@rmproperty` to `@rmgroup`
+* rename `@addproperty` to `@addgroup` and rename `@rmproperty` to `@rmgroup`.
+
+* rename property `regu` to `regprob`.
 
 * set Float64 as the default data type for all the parameterized matrices in
   the collection. 
