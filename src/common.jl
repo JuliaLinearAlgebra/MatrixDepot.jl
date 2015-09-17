@@ -18,9 +18,10 @@ end
 function matrixdepot()
     # Print information strings
     println()
+    println("Matrices:")
 
     i = 1
-    for mat in sort(collect(keys(matrixdict)))  
+    for mat in sort(collect(keys(matrixdict))) 
         if i < 4
             i += 1
             @printf "%12s" mat
@@ -54,20 +55,24 @@ function matrixdepot()
         end
     end
 
-    # print user defined properties
-    if length(usermatrixclass) != 0
-        println()
-        println("New Groups:")
-        println()
-        for prop in keys(usermatrixclass)
-            print(prop, " = [ ")
-            for mat in usermatrixclass[prop]
-                print(mat, ", ")
-            end
-            print("] \n")
-            println()
+    println("Groups:")
+    j = 1
+    
+    groups = collect(keys(matrixclass))
+    append!(groups, collect(keys(usermatrixclass)))
+    push!(groups, "data")
+    groups = sort(groups)
+
+    for name in groups
+        if j < 4
+            j += 1
+            @printf "%12s" name
+        else
+            j = 1
+            @printf "%12s\n" name
         end
     end
+    println()
 end
 
 function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int)

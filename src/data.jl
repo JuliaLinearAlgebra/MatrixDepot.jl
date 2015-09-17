@@ -493,7 +493,7 @@ matrixclass =
                            "tridiag", "parter", "chow", "poisson", "neumann",
                            "rosser", "sampling", "wilkinson","wathen", 
                            "oscillate"],
-             # minor properties
+
              "sparse" => ["poisson", "neumann", "wathen"],
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
