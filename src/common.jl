@@ -13,13 +13,8 @@ function filenames(directory::String)
     return namevec
 end
 
-
-# print info about all matrices in the collection
-function matrixdepot()
-    # Print information strings
-    println()
-    println("Matrices:")
-
+# return a list of matrix name in the collection 
+function matrix_name_list()
     matrices = sort(collect(keys(matrixdict)))
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
         for col in filenames("uf")
@@ -38,15 +33,26 @@ function matrixdepot()
             end
         end
     end
+    matrices
+end
+
+# print info about all matrices in the collection
+function matrixdepot()
+    # Print information strings
+    println()
+    println("Matrices:")
+
+    matrices = matrix_name_list()
 
     i = 1
-    for mat in matrices
+    for (index, mat) in enumerate(matrices)
+      
         if i < 4
             i += 1
-            @printf "%18s" mat
+            @printf "%4d) %-14s" index mat
         else
             i = 1
-            @printf "%18s\n" mat
+            @printf "%4d) %-14s\n" index mat
         end
     end
     println()
@@ -173,6 +179,15 @@ function matrixdepot(name::String)
                 end
             end
         end
+        if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
+            for col in filenames("mm")
+                for d in filenames("mm/$(col)")
+                    for mat in filenames("mm/$(col)/$(d)")
+                        push!(namelist, string(col, '/', d, '/', mat))
+                    end
+                end
+            end
+        end
         return namelist
     else
         error("\"$(name)\" is not included in Matrix Depot.")
@@ -181,7 +196,7 @@ end
 
 # access matrices by number
 function matrixdepot(num::Int)
-    matrixstrings = sort(collect(keys(matrixdict)))
+    matrixstrings = matrix_name_list()
     n = length(matrixstrings)
     if num > n
         error("There are $(n) parameterized matrices, but you ask for the $(num)-th ")
