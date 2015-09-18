@@ -13,9 +13,9 @@ function filenames(directory::String)
     return namevec
 end
 
-# return a list of matrix name in the collection 
-function matrix_name_list()
-    matrices = sort(collect(keys(matrixdict)))
+# return a list of matrix data name in the collection
+function matrix_data_name_list()
+    matrices = String[]
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
@@ -36,6 +36,14 @@ function matrix_name_list()
     matrices
 end
 
+
+# return a list of matrix name in the collection 
+function matrix_name_list()
+    matrices = sort(collect(keys(matrixdict)))
+    append!(matrices, matrix_data_name_list())
+    matrices
+end
+
 # print info about all matrices in the collection
 function matrixdepot()
     # Print information strings
@@ -46,8 +54,7 @@ function matrixdepot()
 
     i = 1
     for (index, mat) in enumerate(matrices)
-      
-        if i < 4
+        if i < 4 && length(mat) < 13
             i += 1
             @printf "%4d) %-14s" index mat
         else
@@ -65,7 +72,7 @@ function matrixdepot()
     groups = sort(groups)
     append!(groups, collect(keys(usermatrixclass)))
 
-    for name in groups
+    for name in groups        
         if j < 4
             j += 1
             @printf "%12s" name
@@ -171,24 +178,7 @@ function matrixdepot(name::String)
         return
 
     elseif name == "data" # deal with the property "data"
-        namelist = String[]
-        if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
-            for col in filenames("uf")
-                for mat in filenames("uf/$(col)")
-                    push!(namelist, string(col,'/',mat))
-                end
-            end
-        end
-        if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
-            for col in filenames("mm")
-                for d in filenames("mm/$(col)")
-                    for mat in filenames("mm/$(col)/$(d)")
-                        push!(namelist, string(col, '/', d, '/', mat))
-                    end
-                end
-            end
-        end
-        return namelist
+        return matrix_data_name_list()
     else
         error("\"$(name)\" is not included in Matrix Depot.")
     end
