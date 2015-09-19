@@ -34,7 +34,7 @@ matrixinfo =
              Amer. Math. Monthly, 90 (1983), pp. 301-312.
              N.J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
-             USA, 1996; sec. 26.1.",
+             USA, 2002; sec. 28.1.",
 
              "invhilb" => "Inverse of Hilbert matrix:
              \n Input options:
@@ -44,7 +44,7 @@ matrixinfo =
              Amer. Math. Monthly, 90 (1983), pp. 301-312.
              N.J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
-             USA, 1996; sec. 26.1.",
+             USA, 2002; sec. 28.1.",
 
              "hadamard" => "Hadamard matrix:
              \n Input options:
@@ -61,7 +61,7 @@ matrixinfo =
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
              \n Reference:  N.J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
-             USA, 1996; sec. 26.1.",
+             USA, 2002; sec. 28.1.",
 
              "circul" => "Circul matrix:
              \n Input options:
@@ -144,7 +144,7 @@ matrixinfo =
              and a formula for the elements of L^k).
              N.J. Higham, Accuracy and Stability of Numerical Algorithms
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
-             USA, 1996; sec. 26.4.",
+             USA, 2002; sec. 28.4.",
 
              "kahan" => "Kahan Matrix:
              \n Input options:
@@ -346,7 +346,7 @@ matrixinfo =
              \n ['ill-cond', 'random']
              \n Reference: N.J. Higham, Accuracy and Stability of Numerical
              Algorithms, Society for Industrial and Applied Mathematics,
-             Philadelphia, PA, USA, 1996; sec. 26.3.",
+             Philadelphia, PA, USA, 2002; sec. 28.3.",
 
              "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
              \n Input options:

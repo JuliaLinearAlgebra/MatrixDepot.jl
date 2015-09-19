@@ -2,8 +2,6 @@
 # ![logo](doc/logo2.png) Matrix Depot 
 
 [![Build Status](https://travis-ci.org/weijianzhang/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/weijianzhang/MatrixDepot.jl)
-| Julia 0.3 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_release.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=release)
-| Julia 0.4 [![MatrixDepot](http://pkg.julialang.org/badges/MatrixDepot_nightly.svg)](http://pkg.julialang.org/?pkg=MatrixDepot&ver=nightly)
 
 An extensible test matrix collection for Julia.
 
@@ -46,9 +44,9 @@ Matrices:
   45) vand            46) wathen          47) wilkinson       48) wing          
 
 Groups:
-        data       eigen    ill-cond     inverse
-     pos-def      random     regprob      sparse
-   symmetric
+  data          eigen         ill-cond      inverse
+  pos-def       random        regprob       sparse
+  symmetric
 ```
 
 We can generate a Hilbert matrix of size 4 by typing
@@ -67,15 +65,21 @@ properties.
 
 ```julia
 julia> matrixdepot("hilb")
-Hilbert matrix: 
+Hilbert matrix:
              
- Input options: 
+ Input options:
              
  [type,] dim: the dimension of the matrix
              
- [type,] row_dim, col_dim: the row and column dimension 
+ [type,] row_dim, col_dim: the row and column dimension
              
  ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+             
+ Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix,
+             Amer. Math. Monthly, 90 (1983), pp. 301-312.
+             N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             Society for Industrial and Applied Mathematics, Philadelphia, PA,
+             USA, 2002; sec. 28.1.
 ```
 
 We can also specify the data type

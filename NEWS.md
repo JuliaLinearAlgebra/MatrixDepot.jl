@@ -10,10 +10,7 @@ v0.3.2 (coming soon)
 * set Float64 as the default data type for all the parameterized matrices in
   the collection. 
 
-* Todo listb
-
-	- simplify `matrixdepot()` display
-	- fix reference error: Nick's book 29.1
+* update matrix references.
 	
 
 v0.3.1 

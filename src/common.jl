@@ -63,7 +63,7 @@ function matrixdepot()
 
     i = 1
     for (index, mat) in enumerate(matrices)
-        if i < 4 && length(mat) < 13
+        if i < 4 && length(mat) < 14
             i += 1
             @printf "%4d) %-14s" index mat
         else
@@ -79,12 +79,12 @@ function matrixdepot()
 
     j = 1    
     for name in groups        
-        if j < 4
+        if j < 4 && length(groups) < 12
             j += 1
-            @printf "%12s" name
+            @printf "  %-12s" name
         else
             j = 1
-            @printf "%12s\n" name
+            @printf "  %-12s\n" name
         end
     end
     println()
