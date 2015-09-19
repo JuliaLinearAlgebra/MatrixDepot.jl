@@ -44,6 +44,15 @@ function matrix_name_list()
     matrices
 end
 
+# return a list of groups in the collection
+function group_list()
+    groups = collect(keys(matrixclass))
+    push!(groups, "data")
+    groups = sort(groups)
+    append!(groups, collect(keys(usermatrixclass)))
+    groups
+end
+
 # print info about all matrices in the collection
 function matrixdepot()
     # Print information strings
@@ -66,12 +75,9 @@ function matrixdepot()
 
     println("Groups:")
 
-    j = 1    
-    groups = collect(keys(matrixclass))
-    push!(groups, "data")
-    groups = sort(groups)
-    append!(groups, collect(keys(usermatrixclass)))
+    groups = group_list()
 
+    j = 1    
     for name in groups        
         if j < 4
             j += 1
@@ -158,7 +164,7 @@ end
 
 
 # Return information strings if name is a matrix name.
-# Retuen a list of matrix names if name is a property.
+# Retuen a list of matrix names if name is a group.
 function matrixdepot(name::String)
     # name is the matrix name or matrix properties
     if name in keys(matrixinfo)
@@ -177,7 +183,7 @@ function matrixdepot(name::String)
         println("use matrixdepot(\"$name\", :read) to read the data")
         return
 
-    elseif name == "data" # deal with the property "data"
+    elseif name == "data" # deal with the group "data"
         return matrix_data_name_list()
     else
         error("\"$(name)\" is not included in Matrix Depot.")
@@ -244,14 +250,15 @@ function matrixdepot(prop1::String, otherprops::String...)
     return commonprop
 end
 
-#addproperty
+#add new group
 function addgroup(ex)
     propname = string(ex.args[1])
-    !(propname in keys(matrixclass)) || throw(ArgumentError("$propname is an existing property."))
-    !(propname in keys(usermatrixclass)) || throw(ArgumentError("You have defined property $propname."))
+    !(propname in group_list()) || throw(ArgumentError("$propname is an existing group."))
+
     for matname in eval(ex.args[2])
-        matname in keys(matrixdict) || matname in matdata() || throw(ArgumentError("$matname is not in the collection."))
+        matname in matrix_name_list() || throw(ArgumentError("$matname is not in the collection."))
     end
+
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
@@ -271,10 +278,11 @@ macro addgroup(ex)
     esc(addgroup(ex))
 end
 
+# remove group
 function rmgroup(ex)
     propname = string(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
-    propname in keys(usermatrixclass) || throw(ArgumentError("Can not find property $propname."))
+    propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
 
     user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
     s = readall(user)
