@@ -297,7 +297,6 @@ To add a group of matrices permanently for future use, we put the macro
 .. code:: 
 
     @addgroup myfav = ["lehmer", "cauchy", "hilb"]
-
     87
 
     @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]
@@ -334,7 +333,6 @@ Notice new defined groups have been included. We can use them as
 .. code:: 
 
     matrixdepot("myfav")
-
     3-element Array{ASCIIString,1}:
      "lehmer"
      "cauchy"

@@ -45,9 +45,9 @@ matrices is symbolized by ``"symmetric"``.
     ['inverse', 'ill-cond', 'symmetric', 'pos-def']
 
 
-.. function:: matrixdepot(property_name)
+.. function:: matrixdepot(group_name)
 
-  Return a list of matrices with the property `property_name`. For
+  Return a list of matrices with the property `group_name`. For
   example::
 
     julia> matrixdepot("pos-def")
@@ -125,14 +125,14 @@ matrices is symbolized by ``"symmetric"``.
 
     Read the matrix data given by ``name``.
 
-We can define our own properties using the macro ``@addproperty`` and
-remove a defined property using ``@rmproperty``.
+We can define our own groups using the macro ``@addgroup`` and
+remove a defined group using ``@rmgroup``.
 
-.. function:: @addpropery property_name = ["matrix1", "matrix2", "matrix3"]
+.. function:: @addgroup group_name = ["matrix1", "matrix2", "matrix3"]
 
-  Create a new property `"property_name"` such that `"matrix1"`, `"matrix2"`
-  and `"matrix3"` have this property.
+  Create a new group `"group_name"` such that `"matrix1"`, `"matrix2"`
+  and `"matrix3"` have this group.
 
-.. function:: @rmproperty property_name
+.. function:: @rmgroup group_name
   
-   Delete a created property `property_name`.
+   Delete a created group `group_name`.

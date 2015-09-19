@@ -94,6 +94,22 @@ julia> matrixdepot("hilb", Float16, 5, 3)
  0.19995  0.16663  0.14282
 ```
 
+Matrices can be accessed by number.
+
+```julia
+julia> matrixdepot(5)
+"chow"
+
+julia> matrixdepot(5:10)
+6-element Array{ASCIIString,1}:
+ "chow"    
+ "circul"  
+ "clement" 
+ "deriv2"  
+ "dingdong"
+ "fiedler" 
+```
+
 By typing a matrix name, we can see what properties that matrix have.
 Conversely, if we type a property (or properties), we can see all the 
 matrices (in the collection) having that property (or properties).
@@ -120,6 +136,17 @@ julia> matrixdepot("symmetric")
  "kms"      
  "wathen" 
 ```
+
+## Extend Matrix Depot
+
+We can add more matrices to Matrix Depot by downloading them from UF
+sparse matrix collection and Matrix Market. See
+[here](http://matrixdepotjl.readthedocs.org/en/latest/interface.html)
+for more details.
+
+We can add new groups of matrices. See
+[here](http://matrixdepotjl.readthedocs.org/en/latest/properties.html)
+for more details.
 
 ## Interface to the UF Sparse Matrix Collection 
 

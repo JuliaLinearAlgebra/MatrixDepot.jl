@@ -3,6 +3,8 @@
 v0.3.2 (coming soon)
 ---------------------
 
+* make `matrixdepot()` display better information.
+
 * rename `@addproperty` to `@addgroup` and rename `@rmproperty` to `@rmgroup`.
 
 * rename property `regu` to `regprob`.

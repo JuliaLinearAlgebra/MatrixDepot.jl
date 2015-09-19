@@ -26,10 +26,11 @@ To install the release version, type::
 
    usage.rst
    matrices.rst
-   regu.rst
    properties.rst
-   examples.rst   
+   regu.rst
    interface.rst
+   examples.rst   
+  
    
 
 
