@@ -30,6 +30,25 @@ To see all the matrices in the collection, type
 
 ```julia
 julia> matrixdepot()
+
+Matrices:
+   1) baart            2) binomial         3) cauchy           4) chebspec      
+   5) chow             6) circul           7) clement          8) deriv2        
+   9) dingdong        10) fiedler         11) forsythe        12) foxgood       
+  13) frank           14) grcar           15) hadamard        16) heat          
+  17) hilb            18) invhilb         19) invol           20) kahan         
+  21) kms             22) lehmer          23) lotkin          24) magic         
+  25) minij           26) moler           27) neumann         28) oscillate     
+  29) parter          30) pascal          31) pei             32) phillips      
+  33) poisson         34) prolate         35) randcorr        36) rando         
+  37) randsvd         38) rohess          39) rosser          40) sampling      
+  41) shaw            42) toeplitz        43) tridiag         44) triw          
+  45) vand            46) wathen          47) wilkinson       48) wing          
+
+Groups:
+        data       eigen    ill-cond     inverse
+     pos-def      random     regprob      sparse
+   symmetric
 ```
 
 We can generate a Hilbert matrix of size 4 by typing
