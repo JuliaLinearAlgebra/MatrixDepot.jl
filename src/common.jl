@@ -170,9 +170,11 @@ function matrixdepot(name::String)
     if name in keys(matrixinfo)
         println(matrixinfo[name])
     elseif name in keys(matrixclass)
-        return matrixclass[name]
+        matrices = matrixclass[name]
+        return sort(matrices)
     elseif name in keys(usermatrixclass)
-        return usermatrixclass[name]
+        matrices = usermatrixclass[name]
+        return sort(matrices)
     elseif '/' in name  # print matrix data info
         namelist = split(name, '/')
         length(namelist) == 2 ? matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf") :

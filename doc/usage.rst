@@ -130,8 +130,8 @@ remove a defined group using ``@rmgroup``.
 
 .. function:: @addgroup group_name = ["matrix1", "matrix2", "matrix3"]
 
-  Create a new group `"group_name"` such that `"matrix1"`, `"matrix2"`
-  and `"matrix3"` have this group.
+  Create a new group ``"group_name"`` such that it has members
+  ``"matrix1"``, ``"matrix2"`` and ``"matrix3"``.
 
 .. function:: @rmgroup group_name
   

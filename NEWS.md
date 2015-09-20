@@ -1,7 +1,12 @@
 ## Matrix Depot Release Notes
 
-v0.3.2 (coming soon)
----------------------
+v0.3.3 (under preparation)
+---------------------------
+
+* display the matrices in group lists alphabetically.
+
+v0.3.2 
+-------
 
 * make `matrixdepot()` display better information.
 
