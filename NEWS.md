@@ -5,6 +5,8 @@ v0.3.3 (under preparation)
 
 * display the matrices in group lists alphabetically.
 
+* add group `"all"` for all the matrices in the collection.
+
 v0.3.2 
 -------
 

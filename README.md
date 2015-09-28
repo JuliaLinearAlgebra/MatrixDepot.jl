@@ -44,9 +44,9 @@ Matrices:
   45) vand            46) wathen          47) wilkinson       48) wing          
 
 Groups:
-  data          eigen         ill-cond      inverse
-  pos-def       random        regprob       sparse
-  symmetric
+  all           data          eigen         ill-cond    
+  inverse       pos-def       random        regprob     
+  sparse        symmetric
 ```
 
 We can generate a Hilbert matrix of size 4 by typing

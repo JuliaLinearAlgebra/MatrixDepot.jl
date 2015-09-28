@@ -36,7 +36,10 @@ Groups
       NIST Matrix Market. 
 
    regprob
-      The output is a test problem for Regularization Methods
+      The output is a test problem for Regularization Methods.
+
+   all
+      All the matrices in the collection. 
 
 
 Examples

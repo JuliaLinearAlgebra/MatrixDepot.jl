@@ -471,22 +471,24 @@ matrixclass =
                              "invhilb", "moler", "pascal", "pei",
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                              "kms", "wathen", "oscillate", "prolate", 
-                             "deriv2", "shaw"],
+                              "kms", "wathen", "oscillate", "prolate"],
+
              "inverse" => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
                            "clement", "fiedler", "minij", "tridiag",
                            "lehmer", "poisson", "kms" ],
+
              "ill-cond" => ["hilb", "cauchy", "frank", "invhilb",
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
-                            "oscillate", "prolate", "deriv2", "shaw", 
-                            "wing", "foxgood", "phillips"],
+                            "oscillate", "prolate"],
+
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
+
              "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
@@ -495,8 +497,10 @@ matrixclass =
                            "oscillate"],
 
              "sparse" => ["poisson", "neumann", "wathen"],
+
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate"],
+
              "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
-                        "phillips"]
+                        "phillips"],
                );

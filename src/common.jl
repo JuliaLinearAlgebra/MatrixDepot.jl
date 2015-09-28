@@ -48,6 +48,7 @@ end
 function group_list()
     groups = collect(keys(matrixclass))
     push!(groups, "data")
+    push!(groups, "all")
     groups = sort(groups)
     append!(groups, collect(keys(usermatrixclass)))
     groups
@@ -187,6 +188,8 @@ function matrixdepot(name::String)
 
     elseif name == "data" # deal with the group "data"
         return matrix_data_name_list()
+    elseif name == "all" # all the matrix names in the collection
+        return matrix_name_list()
     else
         error("\"$(name)\" is not included in Matrix Depot.")
     end
