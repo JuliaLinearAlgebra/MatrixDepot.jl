@@ -226,7 +226,14 @@ end
 #
 function pascal{T}(::Type{T}, n::Int)
     P = zeros(T, n,n)
-    [P[i,j] = binomial(i+j-2, j-1) for i = 1:n, j= 1:n]
+    for j = 1:n
+        for i = 1:n
+            try P[i,j] = binomial(i+j-2, j-1) 
+            catch 
+                P[i,j] = binomial(BigInt(i+j-2), j-1)
+            end
+        end
+    end
     return P
 end
 

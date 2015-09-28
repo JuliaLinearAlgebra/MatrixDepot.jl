@@ -7,6 +7,8 @@ v0.3.3 (under preparation)
 
 * add group `"all"` for all the matrices in the collection.
 
+* fix pascal matrix overflow error.
+
 v0.3.2 
 -------
 
