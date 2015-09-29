@@ -1,8 +1,8 @@
 # return a list of file names without suffix in the directory
 # e.g. filenames(mm) and filenames(uf)
-function filenames(directory::String)
+function filenames(directory::AbstractString)
 
-    namevec = String[]
+    namevec = AbstractString[]
 
     matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "$directory")
     matvec = readdir(matdatadir)
@@ -15,7 +15,7 @@ end
 
 # return a list of matrix data name in the collection
 function matrix_data_name_list()
-    matrices = String[]
+    matrices = AbstractString[]
     if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
@@ -91,72 +91,72 @@ function matrixdepot()
     println()
 end
 
-function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int)
+function matrixdepot{T}(name::AbstractString, ::Type{T}, m::Int, n::Int)
     # name is matrix name
     # m is the number of rows
     # n is the number of columns
     return matrixdict[name](T, m, n)
 end
-matrixdepot(name::String, m::Int, n::Int) = matrixdepot(name, Float64, m, n)
+matrixdepot(name::AbstractString, m::Int, n::Int) = matrixdepot(name, Float64, m, n)
 
-function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha)
+function matrixdepot{T}(name::AbstractString, ::Type{T}, n::Int, alpha)
     # name: matrix name
     # n: dimension of the matrix
     # alpha : scalar
     return matrixdict[name](T, n, alpha)
 end
-matrixdepot(name::String, n::Int, alpha) = matrixdepot(name, typeof(alpha), n, alpha)
+matrixdepot(name::AbstractString, n::Int, alpha) = matrixdepot(name, typeof(alpha), n, alpha)
 
-function matrixdepot{T}(name::String, ::Type{T}, n::Int)
+function matrixdepot{T}(name::AbstractString, ::Type{T}, n::Int)
     # name is the matrix name
     # n is the dimension of the matrix (square)
     return matrixdict[name](T, n)
 end
 
-matrixdepot(name::String, n::Int) = matrixdepot(name, Float64, n)
+matrixdepot(name::AbstractString, n::Int) = matrixdepot(name, Float64, n)
 
-function matrixdepot{T}(name::String, ::Type{T}, n::Int, alpha, beta)
+function matrixdepot{T}(name::AbstractString, ::Type{T}, n::Int, alpha, beta)
     # name is the matrix name
     # n is the dimension of the matrix
     # alpha, beta are scalars
     return matrixdict[name](T, n, alpha, beta)
 end
-matrixdepot(name::String, n::Int, alpha, beta) = matrixdepot(name, Float64, n, alpha, beta)
+matrixdepot(name::AbstractString, n::Int, alpha, beta) = matrixdepot(name, Float64, n, alpha, beta)
 
-function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int, alpha, k::Int)
+function matrixdepot{T}(name::AbstractString, ::Type{T}, m::Int, n::Int, alpha, k::Int)
     # name is the matrix name
     # m, n are row and column dimensions of the matrix
     # alpha is a scalar
     # k is int
     return matrixdict[name](T, m, n, alpha, k)
 end
-matrixdepot(name::String, m::Int, n::Int, alpha, k::Int) = matrixdepot(name, Float64, m, n, alpha, k)
+matrixdepot(name::AbstractString, m::Int, n::Int, alpha, k::Int) = matrixdepot(name, Float64, m, n, alpha, k)
 
-function matrixdepot{T}(name::String, ::Type{T}, m::Int, n::Int, alpha, theta)
+function matrixdepot{T}(name::AbstractString, ::Type{T}, m::Int, n::Int, alpha, theta)
     # name: matrix name
     # m, n are row and column dimensions of the matrix
     # alpha and theta are scalars
     return matrixdepot[name](T, m, n, alpha, theta)
 end
 
-function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T}, z::Vector{T})
+function matrixdepot{T}(name::AbstractString, x::Vector{T}, y::Vector{T}, z::Vector{T})
     # name: matrix name
     # x, y, z: vectors
     return matrixdict[name](x,y,z)
 end
 
-function matrixdepot{T}(name::String, x::Vector{T}, y::Vector{T})
+function matrixdepot{T}(name::AbstractString, x::Vector{T}, y::Vector{T})
     # name: matrix name
     # x,y : vectors
     return matrixdict[name](x,y)
 end
 
 
-function matrixdepot{T}(name::String, x::Vector{T})
+function matrixdepot{T}(name::AbstractString, x::Vector{T})
     return matrixdict[name](x)
 end
 
-function matrixdepot{T}(name::String, x::Vector{T}, n::Int)
+function matrixdepot{T}(name::AbstractString, x::Vector{T}, n::Int)
     # name: matrix name
     # x: a vector
     # the column dimension of the matrix
@@ -166,7 +166,7 @@ end
 
 # Return information strings if name is a matrix name.
 # Retuen a list of matrix names if name is a group.
-function matrixdepot(name::String)
+function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
     if name in keys(matrixinfo)
         println(matrixinfo[name])
@@ -217,7 +217,7 @@ end
 # method = :read   (or :r) read matrix data
 #          :get    (or :g) download matrix data
 #          :search (or :s) search collection information
-function matrixdepot(name::String, method::Symbol)
+function matrixdepot(name::AbstractString, method::Symbol)
     if method == :r || method == :read
         length(split(name, '/')) == 2 ? matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf") :
                                         matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
@@ -243,7 +243,7 @@ end
 
 # Return a list of matrix names with common properties
 # when multiple properties are given.
-function matrixdepot(prop1::String, otherprops::String...)
+function matrixdepot(prop1::AbstractString, otherprops::AbstractString...)
     if length(otherprops) == 0
         matrixdepot(prop1)
     else

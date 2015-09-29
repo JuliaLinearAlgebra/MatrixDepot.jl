@@ -68,14 +68,14 @@ function downloaddata(; generate_list::Bool = true)
 end
 
 # given a matrix name, 
-function search(matrixname::String)
+function search(matrixname::AbstractString)
     uf_matrixdata, mm_matrixdata = downloaddata()
-    uf_matrices = String[]
-    mm_matrices = String[]
+    uf_matrices = AbstractString[]
+    mm_matrices = AbstractString[]
     [push!(uf_matrices, m[2]) for m in uf_matrixdata]
     [push!(mm_matrices, m[3]) for m in mm_matrixdata]
 
-    datalist = String[]
+    datalist = AbstractString[]
     if (matrixname in uf_matrices) || (matrixname in mm_matrices)
         uf_index = findin(uf_matrices, [matrixname])
         mm_index = findin(mm_matrices, [matrixname])
@@ -136,7 +136,7 @@ end
 # MatrixDepot.get("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.get("1138_bus") # Matrix Market
 #
-function get(name::String)   
+function get(name::AbstractString)   
 
     isdir(string(DATA_DIR,'/', "uf")) || mkdir(string(DATA_DIR, '/', "uf"))
     isdir(string(DATA_DIR,'/', "mm")) || mkdir(string(DATA_DIR, '/', "mm"))
