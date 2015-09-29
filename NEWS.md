@@ -1,7 +1,13 @@
 ## Matrix Depot Release Notes
 
-v0.3.3 (under preparation)
----------------------------
+
+v0.3.4 (under preparation)
+--------------------------
+
+* fix Julia v0.5 String deprecation.
+
+v0.3.3 
+-------
 
 * display the matrices in group lists alphabetically.
 
