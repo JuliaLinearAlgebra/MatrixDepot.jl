@@ -53,7 +53,7 @@ end
 #
 # Cauchy Matrix
 #
-function cauchy{T}(x::Vector{T}, y::Vector{T})
+function cauchy{T}(::Type{T}, x::Vector, y::Vector)
     # Compute the cauchy matrix
     m = size(x,1)
     n = size(y,1)
@@ -62,13 +62,13 @@ function cauchy{T}(x::Vector{T}, y::Vector{T})
     return C
 end
 
-cauchy{T}(x::Vector{T}) = cauchy(x, x)
-cauchy{T}(::Type{T}, k::Int) = cauchy(T[1:k;])
+cauchy{T}(::Type{T}, x::Vector) = cauchy(T, x, x)
+cauchy{T}(::Type{T}, k::Int) = cauchy(T, [1:k;])
 
 #
 # Circul Matrix
 #
-function circul{T}(v::Vector{T}, w::Vector{T})
+function circul{T}(::Type{T}, v::Vector, w::Vector)
     # Compute the circul matrix
     # v: the first row of the matrix
     # w: the length of the vector is the dimension of the column
@@ -79,9 +79,9 @@ function circul{T}(v::Vector{T}, w::Vector{T})
     return C
 end
 
-circul{T}(v::Vector{T}, n::Int) = circul(v, T[1:n;])
-circul{T}(v::Vector{T}) = circul(v, v)
-circul{T}(::Type{T}, k::Int) = circul(T[1:k;])
+circul{T}(::Type{T}, v::Vector, n::Int) = circul(T, v, T[1:n;])
+circul{T}(::Type{T}, v::Vector) = circul(T, v, v)
+circul{T}(::Type{T}, k::Int) = circul(T, [1:k;])
 
 #
 # Dingdong Matrix
@@ -268,7 +268,7 @@ end
 #
 # Vandermonde Matrix
 #
-function vand{T}(p::Vector{T}, n::Int)
+function vand{T}(::Type{T}, p::Vector, n::Int)
     # n: number of rows
     # p: a vector
     m = length(p)
@@ -283,8 +283,8 @@ function vand{T}(p::Vector{T}, n::Int)
     end
     return V
 end
-vand{T}(::Type{T}, n::Int) = vand(T[1:n;], n)
-vand{T}(p::Vector{T}) = vand(p, length(p))
+vand{T}(::Type{T}, n::Int) = vand(T, [1:n;], n)
+vand{T}(::Type{T}, p::Vector) = vand(T, p, length(p))
 
 #
 # Involutory Matrix
@@ -362,13 +362,13 @@ end
 #
 # Fiedler Matrix
 #
-function fiedler{T}(v::Vector{T})
+function fiedler{T}(::Type{T}, v::Vector)
     n = length(v)
     v = v[:].'
     A = ones(T, n) * v
     A = abs(A - A.') # nonconjugate transpose
 end
-fiedler{T}(::Type{T}, n::Int) = fiedler(T[1:n;])
+fiedler{T}(::Type{T}, n::Int) = fiedler(T, [1:n;])
 
 #
 # MIN[I,J] Matrix
@@ -394,7 +394,7 @@ end
 #
 # Tridiagonal Matrix
 #
-function tridiag{T}(x::Vector{T}, y::Vector{T}, z::Vector{T})
+function tridiag{T}(::Type{T}, x::Vector, y::Vector, z::Vector)
     return Tridiagonal(x,y,z)
 end
 # Toeplitz tridiagonal matrix
@@ -509,7 +509,7 @@ end
 #
 # Toeplitz Matrix
 #
-function toeplitz{T}(vc::Vector{T}, vr::Vector{T})
+function toeplitz{T}(::Type{T}, vc::Vector, vr::Vector)
     n = length(vc)
     length(vr) == n || throw(DimensionMismatch(""))
     vc[1] == vr[1] || error("The first element of the vectors must be the same.")    
@@ -517,8 +517,8 @@ function toeplitz{T}(vc::Vector{T}, vr::Vector{T})
     [i>=j ? A[i,j] = vc[i-j+1]: A[i,j] = vr[j-i+1] for i=1:n, j=1:n]
     A
 end
-toeplitz{T}(v::Vector{T}) = toeplitz(v, v)
-toeplitz{T}(::Type{T}, n::Int) = toeplitz(T[1:n;])
+toeplitz{T}(::Type{T}, v::Vector) = toeplitz(T, v, v)
+toeplitz{T}(::Type{T}, n::Int) = toeplitz(T, [1:n;])
 
 #
 # Prolate Matrix
@@ -633,7 +633,7 @@ rosser{T}(::Type{T}, n::Int) = rosser(T, n, rand(1:5), rand(1:5))
 #
 # Matrix with application in sampling theory
 #
-function sampling{T}(x::Vector{T})
+function sampling{T}(::Type{T}, x::Vector)
     n = length(x)
     A = zeros(T, n, n)
     for j = 1:n, i = 1:n

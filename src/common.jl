@@ -1,3 +1,7 @@
+########################
+# helper functions
+########################
+
 # return a list of file names without suffix in the directory
 # e.g. filenames(mm) and filenames(uf)
 function filenames(directory::AbstractString)
@@ -54,6 +58,10 @@ function group_list()
     groups
 end
 
+##########################
+# display information
+##########################
+
 # print info about all matrices in the collection
 function matrixdepot()
     # Print information strings
@@ -91,81 +99,8 @@ function matrixdepot()
     println()
 end
 
-function matrixdepot{T}(name::AbstractString, ::Type{T}, m::Int, n::Int)
-    # name is matrix name
-    # m is the number of rows
-    # n is the number of columns
-    return matrixdict[name](T, m, n)
-end
-matrixdepot(name::AbstractString, m::Int, n::Int) = matrixdepot(name, Float64, m, n)
-
-function matrixdepot{T}(name::AbstractString, ::Type{T}, n::Int, alpha)
-    # name: matrix name
-    # n: dimension of the matrix
-    # alpha : scalar
-    return matrixdict[name](T, n, alpha)
-end
-matrixdepot(name::AbstractString, n::Int, alpha) = matrixdepot(name, typeof(alpha), n, alpha)
-
-function matrixdepot{T}(name::AbstractString, ::Type{T}, n::Int)
-    # name is the matrix name
-    # n is the dimension of the matrix (square)
-    return matrixdict[name](T, n)
-end
-
-matrixdepot(name::AbstractString, n::Int) = matrixdepot(name, Float64, n)
-
-function matrixdepot{T}(name::AbstractString, ::Type{T}, n::Int, alpha, beta)
-    # name is the matrix name
-    # n is the dimension of the matrix
-    # alpha, beta are scalars
-    return matrixdict[name](T, n, alpha, beta)
-end
-matrixdepot(name::AbstractString, n::Int, alpha, beta) = matrixdepot(name, Float64, n, alpha, beta)
-
-function matrixdepot{T}(name::AbstractString, ::Type{T}, m::Int, n::Int, alpha, k::Int)
-    # name is the matrix name
-    # m, n are row and column dimensions of the matrix
-    # alpha is a scalar
-    # k is int
-    return matrixdict[name](T, m, n, alpha, k)
-end
-matrixdepot(name::AbstractString, m::Int, n::Int, alpha, k::Int) = matrixdepot(name, Float64, m, n, alpha, k)
-
-function matrixdepot{T}(name::AbstractString, ::Type{T}, m::Int, n::Int, alpha, theta)
-    # name: matrix name
-    # m, n are row and column dimensions of the matrix
-    # alpha and theta are scalars
-    return matrixdepot[name](T, m, n, alpha, theta)
-end
-
-function matrixdepot{T}(name::AbstractString, x::Vector{T}, y::Vector{T}, z::Vector{T})
-    # name: matrix name
-    # x, y, z: vectors
-    return matrixdict[name](x,y,z)
-end
-
-function matrixdepot{T}(name::AbstractString, x::Vector{T}, y::Vector{T})
-    # name: matrix name
-    # x,y : vectors
-    return matrixdict[name](x,y)
-end
-
-
-function matrixdepot{T}(name::AbstractString, x::Vector{T})
-    return matrixdict[name](x)
-end
-
-function matrixdepot{T}(name::AbstractString, x::Vector{T}, n::Int)
-    # name: matrix name
-    # x: a vector
-    # the column dimension of the matrix
-    return matrixdict[name](x,n)
-end
-
-
-# Return information strings if name is a matrix name.
-# Retuen a list of matrix names if name is a group.
+# Return information strings if name is a matrix name
+# and return a list of matrix names if name is a group.
 function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
     if name in keys(matrixinfo)
@@ -194,6 +129,18 @@ function matrixdepot(name::AbstractString)
         error("\"$(name)\" is not included in Matrix Depot.")
     end
 end
+
+
+#############################
+# matrix generators 
+#############################
+
+matrixdepot{T}(name::AbstractString, ::Type{T}, args...) = length(args) == 1 ? 
+             matrixdict[name](T, args[1]) : matrixdict[name](T, collect(args))
+matrixdepot(name::AbstractString, args...) = matrixdepot(name::AbstractString, Float64, args...)
+
+
+
 
 # access matrices by number
 function matrixdepot(num::Int)
