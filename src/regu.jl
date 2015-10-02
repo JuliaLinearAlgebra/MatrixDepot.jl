@@ -183,7 +183,7 @@ function heat{T}(::Type{T}, n::Int, κ::Real)
     m = length(t); k = zeros(T, m)
     [k[i] = c*t[i]^(-1.5)*exp(-d/t[i]) for i in 1:m]
     r = zeros(T, m); r[1] = k[1]
-    A = toeplitz(k, r)
+    A = toeplitz(T, k, r)
 
     # compute the vectors x and b
     x = zeros(T, n)
@@ -245,7 +245,7 @@ function phillips{T}(::Type{T}, n::Int)
     c = cos(T[-1:n4;]*4*pi/n)
     [r1[i] = h + 9/(h*pi^2)*(2*c[i+1] - c[i] - c[i+2]) for i in 1:n4]
     r1[n4+1] = h/2 + 9/(h*pi^2)*(cos(4*pi/n)-1)
-    A = toeplitz(r1)
+    A = toeplitz(T, r1)
     
     # compute the vector b
     b = zeros(T, n); c = pi/3
@@ -264,4 +264,11 @@ function phillips{T}(::Type{T}, n::Int)
     x[2*n4+1:3*n4] = (h + diff(sin(T[0:h:(3+10*eps(T));]*c))/c)/sqrt(h)
     x[n4+1:2*n4] = x[3*n4:-1:2*n4+1]
     return RegProb(A, b, x)
+end
+
+#
+# gravity test problem
+#
+function gravity{T}(::Type{T}, n::Int, example::Int, a::T, b::T, d::T)
+    
 end

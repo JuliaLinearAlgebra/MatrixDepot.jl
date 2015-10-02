@@ -395,12 +395,15 @@ end
 # Tridiagonal Matrix
 #
 function tridiag{T}(::Type{T}, x::Vector, y::Vector, z::Vector)
+    x = map((i)-> convert(T, i), x)
+    y = map((i)-> convert(T, i), y)
+    z = map((i)-> convert(T, i), z)
     return Tridiagonal(x,y,z)
 end
 # Toeplitz tridiagonal matrix
 tridiag{T}(::Type{T}, n::Int, x::Int, y::Int, z::Int) =
 n == 1 ? y*ones(T,1,1) :
-         tridiag(x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
+         tridiag(T, x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
 tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1)
 
 #
@@ -527,7 +530,7 @@ function prolate{T}(::Type{T}, n::Int, w::Real)
     v = Array(T, n)
     v[1] = 2*w
     [v[i] = sin(2*pi*w*i)/pi*i for i = 2:n]
-    return toeplitz(v)
+    return toeplitz(T, v)
 end
 prolate{T}(::Type{T}, n::Int) = prolate(T, n, 0.25)
 
@@ -653,7 +656,7 @@ end
 #
 function sampling{T}(::Type{T}, n::Int)
     p = T[1:n;] / n
-    return sampling(p)
+    return sampling(T, p)
 end
 
 #
@@ -778,8 +781,8 @@ end
 # KMS (Kac-Murdock-Szego) Toeplitz matrix
 #
 
-function kms{T}(::Type{T}, n::Int, rho)
-    A = Array(T, n, n)
+function kms{T}(::Type{T}, n::Int, rho::Number)
+    typeof(rho) <: Complex ? A = Array(typeof(rho), n, n): A = Array(T, n, n)
     [A[i,j] = rho^(abs(i-j)) for i = 1:n, j = 1:n]
     if typeof(rho) <: Complex
         A = conj(tril(A, -1)) + triu(A)

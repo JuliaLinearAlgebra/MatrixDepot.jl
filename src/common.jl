@@ -136,29 +136,8 @@ end
 #############################
 
 matrixdepot{T}(name::AbstractString, ::Type{T}, args...) = length(args) == 1 ? 
-             matrixdict[name](T, args[1]) : matrixdict[name](T, collect(args))
+             matrixdict[name](T, args[1]) : matrixdict[name](T, collect(args)...)
 matrixdepot(name::AbstractString, args...) = matrixdepot(name::AbstractString, Float64, args...)
-
-
-
-
-# access matrices by number
-function matrixdepot(num::Int)
-    matrixstrings = matrix_name_list()
-    n = length(matrixstrings)
-    if num > n
-        error("There are $(n) parameterized matrices, but you ask for the $(num)-th ")
-    end
-    return matrixstrings[num]
-end
-
-function matrixdepot(I::UnitRange{Int})
-    matrixnamelist = ASCIIString[]
-    for i in I
-        push!(matrixnamelist, matrixdepot(i))
-    end
-    return matrixnamelist
-end
 
 # generate the required matrix
 # method = :read   (or :r) read matrix data
@@ -188,6 +167,28 @@ function matrixdepot(name::AbstractString, method::Symbol)
 end
 
 
+#########################
+# access matrices
+#########################
+
+# access matrices by number
+function matrixdepot(num::Int)
+    matrixstrings = matrix_name_list()
+    n = length(matrixstrings)
+    if num > n
+        error("There are $(n) parameterized matrices, but you ask for the $(num)-th ")
+    end
+    return matrixstrings[num]
+end
+
+function matrixdepot(I::UnitRange{Int})
+    matrixnamelist = ASCIIString[]
+    for i in I
+        push!(matrixnamelist, matrixdepot(i))
+    end
+    return matrixnamelist
+end
+
 # Return a list of matrix names with common properties
 # when multiple properties are given.
 function matrixdepot(prop1::AbstractString, otherprops::AbstractString...)
@@ -201,6 +202,11 @@ function matrixdepot(prop1::AbstractString, otherprops::AbstractString...)
     end
     return commonprop
 end
+
+
+#######################
+# matrix group
+#######################
 
 #add new group
 function addgroup(ex)
