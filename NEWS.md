@@ -6,6 +6,8 @@ v0.3.4 (under preparation)
 
 * fix Julia v0.5 String deprecation.
 
+* implement a more general matrix generator. 
+
 v0.3.3 
 -------
 
