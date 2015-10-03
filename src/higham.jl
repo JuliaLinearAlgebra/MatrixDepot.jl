@@ -523,6 +523,21 @@ end
 toeplitz{T}(::Type{T}, v::Vector) = toeplitz(T, v, v)
 toeplitz{T}(::Type{T}, n::Int) = toeplitz(T, [1:n;])
 
+
+#
+# Hankel matrix
+#
+function hankel{T}(::Type{T}, vc::Vector, vr::Vector)
+    p = [vc; vr[2:end]]
+    m = length(vc)
+    n = length(vr)
+    H = Array(T, m, n)
+    [H[i,j] = p[i+j-1] for i=1:m, j=1:n]
+    H
+end
+hankel{T}(::Type{T}, v::Vector) = hankel(T, v, v)
+hankel{T}(::Type{T}, n::Int) = hankel(T, [1:n;])
+
 #
 # Prolate Matrix
 #
