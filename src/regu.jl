@@ -267,8 +267,51 @@ function phillips{T}(::Type{T}, n::Int)
 end
 
 #
-# gravity test problem
+# one-dimensional gravity surveying problem
 #
-function gravity{T}(::Type{T}, n::Int, example::Int, a::T, b::T, d::T)
-    
+function gravity{T}(::Type{T}, n::Int, example::Int, a::Number, b::Number, d::Number)
+
+end
+
+#
+# Image deblurring test problem
+#
+function blur{T}(::Type{T}, n::Int)
+
+end
+
+
+#
+# Inverse Laplace transformation
+#
+function ilaplace{T}(::Type{T}, n::Int)
+
+end
+
+#
+# Stellar parallax problem with real observations
+#
+function parallax{T}(::Type{T}, n::Int)
+
+end
+
+#
+# Test problem with a "spiky" solution
+#
+function spikes{T}(::Type{T}, n::Int)
+
+end
+
+#
+# Two-dimensional tomography problem with sparse matrix
+#
+function tomo{T}(::Type{T}, n::Int)
+
+end
+
+#
+# Integral equation with no square integrable solution
+#
+function ursell{T}(::Type{T}, n::Int)
+
 end
