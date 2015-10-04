@@ -8,6 +8,10 @@ v0.3.4 (under preparation)
 
 * implement a more general matrix generator. 
 
+* add new matrix: Hankel matrix `hankel` 
+
+* enumerate matrix input options
+
 v0.3.3 
 -------
 
