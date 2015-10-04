@@ -16,6 +16,7 @@ Matrices
 * :term:`frank`
 * :term:`grcar`
 * :term:`hadamard`
+* :term:`hankel`
 * :term:`hilb`
 * :term:`invhilb`
 * :term:`invol`
@@ -49,6 +50,18 @@ Matrices
 
 .. glossary::
    :sorted:
+
+   hankel
+     `Hankel matrix <https://en.wikipedia.org/wiki/Hankel_matrix>`_ is a 
+     a matrix that is symmetric and constant across the anti-diagonals.
+     For example::
+
+       julia> matrixdepot("hankel", [1,2,3,4], [7,8,9,10])
+       4x4 Array{Float64,2}:
+       1.0  2.0  3.0   4.0
+       2.0  3.0  4.0   8.0
+       3.0  4.0  8.0   9.0
+       4.0  8.0  9.0  10.0
 
    toeplitz
      `Toeplitz matrix <https://en.wikipedia.org/wiki/Toeplitz_matrix>`_ is 
