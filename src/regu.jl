@@ -80,7 +80,7 @@ end
 #
 # Computation of the Second Derivative 
 # 
-function deriv2{T}(::Type{T}, n::Int)
+function deriv2{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     h = one(T)/n; sqh = sqrt(h); h32 = h*sqh; h2 = h^2; sqhi = 1/sqh
     t = 2/3; A = zeros(T, n, n)
 
@@ -101,13 +101,17 @@ function deriv2{T}(::Type{T}, n::Int)
     x = zeros(T, n)
     [x[i] = h32*(i - 0.5) for i = 1:n]
     
-    return RegProb(A, b, x)
+    if matrixonly
+        return A
+    else
+        return RegProb(A, b, x)
+    end
 end
 
 #
 # One-Dimensional Image Restoration Model
 # 
-function shaw{T}(::Type{T}, n::Int)
+function shaw{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = pi/n; A = zeros(T, n, n)
     
@@ -131,13 +135,17 @@ function shaw{T}(::Type{T}, n::Int)
         a2*exp(-c2*(-pi/2 + T[.5:n-.5;]*h - t2).^2)
     b = A*x
 
-    return RegProb(A, b, x)
+    if matrixonly
+        return A
+    else
+        return RegProb(A, b, x)
+    end
 end
 
 #
 # A Problem with a Discontinuous Solution
 #
-function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real)
+function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real, matrixonly = true)
     t1 < t2 || error("t1 must be smaller than t2")
     A = zeros(T, n, n); h = 1/n
     
@@ -152,14 +160,18 @@ function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real)
     indices = [findfirst(t1 .< sti, true): findlast(t2 .> sti, true);]
     x = zeros(T,n); x[indices] = sqrt(h)*ones(length(indices))
 
-    return RegProb(A, b, x)
+    if matrixonly
+        return A
+    else
+        return RegProb(A, b, x)
+    end
 end
-wing{T}(::Type{T}, n::Int) = wing(T, n, 1/3, 2/3)
+wing{T}(::Type{T}, n::Int, matrixonly = true) = wing(T, n, 1/3, 2/3, matrixonly)
 
 #
 # Severely Ill-posed Problem Suggested by Fox & Goodwin
 #
-function foxgood{T}(::Type{T}, n::Int)
+function foxgood{T}(::Type{T}, n::Int, matrixonly = true)
     h = 1/n; t = h*(T[1:n;] - one(T)/2)
 
     A = h*sqrt((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
@@ -167,13 +179,17 @@ function foxgood{T}(::Type{T}, n::Int)
     b = zeros(T, n)
     [b[i] = ((one(T) + t[i]^2)^1.5 - t[i]^3)/3 for i in 1:n]
 
-    return RegProb(A, b, x)
+    if matrixonly
+        return A
+    else
+        return RegProb(A, b, x)
+    end
 end
 
 #
 # Inverse Heat Equation
 #
-function heat{T}(::Type{T}, n::Int, κ::Real)
+function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = one(T)/n; t = T[h/2:h:1;]
     c = h/(2*κ*sqrt(pi))
@@ -198,15 +214,20 @@ function heat{T}(::Type{T}, n::Int, κ::Real)
         end
     end
     x[div(n,2)+1:n] = zeros(T, div(n, 2))
-    b = A*x
-    return RegProb(A, b, x)
+
+    if matrixonly
+        return A
+    else
+        b = A*x
+        return RegProb(A, b, x)
+    end
 end
-heat{T}(::Type{T}, n::Int) = heat(T, n, 1)
+heat{T}(::Type{T}, n::Int, matrixonly = true) = heat(T, n, 1, matrixonly)
 
 #
 # First Kind Fredholm Integral Equation
 #
-function baart{T}(::Type{T}, n::Int)
+function baart{T}(::Type{T}, n::Int, matrixonly = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     hs = pi/(2*n); ht = pi/n; c = one(T)/(3*sqrt(2))
     ht = convert(T, ht)
@@ -231,13 +252,17 @@ function baart{T}(::Type{T}, n::Int)
 
     # compute vector x
     x = -diff(cos(T[0:n;]*ht))/sqrt(ht)
-    return RegProb(A, b, x)
+    if matrixonly
+        return A
+    else
+        return RegProb(A, b, x)
+    end
 end
 
 #
 # Phillips's "famous" problem
 #
-function phillips{T}(::Type{T}, n::Int)
+function phillips{T}(::Type{T}, n::Int, matrixonly = true)
     mod(n, 4) == 0 || error("The dimension of the matrix must be a multiple of 4.")
 
     # compute A
@@ -263,7 +288,11 @@ function phillips{T}(::Type{T}, n::Int)
     x = zeros(T, n)
     x[2*n4+1:3*n4] = (h + diff(sin(T[0:h:(3+10*eps(T));]*c))/c)/sqrt(h)
     x[n4+1:2*n4] = x[3*n4:-1:2*n4+1]
-    return RegProb(A, b, x)
+    if matrixonly
+        return A
+    else
+        return RegProb(A, b, x)
+    end
 end
 
 #
