@@ -35,20 +35,37 @@ defined as::
 
 Here is an example::
 
-  julia> matrixdepot("deriv2") # check information
+  julia> matrixdepot("deriv2")
   Computation of the Second Derivative:
              
   A classical test problem for regularization algorithms.
-             
+  
   Input options:
              
-  [type,] n: the dimension of the matrix is n.
-             
+  1. [type,] n, [matrixonly]: the dimension of the matrix is n. 
+             If matrixonly = false, the linear system A, b, x will be generated. 
+             (matrixonly = true by default.)
+           
   Reference: P.C. Hansen, Regularization tools: A MATLAB pacakge for 
-             analysis and solution of discrete ill-posed problems.
+             analysis and solution of discrete ill-posed problems. 
+             Numerical Algorithms, 6(1994), pp.1-35
+
+  julia> A = matrixdepot("deriv2", 4) # generate the test matrix
+  4x4 Array{Float64,2}:
+  -0.0169271   -0.0195313  -0.0117188  -0.00390625
+  -0.0195313   -0.0481771  -0.0351563  -0.0117188 
+  -0.0117188   -0.0351563  -0.0481771  -0.0195313 
+  -0.00390625  -0.0117188  -0.0195313  -0.0169271 
+
+  julia> A = matrixdepot("deriv2", Float32, 4)
+  4x4 Array{Float32,2}:
+  -0.0169271   -0.0195313  -0.0117188  -0.00390625
+  -0.0195313   -0.0481771  -0.0351563  -0.0117188 
+  -0.0117188   -0.0351563  -0.0481771  -0.0195313 
+  -0.00390625  -0.0117188  -0.0195313  -0.0169271 
 
   
-  julia> r = matrixdepot("deriv2", 3) # generate the test problem
+  julia> r = matrixdepot("deriv2", 3, false) # generate the test problem
   Test problems for Regularization Method
   A:
   3x3 Array{Float64,2}:
