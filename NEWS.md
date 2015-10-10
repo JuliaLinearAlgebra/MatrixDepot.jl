@@ -12,6 +12,8 @@ v0.3.4 (under preparation)
 
 * enumerate matrix input options
 
+* add option `matrixonly` for regularization problems.
+
 v0.3.3 
 -------
 

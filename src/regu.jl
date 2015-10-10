@@ -92,18 +92,17 @@ function deriv2{T}(::Type{T}, n::Int, matrixonly::Bool = true)
         end
     end
     A = A + tril(A, -1)'
-
-    # compute b
-    b = zeros(T, n)
-    [b[i] = h32*(i - 0.5)*((i^2 + (i-1)^2)*h2/2 - 1)/6 for i = 1:n]
-
-    # compute x
-    x = zeros(T, n)
-    [x[i] = h32*(i - 0.5) for i = 1:n]
     
     if matrixonly
         return A
     else
+        # compute b
+        b = zeros(T, n)
+        [b[i] = h32*(i - 0.5)*((i^2 + (i-1)^2)*h2/2 - 1)/6 for i = 1:n]
+        
+        # compute x
+        x = zeros(T, n)
+        [x[i] = h32*(i - 0.5) for i = 1:n]
         return RegProb(A, b, x)
     end
 end
@@ -128,16 +127,15 @@ function shaw{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     end
     A = A + triu(A, 1)'; A = A*h
     
-    # compute x and b
-    a1 = 2; c1 = 6; t1 = .8
-    a2 = 1; c2 = 2; t2 = -.5
-    x = a1*exp(-c1*(-pi/2 + T[.5:n-.5;]*h - t1).^2) + 
-        a2*exp(-c2*(-pi/2 + T[.5:n-.5;]*h - t2).^2)
-    b = A*x
-
     if matrixonly
         return A
     else
+        # compute x and b
+        a1 = 2; c1 = 6; t1 = .8
+        a2 = 1; c2 = 2; t2 = -.5
+        x = a1*exp(-c1*(-pi/2 + T[.5:n-.5;]*h - t1).^2) + 
+            a2*exp(-c2*(-pi/2 + T[.5:n-.5;]*h - t2).^2)
+        b = A*x
         return RegProb(A, b, x)
     end
 end
@@ -153,16 +151,15 @@ function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real, matrixonly = true)
     sti = (T[1:n;]-0.5)*h
     [A[i,:] = h*sti.*exp(-sti[i] * sti.^2) for i = 1:n]
 
-    # compute b
-    b = sqrt(h)*0.5*(exp(-sti*t1^2) - exp(-sti*t2^2))./sti
-
-    # compute x
-    indices = [findfirst(t1 .< sti, true): findlast(t2 .> sti, true);]
-    x = zeros(T,n); x[indices] = sqrt(h)*ones(length(indices))
-
     if matrixonly
         return A
     else
+        # compute b
+        b = sqrt(h)*0.5*(exp(-sti*t1^2) - exp(-sti*t2^2))./sti
+
+        # compute x
+        indices = [findfirst(t1 .< sti, true): findlast(t2 .> sti, true);]
+        x = zeros(T,n); x[indices] = sqrt(h)*ones(length(indices))
         return RegProb(A, b, x)
     end
 end
@@ -175,13 +172,13 @@ function foxgood{T}(::Type{T}, n::Int, matrixonly = true)
     h = 1/n; t = h*(T[1:n;] - one(T)/2)
 
     A = h*sqrt((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
-    x = t
-    b = zeros(T, n)
-    [b[i] = ((one(T) + t[i]^2)^1.5 - t[i]^3)/3 for i in 1:n]
 
     if matrixonly
         return A
     else
+        x = t
+        b = zeros(T, n)
+        [b[i] = ((one(T) + t[i]^2)^1.5 - t[i]^3)/3 for i in 1:n]
         return RegProb(A, b, x)
     end
 end
@@ -201,23 +198,22 @@ function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly = true)
     r = zeros(T, m); r[1] = k[1]
     A = toeplitz(T, k, r)
 
-    # compute the vectors x and b
-    x = zeros(T, n)
-    for i = 1:div(n,2)  
-        ti = i*20/n
-        if ti < 2
-            x[i] = 0.75*ti^2/4
-        elseif ti < 3
-            x[i] = 0.75 + (ti - 2)*(3 - ti)
-        else
-            x[i] = 0.75*exp(-(ti - 3)*2)
-        end
-    end
-    x[div(n,2)+1:n] = zeros(T, div(n, 2))
-
     if matrixonly
         return A
     else
+        # compute the vectors x and b
+        x = zeros(T, n)
+        for i = 1:div(n,2)  
+            ti = i*20/n
+            if ti < 2
+                x[i] = 0.75*ti^2/4
+            elseif ti < 3
+                x[i] = 0.75 + (ti - 2)*(3 - ti)
+            else
+                x[i] = 0.75*exp(-(ti - 3)*2)
+            end
+        end
+        x[div(n,2)+1:n] = zeros(T, div(n, 2))
         b = A*x
         return RegProb(A, b, x)
     end
@@ -243,18 +239,18 @@ function baart{T}(::Type{T}, n::Int, matrixonly = true)
         A[:,j] = c*(f1 + 4*f2 + f3)
     end
     
-    # compute vector b
-    si = T[.5:.5:n;]*hs; si = sinh(si)./si
-    b = zeros(T, n)
-    b[1] = 1 + 4*si[1] + si[2]
-    b[2:n] = si[2:2:2*n-2] + 4*si[3:2:2*n-1] + si[4:2:2*n]
-    b = b*sqrt(hs)/3
-
-    # compute vector x
-    x = -diff(cos(T[0:n;]*ht))/sqrt(ht)
     if matrixonly
         return A
     else
+        # compute vector b
+        si = T[.5:.5:n;]*hs; si = sinh(si)./si
+        b = zeros(T, n)
+        b[1] = 1 + 4*si[1] + si[2]
+        b[2:n] = si[2:2:2*n-2] + 4*si[3:2:2*n-1] + si[4:2:2*n]
+        b = b*sqrt(hs)/3
+
+        # compute vector x
+        x = -diff(cos(T[0:n;]*ht))/sqrt(ht)
         return RegProb(A, b, x)
     end
 end
@@ -272,25 +268,26 @@ function phillips{T}(::Type{T}, n::Int, matrixonly = true)
     r1[n4+1] = h/2 + 9/(h*pi^2)*(cos(4*pi/n)-1)
     A = toeplitz(T, r1)
     
-    # compute the vector b
-    b = zeros(T, n); c = pi/3
-    for i = div(n,2)+1:n
-        t1 = -6 + i*h; t2 = t1 - h
-        b[i] = t1*(6-abs(t1)/2) + 
-               ((3-abs(t1)/2)*sin(c*t1) - 2/c*(cos(c*t1) - one(T)))/c -  
-               t2*(6-abs(t2)/2) -
-               ((3-abs(t2)/2)*sin(c*t2) - 2/c*(cos(c*t2) - one(T)))/c
-        b[n-i+1] = b[i]
-    end
-    [b[i] = b[i]/sqrt(h) for i=1:n]
-    
-    # compute x
-    x = zeros(T, n)
-    x[2*n4+1:3*n4] = (h + diff(sin(T[0:h:(3+10*eps(T));]*c))/c)/sqrt(h)
-    x[n4+1:2*n4] = x[3*n4:-1:2*n4+1]
+
     if matrixonly
         return A
     else
+        # compute the vector b
+        b = zeros(T, n); c = pi/3
+        for i = div(n,2)+1:n
+            t1 = -6 + i*h; t2 = t1 - h
+            b[i] = t1*(6-abs(t1)/2) + 
+                ((3-abs(t1)/2)*sin(c*t1) - 2/c*(cos(c*t1) - one(T)))/c -  
+                t2*(6-abs(t2)/2) -
+                ((3-abs(t2)/2)*sin(c*t2) - 2/c*(cos(c*t2) - one(T)))/c
+            b[n-i+1] = b[i]
+        end
+        [b[i] = b[i]/sqrt(h) for i=1:n]
+    
+        # compute x
+        x = zeros(T, n)
+        x[2*n4+1:3*n4] = (h + diff(sin(T[0:h:(3+10*eps(T));]*c))/c)/sqrt(h)
+        x[n4+1:2*n4] = x[3*n4:-1:2*n4+1]
         return RegProb(A, b, x)
     end
 end
