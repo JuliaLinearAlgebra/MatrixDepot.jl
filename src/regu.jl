@@ -294,8 +294,8 @@ end
 
 # replicates the grid vectors xgv and ygv to produce a full grid. 
 function meshgrid(xgv, ygv)
-    X = [i for i in xgv, j in ygv]
-    Y = [j for i in xgv, j in ygv]
+    X = [i for j in ygv, i in xgv]
+    Y = [j for j in ygv, i in xgv]
     return X, Y
 end
 
@@ -307,19 +307,37 @@ function gravity{T}(::Type{T}, n::Int, example::Int,
     dt = one(T)/n
     a = convert(T, a); b = convert(T, b); d = convert(T, d)
     ds = (b-a)/n
-    tv = dt*(T[1:n;] - 0.5)
-    sv = a + ds*(T[1:n;] - 0.5)
-    [T,S] = meshgrid(tv,sv)
-    A = dt*d*ones(T, n, n)./(d^2 + (S-T).^2).^(3/2)
-    A
+    tv = dt*(T[1:n;] - one(T)/2)
+    sv = a + ds*(T[1:n;] - one(T)/2)
+    Tm,Sm = meshgrid(tv,sv)
+    A = dt*d*ones(T, n, n)./(d^2 + (Sm-Tm).^2).^(convert(T, 3/2))
+    if matrixonly
+        return A
+    else
+        x = ones(T, n)
+        nt = @compat round(Integer, n/3)
+        nn = @compat round(Integer, n*7/8)
+        if example == 1
+            x = sin(pi*tv) + 0.5*sin(2*pi*tv)
+        elseif example == 2
+            x[1:nt] = (2/nt)*[1:nt;]
+            x[nt+1:nn] = ((2*nn - nt) - [nt+1:nn;])/ (nn-nt)
+            x[nn+1:n] = (n - [nn+1:n;])/(n-nn)
+        elseif example == 3
+            x[1:nt] = 2*ones(T, nt)
+        else
+            error("Illegal value of example")
+        end
+        b = A*x
+        return RegProb(A, b, x) 
+    end
 end
 
-gravity{T}(::Type{T}, n::Int, a::Number, b::Number, 
-           d::Number, matrixonly::Bool = true) =  
-           gravity(T, n, 1, a, b, d, matrixonly = matrixonly)
+gravity{T}(::Type{T}, n::Int, example::Int, matrixonly::Bool = true) = 
+    gravity(T, n, example, 0, 1, 0.25, matrixonly)
 
 gravity{T}(::Type{T}, n::Int, matrixonly::Bool = true) = 
-           gravity(T, n, 1, 0, 1, 0.25, matrixonly = matrixonly) 
+           gravity(T, n, 1, 0, 1, 0.25, matrixonly) 
 
 #
 # Image deblurring test problem

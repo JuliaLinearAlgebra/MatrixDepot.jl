@@ -29,3 +29,11 @@ rf32 = matrixdepot("baart", Float32, 2*n)
 n = rand(1:5)
 r = matrixdepot("phillips", 4*n)
 rf32 = matrixdepot("phillips", Float32, 4*n)
+
+A = matrixdepot("gravity", n)
+
+@test matrixdepot("gravity", n, 1, 0, 1, 0.25) == A
+
+r1 = matrixdepot("gravity", Float32, n, 1, false)
+r2 = matrixdepot("gravity", Float32, n, 2, false)
+r3 = matrixdepot("gravity", Float32, n, 3, false)

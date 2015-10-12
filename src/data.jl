@@ -493,10 +493,26 @@ matrixinfo =
              9 (1962), 84-97.",
              
              "gravity" => "One-dimensional gravity surverying problem:
+             Discretization of a 1-D model problem in gravity surveying, in 
+             which a mass distribution f(t) is located at depth d, while the
+             vertical component of the gravity field g(s) is measured at the
+             surface. 
              \n Input options:
-             \n 1. [type,] n, example, a, b, d, [matrixonly]
-             \n 2. [type,] n, a, b, d, [matrixonly]: example = 1;
-             \n 3. [type,] n, [matrixonly]: example = 1, a = 0, b = 1, d = 0.25."
+             \n 1. [type,] n, example, a, b, d, [matrixonly]: n is the dimension
+             of the matrix. Three examples are implemented.
+             (a) example = 1 gives f(t) = sin(pi*t) + 0.5*sin(2*pi*t).
+             (b) example = 2 gives f(t) = piecewise linear function.
+             (c) example = 3 gives f(t) = piecewise constant function. 
+             The t integration interval is fixed to [0, 1], while the s 
+             integration interval [a, b] can be specified by the user.
+             The parameter d is the depth at which the magnetic deposit is 
+             located. The larger the d, the faster the decay of the singular 
+             values. 
+             If matrixonly = false, the linear system A, b, x will be generated.
+             (matrixonly = true by default.)
+             \n 2. [type,] n, example, [matrixonly]: a = 0, b = 1, d = 0.25;
+             \n 3. [type,] n, [matrixonly]: example = 1, a = 0, b = 1, d = 0.25.             \n Reference: G. M. Wing and J. D. Zahrt, A Primer on Integral 
+             Equations of the First Kind, SIAM, Philadelphia, 1991, p. 17."
              );
 
 matrixclass =
