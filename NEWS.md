@@ -1,8 +1,15 @@
 ## Matrix Depot Release Notes
 
 
-v0.3.4 (under preparation)
---------------------------
+v0.3.5 (under preparation)
+---------------------------
+
+* Add new test problems for regularization methods:
+
+	- `gravity`
+
+v0.3.4 
+-------
 
 * fix Julia v0.5 String deprecation.
 
