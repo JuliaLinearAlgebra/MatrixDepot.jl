@@ -292,12 +292,34 @@ function phillips{T}(::Type{T}, n::Int, matrixonly = true)
     end
 end
 
+# replicates the grid vectors xgv and ygv to produce a full grid. 
+function meshgrid(xgv, ygv)
+    X = [i for i in xgv, j in ygv]
+    Y = [j for i in xgv, j in ygv]
+    return X, Y
+end
+
 #
 # one-dimensional gravity surveying problem
 #
-function gravity{T}(::Type{T}, n::Int, example::Int, a::Number, b::Number, d::Number)
-
+function gravity{T}(::Type{T}, n::Int, example::Int, 
+                    a::Number, b::Number, d::Number, matrixonly::Bool = true)
+    dt = one(T)/n
+    a = convert(T, a); b = convert(T, b); d = convert(T, d)
+    ds = (b-a)/n
+    tv = dt*(T[1:n;] - 0.5)
+    sv = a + ds*(T[1:n;] - 0.5)
+    [T,S] = meshgrid(tv,sv)
+    A = dt*d*ones(T, n, n)./(d^2 + (S-T).^2).^(3/2)
+    A
 end
+
+gravity{T}(::Type{T}, n::Int, a::Number, b::Number, 
+           d::Number, matrixonly::Bool = true) =  
+           gravity(T, n, 1, a, b, d, matrixonly = matrixonly)
+
+gravity{T}(::Type{T}, n::Int, matrixonly::Bool = true) = 
+           gravity(T, n, 1, 0, 1, 0.25, matrixonly = matrixonly) 
 
 #
 # Image deblurring test problem

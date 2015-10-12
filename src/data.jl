@@ -22,7 +22,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "prolate" => prolate, "deriv2" => deriv2,
                           "shaw" => shaw, "wing" => wing,
                           "foxgood" => foxgood, "heat" => heat,
-                          "baart" => baart, "phillips" => phillips
+                          "baart" => baart, "phillips" => phillips,
+                          "gravity" => gravity
                           );
 
 matrixinfo =
@@ -489,7 +490,13 @@ matrixinfo =
              (matrixonly = true by default.)
              \n Reference: D.L. Phillips, A technique for the numerical 
              solution of certain integral equations of the first kind, J. ACM
-             9 (1962), 84-97."
+             9 (1962), 84-97.",
+             
+             "gravity" => "One-dimensional gravity surverying problem:
+             \n Input options:
+             \n 1. [type,] n, example, a, b, d, [matrixonly]
+             \n 2. [type,] n, a, b, d, [matrixonly]: example = 1;
+             \n 3. [type,] n, [matrixonly]: example = 1, a = 0, b = 1, d = 0.25."
              );
 
 matrixclass =
@@ -529,5 +536,5 @@ matrixclass =
                           "wathen", "oscillate"],
 
              "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
-                        "phillips"],
+                        "phillips", "gravity"],
                );
