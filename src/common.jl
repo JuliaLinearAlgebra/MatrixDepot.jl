@@ -182,11 +182,25 @@ function matrixdepot(num::Int)
 end
 
 function matrixdepot(I::UnitRange{Int})
-    matrixnamelist = ASCIIString[]
+    matrixnamelist = AbstractString[]
     for i in I
         push!(matrixnamelist, matrixdepot(i))
     end
     return matrixnamelist
+end
+
+IntOrUnitRange = @compat Union{Int, UnitRange{Int}}
+
+function matrixdepot(vs::IntOrUnitRange...)
+    matrixnames = AbstractString[]
+    for i in vs
+        if typeof(i) <: Int
+            push!(matrixnames, matrixdepot(i))
+        else
+            append!(matrixnames, matrixdepot(i))
+        end
+    end
+    return matrixnames
 end
 
 # Return a list of matrix names with common properties
