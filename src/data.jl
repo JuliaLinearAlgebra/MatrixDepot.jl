@@ -32,9 +32,9 @@ matrixinfo =
              \n 1. [type,] dim: the dimension of the matrix;
              \n 2. [type,] row_dim, col_dim: the row and column dimension.
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix,
+             \n Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
              Amer. Math. Monthly, 90 (1983), pp. 301-312.
-             N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             N. J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 2002; sec. 28.1.",
 
@@ -42,9 +42,9 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'symmetric','pos-def']
-             \n Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix,
+             \n Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
              Amer. Math. Monthly, 90 (1983), pp. 301-312.
-             N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             N. J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 2002; sec. 28.1.",
 
@@ -52,7 +52,7 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix, n is a power of 2.
              \n ['inverse', 'orthogonal', 'eigen']
-             \n Reference: S.W. Golomb and L.D. Baumert, The search for
+             \n Reference: S. W. Golomb and L. D. Baumert, The search for
              Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17.",
 
              "cauchy" => "Cauchy matrix:
@@ -61,7 +61,7 @@ matrixinfo =
              \n 2. [type,] vec: a vector;
              \n 3. [type,] dim: the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference:  N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             \n Reference:  N. J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 2002; sec. 28.1.",
 
@@ -71,13 +71,13 @@ matrixinfo =
              \n 2. [type,] vec: a vector;
              \n 3. [type,] dim: the dimension of the matrix.
              \n ['symmetric', 'pos-def', 'eigen']
-             \n Reference:  P.J. Davis, Circulant Matrices, John Wiley, 1977.",
+             \n Reference:  P. J. Davis, Circulant Matrices, John Wiley, 1977.",
 
              "dingdong" => "Dingdong matrix:
              \n Input options:
              \n 1. [type,] n: the dimension of the matrix.
              \n ['symmetric', 'eigen']
-             \n Reference: J.C. Nash, Compact Numerical Methods for
+             \n Reference: J. C. Nash, Compact Numerical Methods for
              Computers: Linear Algebra and Function Minimisation,
              second edition, Adam Hilger, Bristol, 1990 (Appendix 1).",
 
@@ -87,7 +87,7 @@ matrixinfo =
              If k = 1 the matrix reflect about the anti-diagonal;
              \n 2. [type,] n: n is the dimension of the matrix.
              \n ['ill-cond', 'eigen']
-             \n Reference:  W.L. Frank, Computing eigenvalues of complex matrices
+             \n Reference:  W. L. Frank, Computing eigenvalues of complex matrices
              by determinant evaluation and by methods of Danilewski and Wielandt,
              J. Soc. Indust. Appl. Math., 6 (1958), pp. 378-392 (see pp. 385, 388).",
 
@@ -97,7 +97,7 @@ matrixinfo =
              alpha and lambda are scalars;
              \n 2. [type,] n: alpha = sqrt(eps(type)) and lambda = 0.
              \n ['inverse', 'ill-cond', 'eigen']
-             \n This generator is adapted from Nicholas J. Higham's Test Matrix Toolbox.",
+             \n This generator is adapted from N. J. Higham's Test Matrix Toolbox.",
 
              "magic" => "Magic square matrix:
              \n Input options:
@@ -110,7 +110,7 @@ matrixinfo =
              k is the number of superdiagonals;
              \n 2. [type,] dim: the dimension of the matrix.
              \n ['eigen']
-             \n Reference: J.F. Grcar, Operator coefficient methods
+             \n Reference: J. F. Grcar, Operator coefficient methods
              for linear equations, Report SAND89-8691, Sandia National
              Laboratories, Albuquerque, New Mexico, 1989 (Appendix 2).",
 
@@ -122,7 +122,7 @@ matrixinfo =
              k is the number superdiagonals;
              \n 2. [type,] dim: the dimension of the matrix.
              \n ['inverse', 'ill-cond']
-             \n Reference:  G.H. Golub and J.H. Wilkinson, Ill-conditioned
+             \n Reference:  G. H. Golub and J. H. Wilkinson, Ill-conditioned
              eigensystems and the computation of the Jordan canonical form,
              SIAM Review, 18(4), 1976, pp. 578-6",
 
@@ -144,7 +144,7 @@ matrixinfo =
              the Pascal matrix, Linear Algebra and Appl., 174 (1992),
              pp. 13-23 (this paper gives a factorization of L = PASCAL(N,1)
              and a formula for the elements of L^k).
-             N.J. Higham, Accuracy and Stability of Numerical Algorithms
+             N. J. Higham, Accuracy and Stability of Numerical Algorithms
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 2002; sec. 28.4.",
 
@@ -164,7 +164,7 @@ matrixinfo =
              alpha is a scalar;
              \n 2. [type,] dim: the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference: M.L. Pei, A test matrix for inversion procedures,
+             \n Reference: M. L. Pei, A test matrix for inversion procedures,
              Comm. ACM, 5 (1962), p. 508.",
 
              "vand" => "Vandermonde Matrix:
@@ -173,7 +173,7 @@ matrixinfo =
              \n 2. [type,] vec
              \n 3. [type,] dim
              \n ['inverse', 'ill-cond']
-             \n Reference: N.J. Higham, Stability analysis of algorithms
+             \n Reference: N. J. Higham, Stability analysis of algorithms
              for solving confluent Vandermonde-like systems, SIAM J.
              Matrix Anal. Appl., 11 (1990), pp. 23-41.",
 
@@ -181,7 +181,7 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']
-             \n Reference: A.S. Householder and J.A. Carpenter, The
+             \n Reference: A. S. Householder and J. A. Carpenter, The
              singular values of involutory and of idempotent matrices,
              Numer. Math. 5 (1963), pp. 234-237.",
 
@@ -191,7 +191,7 @@ matrixinfo =
              k = 0 or 1.
              \n 2. [type,] dim
              \n ['eigen']
-             \n Reference: L.N. Trefethen and M.R. Trummer, An instability
+             \n Reference: L. N. Trefethen and M. R. Trummer, An instability
              phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.",
 
              "lotkin" => "Lotkin Matrix:
@@ -207,7 +207,7 @@ matrixinfo =
              is SymTridiagonal;
              \n 2. [type,] dim: k = 0.
              \n ['inverse', 'symmetric', 'eigen']
-             \n Reference: P.A. Clement, A class of triple-diagonal
+             \n Reference: P. A. Clement, A class of triple-diagonal
              matrices for test purposes, SIAM Review, 1 (1959), pp. 50-52.",
 
              "fiedler" => "Fiedler Matrix:
@@ -261,7 +261,7 @@ matrixinfo =
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['eigen']
              \n Reference: The MathWorks Newsletter, Volume 1, Issue 1,
-             March 1986, page 2. S.V. Parter, On the distribution of the
+             March 1986, page 2. S. V. Parter, On the distribution of the
              singular values of Toeplitz matrices, Linear Algebra and
              Appl., 80 (1986), pp. 115-130.",
 
@@ -272,7 +272,7 @@ matrixinfo =
              A[i,j] = alpha^(i + 1 -j) for j + 1 <= i;
              \n 2. dim: alpha = 1, delta = 0.
              \n ['eigen']
-             \n Reference: T.S. Chow, A class of Hessenberg matrices with known
+             \n Reference: T. S. Chow, A class of Hessenberg matrices with known
              eigenvalues and inverses, SIAM Review, 11 (1969), pp. 391-395.",
 
              "randcorr" => "Random Correlation Matrix:
@@ -284,7 +284,7 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] n: the dimension of the matirx is n^2.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']
-             \n Reference: G.H. Golub and C.F. Van Loan, Matrix Computations,
+             \n Reference: G. H. Golub and C. F. Van Loan, Matrix Computations,
              second edition, Johns Hopkins University Press, Baltimore,
              Maryland, 1989 (Section 4.5.4).",
 
@@ -292,7 +292,7 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] n: the dimension of the matrix is n^2.
              \n ['eigen', 'sparse']
-             \n Reference: R.J. Plemmons, Regular splittings and the
+             \n Reference: R. J. Plemmons, Regular splittings and the
              discrete Neumann problem, Numer. Math., 25 (1976), pp. 153-161.",
 
              "rosser" => "Rosser Matrix:
@@ -303,7 +303,7 @@ matrixinfo =
              matrix is the test matrix used by Rosser.
              \n 2. [type,] dim: a = b = rand(1:5)
              \n ['eigen', 'ill-cond', 'random']
-             \n Reference: J.B. Rosser, C. Lanczos, M.R. Hestenes, W. Karush,
+             \n Reference: J. B. Rosser, C. Lanczos, M. R. Hestenes, W. Karush,
              Separation of close eigenvalues of a real symmetric matrix,
              Journal of Research of the National Bureau of Standards, v(47)
              (1951)",
@@ -321,7 +321,7 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['symmetric', 'eigen']
-             \n Reference: J.H. Wilkinson, Error analysis of direct methods
+             \n Reference: J. H. Wilkinson, Error analysis of direct methods
              of matrix inversion, J. Assoc. Comput. Mach., 8 (1961),  pp. 281-330.",
 
              "rando" => "Random Matrix with Element -1, 0, 1:
@@ -347,7 +347,7 @@ matrixinfo =
              \n 3. [type,] n, kappa: mode = 3;
              \n 4. [type,] n: kappa = sqrt(1/eps()), mode = 3.
              \n ['ill-cond', 'random']
-             \n Reference: N.J. Higham, Accuracy and Stability of Numerical
+             \n Reference: N. J. Higham, Accuracy and Stability of Numerical
              Algorithms, Society for Industrial and Applied Mathematics,
              Philadelphia, PA, USA, 2002; sec. 28.3.",
 
@@ -355,7 +355,7 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] n : n is the dimension of the matrix.
              \n ['random']
-             \n Reference:  W.B. Gragg, The QR algorithm for unitary
+             \n Reference:  W. B. Gragg, The QR algorithm for unitary
              Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.",
 
              "kms" => "Kac-Murdock-Szego Toeplitz Matrix:
@@ -364,7 +364,7 @@ matrixinfo =
              scalar such that A[i,j] = rho^(abs(i-j)).
              \n 2. [type,] n: rho = 0.5
              \n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             \n Reference: W.F. Trench, Numerical solution of the eigenvalue
+             \n Reference: W. F. Trench, Numerical solution of the eigenvalue
              problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis
              and Appl., 10 (1989), pp. 135-146 (and see the references therein).",
 
@@ -374,7 +374,7 @@ matrixinfo =
              3 * nx * ny + 2 * nx * ny + 1;
              \n 2. [type,] n: nx = ny = n.
              \n ['symmetric', 'pos-def', 'eigen', 'random', 'sparse']
-             \n Reference: A.J. Wathen, Realistic eigenvalue bounds for
+             \n Reference: A. J. Wathen, Realistic eigenvalue bounds for
              the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987),
              pp. 449-457.",
 
@@ -417,7 +417,7 @@ matrixinfo =
              \n Input options:
              \n 1. [type,] n, w: the dimension of the matrix is n, w is a real scalar;
              \n 2. [type,] n: the case when w = 0.25.
-             \n Reference: J.M. Varah. The Prolate Matrix. Linear Algebra and Appl.
+             \n Reference: J. M. Varah. The Prolate Matrix. Linear Algebra and Appl.
              187:267--278, 1993.",
              
              "deriv2" => "Computation of the Second Derivative:
@@ -426,7 +426,7 @@ matrixinfo =
              \n 1. [type,] n, [matrixonly]: the dimension of the matrix is n. 
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.)
-             \n Reference: P.C. Hansen, Regularization tools: A MATLAB pacakge for 
+             \n Reference: P. C. Hansen, Regularization tools: A MATLAB pacakge for 
              analysis and solution of discrete ill-posed problems. 
              Numerical Algorithms, 6(1994), pp.1-35",
 
@@ -437,7 +437,7 @@ matrixinfo =
              \n 1. [type,] n, [matrixonly]: the dimesion of the matrix n must be even.
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.)
-             \n Reference: C.B. Shaw, Jr., Improvements of the resolution of 
+             \n Reference: C. B. Shaw, Jr., Improvements of the resolution of 
              an instrument by numerical solution of an integral equation. 
              J. Math. Ana. Appl. 37 (1972), 83-112.",
 
@@ -448,7 +448,7 @@ matrixinfo =
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.);
              \n 2. [type,] n, [matrixonly]: t1 = 1/3 and t2 = 2/3.
-             \n Reference: G.M. Wing, A Primer on Integral Equations of the 
+             \n Reference: G. M. Wing, A Primer on Integral Equations of the 
              First Kind, SIAM, 1991, p. 109.",
 
              "foxgood" => "Severely Ill-posed Problem Suggested by Fox & Goodwin:
@@ -459,7 +459,7 @@ matrixinfo =
              \n 1. [type,] n, [matrixonly]: the dimension of the matrix is n.
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.)
-             \n Reference: C.T. H. Baker, The Numerical Treatment of Integral
+             \n Reference: C. T. H. Baker, The Numerical Treatment of Integral
              Equations, Clarendon Press, Oxford, 1977, p. 665.",
 
              "heat" => "Inverse Heat Equation:
@@ -471,7 +471,7 @@ matrixinfo =
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.);
              \n 2. [type,] n, [matrixonly]: κ = 1.
-             \n Reference: A.S. Carasso, Determining surface temperatures 
+             \n Reference: A. S. Carasso, Determining surface temperatures 
              from interior observations, SIAM J. Appl. Math. 42 (1982), 558-574.",
 
              "baart" => "Fredholm Integral Equation of the Fisrt Kind:
@@ -479,7 +479,7 @@ matrixinfo =
              \n 1. [type,] n, [matrixonly]: the dimenstion of the matrix is n.
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.)
-             \n Reference: M.L. Baart, The use of auto-correlation for 
+             \n Reference: M. L. Baart, The use of auto-correlation for 
              pesudo-rank determination in noisy ill-conditioned linear-squares
              problems, IMA, J. Numer. Anal. 2 (1982), 241-247.",
              
@@ -488,7 +488,7 @@ matrixinfo =
              \n 1. [type,] n, [matrixonly]: the dimenstion of the matrix is n.
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.)
-             \n Reference: D.L. Phillips, A technique for the numerical 
+             \n Reference: D. L. Phillips, A technique for the numerical 
              solution of certain integral equations of the first kind, J. ACM
              9 (1962), 84-97.",
              
