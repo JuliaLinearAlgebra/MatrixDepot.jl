@@ -94,20 +94,34 @@ julia> matrixdepot("hilb", Float16, 5, 3)
  0.19995  0.16663  0.14282
 ```
 
-Matrices can be accessed by number.
+Matrices can be accessed by number, range or a mixture of number and range.
 
 ```julia
 julia> matrixdepot(5)
 "chow"
 
 julia> matrixdepot(5:10)
-6-element Array{ASCIIString,1}:
+6-element Array{AbstractString,1}:
  "chow"    
  "circul"  
  "clement" 
  "deriv2"  
  "dingdong"
+ "fiedler"
+
+julia> matrixdepot(1:4, 6, 10:15)
+11-element Array{AbstractString,1}:
+ "baart"   
+ "binomial"
+ "cauchy"  
+ "chebspec"
+ "circul"  
  "fiedler" 
+ "forsythe"
+ "foxgood" 
+ "frank"   
+ "gravity" 
+ "grcar" 
 ```
 
 By typing a matrix name, we can see what properties that matrix have.

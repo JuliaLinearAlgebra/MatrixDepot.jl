@@ -8,6 +8,11 @@ v0.3.5 (under preparation)
 
 	- `gravity`
 
+* Add new feature:
+
+	- access matrices by a mixture of number and range. For example,
+	  we could do `matrixdepot(1:4, 6, 10:15)`. 
+
 v0.3.4 
 -------
 

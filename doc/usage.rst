@@ -103,6 +103,25 @@ matrices is symbolized by ``"symmetric"``.
      "grcar"   
      "hadamard"
 
+.. function:: matrixdepot(num, num1:num2...)
+
+   Access matrix by a mixture of number and range. For example::
+
+     julia> matrixdepot(1:4, 6, 10:15)
+     11-element Array{AbstractString,1}:
+     "baart"   
+     "binomial"
+     "cauchy"  
+     "chebspec"
+     "circul"  
+     "fiedler" 
+     "forsythe"
+     "foxgood" 
+     "frank"   
+     "gravity" 
+     "grcar"  	      
+
+
 .. function:: matrixdepot(name, :get)
 
     Download a matrix from test matrix collections, where
