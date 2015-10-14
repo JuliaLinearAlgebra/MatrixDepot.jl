@@ -80,8 +80,9 @@ end
 #
 # Computation of the Second Derivative 
 # 
-function deriv2{T}(::Type{T}, n::Int, matrixonly::Bool = true)
-    h = one(T)/n; sqh = sqrt(h); h32 = h*sqh; h2 = h^2; sqhi = 1/sqh
+function deriv2{T}(::Type{T}, n::Int, example::Int, matrixonly::Bool = true)
+    h = convert(T, one(T)/n); sqh = sqrt(h) 
+    h32 = h*sqh; h2 = h^2; sqhi = one(T)/sqh
     t = 2/3; A = zeros(T, n, n)
 
     # compute A
@@ -96,16 +97,40 @@ function deriv2{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     if matrixonly
         return A
     else
-        # compute b
         b = zeros(T, n)
-        [b[i] = h32*(i - 0.5)*((i^2 + (i-1)^2)*h2/2 - 1)/6 for i = 1:n]
-        
-        # compute x
         x = zeros(T, n)
-        [x[i] = h32*(i - 0.5) for i = 1:n]
+        if example == 1
+            # compute b
+            [b[i] = h32*(i - 0.5)*((i^2 + (i-1)^2)*h2/2 - 1)/6 for i = 1:n]
+        
+            # compute x
+            [x[i] = h32*(i - 0.5) for i = 1:n]
+        elseif example == 2
+            ee = one(T) - exp(one(T))
+            [b[i] = sqhi*(exp(i*h) - exp((i-1)*h) + ee*(i-0.5)*h2 - h) for i = 1:n]
+            [x[i] = sqhi*(exp(i*h) - exp((i-1)*h)) for i = 1:n]
+        elseif example == 3
+            mod(n, 2) == 0 || error("The order n must be even.")
+            for i = 1:div(n,2)
+                s12 = (i*h)^2; s22 = ((i-1)*h)^2
+                b[i] = sqhi*(s12 + s22 - 1.5)*(s12 - s22)/24
+            end
+            for i = div(n, 2)+1:n
+                s1 = i*h; s12 = s1^2; s2 = (i-1)*h; s22 = s2^2
+                b[i] = sqhi*(-(s12 + s22)*(s12 - s22) + 4*(s1^3 - s2^3) 
+                       - 4.5*(s12 - s22) + h)/24
+            end
+            [x[i] = sqhi*((i*h)^2 - ((i-1)*h)^2)/2 for i = 1:div(n, 2)]
+            [x[i] = sqhi*(h - ((i*h)^2 - ((i-1)*h)^2)/2) for i = div(n, 2)+1:n]
+        else
+            error("Illegal value of example.")
+        end       
         return RegProb(A, b, x)
     end
 end
+
+deriv2{T}(::Type{T}, n::Int, matrixonly::Bool = true) = deriv2(T, n, 1, matrixonly)
+
 
 #
 # One-Dimensional Image Restoration Model

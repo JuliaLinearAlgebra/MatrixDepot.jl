@@ -421,11 +421,23 @@ matrixinfo =
              187:267--278, 1993.",
              
              "deriv2" => "Computation of the Second Derivative:
-             \n A classical test problem for regularization algorithms.
+             \n A classical test problem for regularization algorithms:
+             This is a mildly ill-posed problem. It is a discretization
+             of a first kind Fredholm integral equation whose kernel K
+             is the Green's function for the second derivative. 
              \n Input options:
-             \n 1. [type,] n, [matrixonly]: the dimension of the matrix is n. 
-             If matrixonly = false, the linear system A, b, x will be generated. 
-             (matrixonly = true by default.)
+             \n 1. [type,] n, example, [matrixonly]: the dimension of the 
+             matrix is n.  One choose between between the following right-hand
+             g and solution f: 
+             (a) example = 1 gives g(s) = (s^3 - s)/6, f(t) = t.
+             (b) example = 2 gives g(s) = exp(s) + (1 -e)s - 1, f(t) = exp(t)
+             (c) example = 3 gives g(s) = | (4s^3 - 3s)/24,  s < 0.5
+                                          | (-4s^3 + 12s^2 - 9s + 1)/24, s>= 0.5
+                                   f(t) = | t, t < 0.5
+                                   g(t) = | 1- t, t >= 0.5.
+             If matrixonly = false, the linear system A, b, x will be 
+             generated.  (matrixonly = true by default.)             
+             \n 2. [type,] n, [matrixonly]: example = 1.
              \n Reference: P. C. Hansen, Regularization tools: A MATLAB pacakge for 
              analysis and solution of discrete ill-posed problems. 
              Numerical Algorithms, 6(1994), pp.1-35",

@@ -3,6 +3,11 @@ n = rand(1:10)
 r = matrixdepot("deriv2", n, false)
 rf32 = matrixdepot("deriv2", Float32, n, false)
 
+r2 = matrixdepot("deriv2", Float32, n, 2, false)
+if mod(n, 2) == 0
+    r3 = matrixdepot("deriv2", Float32, n, 3, false)
+end
+
 @test_approx_eq r.A*r.x  r.b
 @test issym(r.A)
 

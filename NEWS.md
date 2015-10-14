@@ -7,11 +7,14 @@ v0.3.5 (under preparation)
 * Add new test problems for regularization methods:
 
 	- `gravity`
+	- `blur`
 
 * Add new feature:
 
 	- access matrices by a mixture of number and range. For example,
 	  we could do `matrixdepot(1:4, 6, 10:15)`. 
+
+* Implement all three examples for `deriv2`.
 
 v0.3.4 
 -------
