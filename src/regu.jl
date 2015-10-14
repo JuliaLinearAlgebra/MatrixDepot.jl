@@ -33,9 +33,9 @@ oscillate{T}(::Type{T}, n::Int) = oscillate(T, n, 2)
 
 
 immutable RegProb{T}
-    A::Matrix{T}  # matrix of interest
-    b::Vector{T}  # right-hand side
-    x::Vector{T}  # the solution to Ax = b
+    A::AbstractMatrix{T}  # matrix of interest
+    b::AbstractVector{T}  # right-hand side
+    x::AbstractVector{T}  # the solution to Ax = b
 end
 
 function show(io::IO, p::RegProb)
@@ -315,8 +315,8 @@ function gravity{T}(::Type{T}, n::Int, example::Int,
         return A
     else
         x = ones(T, n)
-        nt = @compat round(Integer, n/3)
-        nn = @compat round(Integer, n*7/8)
+        nt = @compat round(Integer, n/3, RoundNearestTiesAway)
+        nn = @compat round(Integer, n*7/8, RoundNearestTiesAway)
         if example == 1
             x = sin(pi*tv) + 0.5*sin(2*pi*tv)
         elseif example == 2
@@ -342,9 +342,61 @@ gravity{T}(::Type{T}, n::Int, matrixonly::Bool = true) =
 #
 # Image deblurring test problem
 #
-function blur{T}(::Type{T}, n::Int)
+function blur{T}(::Type{T}, n::Int, band::Int, σ::Number, 
+                 matrixonly::Bool = true)
+    σ = convert(T, σ)
+    z = [exp(-(T[0:band-1;].^2)/(2*σ^2)); zeros(T, n-band)]
+    A = toeplitz(T, z)
+    A = sparse(A)
+    A = (1/(2*pi*σ^2))*kron(A, A)
+    if matrixonly
+        return A
+    else
+        # start with an image of all zeros
+        n2 = @compat round(Integer, n/2, RoundNearestTiesAway)
+        n3 = @compat round(Integer, n/3, RoundNearestTiesAway)
+        n6 = @compat round(Integer, n/6, RoundNearestTiesAway)
+        n12 = @compat round(Integer, n/12, RoundNearestTiesAway)
+        m = max(n, 2*n6+1+n2+n12)
+        x = zeros(T, m, m)
+        
+        # add a large ellipse
+        Te = zeros(T, n6, n3)
+        [if ((i/n6)^2 + (j/n3)^2 < 1) Te[i,j] = 1 end for i = 1:n6, j = 1:n3]
+        Te = [flipdim(Te, 2) Te;]
+        Te = [flipdim(Te, 1); Te]
 
+        x[2+[1:2*n6;], n3-1+[1:2*n3;]] = Te
+
+        
+        # add a smaller ellipse
+        Te = zeros(T, n6, n3)
+        [if ((i/n6)^2 + (j/n3)^2 < 0.6) Te[i,j] = 1 end for i = 1:n6, j = 1:n3]
+        Te = [flipdim(Te, 2) Te;]
+        Te = [flipdim(Te, 1); Te]
+        x[n6+[1:2*n6;], n3-1+[1:2*n3;]] = x[n6+[1:2*n6;],n3-1+[1:2*n3;]] + 2*Te
+        f = find((i) -> i==3, x)
+        x[f] = 2*ones(T, length(f))
+        
+        # Add a triangle
+        Te = triu(ones(T, n3, n3))
+        mT, nT = size(Te)
+        x[n3+n12+[1:nT;], 1+[1:mT;]] = 3*Te
+
+
+        # add a cross
+        Te = zeros(T, 2*n6+1, 2*n6+1)
+        mT, nT = size(Te)
+        Te[n6+1, 1:nT] = ones(T, nT)
+        Te[1:mT, n6+1] = ones(T, mT)
+        x[n2+n12+[1:mT;], n2+[1:nT;]] = 4*Te
+
+        x = reshape(x[1:n, 1:n], n^2)
+        b = A*x 
+        return RegProb(A, b, x) 
+    end
 end
+blur{T}(::Type{T}, n::Int, matrixonly::Bool = true) = blur(T, n, 3, 0.7, matrixonly)
 
 
 #

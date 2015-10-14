@@ -23,7 +23,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "shaw" => shaw, "wing" => wing,
                           "foxgood" => foxgood, "heat" => heat,
                           "baart" => baart, "phillips" => phillips,
-                          "gravity" => gravity
+                          "gravity" => gravity, "blur" => blur
                           );
 
 matrixinfo =
@@ -512,7 +512,21 @@ matrixinfo =
              (matrixonly = true by default.)
              \n 2. [type,] n, example, [matrixonly]: a = 0, b = 1, d = 0.25;
              \n 3. [type,] n, [matrixonly]: example = 1, a = 0, b = 1, d = 0.25.             \n Reference: G. M. Wing and J. D. Zahrt, A Primer on Integral 
-             Equations of the First Kind, SIAM, Philadelphia, 1991, p. 17."
+             Equations of the First Kind, SIAM, Philadelphia, 1991, p. 17.",
+
+             "blur" => "Image deblurring test problem:
+             The generated matrix A is an n*n-by-n*n sparse, symmetric, 
+             doubly block Toeplitz matrix that models blurring of an n-by-n 
+             image by a Gaussian point spread function.
+             \n Input options:
+             \n 1. [type,] n, band, σ, [matrixonly]: the dimension of the matrix
+             is n^2. band is the half-bandwidth, only matrix elements within
+             a distance band-1 from the diagonal are nonzero. σ controls the
+             width of the Gaussin point spread function. The larger the σ, the 
+             wider the function and the more ill posed the problem. 
+             If matrixonly = false, the linear system A, b, x will be generated.
+             (matrixonly = true by default.)
+             \n 2, [type,] n, [matrixonly]: band = 3, σ = 0.7."
              );
 
 matrixclass =
@@ -552,5 +566,5 @@ matrixclass =
                           "wathen", "oscillate"],
 
              "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
-                        "phillips", "gravity"],
+                        "phillips", "gravity", "blur"],
                );
