@@ -340,8 +340,8 @@ function gravity{T}(::Type{T}, n::Int, example::Int,
         return A
     else
         x = ones(T, n)
-        nt = @compat round(Integer, n/3, RoundNearestTiesAway)
-        nn = @compat round(Integer, n*7/8, RoundNearestTiesAway)
+        nt = @compat round(Integer, n/3)
+        nn = @compat round(Integer, n*7/8)
         if example == 1
             x = sin(pi*tv) + 0.5*sin(2*pi*tv)
         elseif example == 2
@@ -378,10 +378,17 @@ function blur{T}(::Type{T}, n::Int, band::Int, σ::Number,
         return A
     else
         # start with an image of all zeros
-        n2 = @compat round(Integer, n/2, RoundNearestTiesAway)
-        n3 = @compat round(Integer, n/3, RoundNearestTiesAway)
-        n6 = @compat round(Integer, n/6, RoundNearestTiesAway)
-        n12 = @compat round(Integer, n/12, RoundNearestTiesAway)
+        if VERSION < v"0.4.0-dev+1419"
+            n2 = @compat round(Integer, n/2)
+            n3 = @compat round(Integer, n/3)
+            n6 = @compat round(Integer, n/6)
+            n12 = @compat round(Integer, n/12)
+        else
+            n2 = round(Integer, n/2, RoundNearestTiesAway)
+            n3 = round(Integer, n/3, RoundNearestTiesAway)
+            n6 = round(Integer, n/6, RoundNearestTiesAway)
+            n12 = round(Integer, n/12, RoundNearestTiesAway)
+        end
         m = max(n, 2*n6+1+n2+n12)
         x = zeros(T, m, m)
         
