@@ -31,7 +31,7 @@ rf32 = matrixdepot("heat", Float32, 2*n)
 r = matrixdepot("baart", 2*n)
 rf32 = matrixdepot("baart", Float32, 2*n)
 
-n = rand(1:10)
+n = rand(3:10)
 r = matrixdepot("phillips", 4*n)
 rf32 = matrixdepot("phillips", Float32, 4*n)
 
