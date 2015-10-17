@@ -1,8 +1,12 @@
 ## Matrix Depot Release Notes
 
+v.0.4.0 (coming soon)
+------------------------------
 
-v0.3.5 (under preparation)
----------------------------
+
+
+v0.3.5 
+----------
 
 * Add new test problems for regularization methods:
 
