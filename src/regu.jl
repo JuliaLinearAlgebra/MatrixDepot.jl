@@ -379,6 +379,9 @@ function blur{T}(::Type{T}, n::Int, band::Int, σ::Number,
     else
         # start with an image of all zeros
         if VERSION < v"0.4.0-dev+1419"
+            warn("The resulting x, b vectors may be different from these
+                 generated from Julia v0.4, v0.4+ because
+                 RoundNearestTiesAway is not supported in Julia v0.3.")
             n2 = @compat round(Integer, n/2)
             n3 = @compat round(Integer, n/3)
             n6 = @compat round(Integer, n/6)
