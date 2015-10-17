@@ -30,23 +30,23 @@ To see all the matrices in the collection, type
 julia> matrixdepot()
 
 Matrices:
-   1) baart            2) binomial         3) cauchy           4) chebspec      
-   5) chow             6) circul           7) clement          8) deriv2        
-   9) dingdong        10) fiedler         11) forsythe        12) foxgood       
-  13) frank           14) grcar           15) hadamard        16) heat          
-  17) hilb            18) invhilb         19) invol           20) kahan         
-  21) kms             22) lehmer          23) lotkin          24) magic         
-  25) minij           26) moler           27) neumann         28) oscillate     
-  29) parter          30) pascal          31) pei             32) phillips      
-  33) poisson         34) prolate         35) randcorr        36) rando         
-  37) randsvd         38) rohess          39) rosser          40) sampling      
-  41) shaw            42) toeplitz        43) tridiag         44) triw          
-  45) vand            46) wathen          47) wilkinson       48) wing          
-
+   1) baart            2) binomial         3) blur             4) cauchy        
+   5) chebspec         6) chow             7) circul           8) clement       
+   9) deriv2          10) dingdong        11) fiedler         12) forsythe      
+  13) foxgood         14) frank           15) gravity         16) grcar         
+  17) hadamard        18) hankel          19) heat            20) hilb          
+  21) invhilb         22) invol           23) kahan           24) kms           
+  25) lehmer          26) lotkin          27) magic           28) minij         
+  29) moler           30) neumann         31) oscillate       32) parter        
+  33) pascal          34) pei             35) phillips        36) poisson       
+  37) prolate         38) randcorr        39) rando           40) randsvd       
+  41) rohess          42) rosser          43) sampling        44) shaw          
+  45) toeplitz        46) tridiag         47) triw            48) vand          
+  49) wathen          50) wilkinson       51) wing          
 Groups:
   all           data          eigen         ill-cond    
   inverse       pos-def       random        regprob     
-  sparse        symmetric
+  sparse        symmetric  
 ```
 
 We can generate a Hilbert matrix of size 4 by typing
@@ -69,15 +69,15 @@ Hilbert matrix:
              
  Input options:
              
- [type,] dim: the dimension of the matrix
+ 1. [type,] dim: the dimension of the matrix;
              
- [type,] row_dim, col_dim: the row and column dimension
+ 2. [type,] row_dim, col_dim: the row and column dimension.
              
  ['inverse', 'ill-cond', 'symmetric', 'pos-def']
              
- Reference: M.-D. Choi, Tricks or treats with the Hilbert matrix,
+ Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
              Amer. Math. Monthly, 90 (1983), pp. 301-312.
-             N.J. Higham, Accuracy and Stability of Numerical Algorithms,
+             N. J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 2002; sec. 28.1.
 ```
@@ -92,6 +92,13 @@ julia> matrixdepot("hilb", Float16, 5, 3)
  0.33325  0.25     0.19995
  0.25     0.19995  0.16663
  0.19995  0.16663  0.14282
+
+julia> matrixdepot("hilb", Rational, 4)
+4x4 Array{Rational{T<:Integer},2}:
+ 1//1  1//2  1//3  1//4
+ 1//2  1//3  1//4  1//5
+ 1//3  1//4  1//5  1//6
+ 1//4  1//5  1//6  1//7
 ```
 
 Matrices can be accessed by number, range or a mixture of number and range.
