@@ -1,9 +1,11 @@
 ## Matrix Depot Release Notes
 
-v.0.4.0 (coming soon)
-------------------------------
+v0.4.0 (coming soon)
+---------------------
 
+* Add new test problems for regularization methods:
 
+	- `spikes`
 
 v0.3.5 
 ----------

@@ -324,6 +324,16 @@ function meshgrid(xgv, ygv)
     return X, Y
 end
 
+# MATLAB rounding behavior 
+# This is equivalent to RoundNearestTiesAway 
+# and it can be used for both Julia v0.3, v0.4
+function round_matlab(x::AbstractFloat)
+    y = trunc(x)
+    ifelse(x==y,y,trunc(2*x-y))
+end
+round_matlab{T<:Integer}(::Type{T}, x::AbstractFloat) = 
+        @compat trunc(T,round_matlab(x))   
+
 #
 # one-dimensional gravity surveying problem
 #
@@ -340,8 +350,8 @@ function gravity{T}(::Type{T}, n::Int, example::Int,
         return A
     else
         x = ones(T, n)
-        nt = @compat round(Integer, n/3)
-        nn = @compat round(Integer, n*7/8)
+        nt = round_matlab(Integer, n/3)
+        nn = round_matlab(Integer, n*7/8)
         if example == 1
             x = sin(pi*tv) + 0.5*sin(2*pi*tv)
         elseif example == 2
@@ -378,20 +388,11 @@ function blur{T}(::Type{T}, n::Int, band::Int, σ::Number,
         return A
     else
         # start with an image of all zeros
-        if VERSION < v"0.4.0-dev+1419"
-            warn("The resulting x, b vectors may be different from these
-                 generated from Julia v0.4, v0.4+ because
-                 RoundNearestTiesAway is not supported in Julia v0.3.")
-            n2 = @compat round(Integer, n/2)
-            n3 = @compat round(Integer, n/3)
-            n6 = @compat round(Integer, n/6)
-            n12 = @compat round(Integer, n/12)
-        else
-            n2 = round(Integer, n/2, RoundNearestTiesAway)
-            n3 = round(Integer, n/3, RoundNearestTiesAway)
-            n6 = round(Integer, n/6, RoundNearestTiesAway)
-            n12 = round(Integer, n/12, RoundNearestTiesAway)
-        end
+        n2 = round_matlab(Integer, n/2)
+        n3 = round_matlab(Integer, n/3)
+        n6 = round_matlab(Integer, n/6)
+        n12 = round_matlab(Integer, n/12)
+
         m = max(n, 2*n6+1+n2+n12)
         x = zeros(T, m, m)
         
@@ -451,9 +452,39 @@ end
 #
 # Test problem with a "spiky" solution
 #
-function spikes{T}(::Type{T}, n::Int)
-# need meshgrid
+function spikes{T}(::Type{T}, n::Int, t_max::Int, matrixonly::Bool = true)
+    del = convert(T, t_max/n)
+    
+    # compute A
+    t, sigma = meshgrid(T[del:del:t_max;], T[del:del:t_max;])
+    A = sigma./(2*sqrt(pi*t.^3)).*exp(-(sigma.^2)./(4*t))
+    
+    if matrixonly
+        return A
+    else
+        # compute b and x
+        heights = 2*ones(T, t_max); heights[1] = 25
+        heights[2] = 9; heights[3] = 5; heights[4] = 4; heights[5] = 3
+        x = zeros(T, n); n_h = one(Integer)
+        peak = convert(T, 0.5/t_max); peak_dist = one(T)/ t_max
+        if peak < 1            
+            n_peak = round_matlab(Integer, peak*n)
+            x[n_peak] = heights[n_h]
+            x[n_peak+1:n] = ones(T, n-n_peak)
+            peak = peak + peak_dist; n_h = n_h + one(Integer)
+        end
+        while peak < 1
+            n_peak = round_matlab(Integer, peak*n)
+            x[n_peak] = heights[n_h]
+            peak = peak + peak_dist; n_h = n_h + 1
+        end
+        b = A*x
+        return RegProb(A, b, x) 
+    end
+
 end
+spikes{T}(::Type{T}, n::Int, matrixonly::Bool = true) = 
+         spikes(T, n, 5, matrixonly)
 
 #
 # Two-dimensional tomography problem with sparse matrix

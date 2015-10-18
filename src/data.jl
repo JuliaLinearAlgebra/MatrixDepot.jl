@@ -23,7 +23,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "shaw" => shaw, "wing" => wing,
                           "foxgood" => foxgood, "heat" => heat,
                           "baart" => baart, "phillips" => phillips,
-                          "gravity" => gravity, "blur" => blur
+                          "gravity" => gravity, "blur" => blur,
+                          "spikes" => spikes
                           );
 
 matrixinfo =
@@ -538,7 +539,19 @@ matrixinfo =
              wider the function and the more ill posed the problem. 
              If matrixonly = false, the linear system A, b, x will be generated.
              (matrixonly = true by default.)
-             \n 2, [type,] n, [matrixonly]: band = 3, σ = 0.7."
+             \n 2. [type,] n, [matrixonly]: band = 3, σ = 0.7.",
+             
+             "spikes" => "Test problem with \"spike\" solution:
+             Artifically generated discrete ill-posed problem.
+             \n Input options:
+             \n 1. [type,] n, t_max, [matrixonly]: the dimension of the 
+             matrix is n. t_max controls the length of the pulse train.
+             If matrixonly = false, the linear system A, b, x will be 
+             generated. (matrixonly = true by default.) The solution x
+             consists a unit step at t = .5 and a pulse train of spike
+             of decreasing magnitude at t = .5, 1.5, 2.5, ...;
+             \n 2. [type,] n, [matrixonly]: t_max = 5.    
+             "
              );
 
 matrixclass =
@@ -578,5 +591,5 @@ matrixclass =
                           "wathen", "oscillate"],
 
              "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
-                        "phillips", "gravity", "blur"],
+                        "phillips", "gravity", "blur", "spikes"],
                );
