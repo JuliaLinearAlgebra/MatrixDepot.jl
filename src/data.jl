@@ -241,7 +241,8 @@ matrixinfo =
              \n 2. [type,] dim, x, y, z: dim is the dimension of the matrix. x, y, z are
              scalars. x and z are sub- superdiagonal elements, y is diagonal
              element.
-             \n 3. [type,] dim: x = -1, y = 2, z = -1.
+             \n 3. [type,] dim: x = -1, y = 2, z = -1. This matrix is also
+             known as Strang's matrix, named after Gilbert Strang.
              \n ['inverse', 'ill-cond', 'pos-def', 'eigen']
              \n Reference: J. Todd, Basic Numerical Mathematics, Vol. 2:
              Numerical Algebra, Birkhauser, Basel, and Academic Press,

@@ -854,3 +854,11 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
     return sparse(Irow, Jrow, Xrow, n, n)
 end
 wathen{T}(::Type{T}, n::Int) = wathen(T, n, n)
+
+#
+# Golub matrix
+#
+function golub{T}(::Type, n::Int)
+    
+
+end

@@ -234,7 +234,9 @@ Matrices
    tridiag
       A group of tridiagonal matrices. ``matrixdepot("tridiagonal", n)``
       generate a tridiagonal matrix with 1 on the diagonal and -2 on the 
-      upper- lower- diagonal, which is a symmetric positive definite M-matrix.
+      upper- lower- diagonal, which is a symmetric positive definite 
+      M-matrix. This matrix is also known as Strang's matrix, named after
+      Gilbert Strang.
 
       .. image:: images/tridiag.png
 
