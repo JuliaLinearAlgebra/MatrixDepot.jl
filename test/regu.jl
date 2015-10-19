@@ -53,4 +53,5 @@ A = matrixdepot("spikes", n)
 
 @test matrixdepot("spikes", n, 5) == A
 
+n = rand(5:10)
 r1 = matrixdepot("spikes", Float32, n, false)
