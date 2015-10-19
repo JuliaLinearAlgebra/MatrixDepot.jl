@@ -48,3 +48,9 @@ A = matrixdepot("blur", n)
 @test matrixdepot("blur", n, 3, 0.7) == A
 
 r1 = matrixdepot("blur", Float32, n, false)
+
+A = matrixdepot("spikes", n)
+
+@test matrixdepot("spikes", n, 5) == A
+
+r1 = matrixdepot("spikes", Float32, n, false)

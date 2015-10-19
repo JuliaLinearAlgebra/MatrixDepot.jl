@@ -7,6 +7,10 @@ v0.4.0 (coming soon)
 
 	- `spikes`
 
+* Add new test matrices:
+
+	- `golub` see http://blogs.mathworks.com/cleve/2015/08/24/golub-matrices-deceptively-ill-conditioned/
+
 v0.3.5 
 ----------
 

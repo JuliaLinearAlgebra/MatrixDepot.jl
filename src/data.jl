@@ -18,7 +18,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "randsvd" => randsvd, "rohess" => rohess,
                           "kms" => kms, "wathen" => wathen,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
-                          "hankel" => hankel,
+                          "hankel" => hankel, "golub" => golub,
                           "prolate" => prolate, "deriv2" => deriv2,
                           "shaw" => shaw, "wing" => wing,
                           "foxgood" => foxgood, "heat" => heat,
@@ -421,6 +421,16 @@ matrixinfo =
              \n 2. [type,] n: the case when w = 0.25.
              \n Reference: J. M. Varah. The Prolate Matrix. Linear Algebra and Appl.
              187:267--278, 1993.",
+
+             "golub" => "Golub Matrix:
+             Golub matrix is the product of two random unit lower and upper
+             triangular matrices respectively. LU factorization without pivoting
+             fails to reveal that such matrices are badly conditioned.
+             \n Input options:
+             \n 1. [type,] n: the dimension of the matrix is n.
+             \n Reference: D. Viswanath and N. Trefethen. Condition Numbers of 
+             Random Triangular Matrices, SIAM J. Matrix Anal. Appl. 19, 564-581,
+             1998.",
              
              "deriv2" => "Computation of the Second Derivative:
              \n A classical test problem for regularization algorithms:
@@ -573,7 +583,7 @@ matrixclass =
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
-                            "oscillate", "prolate"],
+                            "oscillate", "prolate", "golub"],
 
              "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
@@ -589,7 +599,7 @@ matrixclass =
              "sparse" => ["poisson", "neumann", "wathen"],
 
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
-                          "wathen", "oscillate"],
+                          "wathen", "oscillate", "golub"],
 
              "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
                         "phillips", "gravity", "blur", "spikes"],

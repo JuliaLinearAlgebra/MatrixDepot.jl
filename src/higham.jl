@@ -857,8 +857,20 @@ wathen{T}(::Type{T}, n::Int) = wathen(T, n, n)
 
 #
 # Golub matrix
-#
-function golub{T}(::Type, n::Int)
-    
-
+# 
+# Reference: Cleve B. Moler, Numerical Computing with MATLAB, SIAM, 2008.
+function golub{T}(::Type{T}, n::Int)
+    s = 10
+    L = Array(T, n, n)
+    U = Array(T, n, n)
+    if T <: Integer
+        [L[i,j] = round_matlab(T, s*randn()) for j = 1:n, i = 1:n]
+        [U[i,j] = round_matlab(T, s*randn()) for j = 1:n, i = 1:n]
+    else
+        [L[i,j] = s*randn() for j = 1:n, i = 1:n]
+        [U[i,j] = s*randn() for j = 1:n, i = 1:n]   
+    end
+    L = tril(L, -1) + eye(L)
+    U = triu(U, 1) + eye(U)
+    return L*U
 end

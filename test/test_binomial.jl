@@ -1,5 +1,5 @@
 n = rand(1:10)
-@test matrixdepot("binomial", n) == matrixdepot("binomial", Int, n)
+@test matrixdepot("binomial", n) == matrixdepot("binomial", Float64, n)
 
 A = matrixdepot("binomial", n)
 
