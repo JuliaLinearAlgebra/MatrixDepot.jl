@@ -274,3 +274,26 @@ end
 macro rmgroup(ex)
     esc(rmgroup(ex))
 end
+
+################################
+# user defined matrix generators
+################################
+
+abstract MatrixGenerator
+
+abstract FunctionName <: MatrixGenerator
+abstract Help <: MatrixGenerator
+abstract Group <: MatrixGenerator
+
+include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (matrixdict[fn] = f)
+include_generator(::Type{Help}, helplines::AbstractString, f::Function) = (matrixinfo[fname(f)] = helplines)
+function include_generator(::Type{Group}, groupname::AbstractString, f::Function) 
+    try 
+        push!(matrixclass[groupname], fname(f))
+    catch
+        error("$(groupname) is not a group in MatrixDepot, use
+              @addgroup to add this group")
+    end
+end
+
+fname(f::Function) = split(string(f), '.')[2]

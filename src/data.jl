@@ -303,7 +303,7 @@ matrixinfo =
              dim must be a power of 2.
              a and b are scalars. For dim = 8, a = 2 and b = 1, the generated
              matrix is the test matrix used by Rosser.
-             \n 2. [type,] dim: a = b = rand(1:5)
+             \n 2. [type,] dim: a = rand(1:5), b = rand(1:5).
              \n ['eigen', 'ill-cond', 'random']
              \n Reference: J. B. Rosser, C. Lanczos, M. R. Hestenes, W. Karush,
              Separation of close eigenvalues of a real symmetric matrix,
