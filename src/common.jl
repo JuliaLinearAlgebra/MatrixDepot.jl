@@ -231,7 +231,7 @@ function addgroup(ex)
         matname in matrix_name_list() || throw(ArgumentError("$matname is not in the collection."))
     end
 
-    user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
+    user = joinpath(Pkg.dir("MatrixDepot"), "user", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
     newprop = s[1:end-4] * "\""  * propname * "\" => ["
@@ -256,7 +256,7 @@ function rmgroup(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
     propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
 
-    user = joinpath(Pkg.dir("MatrixDepot"), "src", "user.jl")
+    user = joinpath(Pkg.dir("MatrixDepot"), "user", "user.jl")
     s = readall(user)
     iofile = open(user, "w")
     rg = Regex("""\"""" * eval(propname) * ".+")

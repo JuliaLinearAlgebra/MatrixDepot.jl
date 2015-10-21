@@ -2,5 +2,5 @@ usermatrixclass =
 @compat Dict(
 
 
-);
 
+);

@@ -1,3 +1,4 @@
 # read .history
-# matrixdepot("history") top 10 most used matrices 
-# matrixdepot("history", n) top n most used matrices
+# matrixdepot("freq-mats") top 10 most used matrices 
+# matrixdepot("freq-groups") top 10 most used groups
+
