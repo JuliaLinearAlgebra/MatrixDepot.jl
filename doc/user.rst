@@ -7,11 +7,32 @@ Matrix Depot provides a diverse collection of
 test matrices, including parametrized matrices
 and real-life matrices. But occasionally, you 
 may want to define your own matrix generators and 
-be able to use them from Matrix Depot. Can I do that? 
-Yes and it is very simple :)
+be able to use them from Matrix Depot. 
 
 Declaring Generators
 --------------------
+
+All we need to do is to code the generators in
+``path/to/MatrixDepot/user/user.jl`` and use ``include_generator`` to 
+include them.
+
+.. function:: include_generator(Stuff To Be Included, Stuff, f)
+
+   Includes a piece of information of the function ``f`` to Matrix Depot,
+   where ``Stuff To Be Included`` is one of the following:
+   
+    * ``FunctionName``: the function name of ``f``. In this case, 
+      ``Stuff`` is a string representing ``f``.
+    
+    * ``Help``: the helper lines of ``f``. In this case, ``Stuff``
+      is the helper lines of ``f``.
+ 
+    * ``Group``: the group where ``f`` belongs. In this case, 
+      ``Stuff`` is the group name.
+
+
+Examples
+--------- 
 
 To get a feel of how it works, let's see an example. 
 Suppose we want to include a random symmetric matrix ``randsym``
@@ -28,6 +49,11 @@ in Matrix Depot::
     return A
   end
 
+.. note:: 
+   To be consistent with Matrix Depot's matrix generators, 
+   the first argument of the function must be the
+   element type of matrix.
+
 We first need to find out where Matrix Depot is installed. This 
 can be done by::
 
@@ -36,7 +62,7 @@ can be done by::
 
 For me, the package is installed at
 ``/home/weijian/.julia/v0.4/MatrixDepot``. Now we open the file
-``user/user.jl`` inside ``MatrixDepot``. It looks like this::
+``user/user.jl``. It looks like this::
 
   usermatrixclass =
   @compat Dict(
@@ -142,5 +168,27 @@ Now we can do::
   "rosser"   
   "wathen" 
 
+  julia> matrixdepot("symmetric")
+  22-element Array{ASCIIString,1}:
+  "cauchy"   
+  "circul"   
+  "clement"  
+  "dingdong" 
+  "fiedler"  
+  "hankel"   
+  "hilb"     
+  "invhilb"  
+  "kms"      
+  "lehmer"   
+  ⋮          
+  "pascal"   
+  "pei"      
+  "poisson"  
+  "prolate"  
+  "randcorr" 
+  "randsym"  
+  "tridiag"  
+  "wathen"   
+  "wilkinson"
 
-
+Notice ``randsym`` is now part of the group ``symmetric`` and ``random``.
