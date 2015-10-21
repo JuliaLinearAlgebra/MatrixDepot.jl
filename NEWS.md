@@ -3,6 +3,11 @@
 v0.4.0 (coming soon)
 ---------------------
 
+* Add new feature:
+
+	- allow users to add new matrix generators.
+	  see http://matrixdepotjl.readthedocs.org/en/latest/user.html
+
 * Add new test problems for regularization methods:
 
 	- `spikes`

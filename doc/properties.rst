@@ -86,8 +86,8 @@ property ``prop1``, ``prop2`` etc. For example::
   "oscillate"
 
 
-Add New Groups
---------------
+Adding New Groups
+-----------------
 
 New groups can be added with the macro ``@addgroup``::
 

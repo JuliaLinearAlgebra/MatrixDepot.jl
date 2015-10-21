@@ -14,7 +14,7 @@ Declaring Generators
 
 All we need to do is to code the generators in
 ``path/to/MatrixDepot/user/user.jl`` and use ``include_generator`` to 
-include them.
+declare them.
 
 .. function:: include_generator(Stuff To Be Included, Stuff, f)
 
@@ -76,7 +76,7 @@ For me, the package is installed at
   ##########################################
 
 We can copy and paste the function ``randsym`` anywhere below the
-comments and use the function ``include_generator`` to include it::
+comments and use the function ``include_generator`` to declare it::
   
   usermatrixclass =
   @compat Dict(
@@ -141,7 +141,7 @@ This is it. We can now use it from Matrix Depot::
    0.554571   2.81623    1.16547   0.351268   0.410586
   -0.692858   1.2637    -0.705227  0.410586  -0.786438
 
-To make it more useful, we can include the helper strings and group information::
+To make it more useful, we can declare the helper strings and group information::
 
   helplines = "random symmetric matrix:
             \n Input options: [type, n]: the dimension of the matrix is n."

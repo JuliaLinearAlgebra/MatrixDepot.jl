@@ -33,20 +33,21 @@ Matrices:
    1) baart            2) binomial         3) blur             4) cauchy        
    5) chebspec         6) chow             7) circul           8) clement       
    9) deriv2          10) dingdong        11) fiedler         12) forsythe      
-  13) foxgood         14) frank           15) gravity         16) grcar         
-  17) hadamard        18) hankel          19) heat            20) hilb          
-  21) invhilb         22) invol           23) kahan           24) kms           
-  25) lehmer          26) lotkin          27) magic           28) minij         
-  29) moler           30) neumann         31) oscillate       32) parter        
-  33) pascal          34) pei             35) phillips        36) poisson       
-  37) prolate         38) randcorr        39) rando           40) randsvd       
-  41) rohess          42) rosser          43) sampling        44) shaw          
-  45) toeplitz        46) tridiag         47) triw            48) vand          
-  49) wathen          50) wilkinson       51) wing          
+  13) foxgood         14) frank           15) golub           16) gravity       
+  17) grcar           18) hadamard        19) hankel          20) heat          
+  21) hilb            22) invhilb         23) invol           24) kahan         
+  25) kms             26) lehmer          27) lotkin          28) magic         
+  29) minij           30) moler           31) neumann         32) oscillate     
+  33) parter          34) pascal          35) pei             36) phillips      
+  37) poisson         38) prolate         39) randcorr        40) rando         
+  41) randsvd         42) rohess          43) rosser          44) sampling      
+  45) shaw            46) spikes          47) toeplitz        48) tridiag       
+  49) triw            50) vand            51) wathen          52) wilkinson     
+  53) wing          
 Groups:
   all           data          eigen         ill-cond    
   inverse       pos-def       random        regprob     
-  sparse        symmetric  
+  sparse        symmetric
 ```
 
 We can generate a Hilbert matrix of size 4 by typing
@@ -165,9 +166,9 @@ sparse matrix collection and Matrix Market. See
 [here](http://matrixdepotjl.readthedocs.org/en/latest/interface.html)
 for more details.
 
-We can add new groups of matrices. See
-[here](http://matrixdepotjl.readthedocs.org/en/latest/properties.html)
-for more details.
+We can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
+and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/latest/properties.html).
+
 
 ## Interface to the UF Sparse Matrix Collection 
 
