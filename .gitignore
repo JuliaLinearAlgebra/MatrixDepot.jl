@@ -1,6 +1,12 @@
 # ignore org
 *.org
 
+# ignore newly added matrices 
+user/
+data/uf/
+data/*html
+data/mm/
+
 # ignore generated files from Sphinx
 _build
 _static
