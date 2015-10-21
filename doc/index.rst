@@ -29,6 +29,7 @@ To install the release version, type::
    properties.rst
    regu.rst
    interface.rst
+   user.rst
    examples.rst   
   
    

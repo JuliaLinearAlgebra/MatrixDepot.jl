@@ -4,3 +4,7 @@ usermatrixclass =
 
 
 );
+
+##########################################
+# Please put your matrix generators here #
+##########################################
