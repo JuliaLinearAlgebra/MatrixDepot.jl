@@ -1,3 +1,11 @@
+dirdata = joinpath(Pkg.dir("MatrixDepot"), "data")
+if isdir(string(dirdata, '/', "uf"))
+    rm(string(dirdata, '/', "uf"), recursive = true)
+end
+if isdir(string(dirdata, '/', "mm"))
+    rm(string(dirdata, '/', "mm"), recursive = true)
+end
+
 #download
 MatrixDepot.update()
 matrixdepot("HB/1138_bus", :get)
@@ -9,7 +17,7 @@ matrixdepot("HB/1138_bus")
 #matrixdepot("Harwell-Boeing/psadmit/662_bus")
 
 # rm data
-dirdata = joinpath(Pkg.dir("MatrixDepot"), "data")
+
 rm(string(dirdata, '/', "uf_matrices.html"))
 rm(string(dirdata, '/', "mm_matrices.html"))
 rm(string(dirdata, '/', "uf"), recursive = true)
