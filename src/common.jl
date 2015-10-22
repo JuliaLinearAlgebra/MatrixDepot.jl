@@ -126,7 +126,7 @@ function matrixdepot(name::AbstractString)
     elseif name == "all" # all the matrix names in the collection
         return matrix_name_list()
     else
-        error("\"$(name)\" is not included in Matrix Depot.")
+        error("No information is available for \"$(name)\".")
     end
 end
 
@@ -231,7 +231,7 @@ function addgroup(ex)
         matname in matrix_name_list() || throw(ArgumentError("$matname is not in the collection."))
     end
 
-    user = joinpath(Pkg.dir("MatrixDepot"), "user", "user.jl")
+    user = joinpath(Pkg.dir("MatrixDepot"), "user", "group.jl")
     s = readall(user)
     iofile = open(user, "w")
     newprop = s[1:end-4] * "\""  * propname * "\" => ["
@@ -256,7 +256,7 @@ function rmgroup(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
     propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
 
-    user = joinpath(Pkg.dir("MatrixDepot"), "user", "user.jl")
+    user = joinpath(Pkg.dir("MatrixDepot"), "user", "group.jl")
     s = readall(user)
     iofile = open(user, "w")
     rg = Regex("""\"""" * eval(propname) * ".+")
@@ -288,9 +288,11 @@ abstract Group <: MatrixGenerator
 include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (matrixdict[fn] = f)
 include_generator(::Type{Help}, helplines::AbstractString, f::Function) = (matrixinfo[fname(f)] = helplines)
 function include_generator(::Type{Group}, groupname::AbstractString, f::Function) 
-    try 
+    if groupname in keys(matrixclass)
         push!(matrixclass[groupname], fname(f))
-    catch
+    elseif groupname in keys(usermatrixclass)
+        push!(usermatrixclass[groupname], fname(f))
+    else
         error("$(groupname) is not a group in MatrixDepot, use
               @addgroup to add this group")
     end
