@@ -29,6 +29,8 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
 
 matrixinfo =
 @compat Dict("hilb" => "Hilbert matrix:
+             The Hilbert matrix is a very ill conditioned matrix. 
+             It is symmetric positive definite and totally positive. 
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix;
              \n 2. [type,] row_dim, col_dim: the row and column dimension.
@@ -50,6 +52,9 @@ matrixinfo =
              USA, 2002; sec. 28.1.",
 
              "hadamard" => "Hadamard matrix:
+             The Hadamard matrix is a square matrix whose entries are 
+             1 or -1. It was named after Jacques Hadamard. The rows of 
+             a Hadamard matrix are orthogonal.
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix, n is a power of 2.
              \n ['inverse', 'orthogonal', 'eigen']
@@ -57,6 +62,8 @@ matrixinfo =
              Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17.",
 
              "cauchy" => "Cauchy matrix:
+             Given two vectors x and y, the (i,j) entry of the Cauchy 
+             matrix is 1/(x[i]-y[j]). 
              \n Input options:
              \n 1. [type,] vec1, vec2: two vectors;
              \n 2. [type,] vec: a vector;
@@ -66,7 +73,10 @@ matrixinfo =
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 2002; sec. 28.1.",
 
-             "circul" => "Circul matrix:
+             "circul" => "Circulant matrix:
+             A circulant matrix has the property that each row is obtained
+             by cyclically permuting the entries of the previous row one
+             step forward.
              \n Input options:
              \n 1. [type,] vec, n: a vector and the column dimension;
              \n 2. [type,] vec: a vector;
@@ -75,6 +85,9 @@ matrixinfo =
              \n Reference:  P. J. Davis, Circulant Matrices, John Wiley, 1977.",
 
              "dingdong" => "Dingdong matrix:
+             The Dingdong matrix is a symmetric Hankel matrix invented
+             by DR. F. N. Ris of IBM, Thomas J Watson Research Centre.
+             The eigenvalues cluster around π/2 and -π/2.
              \n Input options:
              \n 1. [type,] n: the dimension of the matrix.
              \n ['symmetric', 'eigen']
@@ -83,6 +96,9 @@ matrixinfo =
              second edition, Adam Hilger, Bristol, 1990 (Appendix 1).",
 
              "frank" => "Frank matrix:
+             The Frank matrix is an upper Hessenberg matrix with 
+             determinant 1. The eigenvalues are real, positive and 
+             very ill conditioned.
              \n Input options:
              \n 1. [type,] n, k: n is the dimension of the matrix, k = 0 or 1.
              If k = 1 the matrix reflect about the anti-diagonal;
@@ -93,6 +109,7 @@ matrixinfo =
              J. Soc. Indust. Appl. Math., 6 (1958), pp. 378-392 (see pp. 385, 388).",
 
              "forsythe" => "Forsythe matrix:
+             The Forsythe matrix is a n-by-n perturbed Jordan block.
              \n Input options:
              \n 1. [type,] n, alpha, lambda: n is the dimension of the matrix.
              alpha and lambda are scalars;
@@ -101,11 +118,16 @@ matrixinfo =
              \n This generator is adapted from N. J. Higham's Test Matrix Toolbox.",
 
              "magic" => "Magic square matrix:
+             The magic matrix is a matrix with integer entries such that 
+             the row elements, column elements, diagonal elements and 
+             anti-diagonal elements all add up to the same number.
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['inverse']",
 
              "grcar" => "Grcar Matrix:
+             The Grcar matrix is a Toeplitz matrix with sensitive 
+             eigenvalues.
              \n Input options:
              \n 1. [type,] dim, k: dim is the dimension of the matrix and
              k is the number of superdiagonals;
@@ -116,9 +138,10 @@ matrixinfo =
              Laboratories, Albuquerque, New Mexico, 1989 (Appendix 2).",
 
              "triw" => "Triw Matrix:
+             Upper triangular matrices discussed by Wilkinson and others.
              \n Input options:
-             \n 1. [type,] row_dim, col_dim, alpha, k: row_dim and col_dim
-             are row and column dimension of the matrix. alpha is a
+              \n 1. [type,] row_dim, col_dim, α, k: row_dim and col_dim
+             are row and column dimension of the matrix. α is a
              scalar representing the entries on the superdiagonals.
              k is the number superdiagonals;
              \n 2. [type,] dim: the dimension of the matrix.
@@ -128,6 +151,8 @@ matrixinfo =
              SIAM Review, 18(4), 1976, pp. 578-6",
 
              "moler" => "Moler Matrix:
+             The Moler matrix is a symmetric positive definite matrix. 
+             It has one small eigenvalue.
              \n Input options:
              \n 1. [type,] dim, alpha: dim is the dimension of the matrix,
              alpha is a scalar;
@@ -138,6 +163,7 @@ matrixinfo =
              Adam Hilger, Bristol, 1990 (Appendix 1).",
 
              "pascal" => "Pascal Matrix:
+             The Pascal matrix’s anti-diagonals form the Pascal’s triangle.
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']
@@ -150,16 +176,21 @@ matrixinfo =
              USA, 2002; sec. 28.4.",
 
              "kahan" => "Kahan Matrix:
+             The Kahan matrix is an upper trapezoidal matrix, i.e., the 
+             (i,j) element is equal to 0 if i > j. The useful range of 
+             θ is 0 < θ < π. The diagonal is perturbed by 
+             pert*eps()*diagm([n:-1:1;]).
              \n Input options:
-             \n 1. [type,] m, n, theta, pert: m, n are the row and column
+             \n 1. [type,] m, n, θ, pert: m, n are the row and column
              dimensions of the matrix. theta and pert are scalars;
-             \n 2. [type,] dim, theta, pert: dim is the dimension of the matrix;
-             \n 3. [type,] dim: theta = 1.2, pert = 25.
+             \n 2. [type,] dim, θ, pert: dim is the dimension of the matrix;
+             \n 3. [type,] dim: θ = 1.2, pert = 25.
              \n ['inverse', 'ill-cond']
              \n Reference: W. Kahan, Numerical linear algebra, Canadian Math.
              Bulletin, 9 (1966), pp. 757-801." ,
 
              "pei" => "Pei Matrix:
+             The Pei matrix is a symmetric matrix with known inversion.
              \n Input options:
              \n 1. [type,] dim, alpha: dim is the dimension of the matrix.
              alpha is a scalar;
@@ -169,6 +200,7 @@ matrixinfo =
              Comm. ACM, 5 (1962), p. 508.",
 
              "vand" => "Vandermonde Matrix:
+             The inverse and determinat are known explicity.
              \n Input options:
              \n 1. [type,] vec, dim: vec is a vector, dim is the number of columns.
              \n 2. [type,] vec
@@ -179,6 +211,7 @@ matrixinfo =
              Matrix Anal. Appl., 11 (1990), pp. 23-41.",
 
              "invol" => "Involutory Matrix:
+             An involutory matrix is a matrix that is its own inverse.
              \n Input options:
              \n 1. [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']
@@ -187,6 +220,10 @@ matrixinfo =
              Numer. Math. 5 (1963), pp. 234-237.",
 
              "chebspec" => "Chebyshev spectral differentiation matrix:
+             If k = 0,the generated matrix is nilpotent and a vector with 
+             all one entries is a null vector. If k = 1, the generated 
+             matrix is nonsingular and well-conditioned. Its eigenvalues 
+             have negative real parts.
              \n Input options:
              \n 1. [type,] dim, k: dim is the dimension of the matrix and
              k = 0 or 1.
@@ -196,12 +233,17 @@ matrixinfo =
              phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.",
 
              "lotkin" => "Lotkin Matrix:
+             The Lotkin matrix is the Hilbert matrix with its first row 
+             altered to all ones. It is unsymmetric, ill-conditioned and 
+             has many negative eigenvalues of small magnitude.
              \n Input options:
              \n 1. [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'ill-cond', 'eigen']
              \n Reference: M. Lotkin, A set of test matrices, MTAC, 9 (1955), pp. 153-161.",
 
              "clement" => "Clement Matrix:
+             The Clement matrix is a tridiagonal matrix with zero
+             diagonal entrie. If k = 1, the matrix is symmetric.
              \n Input options:
              \n 1. [type,] dim, k: dim is the dimension of the matrix.
              If k = 0, the matrix is Tridiagonal. If k = 1, the matrix
@@ -212,6 +254,8 @@ matrixinfo =
              matrices for test purposes, SIAM Review, 1 (1959), pp. 50-52.",
 
              "fiedler" => "Fiedler Matrix:
+             The Fiedler matrix is symmetric matrix with a dominant 
+             positive eigenvalue and all the other eigenvalues are negative.
              \n Input options:
              \n 1. [type,] vec: vec is a vector;
              \n 2. [type,] dim: dim is the dimension of the matrix.
@@ -222,6 +266,9 @@ matrixinfo =
              Birkhauser, Basel, and Academic Press, New York, 1977, p. 159.",
 
              "minij" => "MIN[I,J] Matrix:
+             A matrix with (i,j) entry min(i,j). It is a symmetric positive
+             definite matrix. The eigenvalues and eigenvectors are known 
+             explicitly. Its inverse is tridiagonal.
              \n Input options:
              \n 1. [type,] dim: dim is the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen']
@@ -230,6 +277,7 @@ matrixinfo =
              Linear Algebra Appl., 264 (1997), 173-188.  (For the eigensystem of A.)",
 
              "binomial" => "Binomial Matrix:
+             The matrix is a multiple of an involutory matrix.
              \n Input options:
              \n 1. [type,] dim: dim is the dimension of the matrix.
              \n ['']",
@@ -249,6 +297,9 @@ matrixinfo =
              New York, 1977, p. 155.",
 
              "lehmer" => "Lehmer Matrix:
+             The Lehmer matrix is a symmetric positive definite matrix. 
+             It is totally nonnegative. The inverse is tridiagonal and 
+             explicitly known
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['inverse', 'symmetric', 'pos-def']
@@ -259,6 +310,8 @@ matrixinfo =
              of a matrix, Amer. Math. Monthly, 53 (1946), pp. 534-535.",
 
              "parter" => "Parter Matrix:
+             The Parter matrix is a Toeplitz and Cauchy matrix 
+             with singular values near π.
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['eigen']
@@ -268,6 +321,7 @@ matrixinfo =
              Appl., 80 (1986), pp. 115-130.",
 
              "chow" => "Chow Matrix:
+             The Chow matrix is a singular Toeplitz lower Hessenberg matrix.
              \n Input options:
              \n 1. [type,] dim, alpha, delta: dim is dimension of the matrix.
              alpha, delta are scalars such that A[i,i] = alpha + delta and
@@ -278,11 +332,16 @@ matrixinfo =
              eigenvalues and inverses, SIAM Review, 11 (1969), pp. 391-395.",
 
              "randcorr" => "Random Correlation Matrix:
+             A random correlation matrix is a symmetric positive 
+             semidefinite matrix with 1s on the diagonal.
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['symmetric', 'pos-semidef', 'random']",
 
              "poisson" => "Poisson Matrix:
+             A block tridiagonal matrix from Poisson’s equation. 
+             This matrix is sparse, symmetric positive definite and 
+             has known eigenvalues.
              \n Input options:
              \n 1. [type,] n: the dimension of the matirx is n^2.
              \n ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']
@@ -291,6 +350,9 @@ matrixinfo =
              Maryland, 1989 (Section 4.5.4).",
 
              "neumann" => "Neumann Matrix:
+             A singular matrix from the discrete Neumann problem. 
+             This matrix is sparse and the null space is formed by 
+             a vector of ones
              \n Input options:
              \n 1. [type,] n: the dimension of the matrix is n^2.
              \n ['eigen', 'sparse']
@@ -298,6 +360,8 @@ matrixinfo =
              discrete Neumann problem, Numer. Math., 25 (1976), pp. 153-161.",
 
              "rosser" => "Rosser Matrix:
+             The Rosser matrix’s eigenvalues are very close together 
+             so it is a challenging matrix for many eigenvalue algorithms.
              \n Input options:
              \n 1. [type,] dim, a, b: dim is the dimension of the matrix.
              dim must be a power of 2.
@@ -311,15 +375,18 @@ matrixinfo =
              (1951)",
 
              "sampling" => "Matrix with Application in Sampling Theory:
+             A nonsymmetric matrix with eigenvalues 0, 1, 2, ... n-1.
              \n Input options:
              \n 1. [type,] vec: vec is a vector with no repeated elements;
-             \n 2. [type,] dim: the dimension of the matrix.
+             \n 2. [type,] n: the dimension of the matrix is n.
              \n ['eigen']
              \n Reference: L. Bondesson and I. Traat, A nonsymmetric matrix
              with integer eigenvalues, linear and multilinear algebra, 55(3)
              (2007), pp. 239-247",
 
              "wilkinson" => "Wilkinson Matrix:
+             The Wilkinson matrix is a symmetric tridiagonal matrix with 
+             pairs of nearly equal eigenvalues. The most frequently used                 case is matrixdepot(\"wilkinson\", 21).
              \n Input options:
              \n 1. [type,] dim: the dimension of the matrix.
              \n ['symmetric', 'eigen']
@@ -354,6 +421,7 @@ matrixinfo =
              Philadelphia, PA, USA, 2002; sec. 28.3.",
 
              "rohess" => "Random Orthogonal Upper Hessenberg Matrix:
+             The matrix is constructed via a product of Givens rotations.
              \n Input options:
              \n 1. [type,] n : n is the dimension of the matrix.
              \n ['random']
@@ -371,6 +439,10 @@ matrixinfo =
              and Appl., 10 (1989), pp. 135-146 (and see the references therein).",
 
              "wathen" => "Wathen Matrix:
+             Wathen Matrix is a sparse, symmetric positive, random matrix 
+             arose from the finite element method. The generated matrix is 
+             the consistent mass matrix for a regular nx-by-ny grid of 
+             8-nodes.
              \n Input options:
              \n 1. [type,] nx, ny: the dimension of the matrix is equal to
              3 * nx * ny + 2 * nx * ny + 1;
@@ -415,7 +487,8 @@ matrixinfo =
              \n 3. [type,] n: the dimension of the matrix is n, v = [1:n;].",
              
              "prolate" => "Prolate Matrix:
-             \n A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
+             \n A prolate matrix is a symmetirc, ill-conditioned Toeplitz 
+             matrix.
              \n Input options:
              \n 1. [type,] n, w: the dimension of the matrix is n, w is a real scalar;
              \n 2. [type,] n: the case when w = 0.25.
