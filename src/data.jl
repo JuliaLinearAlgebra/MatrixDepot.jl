@@ -24,7 +24,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "foxgood" => foxgood, "heat" => heat,
                           "baart" => baart, "phillips" => phillips,
                           "gravity" => gravity, "blur" => blur,
-                          "spikes" => spikes
+                          "spikes" => spikes, "ursell" => ursell
                           );
 
 matrixinfo =
@@ -562,7 +562,22 @@ matrixinfo =
              consists a unit step at t = .5 and a pulse train of spike
              of decreasing magnitude at t = .5, 1.5, 2.5, ...;
              \n 2. [type,] n, [matrixonly]: t_max = 5.    
-             "
+             ",
+             
+             "ursell" => "Integral equation with no square integrable 
+             solution. Discretization of a first kind Fredholm integral
+             equation with kernel K and right-hand side g given by
+                     K(s,t) = 1/(s+t+1), g(s) = 1,
+             where both integration intervals are [0, 1]. The matrix A
+             is a Hankel matrix.
+             \n Input options:
+             \n 1. [type,] n, [matrixonly]: the dimension of the matrix
+             is n. If matrixonly = false, the right-hand side b will also
+             be generated. (matrixonly = true by default).
+             \n Reference: F. Ursell, Introduction to the theory of linear
+             integral equations., Chapter 1 in L. M. Delves & J. Walsh,
+             Numerical Solution of Integral Equations, Clarendon Press, 
+             1974."
              );
 
 matrixclass =
@@ -601,6 +616,7 @@ matrixclass =
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate", "golub"],
 
-             "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", "baart",
-                        "phillips", "gravity", "blur", "spikes"],
+             "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", 
+                           "baart", "phillips", "gravity", "blur", 
+                           "spikes", "ursell"],
                );

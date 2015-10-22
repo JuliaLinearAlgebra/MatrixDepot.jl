@@ -38,11 +38,22 @@ immutable RegProb{T}
     x::AbstractVector{T}  # the solution to Ax = b
 end
 
+immutable RegProbNoSolution{T}
+    A::AbstractMatrix{T}  # matrix of interest
+    b::AbstractVector{T}  # right-hand side
+end
+
 function show(io::IO, p::RegProb)
     println(io, "Test problems for Regularization Methods")
     println(io, "A:\n", p.A)
     println(io, "b:\n", p.b)
     println(io, "x:\n", p.x)
+end
+
+function show(io::IO, p::RegProbNoSolution)
+    println(io, "Test problems for Regularization Methods with No Solution")
+    println(io, "A:\n", p.A)
+    println(io, "b:\n", p.b)
 end
 
 # The following test problems are derived from Per Christian Hansen's
@@ -496,6 +507,24 @@ end
 #
 # Integral equation with no square integrable solution
 #
-function ursell{T}(::Type{T}, n::Int)
-
+function ursell{T}(::Type{T}, n::Int, matrixonly::Bool = true)
+    r = zeros(T, n); c = copy(r)
+    for k = 1:n
+        d1 = one(T) + (one(T) + k)/n
+        d2 = one(T) + k/n
+        d3 = one(T) + (k - one(T))/n
+        c[k] = n*(d1*log(d1) + d3*log(d3) - 2*d2*log(d2))
+        e1 = one(T) + (n+k)/n
+        e2 = one(T) + (n+k-one(T))/n
+        e3 = one(T) + (n+k-2)/n
+        r[k] = n*(e1*log(e1) + e3*log(e3) - 2*e2*log(e2))
+    end
+    A = hankel(T, c, r)
+    if matrixonly
+        return A
+    else
+        # compute the right-hand side b
+        b = ones(T,n)/convert(T, sqrt(n))
+        return RegProbNoSolution(A, b) 
+    end
 end

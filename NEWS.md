@@ -11,6 +11,7 @@ v0.4.0 (coming soon)
 * Add new test problems for regularization methods:
 
 	- `spikes`
+	- `ursell`
 
 * Add new test matrices:
 

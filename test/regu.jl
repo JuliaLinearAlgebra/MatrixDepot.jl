@@ -55,3 +55,7 @@ A = matrixdepot("spikes", n)
 
 n = rand(5:10)
 r1 = matrixdepot("spikes", Float32, n, false)
+
+A = matrixdepot("ursell", n)
+@test matrixdepot("ursell", Float64, n) == A
+r1 = matrixdepot("ursell", Float32, n, false)
