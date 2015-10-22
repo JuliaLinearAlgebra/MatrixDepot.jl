@@ -13,7 +13,7 @@ Declaring Generators
 --------------------
 
 All we need to do is to code the generators in
-``path/to/MatrixDepot/user/user.jl`` and use ``include_generator`` to 
+``path/to/MatrixDepot/user/generator.jl`` and use ``include_generator`` to 
 declare them.
 
 .. function:: include_generator(Stuff To Be Included, Stuff, f)
@@ -62,14 +62,8 @@ can be done by::
 
 For me, the package is installed at
 ``/home/weijian/.julia/v0.4/MatrixDepot``. Now we open the file
-``user/user.jl``. It looks like this::
+``user/generator.jl``. It looks like this::
 
-  usermatrixclass =
-  @compat Dict(
-
-
-
-  );
 
   ##########################################
   # Please put your matrix generators here #
@@ -78,12 +72,6 @@ For me, the package is installed at
 We can copy and paste the function ``randsym`` anywhere below the
 comments and use the function ``include_generator`` to declare it::
   
-  usermatrixclass =
-  @compat Dict(
-
-
-
-  );
 
   ##########################################
   # Please put your matrix generators here #
@@ -143,6 +131,17 @@ This is it. We can now use it from Matrix Depot::
 
 To make it more useful, we can declare the helper strings and group information::
 
+  function randsym{T}(::Type{T}, n)
+   A = zeros(T, n, n)
+    for j = 1:n
+        for i = j:n
+            A[i,j] = randn()
+        end
+    end
+    A = A + tril(A, -1)'
+    return A
+  end
+  include_generator(FunctionName, "randsym", randsym)
   helplines = "random symmetric matrix:
             \n Input options: [type, n]: the dimension of the matrix is n."
   include_generator(Help, helplines, randsym)
