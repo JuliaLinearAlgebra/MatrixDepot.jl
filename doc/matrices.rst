@@ -10,10 +10,12 @@ Matrices
 * :term:`chow`
 * :term:`circul`
 * :term:`clement`
+* :term:`companion`
 * :term:`dingdong`
 * :term:`fiedler`
 * :term:`forsythe`
 * :term:`frank`
+* :term:`golub`
 * :term:`grcar`
 * :term:`hadamard`
 * :term:`hankel`
@@ -50,6 +52,29 @@ Matrices
 
 .. glossary::
    :sorted:
+
+   companion
+     The companion matrix to a monic polynomial
+     
+     .. math:: 
+
+           a(x) = a_0 + a_1 x + \cdots + a_{n-1}x^{n-1} + x^n
+
+     is the `n-by-n` matrix with ones on the subdiagonal and the 
+     last column given by the coefficients of `a(x)`. 
+
+     .. image:: images/companion.png
+
+   golub
+     Golub matrix is the product of two random unit lower and upper
+     triangular matrices respectively. LU factorization without pivoting
+     fails to reveal that such matrices are badly conditioned [vistre98]_. 
+
+     .. image:: images/golub.png
+
+     .. [vistre98] D. Viswanath and N. Trefethen. Condition Numbers of
+		   Random Triangular Matrices, SIAM J. Matrix
+		   Anal. Appl. 19, 564-581, 1998.
 
    hankel
      `Hankel matrix <https://en.wikipedia.org/wiki/Hankel_matrix>`_ is a 

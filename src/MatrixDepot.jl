@@ -3,7 +3,7 @@ using Compat # support v3 and v4
 using GZip
 using MatrixMarket
 
-import Base: show, search
+import Base: show
 
 if VERSION < v"0.4-"
     using Docile
