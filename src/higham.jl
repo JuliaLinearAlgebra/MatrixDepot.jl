@@ -887,4 +887,4 @@ function companion{T}(::Type{T}, v::AbstractVector)
     end
     A
 end
-companion{T}(::Type{T}, n::Int) = compan(T, [1:n;])
+companion{T}(::Type{T}, n::Int) = companion(T, [1:n;])

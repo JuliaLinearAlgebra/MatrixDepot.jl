@@ -43,6 +43,7 @@ include("test_oscillate.jl")
 include("test_toeplitz.jl")
 include("test_hankel.jl")
 include("test_golub.jl")
+include("test_companion.jl")
 
 tests = [
          "download",
