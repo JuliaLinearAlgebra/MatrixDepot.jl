@@ -18,6 +18,8 @@ v0.4.0 (coming soon)
 	- `golub` see http://blogs.mathworks.com/cleve/2015/08/24/golub-matrices-deceptively-ill-conditioned/
     - `companion`: Companion matrix.
 
+* Document function `matrixdepot`.
+
 v0.3.5 
 ----------
 

@@ -63,6 +63,11 @@ end
 ##########################
 
 # print info about all matrices in the collection
+"""
+`matrixdepot()` 
+
+Prints all the matrices and groups in the collection.
+"""
 function matrixdepot()
     # Print information strings
     println()
@@ -101,6 +106,12 @@ end
 
 # Return information strings if name is a matrix name
 # and return a list of matrix names if name is a group.
+"""
+`matrixdepot(name)` 
+
+Returns the documentation if `name` is a matrix name;
+returns a list of matrix names if `name` is a group name.
+"""
 function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
     if name in keys(matrixinfo)
@@ -135,6 +146,12 @@ end
 # matrix generators 
 #############################
 
+"""
+`matrixdepot(matrix name, p1, p2...)` 
+
+Returns a matrix specified by the query string `matrix name`. 
+`p1, p2...` are input parameters depending on `matrix name`.
+"""
 matrixdepot{T}(name::AbstractString, ::Type{T}, args...) = length(args) == 1 ? 
              matrixdict[name](T, args[1]) : matrixdict[name](T, collect(args)...)
 matrixdepot(name::AbstractString, args...) = matrixdepot(name::AbstractString, Float64, args...)
@@ -143,6 +160,11 @@ matrixdepot(name::AbstractString, args...) = matrixdepot(name::AbstractString, F
 # method = :read   (or :r) read matrix data
 #          :get    (or :g) download matrix data
 #          :search (or :s) search collection information
+"""
+`matrixdepot(data, symbol)` 
+
+Generates the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
+"""
 function matrixdepot(name::AbstractString, method::Symbol)
     if method == :r || method == :read
         length(split(name, '/')) == 2 ? matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf") :
@@ -172,6 +194,11 @@ end
 #########################
 
 # access matrices by number
+"""
+`matrixdepot(number, range...)` 
+
+Accesses matrices by number, range or a mixture of numbers and ranges.
+"""
 function matrixdepot(num::Int)
     matrixstrings = matrix_name_list()
     n = length(matrixstrings)
@@ -246,11 +273,12 @@ function addgroup(ex)
     end
 end
 
+"add a group to Matrix Depot"
 macro addgroup(ex)
     esc(addgroup(ex))
 end
 
-# remove group
+# remove an added group
 function rmgroup(ex)
     propname = string(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
@@ -271,6 +299,7 @@ function rmgroup(ex)
     end
 end
 
+"remove an added group from Matrix Depot"
 macro rmgroup(ex)
     esc(rmgroup(ex))
 end
@@ -285,6 +314,7 @@ abstract FunctionName <: MatrixGenerator
 abstract Help <: MatrixGenerator
 abstract Group <: MatrixGenerator
 
+
 include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (matrixdict[fn] = f)
 include_generator(::Type{Help}, helplines::AbstractString, f::Function) = (matrixinfo[fname(f)] = helplines)
 function include_generator(::Type{Group}, groupname::AbstractString, f::Function) 
@@ -298,4 +328,5 @@ function include_generator(::Type{Group}, groupname::AbstractString, f::Function
     end
 end
 
+"return the name of the function `f` as a string."
 fname(f::Function) = split(string(f), '.')[2]

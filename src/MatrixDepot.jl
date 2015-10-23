@@ -5,6 +5,10 @@ using MatrixMarket
 
 import Base: show, search
 
+if VERSION < v"0.4-"
+    using Docile
+end
+
 export
 
 # main function
