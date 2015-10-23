@@ -7,8 +7,6 @@ An extensible test matrix collection for Julia.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
-* [Demo](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/doc/MatrixDepot_Demo.ipynb)
-
 * [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
 
 **NOTE:** If you use Windows, you need to install MinGW/MSYS or
@@ -32,25 +30,25 @@ julia> matrixdepot()
 Matrices:
    1) baart            2) binomial         3) blur             4) cauchy        
    5) chebspec         6) chow             7) circul           8) clement       
-   9) deriv2          10) dingdong        11) fiedler         12) forsythe      
-  13) foxgood         14) frank           15) golub           16) gravity       
-  17) grcar           18) hadamard        19) hankel          20) heat          
-  21) hilb            22) invhilb         23) invol           24) kahan         
-  25) kms             26) lehmer          27) lotkin          28) magic         
-  29) minij           30) moler           31) neumann         32) oscillate     
-  33) parter          34) pascal          35) pei             36) phillips      
-  37) poisson         38) prolate         39) randcorr        40) rando         
-  41) randsvd         42) rohess          43) rosser          44) sampling      
-  45) shaw            46) spikes          47) toeplitz        48) tridiag       
-  49) triw            50) vand            51) wathen          52) wilkinson     
-  53) wing          
+   9) companion       10) deriv2          11) dingdong        12) fiedler       
+  13) forsythe        14) foxgood         15) frank           16) golub         
+  17) gravity         18) grcar           19) hadamard        20) hankel        
+  21) heat            22) hilb            23) invhilb         24) invol         
+  25) kahan           26) kms             27) lehmer          28) lotkin        
+  29) magic           30) minij           31) moler           32) neumann       
+  33) oscillate       34) parter          35) pascal          36) pei           
+  37) phillips        38) poisson         39) prolate         40) randcorr      
+  41) rando           42) randsvd         43) rohess          44) rosser        
+  45) sampling        46) shaw            47) spikes          48) toeplitz      
+  49) tridiag         50) triw            51) ursell          52) vand          
+  53) wathen          54) wilkinson       55) wing          
 Groups:
   all           data          eigen         ill-cond    
   inverse       pos-def       random        regprob     
-  sparse        symmetric
+  sparse        symmetric 
 ```
 
-We can generate a Hilbert matrix of size 4 by typing
+We can generate a 4-by-4 Hilbert matrix by typing
 
 ```julia
 julia> matrixdepot("hilb", 4)
@@ -61,12 +59,13 @@ julia> matrixdepot("hilb", 4)
  0.25      0.2       0.166667  0.142857
 ```
 
-We can type the matrix name to see the parameter options and matrix
-properties.
+We can type the matrix name to get help. 
 
 ```julia
 julia> matrixdepot("hilb")
 Hilbert matrix:
+             The Hilbert matrix is a very ill conditioned matrix. 
+             It is symmetric positive definite and totally positive. 
              
  Input options:
              
@@ -102,7 +101,8 @@ julia> matrixdepot("hilb", Rational, 4)
  1//4  1//5  1//6  1//7
 ```
 
-Matrices can be accessed by number, range or a mixture of number and range.
+Matrices can be accessed by number, range or a mixture of numbers and
+ranges.
 
 ```julia
 julia> matrixdepot(5)
@@ -138,25 +138,27 @@ matrices (in the collection) having that property (or properties).
 
 ```julia
 julia> matrixdepot("symmetric")
-18-element Array{ASCIIString,1}:
- "hilb"     
+21-element Array{ASCIIString,1}:
  "cauchy"   
  "circul"   
+ "clement"  
  "dingdong" 
+ "fiedler"  
+ "hankel"   
+ "hilb"     
  "invhilb"  
- "moler"    
+ "kms"      
+ "lehmer"   
+ ⋮          
+ "oscillate"
  "pascal"   
  "pei"      
- "clement"  
- "fiedler"  
- "minij"    
- "tridiag"  
- "lehmer"   
- "randcorr" 
  "poisson"  
+ "prolate"  
+ "randcorr" 
+ "tridiag"  
+ "wathen"   
  "wilkinson"
- "kms"      
- "wathen" 
 ```
 
 ## Extend Matrix Depot
