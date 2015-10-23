@@ -66,7 +66,7 @@ end
 """
 `matrixdepot()` 
 
-Prints all the matrices and groups in the collection.
+Print all the matrices and groups in the collection.
 """
 function matrixdepot()
     # Print information strings
@@ -109,8 +109,8 @@ end
 """
 `matrixdepot(name)` 
 
-Returns the documentation if `name` is a matrix name;
-returns a list of matrix names if `name` is a group name.
+Return the documentation if `name` is a matrix name;
+return a list of matrix names if `name` is a group name.
 """
 function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
@@ -149,7 +149,7 @@ end
 """
 `matrixdepot(matrix name, p1, p2...)` 
 
-Returns a matrix specified by the query string `matrix name`. 
+Return a matrix specified by the query string `matrix name`. 
 `p1, p2...` are input parameters depending on `matrix name`.
 """
 matrixdepot{T}(name::AbstractString, ::Type{T}, args...) = length(args) == 1 ? 
@@ -163,7 +163,7 @@ matrixdepot(name::AbstractString, args...) = matrixdepot(name::AbstractString, F
 """
 `matrixdepot(data, symbol)` 
 
-Generates the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
+Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
 """
 function matrixdepot(name::AbstractString, method::Symbol)
     if method == :r || method == :read
@@ -197,7 +197,7 @@ end
 """
 `matrixdepot(number, range...)` 
 
-Accesses matrices by number, range or a mixture of numbers and ranges.
+Access matrices by number, range or a mixture of numbers and ranges.
 """
 function matrixdepot(num::Int)
     matrixstrings = matrix_name_list()

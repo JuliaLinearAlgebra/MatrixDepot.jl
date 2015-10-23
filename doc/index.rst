@@ -7,7 +7,10 @@
 Matrix Depot
 ============
 
-Matrix Depot is an extensible test matrix collection for Julia.
+Matrix Depot is an extensible test matrix collection for Julia. It
+provides a diverse collection of test matrices, including parametrized
+matrices and real-life matrices.
+
 
 * `Source at Github <https://github.com/weijianzhang/MatrixDepot.jl>`_
 * `Release Notes <https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md>`_
