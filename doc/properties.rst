@@ -1,12 +1,16 @@
 
 .. _properties:
 
-Matrix Properties (Groups)
-===========================
-
-
 Groups
-------
+======
+
+Groups are lists of matrix names and we use them to
+categorize matrices in Matrix Depot. The list below shows
+all the predefined groups in Matrix Depot and we can extend
+this list by defining new groups.
+
+Predefined Groups
+-----------------
 
 .. glossary::
 
@@ -42,50 +46,6 @@ Groups
       All the matrices in the collection. 
 
 
-Examples
---------
-
-Type ``matrixdepot("prop1", "prop2", ...)`` to see all the matrices with 
-property ``prop1``, ``prop2`` etc. For example::
-
-  julia> matrixdepot("symmetric")
-  22-element Array{ASCIIString,1}:
-  "hilb"     
-  "cauchy"   
-  "circul"   
-  "dingdong" 
-  "invhilb"  
-  "moler"    
-  "pascal"   
-  "pei"      
-  "clement"  
-  "fiedler"  
-  ⋮          
-  "randcorr" 
-  "poisson"  
-  "wilkinson"
-  "kms"      
-  "wathen"   
-  "oscillate"
-  "prolate"  
-  "deriv2"   
-  "shaw"     
-
-  julia> matrixdepot("symmetric", "eigen")
-  11-element Array{ASCIIString,1}:
-  "circul"   
-  "dingdong" 
-  "pascal"   
-  "clement"  
-  "fiedler"  
-  "minij"    
-  "tridiag"  
-  "poisson"  
-  "wilkinson"
-  "wathen"   
-  "oscillate"
-
-
 Adding New Groups
 -----------------
 
@@ -97,6 +57,9 @@ New groups can be added with the macro ``@addgroup``::
     @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]
     138
 
+    workspace()
+    
+    using MatrixDepot # reload the package 
     matrixdepot()
 
     Matrices:

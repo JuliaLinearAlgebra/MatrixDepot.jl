@@ -64,10 +64,10 @@ For me, the package is installed at
 ``/home/weijian/.julia/v0.4/MatrixDepot``. Now we open the file
 ``user/generator.jl``. It looks like this::
 
-
   ##########################################
   # Please put your matrix generators here #
   ##########################################
+
 
 We can copy and paste the function ``randsym`` anywhere below the
 comments and use the function ``include_generator`` to declare it::
