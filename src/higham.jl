@@ -874,3 +874,17 @@ function golub{T}(::Type{T}, n::Int)
     U = triu(U, 1) + eye(U)
     return L*U
 end
+
+#
+# Companion marix
+#
+function companion{T}(::Type{T}, v::AbstractVector)
+    n = length(v)
+    A = zeros(T, n, n)
+    A[:, end] = v
+    for i = 1:n-1
+        A[i+1, i] = one(T)
+    end
+    A
+end
+companion{T}(::Type{T}, n::Int) = compan(T, [1:n;])

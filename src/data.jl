@@ -19,6 +19,7 @@ matrixdict = @compat Dict("hilb" => hilb, "hadamard" => hadamard,
                           "kms" => kms, "wathen" => wathen,
                           "oscillate" => oscillate, "toeplitz" => toeplitz,
                           "hankel" => hankel, "golub" => golub,
+                          "companion" => companion,
                           "prolate" => prolate, "deriv2" => deriv2,
                           "shaw" => shaw, "wing" => wing,
                           "foxgood" => foxgood, "heat" => heat,
@@ -50,6 +51,16 @@ matrixinfo =
              N. J. Higham, Accuracy and Stability of Numerical Algorithms,
              Society for Industrial and Applied Mathematics, Philadelphia, PA,
              USA, 2002; sec. 28.1.",
+
+             "companion" => "Companion matrix:
+             The companion matrix to a monic polynomial 
+                 a(x) = a_0 + a_1x + ... + a_{n-1}x^{n-1} + x^n
+             is the n-by-n matrix with ones on the subdiagonal and 
+             the last column given by the coefficients of a(x).     
+             \n Input options:
+             \n 1. [type,] vec: vec is a vector of coefficients;
+             \n 2. [type,] n: vec = [1:n;], the dimension of the matrix 
+             is n.",
 
              "hadamard" => "Hadamard matrix:
              The Hadamard matrix is a square matrix whose entries are 
