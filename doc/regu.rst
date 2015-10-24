@@ -28,9 +28,9 @@ Each generated test problem has type ``RegProb``, which is
 defined as::
 
   immutable RegProb{T}
-    A::Matrix{T}  # matrix of interest
-    b::Vector{T}  # right-hand side
-    x::Vector{T}  # the solution to Ax = b
+    A::AbstractMatrix{T}  # matrix of interest
+    b::AbstractVector{T}  # right-hand side
+    x::AbstractVector{T}  # the solution to Ax = b
   end
 
 Here is an example::
@@ -86,15 +86,63 @@ Here is an example::
 Here is a list of test problems in the collection:
 
 * :term:`baart`
+* :term:`blur`
 * :term:`deriv2`
 * :term:`foxgood`
+* :term:`gravity`
 * :term:`heat`
 * :term:`phillips`
 * :term:`shaw`
+* :term:`spikes`
+* :term:`ursell`
 * :term:`wing`
 
 .. glossary::
    :sorted:
+
+   ursell
+     Discretization of a Fredholm integral equation of the first kind
+     with kernel `K` and right-hand side `g` given by
+
+     .. math:: 
+
+         K(s,t) = \frac{1}{s+t+1}, \quad g(s) = 1,
+  
+     where both integration intervals are :math:`[0,1]` [ursell]_. 
+
+     .. [ursell] F. Ursell, Introduction to the theory of linear 
+  		 integral equations, Chapter 1 in L. M. Delves and 
+		 J. Walsh, Numerical Solution of Integral Equations, 
+		 Clarendon Press, Oxford, 1974.
+
+   spikes
+     Artificially generated discrete ill-posed problem. 
+
+
+   gravity 
+     One-dimensional gravity surveying model
+     problem. Discretization of a 1-D model problem in gravity
+     surveying, in which a mass distribution f(t) is located at depth
+     d, while the vertical component of the gravity field g(s) is
+     measured at the surface. The resulting problem is a first-kind
+     Fredholm integral equation with kernel
+     
+     .. math::
+
+        K(s,t) = d(d^2 + (s-t)^2)^{-3/2}.
+
+
+   blur
+     Image deblurring test problem. It arises in connection with the 
+     degradation of digital images by atmospheric turbulence blur, 
+     modelled by a Gaussian point-spread function
+
+     .. math::
+	
+	h(x,y) = \frac{1}{2\pi\sigma^2}\exp(-\frac{x^2+y^2}{2\sigma^2}).
+
+     The matrix `A` is a symmetric :math:`n^2\times n^2` doubly block
+     Toeplitz matrix, stored in sparse format.
 
    heat 
      Inverse heat equation [carasso82]_. It is a Volterra integral equation of
