@@ -30,6 +30,9 @@ declare them.
     * ``Group``: the group where ``f`` belongs. In this case, 
       ``Stuff`` is the group name.
 
+.. warning::
+
+   Please commit your changes every time you add a new matrix. 
 
 Examples
 --------- 
