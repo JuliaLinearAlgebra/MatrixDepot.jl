@@ -1,7 +1,7 @@
 ## Matrix Depot Release Notes
 
-v0.4.0 (coming soon)
----------------------
+v0.4.0 
+------
 
 * Add new feature:
 
