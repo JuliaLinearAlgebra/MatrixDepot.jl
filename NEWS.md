@@ -1,5 +1,12 @@
 ## Matrix Depot Release Notes
 
+v0.4.1
+------
+
+* Add new feature:
+
+   - allow users to download a group of matrices from UF sparse matrix collection.
+
 v0.4.0 
 ------
 
