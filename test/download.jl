@@ -1,4 +1,4 @@
-dirdata = joinpath(Pkg.dir("MatrixDepot"), "data")
+dirdata = joinpath(dirname(@__FILE__),"..","data")
 if isdir(string(dirdata, '/', "uf"))
     rm(string(dirdata, '/', "uf"), recursive = true)
 end

@@ -8,7 +8,7 @@ function filenames(directory::AbstractString)
 
     namevec = AbstractString[]
 
-    matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "$directory")
+    matdatadir = joinpath(dirname(@__FILE__),"..", "data", "$directory")
     matvec = readdir(matdatadir)
     for file in matvec
         filename = split(file, '.')[1]
@@ -20,7 +20,7 @@ end
 # return a list of matrix data name in the collection
 function matrix_data_name_list()
     matrices = AbstractString[]
-    if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "uf"))
+    if isdir(joinpath(dirname(@__FILE__), "..", "data", "uf"))
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
                 push!(matrices, string(col, '/', mat))
@@ -28,7 +28,7 @@ function matrix_data_name_list()
         end
     end
 
-    if isdir(joinpath(Pkg.dir("MatrixDepot"), "data", "mm"))
+    if isdir(joinpath(dirname(@__FILE__),"..", "data", "mm"))
         for col in filenames("mm")
             for d in filenames("mm/$(col)")
                 for mat in filenames("mm/$(col)/$(d)")

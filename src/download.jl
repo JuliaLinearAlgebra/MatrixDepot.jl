@@ -28,7 +28,7 @@
 #####################################################
 const UF_URL = "http://www.cise.ufl.edu/research/sparse/"
 const MM_URL = "http://math.nist.gov/MatrixMarket/matrices.html"
-const DATA_DIR = joinpath(Pkg.dir("MatrixDepot"), "data")
+const DATA_DIR = joinpath(dirname(@__FILE__),"..", "data")
 
 # download html files and store matrix data as a list of tuples
 function downloaddata(; generate_list::Bool = true)
