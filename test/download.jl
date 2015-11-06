@@ -16,9 +16,13 @@ matrixdepot("HB/1138_bus")
 #B = matrixdepot("Harwell-Boeing/psadmit/662_bus", :read)
 #matrixdepot("Harwell-Boeing/psadmit/662_bus")
 
+matrixdepot("Bates/*", :get)
+B = matrixdepot("Bates/Chem97Zt", :r)
+matrixdepot("Bates/Chem97Zt")
 # rm data
 
 rm(string(dirdata, '/', "uf_matrices.html"))
 rm(string(dirdata, '/', "mm_matrices.html"))
 rm(string(dirdata, '/', "uf"), recursive = true)
 rm(string(dirdata, '/', "mm"), recursive = true)
+

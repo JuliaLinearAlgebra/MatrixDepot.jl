@@ -144,40 +144,52 @@ function get(name::AbstractString)
     uf_matrixdata, mm_matrixdata = downloaddata()
 
     namelist = split(name, '/')
+    collectionname = namelist[1]
     if length(namelist) == 2 # UF sparse matrix collection
-        collectionname, matrixname = namelist
-        (collectionname, matrixname) in uf_matrixdata ||
-        error("can not find $collectionname/$matrixname in UF sparse matrix collection")
-        fn = string(matrixname, ".tar.gz")
-        uzfn = string(matrixname, ".mtx")
-        url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
-    
-        dir = string(DATA_DIR, '/', "uf", '/', collectionname, '/')
-        if !isdir(dir)
-            mkdir(string(DATA_DIR, '/', "uf", '/', collectionname))
+        matrixnames = AbstractString[]
+        if namelist[2] == "*"
+            println("Downloading all matrices in group $(collectionname)...")
+            for uf in uf_matrixdata
+                if uf[1] == collectionname
+                    push!(matrixnames, uf[2])
+                end
+            end
+        else
+            push!(matrixnames, namelist[2])
         end
-        dirfn = string(dir, fn)
-        diruzfn = string(dir, matrixname, '/', uzfn)
-
-        !isfile(string(dir, uzfn)) || error("file $(uzfn) exits, no need to download")
+        for matrixname in matrixnames           
+            (collectionname, matrixname) in uf_matrixdata ||
+                       error("can not find $collectionname/$matrixname in UF sparse matrix collection")
+            fn = string(matrixname, ".tar.gz")
+            uzfn = string(matrixname, ".mtx")
+            url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
+    
+            dir = string(DATA_DIR, '/', "uf", '/', collectionname, '/')
+            if !isdir(dir)
+                mkdir(string(DATA_DIR, '/', "uf", '/', collectionname))
+            end
+            dirfn = string(dir, fn)
+            diruzfn = string(dir, matrixname, '/', uzfn)
+            
+            !isfile(string(dir, uzfn)) || error("file $(uzfn) exits, no need to download")
         
-        try
-            download(url, dirfn)
-            println("download:", dirfn)
-        catch
-            error("fail to download $fn")
-        end
-
-        if !isfile(diruzfn)
-            gunzip(dirfn)
-        end
-        rm(dirfn)
+            try
+                download(url, dirfn)
+                println("download:", dirfn)
+            catch
+                error("fail to download $fn")
+            end
+            
+            if !isfile(diruzfn)
+                gunzip(dirfn)
+            end
+            rm(dirfn)
     
-        run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
-        cp("$(diruzfn)", "$(dir)/$(uzfn)")
-        rm(string(dir,'/', matrixname, ".tar"))
-        rm(string(dir, '/', matrixname), recursive=true)
-
+            run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
+            cp("$(diruzfn)", "$(dir)/$(uzfn)")
+            rm(string(dir,'/', matrixname, ".tar"))
+            rm(string(dir, '/', matrixname), recursive=true)
+        end
     elseif length(namelist) == 3 # Matrix Market collection 
         
         collectionname, setname, matrixname = namelist

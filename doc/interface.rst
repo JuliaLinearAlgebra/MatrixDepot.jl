@@ -102,6 +102,54 @@ and generate it with the Symbol ``:r`` or  ``:read`` ::
 	[417498, 916428]  =  1.0
 	[843845, 916428]  =  1.0
 
+We can use ``matrixdepot(collection name/*)`` to download all the matrices
+in a given ``collection name``. For example, we can get all the 
+matrices contributed by The Mathworks, Inc. by ``matrixdepot("MathWorks/*", :get)``::
+
+   julia> matrixdepot()
+
+   Matrices:
+    1) baart            2) binomial         3) blur             4) cauchy        
+    5) chebspec         6) chow             7) circul           8) clement       
+    9) companion       10) deriv2          11) dingdong        12) fiedler       
+    13) forsythe        14) foxgood         15) frank           16) golub         
+    17) gravity         18) grcar           19) hadamard        20) hankel        
+    21) heat            22) hilb            23) invhilb         24) invol         
+    25) kahan           26) kms             27) lehmer          28) lotkin        
+    29) magic           30) minij           31) moler           32) neumann       
+    33) oscillate       34) parter          35) pascal          36) pei           
+    37) phillips        38) poisson         39) prolate         40) randcorr      
+    41) rando           42) randsvd         43) rohess          44) rosser        
+    45) sampling        46) shaw            47) spikes          48) toeplitz      
+    49) tridiag         50) triw            51) ursell          52) vand          
+    53) wathen          54) wilkinson       55) wing            56) MathWorks/Harvard500
+    57) MathWorks/Kaufhold
+    58) MathWorks/Kuu   59) MathWorks/Muu   60) MathWorks/Pd    61) MathWorks/Pd_rhs
+    62) MathWorks/pivtol
+    63) MathWorks/QRpivot
+    64) MathWorks/Sieber
+    65) MathWorks/tomography
+    66) MathWorks/TS  
+   Groups:
+    all           data          eigen         ill-cond    
+    inverse       pos-def       random        regprob     
+    sparse        symmetric  
+
+   julia> matrixdepot("data")
+   11-element Array{AbstractString,1}:
+   "MathWorks/Harvard500"
+   "MathWorks/Kaufhold"  
+   "MathWorks/Kuu"       
+   "MathWorks/Muu"       
+   "MathWorks/Pd"        
+   "MathWorks/Pd_rhs"    
+   "MathWorks/pivtol"    
+   "MathWorks/QRpivot"   
+   "MathWorks/Sieber"    
+   "MathWorks/tomography"
+   "MathWorks/TS" 
+
+
 
 Interface to NIST Matrix Market
 -------------------------------
