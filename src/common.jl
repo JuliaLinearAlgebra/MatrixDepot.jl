@@ -17,10 +17,14 @@ function filenames(directory::AbstractString)
     return namevec
 end
 
+# return the path to a folder inside the data directory
+data_dir(name::AbstractString) = joinpath(dirname(@__FILE__), "..", "data", name)
+user_file(name::AbstractString) = joinpath(dirname(@__FILE__), "..", "user", name)
+
 # return a list of matrix data name in the collection
 function matrix_data_name_list()
     matrices = AbstractString[]
-    if isdir(joinpath(dirname(@__FILE__), "..", "data", "uf"))
+    if isdir(data_dir("uf"))
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
                 push!(matrices, string(col, '/', mat))
@@ -28,7 +32,7 @@ function matrix_data_name_list()
         end
     end
 
-    if isdir(joinpath(dirname(@__FILE__),"..", "data", "mm"))
+    if isdir(data_dir("mm"))
         for col in filenames("mm")
             for d in filenames("mm/$(col)")
                 for mat in filenames("mm/$(col)/$(d)")
@@ -124,8 +128,8 @@ function matrixdepot(name::AbstractString)
         return sort(matrices)
     elseif '/' in name  # print matrix data info
         namelist = split(name, '/')
-        length(namelist) == 2 ? matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf") :
-                                matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
+        length(namelist) == 2 ? matdatadir = data_dir("uf") :
+                                matdatadir = data_dir("mm")
 
         pathfilename = string(matdatadir, '/', name, ".mtx")
         println(ufinfo(pathfilename))
@@ -167,8 +171,8 @@ Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g
 """
 function matrixdepot(name::AbstractString, method::Symbol)
     if method == :r || method == :read
-        length(split(name, '/')) == 2 ? matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "uf") :
-                                        matdatadir = joinpath(Pkg.dir("MatrixDepot"), "data", "mm")
+        length(split(name, '/')) == 2 ? matdatadir = data_dir("uf"):
+                                        matdatadir = data_dir("mm")
         pathfilename = string(matdatadir, '/', name, ".mtx")
 
         if VERSION < v"0.4.0-dev+1419"
@@ -258,7 +262,7 @@ function addgroup(ex)
         matname in matrix_name_list() || throw(ArgumentError("$matname is not in the collection."))
     end
 
-    user = joinpath(Pkg.dir("MatrixDepot"), "user", "group.jl")
+    user = joinpath(user_file("group.jl"))
     s = readall(user)
     iofile = open(user, "w")
     newprop = s[1:end-4] * "\""  * propname * "\" => ["
@@ -284,7 +288,7 @@ function rmgroup(ex)
     !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
     propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
 
-    user = joinpath(Pkg.dir("MatrixDepot"), "user", "group.jl")
+    user = joinpath(user_file("group.jl"))
     s = readall(user)
     iofile = open(user, "w")
     rg = Regex("""\"""" * eval(propname) * ".+")
