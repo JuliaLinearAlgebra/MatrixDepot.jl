@@ -183,6 +183,13 @@ example:
 ```julia
 julia> matrixdepot("HB/1138_bus", :get)
 ```
+
+Use ``matrixdepot(collection name/*, :get )`` to download a group of all the matrices in ``collection name`` from UF sparse matrix collection. For example:
+
+```julia
+julia> matrixdepot("MathWorks/*", :get)
+```
+
 When download is complete, we can check matrix information using
 
 ```julia
