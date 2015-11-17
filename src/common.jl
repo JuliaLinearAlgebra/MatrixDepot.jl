@@ -97,7 +97,7 @@ function matrixdepot()
 
     j = 1    
     for name in groups        
-        if j < 4 && length(groups) < 12
+        if j < 4 && length(name) < 12
             j += 1
             @printf "  %-12s" name
         else
@@ -295,7 +295,7 @@ function rmgroup(ex)
     key = search(s, rg) # locate the propname in user.jl to remove.
     start_char = key[1] # the start of the line
     end_char = key[end] # the end of the line
-    s = s[1:start_char - 1] * s[end_char+1:end]
+    s = s[1:start_char - 2] * s[end_char+1:end]
     try
         write(iofile, s);
     finally
