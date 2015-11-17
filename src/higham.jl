@@ -787,7 +787,7 @@ function rohess{T}(::Type{T}, n::Int)
         theta = x[i-1]
         c = convert(T, cos(theta))
         s = convert(T, sin(theta))
-        H[[i-1; i], :] = [c*H[i-1, :] + s*H[i, :]; -s*H[i-1, :] + c*H[i, :]]
+        H[[i-1; i], :] = [c*H[i-1, :][:]' + s*H[i, :][:]'; -s*H[i-1, :][:]' + c*H[i, :][:]']
     end
     return H
 end
