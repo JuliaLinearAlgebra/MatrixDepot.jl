@@ -1,5 +1,12 @@
 ## Matrix Depot Release Notes
 
+v0.4.2 (Coming Soon)
+---------------------
+
+* fix: build failing on Julia v0.5
+
+* prevent `@rmgroup` from introducing extra empty lines
+
 v0.4.1
 ------
 
