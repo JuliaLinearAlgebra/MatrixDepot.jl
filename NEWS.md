@@ -1,7 +1,7 @@
 ## Matrix Depot Release Notes
 
-v0.4.2 (Coming Soon)
----------------------
+v0.4.2
+------
 
 * Fix: build failing on Julia v0.5
 
