@@ -3,9 +3,11 @@
 v0.4.2 (Coming Soon)
 ---------------------
 
-* fix: build failing on Julia v0.5
+* Fix: build failing on Julia v0.5
 
-* prevent `@rmgroup` from introducing extra empty lines
+* Prevent `@rmgroup` from introducing extra empty lines
+
+* Add more tests
 
 v0.4.1
 ------

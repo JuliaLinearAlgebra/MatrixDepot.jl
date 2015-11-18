@@ -2,6 +2,7 @@
 # ![logo](doc/logo2.png) Matrix Depot 
 
 [![Build Status](https://travis-ci.org/weijianzhang/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/weijianzhang/MatrixDepot.jl)
+[![codecov.io](https://codecov.io/github/weijianzhang/MatrixDepot.jl/coverage.svg?branch=master)](https://codecov.io/github/weijianzhang/MatrixDepot.jl?branch=master)
 
 An extensible test matrix collection for Julia.
 
