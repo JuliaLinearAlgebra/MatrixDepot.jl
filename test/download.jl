@@ -24,9 +24,9 @@ MatrixDepot.update()
 matrixdepot("Bates/*", :get)
 B = matrixdepot("Bates/Chem97Zt", :r)
 matrixdepot("Bates/Chem97Zt")
-
+matrixdepot()
 try
-    matrixdepot("HB/662_bus", :g)
+    matrixdepot("HB/662_bus", :k)
 catch ArgumentError
     println("download error: unknown argument :g")
 end

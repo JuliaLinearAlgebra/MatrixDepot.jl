@@ -222,7 +222,7 @@ end
 #
 # Inverse Heat Equation
 #
-function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly = true)
+function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = one(T)/n; t = T[h/2:h:1;]
     c = h/(2*κ*sqrt(pi))
@@ -254,12 +254,12 @@ function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly = true)
         return RegProb(A, b, x)
     end
 end
-heat{T}(::Type{T}, n::Int, matrixonly = true) = heat(T, n, 1, matrixonly)
+heat{T}(::Type{T}, n::Int, matrixonly::Bool = true) = heat(T, n, 1, matrixonly)
 
 #
 # First Kind Fredholm Integral Equation
 #
-function baart{T}(::Type{T}, n::Int, matrixonly = true)
+function baart{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     hs = pi/(2*n); ht = pi/n; c = one(T)/(3*sqrt(2))
     ht = convert(T, ht)
@@ -294,7 +294,7 @@ end
 #
 # Phillips's "famous" problem
 #
-function phillips{T}(::Type{T}, n::Int, matrixonly = true)
+function phillips{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     mod(n, 4) == 0 || error("The dimension of the matrix must be a multiple of 4.")
 
     # compute A

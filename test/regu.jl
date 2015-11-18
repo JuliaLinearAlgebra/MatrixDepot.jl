@@ -27,14 +27,14 @@ r = matrixdepot("wing", n, false)
 r = matrixdepot("foxgood", n, false)
 rf32 = matrixdepot("foxgood", Float32, n, false)
 
-r = matrixdepot("heat", 2*n)
+r = matrixdepot("heat", 2*n, false)
 rf32 = matrixdepot("heat", Float32, 2*n)
 
 r = matrixdepot("baart", 2*n)
 rf32 = matrixdepot("baart", Float32, 2*n)
 
 n = rand(3:10)
-r = matrixdepot("phillips", 4*n)
+r = matrixdepot("phillips", 4*n, false)
 rf32 = matrixdepot("phillips", Float32, 4*n)
 
 A = matrixdepot("gravity", n)

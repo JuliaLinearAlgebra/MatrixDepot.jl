@@ -11,6 +11,10 @@ catch ArgumentError
     println("matrixdepot: no information for `something`")
 end
 
+n = rand(1:55)
+name = matrixdepot(n)
+matrixdepot(name)
+
 list = matrixdepot(1, 3, 4:20)
 
 @addgroup newlist = matrixdepot(3:6, 20)
