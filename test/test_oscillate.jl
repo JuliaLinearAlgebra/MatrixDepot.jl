@@ -7,6 +7,11 @@
 mode = rand(1:2) # 2 different modes
 n = rand(2:10)
 A = matrixdepot("oscillate", n, mode)
+try
+    matrixdepot("oscillate", n, 4)
+catch ArgumentError
+    println("oscillate invalid mode value")
+end
 
 eva, evc = eig(A)
 for i in eva
@@ -32,4 +37,7 @@ end
 
 k = rand(1:n)
 @test num_sign_change(evc[:,k]) == k - 1
+
+A = matrixdepot("oscillate", n)
+
 println("'oscillate' passed test...")

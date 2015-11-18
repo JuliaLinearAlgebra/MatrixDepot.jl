@@ -46,6 +46,7 @@ include("test_golub.jl")
 include("test_companion.jl")
 
 tests = [
+         "common",
          "download",
          "number",
          "property",

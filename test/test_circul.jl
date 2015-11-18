@@ -6,4 +6,8 @@ x = [1:n;];
 A = matrixdepot("circul", x)
 # test symmetry
 @test A + A' == (A + A')'
+B = matrixdepot("circul", n)
+C = matrixdepot("circul", [1:n;], n)
+@test_approx_eq B C
+
 println("'circul' passed test..." )

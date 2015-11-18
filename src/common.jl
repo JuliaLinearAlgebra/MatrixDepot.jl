@@ -141,7 +141,7 @@ function matrixdepot(name::AbstractString)
     elseif name == "all" # all the matrix names in the collection
         return matrix_name_list()
     else
-        error("No information is available for \"$(name)\".")
+        throw(ArgumentError("No information is available for \"$(name)\"."))
     end
 end
 
@@ -185,10 +185,10 @@ function matrixdepot(name::AbstractString, method::Symbol)
     elseif method == :s || method == :search
         MatrixDepot.search(name)
     else
-        error("unknown symbol $method.
+        throw(ArgumentError("unknown symbol $method.
               use :read (or :r) to read matrix data;
               use :get  (or :g) to download matrix data;
-              use :search (or :s) to search for collection information.")
+              use :search (or :s) to search for collection information."))
     end
 end
 

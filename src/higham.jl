@@ -164,11 +164,7 @@ function magic{T}(::Type{T}, n::Int)
         M = oddmagic(T, n)
     elseif mod(n, 4) == 0
         # n is doubly even
-        if VERSION < v"0.4.0-dev+1827"
-            a = ifloor(mod([1:n;], 4)/2)
-        else
-            a = floor(Integer, mod([1:n;], 4)/2)
-        end
+        a = @compat floor(Integer, mod([1:n;], 4)/2)
         B = broadcast(==, a', a)
         M = broadcast(+, T[1:n:n^2;]',T[0:n-1;])
         for i = 1:n, j = 1:n
@@ -698,7 +694,7 @@ function rando{T}(::Type{T}, m::Int, n::Int, k::Int)
     elseif k == 3
         copy!(A, round(3 * rand(m,n) - 1.5))
     else
-        error("invalid k value.")
+        throw(ArgumentError("invalid k value."))
     end
     return A
 end
@@ -762,7 +758,7 @@ function randsvd{T}(::Type{T}, m::Int, n::Int, kappa, mode::Int)
         sigma = ones(p)./kappa
         sigma[1] = one(T)
     else
-        error("invalid mode value.")
+        throw(ArgumentError("invalid mode value."))
     end
 
     A = zeros(T, m, n)

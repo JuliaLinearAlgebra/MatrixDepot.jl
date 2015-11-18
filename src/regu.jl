@@ -25,7 +25,7 @@ function oscillate{T}(::Type{T}, n::Int, mode::Int)
     elseif mode == 2
         Σ = ones(T, n) - T[0:n-1;]/(n-1)*(1 - 1/κ)
     else
-        error("invalid mode value.")
+        throw(ArgumentError("invalid mode value."))
     end
     return oscillate(Σ)
 end

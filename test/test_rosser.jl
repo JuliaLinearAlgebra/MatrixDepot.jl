@@ -27,4 +27,13 @@ e2 = [-1020, -1020, 0, 0, 0.098, 0.098, 1000, 1000, 1000, 1000, 1000,
       1020, 1020, 1020, 1020, 1020]
 @test_approx_eq_eps e1 e2 1e+1
 
+try
+    matrixdepot("rosser", 0)
+catch ArgumentError
+end
+try
+    matrixdepot("rosser", 1)
+catch ArgumentError
+end
+
 println("'rosser' passed test...")

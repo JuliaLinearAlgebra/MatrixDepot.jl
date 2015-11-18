@@ -11,6 +11,8 @@ A = matrixdepot("wilkinson", n)
 # symmetric along antidiagonal
 @test issym(full(A)[n:-1:1,:])
 
+θ = matrixdepot("wilkinson", 1)
+
 println("'wilkinson' passed test...")
 
 

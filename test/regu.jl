@@ -14,6 +14,8 @@ end
 
 r = matrixdepot("shaw", 2*n, false)
 
+print(r)
+
 @test issym(r.A)
 
 rf32 = matrixdepot("shaw", Float32, 2*n, false)
@@ -59,3 +61,4 @@ r1 = matrixdepot("spikes", Float32, n, false)
 A = matrixdepot("ursell", n)
 @test matrixdepot("ursell", Float64, n) == A
 r1 = matrixdepot("ursell", Float32, n, false)
+print(r1)
