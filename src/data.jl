@@ -254,7 +254,7 @@ matrixinfo =
 
              "clement" => "Clement Matrix:
              The Clement matrix is a tridiagonal matrix with zero
-             diagonal entrie. If k = 1, the matrix is symmetric.
+             diagonal entries. If k = 1, the matrix is symmetric.
              \n Input options:
              \n 1. [type,] dim, k: dim is the dimension of the matrix.
              If k = 0, the matrix is Tridiagonal. If k = 1, the matrix
