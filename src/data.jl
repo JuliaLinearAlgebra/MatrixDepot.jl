@@ -295,13 +295,15 @@ matrixinfo =
 
              "tridiag" => "Tridiagonal Matrix:
              \n Input options:
-             \n 1. [type,] v1, v2, v3: v1 and v3 are sub- superdiagonal vectors.
-             v2 is the diagonal vector;
-             \n 2. [type,] dim, x, y, z: dim is the dimension of the matrix. x, y, z are
-             scalars. x and z are sub- superdiagonal elements, y is diagonal
-             element.
+             \n 1. [type,] v1, v2, v3: v1 and v3 are vectors of subdiagonal
+             and superdiagonal elements, respectively, and v2 is a vector
+             of diagonal elements;
+             \n 2. [type,] dim, x, y, z: dim is the dimension of the matrix,
+             x, y, z are scalars. x and z are the subdiagonal and 
+             superdiagonal elements, respectively, and y is the diagonal 
+             elements;
              \n 3. [type,] dim: x = -1, y = 2, z = -1. This matrix is also
-             known as Strang's matrix, named after Gilbert Strang.
+             known as the second difference matrix.
              \n ['inverse', 'ill-cond', 'pos-def', 'eigen']
              \n Reference: J. Todd, Basic Numerical Mathematics, Vol. 2:
              Numerical Algebra, Birkhauser, Basel, and Academic Press,
