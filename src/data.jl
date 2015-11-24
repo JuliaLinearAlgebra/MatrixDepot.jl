@@ -154,7 +154,7 @@ matrixinfo =
               \n 1. [type,] row_dim, col_dim, α, k: row_dim and col_dim
              are row and column dimension of the matrix. α is a
              scalar representing the entries on the superdiagonals.
-             k is the number superdiagonals;
+             k is the number of superdiagonals;
              \n 2. [type,] dim: the dimension of the matrix.
              \n ['inverse', 'ill-cond']
              \n Reference:  G. H. Golub and J. H. Wilkinson, Ill-conditioned
