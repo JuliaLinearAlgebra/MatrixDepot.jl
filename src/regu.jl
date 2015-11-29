@@ -45,15 +45,20 @@ end
 
 function show(io::IO, p::RegProb)
     println(io, "Test problems for Regularization Methods")
-    println(io, "A:\n", p.A)
-    println(io, "b:\n", p.b)
-    println(io, "x:\n", p.x)
+    println(io, "A:")
+    display(p.A)
+    println(io, "b:")
+    display(p.b)
+    println(io, "x:")
+    display(p.x)
 end
 
 function show(io::IO, p::RegProbNoSolution)
     println(io, "Test problems for Regularization Methods with No Solution")
-    println(io, "A:\n", p.A)
-    println(io, "b:\n", p.b)
+    println(io, "A:")
+    display(p.A)
+    println(io, "b:")
+    display(p.b)
 end
 
 # The following test problems are derived from Per Christian Hansen's
