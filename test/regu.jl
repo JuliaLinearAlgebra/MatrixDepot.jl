@@ -7,6 +7,13 @@ r2 = matrixdepot("deriv2", Float32, n, 2, false)
 if mod(n, 2) == 0
     r3 = matrixdepot("deriv2", Float32, n, 3, false)
 end
+try 
+    matrixdepot("deriv2", Float64, n, 4, false)
+catch ArgumentError
+    println("deriv2: illegal value of example.")
+end
+
+A = matrixdepot("deriv2", n)
 
 @test_approx_eq r.A*r.x  r.b
 @test issym(r.A)
@@ -26,12 +33,14 @@ r = matrixdepot("wing", n, false)
 
 r = matrixdepot("foxgood", n, false)
 rf32 = matrixdepot("foxgood", Float32, n, false)
+A = matrixdepot("foxgood", n)
 
 r = matrixdepot("heat", 2*n, false)
 rf32 = matrixdepot("heat", Float32, 2*n)
 
-r = matrixdepot("baart", 2*n)
-rf32 = matrixdepot("baart", Float32, 2*n)
+r = matrixdepot("baart", 2*n, false)
+rf32 = matrixdepot("baart", Float32, 2*n, false)
+A = matrixdepot("baart", 2*n)
 
 n = rand(3:10)
 r = matrixdepot("phillips", 4*n, false)

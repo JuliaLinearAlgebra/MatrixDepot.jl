@@ -139,7 +139,7 @@ function deriv2{T}(::Type{T}, n::Int, example::Int, matrixonly::Bool = true)
             [x[i] = sqhi*((i*h)^2 - ((i-1)*h)^2)/2 for i = 1:div(n, 2)]
             [x[i] = sqhi*(h - ((i*h)^2 - ((i-1)*h)^2)/2) for i = div(n, 2)+1:n]
         else
-            error("Illegal value of example.")
+            throw(ArgumentError("Illegal value of example."))
         end       
         return RegProb(A, b, x)
     end

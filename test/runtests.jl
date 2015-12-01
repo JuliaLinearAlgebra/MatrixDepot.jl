@@ -47,6 +47,7 @@ include("test_companion.jl")
 
 tests = [
          "common",
+         "include_generator",
          "download",
          "number",
          "property",

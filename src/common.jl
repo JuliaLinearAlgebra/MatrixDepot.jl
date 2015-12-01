@@ -211,7 +211,7 @@ function matrixdepot(num::Int)
     matrixstrings = matrix_name_list()
     n = length(matrixstrings)
     if num > n
-        error("There are $(n) parameterized matrices, but you ask for the $(num)-th ")
+        throw(ArgumentError("There are $(n) parameterized matrices, but you ask for the $(num)-th "))
     end
     return matrixstrings[num]
 end
