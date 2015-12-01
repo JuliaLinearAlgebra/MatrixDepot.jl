@@ -1,5 +1,14 @@
 ## Matrix Depot Release Notes
 
+v0.4.3
+------
+
+* Ignore any changes to the directory `myMatrixDepot`. This means
+  any local changes to `myMatrixDepot\generator.jl` won't be affected when
+  we upgrade to a new version of Matrix Depot.
+
+* Add more tests
+
 v0.4.2
 ------
 
