@@ -53,15 +53,17 @@ function matrix_name_list()
 end
 
 # return a list of groups in the collection
+_matrix_class() = collect(keys(matrixclass))
+_user_matrix_class() = collect(keys(usermatrixclass)) 
+
 function group_list()
-    groups = collect(keys(matrixclass))
+    groups = _matrix_class()
+    try 
+        append!(groups, _user_matrix_class())
+    end
     push!(groups, "data")
     push!(groups, "all")
-    groups = sort(groups)
-    try 
-        append!(groups, collect(keys(usermatrixclass)))
-    end
-    groups
+    sort(groups)
 end
 
 ##########################
@@ -122,11 +124,8 @@ function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
     if name in keys(matrixinfo)
         println(matrixinfo[name])
-    elseif name in keys(matrixclass)
+    elseif name in _matrix_class()
         matrices = matrixclass[name]
-        return sort(matrices)
-    elseif name in keys(usermatrixclass)
-        matrices = usermatrixclass[name]
         return sort(matrices)
     elseif '/' in name  # print matrix data info
         namelist = split(name, '/')
@@ -142,6 +141,9 @@ function matrixdepot(name::AbstractString)
         return matrix_data_name_list()
     elseif name == "all" # all the matrix names in the collection
         return matrix_name_list()
+    elseif name in _user_matrix_class()
+        matrices = usermatrixclass[name]
+        return sort(matrices)
     else
         throw(ArgumentError("No information is available for \"$(name)\"."))
     end
