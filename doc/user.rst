@@ -13,8 +13,8 @@ Declaring Generators
 --------------------
 
 All we need to do is to code the generators in
-``path/to/MatrixDepot/user/generator.jl`` and use ``include_generator`` to 
-declare them.
+``path/to/MatrixDepot/myMatrixDepot/generator.jl`` and use
+``include_generator`` to declare them.   
 
 .. function:: include_generator(Stuff To Be Included, Stuff, f)
 
@@ -29,10 +29,6 @@ declare them.
  
     * ``Group``: the group where ``f`` belongs. In this case, 
       ``Stuff`` is the group name.
-
-.. warning::
-
-   Please commit your changes every time you add a new matrix. 
 
 Examples
 --------- 
@@ -65,20 +61,17 @@ can be done by::
 
 For me, the package is installed at
 ``/home/weijian/.julia/v0.4/MatrixDepot``. Now we open the file
-``user/generator.jl``. It looks like this::
+``myMatrixDepot/generator.jl``. It looks like this::
 
-  ##########################################
-  # Please put your matrix generators here #
-  ##########################################
+
+  # put your matrix generators below
 
 
 We can copy and paste the function ``randsym`` anywhere below the
 comments and use the function ``include_generator`` to declare it::
   
 
-  ##########################################
-  # Please put your matrix generators here #
-  ##########################################
+  # put your matrix generators below
 
   function randsym{T}(::Type{T}, n)
    A = zeros(T, n, n)
@@ -194,3 +187,18 @@ Now we can do::
   "wilkinson"
 
 Notice ``randsym`` is now part of the group ``symmetric`` and ``random``.
+
+
+It is good idea to save a copy somewhere else. For example, we 
+could save it on GitHub by create a new repository named ``myMatrixDepot``.
+(See https://help.github.com/articles/create-a-repo/ for more details.)
+Then go to the directory ``path/to/MatrixDepot/myMatrixDepot`` and type::
+
+  git init
+  git commit -m "add randsym matrix"
+  get remote add origin https://github.com/your-user-name/myMatrixDepot.git
+  git push -u origin master
+
+  
+
+
