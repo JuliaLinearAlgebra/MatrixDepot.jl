@@ -1,6 +1,0 @@
-usermatrixclass =
-@compat Dict(
-
-
-
-);

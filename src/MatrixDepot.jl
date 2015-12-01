@@ -21,9 +21,25 @@ include("common.jl")        # main functions
 include("higham.jl")        # test matrices
 include("regu.jl")          # regularization test problem
 include("data.jl")              # matrix data
-include("../user/group.jl")     # user defined groups 
-include("../user/generator.jl") # user defined matrix generators
 include("download.jl")          # download data from the UF sparse matrix collection
 
+const MY_DEPOT_DIR = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
+
+function __init__()
+    if !isdir(MY_DEPOT_DIR)
+        mkdir(MY_DEPOT_DIR)
+        open(string(MY_DEPOT_DIR, "/group.jl"), "w") do f
+            write(f, "usermatrixclass = \n @compat Dict( \n \n \n );")
+        end
+        open(string(MY_DEPOT_DIR, "/generator.jl"), "w") do f
+            write(f, "# put your matrix generators below ")
+        end
+    end
+end
+
+if isdir(MY_DEPOT_DIR)
+    include("../myMatrixDepot/group.jl")
+    include("../myMatrixDepot/generator.jl")
+end
 
 end # end module

@@ -19,7 +19,7 @@ end
 
 # return the path to a folder inside the data directory
 data_dir(name::AbstractString) = joinpath(dirname(@__FILE__), "..", "data", name)
-user_file(name::AbstractString) = joinpath(dirname(@__FILE__), "..", "user", name)
+user_file(name::AbstractString) = string(MY_DEPOT_DIR, "/$(name)")
 
 # return a list of matrix data name in the collection
 function matrix_data_name_list()
@@ -58,7 +58,9 @@ function group_list()
     push!(groups, "data")
     push!(groups, "all")
     groups = sort(groups)
-    append!(groups, collect(keys(usermatrixclass)))
+    try 
+        append!(groups, collect(keys(usermatrixclass)))
+    end
     groups
 end
 
@@ -212,9 +214,9 @@ function matrixdepot(num::Int)
     return matrixstrings[num]
 end
 
-function matrixdepot(I::UnitRange{Int})
+function matrixdepot(ur::UnitRange{Int})
     matrixnamelist = AbstractString[]
-    for i in I
+    for i in ur
         push!(matrixnamelist, matrixdepot(i))
     end
     return matrixnamelist
@@ -255,6 +257,7 @@ end
 
 #add new group
 function addgroup(ex)
+    isdir(MY_DEPOT_DIR) || error("can not find directory myMatrixDepot")
     propname = string(ex.args[1])
     !(propname in group_list()) || throw(ArgumentError("$propname is an existing group."))
 

@@ -11,3 +11,7 @@ data/mm/
 _build
 _static
 _templates
+
+# ignore myMatrixDepot
+
+myMatrixDepot/
