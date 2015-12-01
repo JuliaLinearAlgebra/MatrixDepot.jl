@@ -338,4 +338,4 @@ function include_generator(::Type{Group}, groupname::AbstractString, f::Function
 end
 
 "return the name of the function `f` as a string."
-fname(f::Function) = split(string(f), '.')[2]
+fname(f::Function) = VERSION < v"0.4-" ? string(f) : split(string(f), '.')[2]
