@@ -189,13 +189,15 @@ Now we can do::
 Notice ``randsym`` is now part of the group ``symmetric`` and ``random``.
 
 
-It is good idea to save a copy somewhere else. For example, we 
-could save it on GitHub by create a new repository named ``myMatrixDepot``.
-(See https://help.github.com/articles/create-a-repo/ for more details.)
-Then go to the directory ``path/to/MatrixDepot/myMatrixDepot`` and type::
+It is a good idea to back up your changes. For example, we 
+could save it on GitHub by creating a new repository named ``myMatrixDepot``.
+(See https://help.github.com/articles/create-a-repo/ for details of creating a new repository on GitHub.)
+Then we go to the directory ``path/to/MatrixDepot/myMatrixDepot`` and type::
 
   git init
-  git commit -m "add randsym matrix"
+  git add group.jl
+  git add generator.jl
+  git commit -m "first commit"
   get remote add origin https://github.com/your-user-name/myMatrixDepot.git
   git push -u origin master
 
