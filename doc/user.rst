@@ -198,7 +198,7 @@ Then we go to the directory ``path/to/MatrixDepot/myMatrixDepot`` and type::
   git add group.jl
   git add generator.jl
   git commit -m "first commit"
-  get remote add origin https://github.com/your-user-name/myMatrixDepot.git
+  git remote add origin https://github.com/your-user-name/myMatrixDepot.git
   git push -u origin master
 
   
