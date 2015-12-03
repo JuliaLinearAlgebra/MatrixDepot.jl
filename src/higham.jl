@@ -1,9 +1,19 @@
 # Higham Test Matrices
 
-
-#
-# Hilbert Matrix
-#
+"""
+Hilbert matrix: 
+The Hilbert matrix is a very ill conditioned matrix. 
+It is symmetric positive definite and totally positive. 
+\n Input options:
+\n 1. [type,] dim: the dimension of the matrix;
+\n 2. [type,] row_dim, col_dim: the row and column dimension.
+\n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+\n Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
+Amer. Math. Monthly, 90 (1983), pp. 301-312.
+N. J. Higham, Accuracy and Stability of Numerical Algorithms,
+Society for Industrial and Applied Mathematics, Philadelphia, PA,
+    USA, 2002; sec. 28.1.
+"""
 function hilb{T}(::Type{T}, m::Int, n::Int)
     # compute the Hilbert matrix
     H = zeros(T, m, n)
@@ -14,9 +24,20 @@ function hilb{T}(::Type{T}, m::Int, n::Int)
 end
 hilb{T}(::Type{T}, n::Int) = hilb(T, n, n)
 
-#
-# Inverse of Hilbert Matrix
-#
+"""
+Inverse of Hilbert matrix:
+Input options:
+
+1. [type,] dim: the dimension of the matrix.
+
+['inverse', 'ill-cond', 'symmetric','pos-def']
+
+Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
+    Amer. Math. Monthly, 90 (1983), pp. 301-312.
+    N. J. Higham, Accuracy and Stability of Numerical Algorithms,
+    Society for Industrial and Applied Mathematics, Philadelphia, PA,
+    USA, 2002; sec. 28.1.
+"""
 function invhilb{T}(::Type{T}, n::Int)
     # compute the inverse of Hilbert matrix
     # Type: data type

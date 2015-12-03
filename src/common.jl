@@ -122,8 +122,8 @@ return a list of matrix names if `name` is a group name.
 """
 function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
-    if name in keys(matrixinfo)
-        println(matrixinfo[name])
+    if name in keys(matrixdict)
+        eval(parse("Base.Docs.@repl $(name)", raise = false))
     elseif name in _matrix_class()
         matrices = matrixclass[name]
         return sort(matrices)
@@ -325,7 +325,7 @@ abstract Group <: MatrixGenerator
 
 
 include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (matrixdict[fn] = f)
-include_generator(::Type{Help}, helplines::AbstractString, f::Function) = (matrixinfo[fname(f)] = helplines)
+
 function include_generator(::Type{Group}, groupname::AbstractString, f::Function) 
     if groupname in keys(matrixclass)
         push!(matrixclass[groupname], fname(f))

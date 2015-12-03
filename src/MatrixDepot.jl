@@ -36,9 +36,13 @@ if !isdir(MY_DEPOT_DIR)
     end
 end
 
+files = readdir(MY_DEPOT_DIR)
 if isdir(MY_DEPOT_DIR)
-    include("../myMatrixDepot/group.jl")
-    include("../myMatrixDepot/generator.jl")
+    for file in files
+        if split(file, '.')[2] == "jl"
+            include("$(MY_DEPOT_DIR)/$(file)")
+        end
+    end
 end
 
 end # end module
