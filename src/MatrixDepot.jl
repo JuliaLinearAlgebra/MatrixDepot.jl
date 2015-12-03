@@ -36,13 +36,15 @@ if !isdir(MY_DEPOT_DIR)
     end
 end
 
-files = readdir(MY_DEPOT_DIR)
+files = Set(readdir(MY_DEPOT_DIR))
+delete!(files, "generator.jl")
 if isdir(MY_DEPOT_DIR)
     for file in files
         if split(file, '.')[2] == "jl"
             include("$(MY_DEPOT_DIR)/$(file)")
         end
     end
+    include(string(MY_DEPOT_DIR, "/generator.jl"))
 end
 
 end # end module

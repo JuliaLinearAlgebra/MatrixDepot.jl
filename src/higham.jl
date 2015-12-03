@@ -23,6 +23,7 @@ function hilb{T}(::Type{T}, m::Int, n::Int)
     return H
 end
 hilb{T}(::Type{T}, n::Int) = hilb(T, n, n)
+hilb(n::Int) = hilb(Float64, n)
 
 """
 Inverse of Hilbert matrix:
@@ -49,7 +50,7 @@ function invhilb{T}(::Type{T}, n::Int)
     end
     return Inv
 end
-
+invhilb(n::Int) = invhilb(Float64, n)
 
 #
 # Hadamard Matrix

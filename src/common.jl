@@ -160,9 +160,7 @@ end
 Return a matrix specified by the query string `matrix name`. 
 `p1, p2...` are input parameters depending on `matrix name`.
 """
-matrixdepot{T}(name::AbstractString, ::Type{T}, args...) = length(args) == 1 ? 
-             matrixdict[name](T, args[1]) : matrixdict[name](T, collect(args)...)
-matrixdepot(name::AbstractString, args...) = matrixdepot(name::AbstractString, Float64, args...)
+matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
 
 # generate the required matrix
 # method = :read   (or :r) read matrix data
