@@ -1,14 +1,20 @@
 # Higham Test Matrices
 
 """
-Hilbert matrix: 
+Hilbert matrix
+==============
 The Hilbert matrix is a very ill conditioned matrix. 
 It is symmetric positive definite and totally positive. 
-\n Input options:
-\n 1. [type,] dim: the dimension of the matrix;
-\n 2. [type,] row_dim, col_dim: the row and column dimension.
-\n ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-\n Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
+
+*Input options:*
+
+1. [type,] dim: the dimension of the matrix;
+
+2. [type,] row_dim, col_dim: the row and column dimension.
+
+['inverse', 'ill-cond', 'symmetric', 'pos-def']
+
+*Reference:* M. D. Choi, Tricks or treats with the Hilbert matrix,
 Amer. Math. Monthly, 90 (1983), pp. 301-312.
 N. J. Higham, Accuracy and Stability of Numerical Algorithms,
 Society for Industrial and Applied Mathematics, Philadelphia, PA,
@@ -23,17 +29,18 @@ function hilb{T}(::Type{T}, m::Int, n::Int)
     return H
 end
 hilb{T}(::Type{T}, n::Int) = hilb(T, n, n)
-hilb(n::Int) = hilb(Float64, n)
+hilb(args...) = hilb(Float64, args...)
 
 """
-Inverse of Hilbert matrix:
-Input options:
+Inverse of Hilbert matrix
+=========================
+*Input options:*
 
 1. [type,] dim: the dimension of the matrix.
 
 ['inverse', 'ill-cond', 'symmetric','pos-def']
 
-Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
+*Reference:* M. D. Choi, Tricks or treats with the Hilbert matrix,
     Amer. Math. Monthly, 90 (1983), pp. 301-312.
     N. J. Higham, Accuracy and Stability of Numerical Algorithms,
     Society for Industrial and Applied Mathematics, Philadelphia, PA,
@@ -52,9 +59,17 @@ function invhilb{T}(::Type{T}, n::Int)
 end
 invhilb(n::Int) = invhilb(Float64, n)
 
-#
-# Hadamard Matrix
-#
+"""
+Hadamard matrix:
+        The Hadamard matrix is a square matrix whose entries are 
+        1 or -1. It was named after Jacques Hadamard. The rows of 
+        a Hadamard matrix are orthogonal.
+         Input options:
+         1. [type,] dim: the dimension of the matrix, n is a power of 2.
+         ['inverse', 'orthogonal', 'eigen']
+         Reference: S. W. Golomb and L. D. Baumert, The search for
+           Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17
+"""
 function hadamard{T}(::Type{T}, n::Int)
     #Compute the hadamard matrix
     if n < 1
@@ -72,9 +87,19 @@ function hadamard{T}(::Type{T}, n::Int)
 end
 
 
-#
-# Cauchy Matrix
-#
+"""
+Cauchy matrix:
+            Given two vectors x and y, the (i,j) entry of the Cauchy 
+            matrix is 1/(x[i]-y[j]). 
+             Input options:
+             1. [type,] vec1, vec2: two vectors;
+             2. [type,] vec: a vector;
+             3. [type,] dim: the dimension of the matrix.
+             ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+             Reference:  N. J. Higham, Accuracy and Stability of Numerical Algorithms,
+            Society for Industrial and Applied Mathematics, Philadelphia, PA,
+                USA, 2002; sec. 28.1
+"""
 function cauchy{T}(::Type{T}, x::Vector, y::Vector)
     # Compute the cauchy matrix
     m = size(x,1)
@@ -87,9 +112,18 @@ end
 cauchy{T}(::Type{T}, x::Vector) = cauchy(T, x, x)
 cauchy{T}(::Type{T}, k::Int) = cauchy(T, [1:k;])
 
-#
-# Circul Matrix
-#
+"""
+Circulant matrix:
+                A circulant matrix has the property that each row is obtained
+                by cyclically permuting the entries of the previous row one
+                step forward.
+                 Input options:
+                 1. [type,] vec, n: a vector and the column dimension;
+                 2. [type,] vec: a vector;
+                 3. [type,] dim: the dimension of the matrix.
+                 ['symmetric', 'pos-def', 'eigen']
+                 Reference:  P. J. Davis, Circulant Matrices, John Wiley, 1977.
+"""
 function circul{T}(::Type{T}, v::Vector, w::Vector)
     # Compute the circul matrix
     # v: the first row of the matrix
@@ -105,9 +139,18 @@ circul{T}(::Type{T}, v::Vector, n::Int) = circul(T, v, T[1:n;])
 circul{T}(::Type{T}, v::Vector) = circul(T, v, v)
 circul{T}(::Type{T}, k::Int) = circul(T, [1:k;])
 
-#
-# Dingdong Matrix
-#
+"""
+Dingdong matrix:
+             The Dingdong matrix is a symmetric Hankel matrix invented
+             by DR. F. N. Ris of IBM, Thomas J Watson Research Centre.
+             The eigenvalues cluster around π/2 and -π/2.
+              Input options:
+              1. [type,] n: the dimension of the matrix.
+              ['symmetric', 'eigen']
+              Reference: J. C. Nash, Compact Numerical Methods for
+             Computers: Linear Algebra and Function Minimisation,
+             second edition, Adam Hilger, Bristol, 1990 (Appendix 1).
+"""
 function dingdong{T}(::Type{T}, n::Int)
     # Compute the dingdong matrix
     # type: data type
@@ -117,9 +160,20 @@ function dingdong{T}(::Type{T}, n::Int)
     return D
 end
 
-#
-# Frank Matrix
-#
+"""
+Frank matrix:
+             The Frank matrix is an upper Hessenberg matrix with 
+             determinant 1. The eigenvalues are real, positive and 
+             very ill conditioned.
+              Input options:
+              1. [type,] n, k: n is the dimension of the matrix, k = 0 or 1.
+             If k = 1 the matrix reflect about the anti-diagonal;
+              2. [type,] n: n is the dimension of the matrix.
+              ['ill-cond', 'eigen']
+              Reference:  W. L. Frank, Computing eigenvalues of complex matrices
+             by determinant evaluation and by methods of Danilewski and Wielandt,
+             J. Soc. Indust. Appl. Math., 6 (1958), pp. 378-392 (see pp. 385, 388).
+"""
 function frank{T}(::Type{T}, n::Int, k::Int)
     # Compute the frank matrix
     # type: data type
@@ -142,9 +196,16 @@ function jordbloc{T}( n::Int, lambda::T)
     return J
 end
 
-#
-# Forsythe Matrix
-#
+"""
+Forsythe matrix:
+             The Forsythe matrix is a n-by-n perturbed Jordan block.
+              Input options:
+              1. [type,] n, alpha, lambda: n is the dimension of the matrix.
+             alpha and lambda are scalars;
+              2. [type,] n: alpha = sqrt(eps(type)) and lambda = 0.
+              ['inverse', 'ill-cond', 'eigen']
+              This generator is adapted from N. J. Higham's Test Matrix Toolbox.
+"""
 function forsythe{T}(::Type{T}, n::Int , alpha, lambda)
     # Generate the forsythe matrix
     alpha = convert(T, alpha)
@@ -175,9 +236,15 @@ function oddmagic{T}(::Type{T}, n::Int)
     return A
 end
 
-#
-# Magic Matrix
-#
+"""
+Magic square matrix:
+             The magic matrix is a matrix with integer entries such that 
+             the row elements, column elements, diagonal elements and 
+             anti-diagonal elements all add up to the same number.
+              Input options:
+              1. [type,] dim: the dimension of the matrix.
+              ['inverse']
+"""
 function magic{T}(::Type{T}, n::Int)
     # Compute a magic square of order n
     # Learnt from Cleve Moler, Experiments with MATLAB, 2011
@@ -211,18 +278,39 @@ function magic{T}(::Type{T}, n::Int)
     return M
 end
 
-#
-# Grcar Matrix
-#
+"""
+Grcar Matrix:
+             The Grcar matrix is a Toeplitz matrix with sensitive 
+             eigenvalues.
+              Input options:
+              1. [type,] dim, k: dim is the dimension of the matrix and
+             k is the number of superdiagonals;
+              2. [type,] dim: the dimension of the matrix.
+              ['eigen']
+              Reference: J. F. Grcar, Operator coefficient methods
+             for linear equations, Report SAND89-8691, Sandia National
+             Laboratories, Albuquerque, New Mexico, 1989 (Appendix 2).
+"""
 function grcar{T}(::Type{T}, n::Int, k::Int = 3)
     # Compute grcar matrix
     G = tril(triu(ones(T, n,n)), k) - diagm(ones(T, n-1), -1)
     return G
 end
 
-#
-# Triw Matrix
-#
+"""
+Triw Matrix:
+             Upper triangular matrices discussed by Wilkinson and others.
+              Input options:
+               1. [type,] row_dim, col_dim, α, k: row_dim and col_dim
+             are row and column dimension of the matrix. α is a
+             scalar representing the entries on the superdiagonals.
+             k is the number of superdiagonals;
+              2. [type,] dim: the dimension of the matrix.
+              ['inverse', 'ill-cond']
+              Reference:  G. H. Golub and J. H. Wilkinson, Ill-conditioned
+             eigensystems and the computation of the Jordan canonical form,
+             SIAM Review, 18(4), 1976, pp. 578-6
+"""
 function triw{T}(::Type{T}, m::Int, n::Int, alpha, k::Int)
     alpha = convert(T, alpha)
     A = tril(eye(T, m,n) + alpha * triu(ones(T, m,n), 1), k)
@@ -230,18 +318,39 @@ function triw{T}(::Type{T}, m::Int, n::Int, alpha, k::Int)
 end
 triw{T}(::Type{T}, n::Int) = triw(T, n, n,  -1, n-1)
 
-#
-# Moler Matrix
-#
+"""
+Moler Matrix:
+             The Moler matrix is a symmetric positive definite matrix. 
+             It has one small eigenvalue.
+              Input options:
+              1. [type,] dim, alpha: dim is the dimension of the matrix,
+             alpha is a scalar;
+              2. [type,] dim: alpha = -1.
+              ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+              Reference:  J.C. Nash, Compact Numerical Methods for Computers:
+             Linear Algebra and Function Minimisation, second edition,
+             Adam Hilger, Bristol, 1990 (Appendix 1).
+"""
 function moler{T}(::Type{T}, n::Int, alpha = -1.)
     alpha = convert(T, alpha)
     M = triw(T, n, n, alpha, n - 1)' * triw(T, n, n, alpha, n -1 )
     return M
 end
 
-#
-# Pascal Matrix
-#
+"""
+Pascal Matrix:
+             The Pascal matrix’s anti-diagonals form the Pascal’s triangle.
+              Input options:
+              1. [type,] dim: the dimension of the matrix.
+              ['Inverse', 'ill-cond', 'symmetric', 'pos-def', 'eigen']
+              Reference: R. Brawer and M. Pirovino, The linear algebra of
+             the Pascal matrix, Linear Algebra and Appl., 174 (1992),
+             pp. 13-23 (this paper gives a factorization of L = PASCAL(N,1)
+             and a formula for the elements of L^k).
+             N. J. Higham, Accuracy and Stability of Numerical Algorithms
+             Society for Industrial and Applied Mathematics, Philadelphia, PA,
+             USA, 2002; sec. 28.4.
+"""
 function pascal{T}(::Type{T}, n::Int)
     P = zeros(T, n,n)
     for j = 1:n
@@ -255,9 +364,21 @@ function pascal{T}(::Type{T}, n::Int)
     return P
 end
 
-#
-# Kahan Matrix
-#
+"""
+Kahan Matrix:
+             The Kahan matrix is an upper trapezoidal matrix, i.e., the 
+             (i,j) element is equal to 0 if i > j. The useful range of 
+             θ is 0 < θ < π. The diagonal is perturbed by 
+             pert*eps()*diagm([n:-1:1;]).
+              Input options:
+              1. [type,] m, n, θ, pert: m, n are the row and column
+             dimensions of the matrix. theta and pert are scalars;
+              2. [type,] dim, θ, pert: dim is the dimension of the matrix;
+              3. [type,] dim: θ = 1.2, pert = 25.
+              ['inverse', 'ill-cond']
+              Reference: W. Kahan, Numerical linear algebra, Canadian Math.
+             Bulletin, 9 (1966), pp. 757-801.
+"""
 function kahan{T}(::Type{T}, m::Int, n::Int, theta, pert)
     theta = convert(T, theta)
     pert = convert(T, pert)
@@ -275,17 +396,34 @@ end
 kahan{T}(::Type{T}, n::Int, theta, pert) = kahan(T, n, n, theta, pert)
 kahan{T}(::Type{T}, n::Int) = kahan(T, n, n, 1.2, 25.)
 
-#
-# Pei Matrix
-#
+"""
+Pei Matrix:
+             The Pei matrix is a symmetric matrix with known inversion.
+              Input options:
+              1. [type,] dim, alpha: dim is the dimension of the matrix.
+             alpha is a scalar;
+              2. [type,] dim: the dimension of the matrix.
+              ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+              Reference: M. L. Pei, A test matrix for inversion procedures,
+             Comm. ACM, 5 (1962), p. 508.
+"""
 function pei{T}(::Type{T}, n::Int, alpha = 1)
     alpha = convert(T, alpha)
     return alpha*eye(T, n, n) + ones(T, n, n)
 end
 
-#
-# Vandermonde Matrix
-#
+"""
+Vandermonde Matrix:
+             The inverse and determinat are known explicity.
+              Input options:
+              1. [type,] vec, dim: vec is a vector, dim is the number of columns.
+              2. [type,] vec
+              3. [type,] dim
+              ['inverse', 'ill-cond']
+              Reference: N. J. Higham, Stability analysis of algorithms
+             for solving confluent Vandermonde-like systems, SIAM J.
+             Matrix Anal. Appl., 11 (1990), pp. 23-41.
+"""
 function vand{T}(::Type{T}, p::Vector, n::Int)
     # n: number of rows
     # p: a vector
@@ -304,9 +442,16 @@ end
 vand{T}(::Type{T}, n::Int) = vand(T, [1:n;], n)
 vand{T}(::Type{T}, p::Vector) = vand(T, p, length(p))
 
-#
-# Involutory Matrix
-#
+"""
+Involutory Matrix:
+             An involutory matrix is a matrix that is its own inverse.
+              Input options:
+              1. [type,] dim: dim is the dimension of the matrix.
+              ['inverse', 'ill-cond', 'eigen']
+              Reference: A. S. Householder and J. A. Carpenter, The
+             singular values of involutory and of idempotent matrices,
+             Numer. Math. 5 (1963), pp. 234-237.
+"""
 function invol{T}(::Type{T}, n::Int)
     A = hilb(T, n)
     d = -n
@@ -318,9 +463,20 @@ function invol{T}(::Type{T}, n::Int)
     return A
 end
 
-#
-# Chebyshev spectral differentiation matrix.
-#
+"""
+Chebyshev spectral differentiation matrix:
+             If k = 0,the generated matrix is nilpotent and a vector with 
+             all one entries is a null vector. If k = 1, the generated 
+             matrix is nonsingular and well-conditioned. Its eigenvalues 
+             have negative real parts.
+              Input options:
+              1. [type,] dim, k: dim is the dimension of the matrix and
+             k = 0 or 1.
+              2. [type,] dim
+              ['eigen']
+              Reference: L. N. Trefethen and M. R. Trummer, An instability
+             phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.
+"""
 function chebspec{T}(::Type{T}, n::Int, k::Int = 0)
     # k = 0 or 1
     k == 1 ? n = n + 1 : none
@@ -346,18 +502,35 @@ function chebspec{T}(::Type{T}, n::Int, k::Int = 0)
     return A
 end
 
-#
-# Lotkin Matrix
-#
+"""
+Lotkin Matrix:
+             The Lotkin matrix is the Hilbert matrix with its first row 
+             altered to all ones. It is unsymmetric, ill-conditioned and 
+             has many negative eigenvalues of small magnitude.
+              Input options:
+              1. [type,] dim: dim is the dimension of the matrix.
+              ['inverse', 'ill-cond', 'eigen']
+              Reference: M. Lotkin, A set of test matrices, MTAC, 9 (1955), pp. 153-161.
+"""
 function lotkin{T}(::Type{T}, n::Int)
     A = hilb(T, n)
     A[1,:] = ones(T,n)'
     return A
 end
 
-#
-# Clement Matrix
-#
+"""
+Clement Matrix:
+             The Clement matrix is a tridiagonal matrix with zero
+             diagonal entries. If k = 1, the matrix is symmetric.
+              Input options:
+              1. [type,] dim, k: dim is the dimension of the matrix.
+             If k = 0, the matrix is Tridiagonal. If k = 1, the matrix
+             is SymTridiagonal;
+              2. [type,] dim: k = 0.
+              ['inverse', 'symmetric', 'eigen']
+              Reference: P. A. Clement, A class of triple-diagonal
+             matrices for test purposes, SIAM Review, 1 (1959), pp. 50-52.
+"""
 function clement{T}(::Type{T}, n::Int, k::Int = 0)
     # construct Tridiagonal matrix
     # n is the dimension of the matrix
@@ -377,9 +550,19 @@ function clement{T}(::Type{T}, n::Int, k::Int = 0)
     return A
 end
 
-#
-# Fiedler Matrix
-#
+"""
+Fiedler Matrix:
+             The Fiedler matrix is symmetric matrix with a dominant 
+             positive eigenvalue and all the other eigenvalues are negative.
+              Input options:
+              1. [type,] vec: vec is a vector;
+              2. [type,] dim: dim is the dimension of the matrix.
+              ['inverse', 'symmetric', 'eigen']
+              Reference: G. Szego, Solution to problem 3705, Amer. Math.
+              Monthly, 43 (1936), pp. 246-259.
+             J. Todd, Basic Numerical Mathematics, Vol. 2: Numerical Algebra,
+             Birkhauser, Basel, and Academic Press, New York, 1977, p. 159.
+"""
 function fiedler{T}(::Type{T}, v::Vector)
     n = length(v)
     v = v[:].'
@@ -388,18 +571,31 @@ function fiedler{T}(::Type{T}, v::Vector)
 end
 fiedler{T}(::Type{T}, n::Int) = fiedler(T, [1:n;])
 
-#
-# MIN[I,J] Matrix
-#
+"""
+MIN[I,J] Matrix:
+             A matrix with (i,j) entry min(i,j). It is a symmetric positive
+             definite matrix. The eigenvalues and eigenvectors are known 
+             explicitly. Its inverse is tridiagonal.
+              Input options:
+              1. [type,] dim: dim is the dimension of the matrix.
+              ['inverse', 'symmetric', 'pos-def', 'eigen']
+              Reference: J. Fortiana and C. M. Cuadras, A family of matrices,
+             the discretized Brownian bridge, and distance-based regression,
+             Linear Algebra Appl., 264 (1997), 173-188.  (For the eigensystem of A.)
+"""
 function minij{T}(::Type{T}, n::Int)
     A = zeros(T, n, n)
     [A[i,j] = min(i,j) for i = 1:n, j = 1:n]
     return A
 end
 
-#
-# Binomial Matrix
-#
+"""
+Binomial Matrix:
+             The matrix is a multiple of an involutory matrix.
+              Input options:
+              1. [type,] dim: dim is the dimension of the matrix.
+              ['']
+"""
 function binomialm{T}(::Type{T}, n::Int)
     # Mulitiple of involutory matrix
     L = Array(T, n, n)
@@ -409,9 +605,23 @@ function binomialm{T}(::Type{T}, n::Int)
     return L*D*U
 end
 
-#
-# Tridiagonal Matrix
-#
+"""
+Tridiagonal Matrix:
+              Input options:
+              1. [type,] v1, v2, v3: v1 and v3 are vectors of subdiagonal
+             and superdiagonal elements, respectively, and v2 is a vector
+             of diagonal elements;
+              2. [type,] dim, x, y, z: dim is the dimension of the matrix,
+             x, y, z are scalars. x and z are the subdiagonal and 
+             superdiagonal elements, respectively, and y is the diagonal 
+             elements;
+              3. [type,] dim: x = -1, y = 2, z = -1. This matrix is also
+             known as the second difference matrix.
+              ['inverse', 'ill-cond', 'pos-def', 'eigen']
+              Reference: J. Todd, Basic Numerical Mathematics, Vol. 2:
+             Numerical Algebra, Birkhauser, Basel, and Academic Press,
+             New York, 1977, p. 155.
+"""
 function tridiag{T}(::Type{T}, x::Vector, y::Vector, z::Vector)
     x = map((i)-> convert(T, i), x)
     y = map((i)-> convert(T, i), y)
@@ -424,27 +634,56 @@ n == 1 ? y*ones(T,1,1) :
          tridiag(T, x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
 tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1)
 
-#
-# Lehmer Matrix
-#
+"""
+Lehmer Matrix:
+             The Lehmer matrix is a symmetric positive definite matrix. 
+             It is totally nonnegative. The inverse is tridiagonal and 
+             explicitly known
+              Input options:
+              1. [type,] dim: the dimension of the matrix.
+              ['inverse', 'symmetric', 'pos-def']
+              Reference: M. Newman and J. Todd, The evaluation of
+             matrix inversion programs, J. Soc. Indust. Appl. Math.,
+             6 (1958), pp. 466-476.
+             Solutions to problem E710 (proposed by D.H. Lehmer): The inverse
+             of a matrix, Amer. Math. Monthly, 53 (1946), pp. 534-535.
+"""
 function lehmer{T}(::Type{T}, n::Int)
     A = Array(T, n, n)
     [A[i,j] = min(i,j) / max(i,j) for i = 1:n, j = 1:n]
     return A
 end
 
-#
-# Parter Matrix
-#
+"""
+Parter Matrix:
+             The Parter matrix is a Toeplitz and Cauchy matrix 
+             with singular values near π.
+              Input options:
+              1. [type,] dim: the dimension of the matrix.
+              ['eigen']
+              Reference: The MathWorks Newsletter, Volume 1, Issue 1,
+             March 1986, page 2. S. V. Parter, On the distribution of the
+             singular values of Toeplitz matrices, Linear Algebra and
+             Appl., 80 (1986), pp. 115-130.
+"""
 function parter{T}(::Type{T}, n::Int)
     A = Array(T, n, n)
     [A[i,j] = one(T) / (i - j + 0.5) for i = 1:n, j = 1:n]
     return A
 end
 
-#
-# Chow Matrix
-#
+"""
+Chow Matrix:
+             The Chow matrix is a singular Toeplitz lower Hessenberg matrix.
+              Input options:
+              1. [type,] dim, alpha, delta: dim is dimension of the matrix.
+             alpha, delta are scalars such that A[i,i] = alpha + delta and
+             A[i,j] = alpha^(i + 1 -j) for j + 1 <= i;
+              2. dim: alpha = 1, delta = 0.
+              ['eigen']
+              Reference: T. S. Chow, A class of Hessenberg matrices with known
+             eigenvalues and inverses, SIAM Review, 11 (1969), pp. 391-395.
+"""
 function chow{T}(::Type{T}, n::Int, alpha, delta)
     A = zeros(T, n, n)
     alpha = convert(T, alpha)
@@ -470,14 +709,14 @@ function newsign(x)
     return y
 end
 
-#
-# Random Correlation Matrix
-#
-# Reference: Numerically Stable Generation of Correlation Matrices
-# and Their Factors. Philip Davies and Nicholas Higham,
-# BIT Numerical Mathematics, 2000, Vol 40. Issue 4, pp 640-651
-#
-# limitation: only generate matrix of type Float64
+"""
+Random Correlation Matrix:
+             A random correlation matrix is a symmetric positive 
+             semidefinite matrix with 1s on the diagonal.
+              Input options:
+              1. [type,] dim: the dimension of the matrix.
+              ['symmetric', 'pos-semidef', 'random']
+"""
 function randcorr{T}(::Type{T}, n::Int)
     x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
     x = n * x / sum(x) # x has nonnegtive elements.
@@ -518,9 +757,18 @@ function randcorr{T}(::Type{T}, n::Int)
 
 end
 
-#
-# Poisson Matrix
-#
+"""
+Poisson Matrix:
+             A block tridiagonal matrix from Poisson’s equation. 
+             This matrix is sparse, symmetric positive definite and 
+             has known eigenvalues.
+              Input options:
+              1. [type,] n: the dimension of the matirx is n^2.
+              ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']
+              Reference: G. H. Golub and C. F. Van Loan, Matrix Computations,
+             second edition, Johns Hopkins University Press, Baltimore,
+             Maryland, 1989 (Section 4.5.4).
+"""
 function poisson{T}(::Type{T}, n::Int)
     S = full(tridiag(T, n))
     A = speye(T, n)
@@ -567,9 +815,17 @@ function prolate{T}(::Type{T}, n::Int, w::Real)
 end
 prolate{T}(::Type{T}, n::Int) = prolate(T, n, 0.25)
 
-#
-# Neumann Matrix
-#
+"""
+Neumann Matrix:
+             A singular matrix from the discrete Neumann problem. 
+             This matrix is sparse and the null space is formed by 
+             a vector of ones
+              Input options:
+              1. [type,] n: the dimension of the matrix is n^2.
+              ['eigen', 'sparse']
+              Reference: R. J. Plemmons, Regular splittings and the
+             discrete Neumann problem, Numer. Math., 25 (1976), pp. 153-161.
+"""
 function neumann{T}(::Type{T}, n::Int)
     if n == 1
         return 4 * ones(T, 1,1) #handle 1-d case.
@@ -589,14 +845,22 @@ end
 #
 P_block{T}(::Type{T}, a, b, c, d) = reshape(T[a, b, c, d, b, -a, -d, c, c, d, -a, -b, d, -c, b, -a], 4,4)
 
-#
-# Rosser Matrix
-#
-# References:
-# 1. Rosser, Lanczos, Hestenes and Karush, J. Res. Natl. Bur. Stand. Vol. 47 (1951), pp291-297.
-# 2. Sylvester, Phil. Mag. ser.4 v.33-34 (1867), pp461
-# For n = 8, a = 2, b = 1, the generated matrix is the test matrix used in reference 1.
-#
+"""
+Rosser Matrix:
+             The Rosser matrix’s eigenvalues are very close together 
+             so it is a challenging matrix for many eigenvalue algorithms.
+              Input options:
+              1. [type,] dim, a, b: dim is the dimension of the matrix.
+             dim must be a power of 2.
+             a and b are scalars. For dim = 8, a = 2 and b = 1, the generated
+             matrix is the test matrix used by Rosser.
+              2. [type,] dim: a = rand(1:5), b = rand(1:5).
+              ['eigen', 'ill-cond', 'random']
+              Reference: J. B. Rosser, C. Lanczos, M. R. Hestenes, W. Karush,
+             Separation of close eigenvalues of a real symmetric matrix,
+             Journal of Research of the National Bureau of Standards, v(47)
+             (1951)
+"""
 function rosser{T}(::Type{T}, n::Int, a, b)
     if n < 1
         lgn = 0
@@ -666,9 +930,17 @@ end
 rosser{T}(::Type{T}, n::Int) = rosser(T, n, rand(1:5), rand(1:5))
 
 
-#
-# Matrix with application in sampling theory
-#
+"""
+Matrix with Application in Sampling Theory:
+             A nonsymmetric matrix with eigenvalues 0, 1, 2, ... n-1.
+              Input options:
+              1. [type,] vec: vec is a vector with no repeated elements;
+              2. [type,] n: the dimension of the matrix is n.
+              ['eigen']
+              Reference: L. Bondesson and I. Traat, A nonsymmetric matrix
+             with integer eigenvalues, linear and multilinear algebra, 55(3)
+             (2007), pp. 239-247
+"""
 function sampling{T}(::Type{T}, x::Vector)
     n = length(x)
     A = zeros(T, n, n)
@@ -692,9 +964,16 @@ function sampling{T}(::Type{T}, n::Int)
     return sampling(T, p)
 end
 
-#
-# Wilkinson Matrix
-#
+"""
+Wilkinson Matrix:
+             The Wilkinson matrix is a symmetric tridiagonal matrix with 
+             pairs of nearly equal eigenvalues. The most frequently used                 case is matrixdepot(\"wilkinson\", 21).
+              Input options:
+              1. [type,] dim: the dimension of the matrix.
+              ['symmetric', 'eigen']
+              Reference: J. H. Wilkinson, Error analysis of direct methods
+             of matrix inversion, J. Assoc. Comput. Mach., 8 (1961),  pp. 281-330.
+"""
 function wilkinson{T}(::Type{T}, n::Int)
     if n == 1 # handle 1-d case
         return ones(T, 1, 1)
@@ -704,9 +983,17 @@ function wilkinson{T}(::Type{T}, n::Int)
     return A
 end
 
-#
-# Random matrix with element -1, 0, 1
-#
+"""
+Random Matrix with Element -1, 0, 1:
+              Input options:
+              1. [type,] m, n, k: m and n are row and column dimensions,
+             k = 1: entries are 0 or 1.
+             k = 2: entries are -1 or 1.
+             k = 3: entries are -1, 0 or 1.
+              2. [type,] n, k: m = n;
+              3. [type,] n: k = 1.
+              ['random']
+"""
 function rando{T}(::Type{T}, m::Int, n::Int, k::Int)
     A = Array(T, m, n)
     if k == 1
@@ -754,9 +1041,24 @@ function qmult!{T}(A::Matrix{T})
     return A
 end
 
-#
-# Random matrix with pre-assigned singular values
-#
+"""
+Random Matrix with Pre-assigned Singular Values:
+              Input options:
+              1. [type,] m, n, kappa, mode: m, n are the dimensions of the matrix.
+             kappa is the condition number of the matrix.
+             mode = 1: one large singular value.
+             mode = 2: one small singular value.
+             mode = 3: geometrically distributed singular values.
+             mode = 4: arithmetrically distributed singular values.
+             mode = 5: random singular values with  unif. dist. logarithm;
+              2. [type,] n, kappa, mode: m = n;
+              3. [type,] n, kappa: mode = 3;
+              4. [type,] n: kappa = sqrt(1/eps()), mode = 3.
+              ['ill-cond', 'random']
+              Reference: N. J. Higham, Accuracy and Stability of Numerical
+             Algorithms, Society for Industrial and Applied Mathematics,
+             Philadelphia, PA, USA, 2002; sec. 28.3.
+"""
 function randsvd{T}(::Type{T}, m::Int, n::Int, kappa, mode::Int)
     kappa >= 1 || throw(ArgumentError("Condition number must be at least 1."))
     kappa = convert(T, kappa)
@@ -794,9 +1096,15 @@ randsvd{T}(::Type{T}, n::Int, kappa, mode) = randsvd(T, n, n, kappa, mode)
 randsvd{T}(::Type{T}, n::Int, kappa) = randsvd(T, n, kappa, 3)
 randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps(T)))
 
-#
-# Random orthogonal upper Hessenberg matrix
-#
+"""
+Random Orthogonal Upper Hessenberg Matrix:
+             The matrix is constructed via a product of Givens rotations.
+              Input options:
+              1. [type,] n : n is the dimension of the matrix.
+              ['random']
+              Reference:  W. B. Gragg, The QR algorithm for unitary
+             Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.
+"""
 function rohess{T}(::Type{T}, n::Int)
     x = rand(n-1)*2*pi
     H = eye(T, n)
@@ -810,10 +1118,18 @@ function rohess{T}(::Type{T}, n::Int)
     return H
 end
 
-#
-# KMS (Kac-Murdock-Szego) Toeplitz matrix
-#
 
+"""
+Kac-Murdock-Szego Toeplitz Matrix:
+              Input:
+              1. [type,] n, rho: n is the dimension of the matrix, rho is a
+             scalar such that A[i,j] = rho^(abs(i-j)).
+              2. [type,] n: rho = 0.5
+              ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+              Reference: W. F. Trench, Numerical solution of the eigenvalue
+             problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis
+             and Appl., 10 (1989), pp. 135-146 (and see the references therein).
+"""
 function kms{T}(::Type{T}, n::Int, rho::Number)
     typeof(rho) <: Complex ? A = Array(typeof(rho), n, n): A = Array(T, n, n)
     [A[i,j] = rho^(abs(i-j)) for i = 1:n, j = 1:n]
@@ -824,13 +1140,21 @@ function kms{T}(::Type{T}, n::Int, rho::Number)
 end
 kms{T}(::Type{T}, n::Int) = kms(T, n, convert(T, 0.5))
 
-#
-# Wathen matrix
-# A finite element matrix (sparse random entries).
-# Reference:
-# A.J. Wathen, Realistic eigenvalue bounds for the Galerkin
-# mass matrix, IMA J, Numer. Anal., 7 (1987), pp. 449-457
-#
+"""
+Wathen Matrix:
+             Wathen Matrix is a sparse, symmetric positive, random matrix 
+             arose from the finite element method. The generated matrix is 
+             the consistent mass matrix for a regular nx-by-ny grid of 
+             8-nodes.
+              Input options:
+              1. [type,] nx, ny: the dimension of the matrix is equal to
+             3 * nx * ny + 2 * nx * ny + 1;
+              2. [type,] n: nx = ny = n.
+              ['symmetric', 'pos-def', 'eigen', 'random', 'sparse']
+              Reference: A. J. Wathen, Realistic eigenvalue bounds for
+             the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987),
+             pp. 449-457.
+"""
 function wathen{T}(::Type{T}, nx::Int, ny::Int)
     e1 = T[6 -6 2 -8;-6 32 -6 20;2 -6 6 -6;-8 20 -6 32]
     e2 = T[3 -8 2 -6;-8 16 -8 20;2 -8 3 -8;-6 20 -8 16]
@@ -873,10 +1197,17 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
 end
 wathen{T}(::Type{T}, n::Int) = wathen(T, n, n)
 
-#
-# Golub matrix
-# 
-# Reference: Cleve B. Moler, Numerical Computing with MATLAB, SIAM, 2008.
+"""
+Golub Matrix:
+             Golub matrix is the product of two random unit lower and upper
+             triangular matrices respectively. LU factorization without pivoting
+             fails to reveal that such matrices are badly conditioned.
+              Input options:
+              1. [type,] n: the dimension of the matrix is n.
+              Reference: D. Viswanath and N. Trefethen. Condition Numbers of 
+             Random Triangular Matrices, SIAM J. Matrix Anal. Appl. 19, 564-581,
+             1998.
+"""
 function golub{T}(::Type{T}, n::Int)
     s = 10
     L = Array(T, n, n)
@@ -893,9 +1224,17 @@ function golub{T}(::Type{T}, n::Int)
     return L*U
 end
 
-#
-# Companion marix
-#
+"""
+Companion matrix:
+             The companion matrix to a monic polynomial 
+                 a(x) = a_0 + a_1x + ... + a_{n-1}x^{n-1} + x^n
+             is the n-by-n matrix with ones on the subdiagonal and 
+             the last column given by the coefficients of a(x).     
+              Input options:
+              1. [type,] vec: vec is a vector of coefficients;
+              2. [type,] n: vec = [1:n;], the dimension of the matrix 
+             is n.
+"""
 function companion{T}(::Type{T}, v::AbstractVector)
     n = length(v)
     A = zeros(T, n, n)
