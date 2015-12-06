@@ -7,10 +7,11 @@ import Base: show, search
 
 export
 
-  # main function
-  matrixdepot,
+    # main function
+    matrixdepot,
 
-  @addgroup, @rmgroup
+    @addgroup, @rmgroup
+
 
 include("ufreader.jl")
 include("common.jl")        # main functions
@@ -28,7 +29,7 @@ if !isdir(MY_DEPOT_DIR)
         write(f, "usermatrixclass = \n Dict( \n \n \n );")
     end
     open(string(MY_DEPOT_DIR, "/generator.jl"), "w") do f
-        write(f, "# put your matrix generators below ")
+        write(f, "# include your matrix generators below ")
     end
 end
 
