@@ -1,9 +1,30 @@
 # Test matrices for regularization methods from Hansen's
 # Regularization toolbox
+       
 
-# compute a oscillating matrix from a given signular value spectrum
-# using the idea proposed by Per Christian Hansen, "Test matrices for
-# regularization methods. 
+"""
+Oscillating Matrix
+==================
+A matrix A is called oscillating if A is totally 
+    nonnegative and if there exists an integer q > 0 such that 
+    A^q is totally positive.
+
+*Input options:*
+
++ [type,] Σ: the singular vaule spectrum of the matrix;
+
++ [type,] n, mode: n is the dimension of the matrix. 
+        mode = 1: geometrically distributed singular values.
+        mode = 2: arithmetrically distributed singular values.
+
++ [type,] n: mode = 1.
+
+['symmetric','pos-def', 'random', 'eigen'] 
+
+*Reference:* Per Christian Hansen, Test matrices for 
+    regularization methods. SIAM J. SCI. COMPUT Vol 16, 
+    No2, pp 506-512 (1995).
+"""
 function oscillate{T}(Σ::Vector{T})
     n = length(Σ)
     dv = rand(T, 1, n)[:] + eps(T)
@@ -12,11 +33,6 @@ function oscillate{T}(Σ::Vector{T})
     U, S, V = svd(B)
     return U*diagm(Σ)*U'
 end
-        
-
-#  mode = 1: geometrically distributed singular values.
-#  mode = 2: arithmetrically distributed singular values.
-#  κ = sqrt(1/eps(T)) is the condition number of the matrix.
 function oscillate{T}(::Type{T}, n::Int, mode::Int)
     κ = sqrt(1/eps(T))
     if mode == 1
@@ -30,7 +46,7 @@ function oscillate{T}(::Type{T}, n::Int, mode::Int)
     return oscillate(Σ)
 end
 oscillate{T}(::Type{T}, n::Int) = oscillate(T, n, 2)
-
+oscillate(args...) = oscillate(Float64, args...)
 
 immutable RegProb{T}
     A::AbstractMatrix{T}  # matrix of interest
