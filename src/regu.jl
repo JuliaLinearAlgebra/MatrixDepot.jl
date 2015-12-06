@@ -719,7 +719,7 @@ is a Hankel matrix.
               Numerical Solution of Integral Equations, Clarendon Press, 
               1974.
 """
-function ursell{T}(::Type{T}, n::Integer, Matrixonly::Bool = true)
+function ursell{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
     r = zeros(T, n); c = copy(r)
     for k = 1:n
         d1 = one(T) + (one(T) + k)/n
