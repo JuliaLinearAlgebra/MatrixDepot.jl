@@ -837,10 +837,10 @@ The Chow matrix is a singular Toeplitz lower Hessenberg matrix.
 *Input options:*
 
 + [type,] dim, alpha, delta: dim is dimension of the matrix.
-            alpha, delta are scalars such that A[i,i] = alpha + delta and
-            A[i,j] = alpha^(i + 1 -j) for j + 1 <= i;
+            `alpha`, `delta` are scalars such that `A[i,i] = alpha + delta` and
+            `A[i,j] = alpha^(i + 1 -j)` for `j + 1 <= i`;
 
-+ [type,] dim: alpha = 1, delta = 0.
++ [type,] dim: `alpha = 1`, `delta = 0`.
 
 ['eigen']
 
@@ -936,7 +936,8 @@ A block tridiagonal matrix from Poisson’s equation.
 *Input options:*
 
 + [type,] n: the dimension of the matirx is n^2.
-                
+
+           
 ['inverse', 'symmetric', 'pos-def', 'eigen', 'sparse']
 
 *Reference:* G. H. Golub and C. F. Van Loan, Matrix Computations,

@@ -553,19 +553,19 @@ gravity(args...) = gravity(Float64, args...)
 """
 Image deblurring test problem
 =============================
-The generated matrix A is an n*n-by-n*n sparse, symmetric, 
+The generated matrix A is an `n*n-by-n*n` sparse, symmetric, 
            doubly block Toeplitz matrix that models blurring of an n-by-n 
            image by a Gaussian point spread function.
 
 *Input options:*
 
 + [type,] n, band, σ, [matrixonly]: the dimension of the matrix
-          is n^2. band is the half-bandwidth, only matrix elements within
-          a distance band-1 from the diagonal are nonzero. σ controls the
-          width of the Gaussin point spread function. The larger the σ, the 
+          is `n^2`. `band` is the half-bandwidth, only matrix elements within
+          a distance `band-1` from the diagonal are nonzero. `σ` controls the
+          width of the Gaussin point spread function. The larger the `σ`, the 
           wider the function and the more ill posed the problem. 
-          If matrixonly = false, the linear system A, b, x will be generated.
-              (matrixonly = true by default.)
+          If `matrixonly = false`, the linear system A, b, x will be generated.
+              (`matrixonly = true` by default.)
 
 + [type,] n, [matrixonly]: band = 3, σ = 0.7.
 """

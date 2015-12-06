@@ -12,9 +12,11 @@ be able to use them from Matrix Depot.
 Declaring Generators
 --------------------
 
-All we need to do is to code the generators in
-``path/to/MatrixDepot/myMatrixDepot/generator.jl`` and use
-``include_generator`` to declare them.   
+When Matrix Depot is first loaded, a new directory ``myMatrixDepot``
+will be created. Matrix Depot automatically includes all Julia files
+in this directory. Hence, all we need to do is to copy
+the generator files to ``path/to/MatrixDepot/myMatrixDepot`` and use
+the function ``include_generator`` to declare them.
 
 .. function:: include_generator(Stuff To Be Included, Stuff, f)
 
@@ -23,9 +25,6 @@ All we need to do is to code the generators in
    
     * ``FunctionName``: the function name of ``f``. In this case, 
       ``Stuff`` is a string representing ``f``.
-    
-    * ``Help``: the helper lines of ``f``. In this case, ``Stuff``
-      is the helper lines of ``f``.
  
     * ``Group``: the group where ``f`` belongs. In this case, 
       ``Stuff`` is the group name.
@@ -34,24 +33,37 @@ Examples
 --------- 
 
 To get a feel of how it works, let's see an example. 
-Suppose we want to include a random symmetric matrix ``randsym``
-in Matrix Depot::
+Suppose we have a file ``myrand.jl`` which contains two 
+matrix generator ``randsym`` and ``randorth``::
 
-  function randsym{T}(::Type{T}, n)
-    A = zeros(T, n, n)
-    for j = 1:n
+  """
+  random symmetric matrix
+  =======================
+
+  *Input options:* 
+
+  + n: the dimension of the matrix
+    """
+    function randsym(n)
+      A = zeros(n, n)
+      for j = 1:n
         for i = j:n
-            A[i,j] = randn()
+           A[i,j] = randn()
         end
-    end
-    A = A + tril(A, -1)'
-    return A
-  end
+      end
+      A = A + tril(A, -1)'
+      return A
+   end
 
-.. note:: 
-   To be consistent with Matrix Depot's matrix generators, 
-   the first argument of the function must be the
-   element type of matrix.
+   """
+   random Orthogonal matrix
+   ========================
+
+   *Input options:*
+
+   + n: the dimension of the matrix
+     """	
+     randorth(n) = qr(randn(n,n))[1]
 
 We first need to find out where Matrix Depot is installed. This 
 can be done by::
@@ -60,54 +72,46 @@ can be done by::
   "/home/weijian/.julia/v0.4/MatrixDepot"
 
 For me, the package is installed at
-``/home/weijian/.julia/v0.4/MatrixDepot``. Now we open the file
-``myMatrixDepot/generator.jl``. It looks like this::
+``/home/weijian/.julia/v0.4/MatrixDepot``. We can copy ``myrand.jl``
+to ``/home/weijian/.julia/v0.4/MatrixDepot/myMatrixDepot``. 
+Now we open the file
+``myMatrixDepot/generator.jl`` and write::
 
-
-  # put your matrix generators below
-
-
-We can copy and paste the function ``randsym`` anywhere below the
-comments and use the function ``include_generator`` to declare it::
-  
-
-  # put your matrix generators below
-
-  function randsym{T}(::Type{T}, n)
-   A = zeros(T, n, n)
-    for j = 1:n
-        for i = j:n
-            A[i,j] = randn()
-        end
-    end
-    A = A + tril(A, -1)'
-    return A
-  end
   include_generator(FunctionName, "randsym", randsym)
+  include_generator(FunctionName, "randorth", randorth)
 
-This is it. We can now use it from Matrix Depot::
+This is it. We can now use them from Matrix Depot::
 
-  julia> matrixdepot()
+ julia> matrixdepot()
 
-  Matrices:
-    1) baart            2) binomial         3) blur             4) cauchy        
-    5) chebspec         6) chow             7) circul           8) clement       
-    9) deriv2          10) dingdong        11) fiedler         12) forsythe      
-   13) foxgood         14) frank           15) golub           16) gravity       
-   17) grcar           18) hadamard        19) hankel          20) heat          
-   21) hilb            22) invhilb         23) invol           24) kahan         
-   25) kms             26) lehmer          27) lotkin          28) magic         
-   29) minij           30) moler           31) neumann         32) oscillate     
-   33) parter          34) pascal          35) pei             36) phillips      
-   37) poisson         38) prolate         39) randcorr        40) rando         
-   41) randsvd         42) randsym         43) rohess          44) rosser        
-   45) sampling        46) shaw            47) spikes          48) toeplitz      
-   49) tridiag         50) triw            51) vand            52) wathen        
-   53) wilkinson       54) wing
-  Groups:
-    all           data          eigen         ill-cond    
-    inverse       pos-def       random        regprob     
-    sparse        symmetric 
+ Matrices:
+   1) baart            2) binomial         3) blur             4) cauchy        
+   5) chebspec         6) chow             7) circul           8) clement       
+   9) companion       10) deriv2          11) dingdong        12) fiedler       
+  13) forsythe        14) foxgood         15) frank           16) golub         
+  17) gravity         18) grcar           19) hadamard        20) hankel        
+  21) heat            22) hilb            23) invhilb         24) invol         
+  25) kahan           26) kms             27) lehmer          28) lotkin        
+  29) magic           30) minij           31) moler           32) neumann       
+  33) oscillate       34) parter          35) pascal          36) pei           
+  37) phillips        38) poisson         39) prolate         40) randcorr      
+  41) rando           42) randorth        43) randsvd         44) randsym       
+  45) rohess          46) rosser          47) sampling        48) shaw          
+  49) spikes          50) toeplitz        51) tridiag         52) triw          
+  53) ursell          54) vand            55) wathen          56) wilkinson     
+  57) wing          
+ Groups:
+  all           data          eigen         ill-cond    
+  inverse       pos-def       random        regprob     
+  sparse        symmetric  
+
+  julia> matrixdepot("randsym")
+     random symmetric matrix
+    ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+    Input options: 
+
+    •  n: the dimension of the matrix
 
   julia> matrixdepot("randsym", 5)
   5x5 Array{Float64,2}:
@@ -117,39 +121,28 @@ This is it. We can now use it from Matrix Depot::
   -0.536217   0.239696  1.72549     0.304016   1.5854   
   -0.0900839  0.302637  0.127008    1.5854    -0.656608 
 
-  julia> matrixdepot("randsym", Float32, 5)
-  5x5 Array{Float32,2}:
-  -0.633797  -0.154157   0.972601  0.554571  -0.692858
-  -0.154157  -0.319152  -0.710942  2.81623    1.2637  
-   0.972601  -0.710942  -0.165526  1.16547   -0.705227
-   0.554571   2.81623    1.16547   0.351268   0.410586
-  -0.692858   1.2637    -0.705227  0.410586  -0.786438
+  julia> A = matrixdepot("randorth", 5)
+  5x5 Array{Float64,2}:
+ -0.359134   0.401435   0.491005  -0.310518   0.610218
+ -0.524132  -0.474053  -0.53949   -0.390514   0.238764
+  0.627656   0.223519  -0.483424  -0.104706   0.558054
+ -0.171077   0.686038  -0.356957  -0.394757  -0.465654
+  0.416039  -0.305802   0.326723  -0.764383  -0.205834
 
-To make it more useful, we can declare the helper strings and group information::
+  julia> A'*A
+  5x5 Array{Float64,2}:
+  1.0           8.32667e-17   1.11022e-16   5.55112e-17  -6.93889e-17
+  8.32667e-17   1.0          -1.80411e-16  -2.77556e-17  -5.55112e-17
+  1.11022e-16  -1.80411e-16   1.0           1.94289e-16  -1.66533e-16
+  5.55112e-17  -2.77556e-17   1.94289e-16   1.0           1.38778e-16
+ -6.93889e-17  -5.55112e-17  -1.66533e-16   1.38778e-16   1.0 
 
-  function randsym{T}(::Type{T}, n)
-   A = zeros(T, n, n)
-    for j = 1:n
-        for i = j:n
-            A[i,j] = randn()
-        end
-    end
-    A = A + tril(A, -1)'
-    return A
-  end
-  include_generator(FunctionName, "randsym", randsym)
-  helplines = "random symmetric matrix:
-            \n Input options: [type, n]: the dimension of the matrix is n."
-  include_generator(Help, helplines, randsym)
+We can also add group information::
+
   include_generator(Group, "random", randsym)
   include_generator(Group, "symmetric", randsym)
 
-Now we can do::
-
-  julia> matrixdepot("randsym")
-  random symmetric matrix:
-            
-  Input options: [type, n]: the dimension of the matrix is n.
+Now if we type::
 
   julia> matrixdepot("random")
   9-element Array{ASCIIString,1}:
@@ -186,7 +179,8 @@ Now we can do::
   "wathen"   
   "wilkinson"
 
-Notice ``randsym`` is now part of the group ``symmetric`` and ``random``.
+the function ``randsym`` is now part of the group ``symmetric`` and
+``random``.
 
 
 It is a good idea to back up your changes. For example, we 
