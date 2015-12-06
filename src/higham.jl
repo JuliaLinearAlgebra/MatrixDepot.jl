@@ -216,6 +216,7 @@ function frank{T}(::Type{T}, n::Int, k::Int)
     k == 1 ?  F[p,p]' : error("k = 0 or 1, but get ", k)
 end
 frank{T}(::Type{T}, n::Int) = frank(T, n, 0)
+frank(args...) = frank(Float64, args...)
 
 #
 # Jordan block
@@ -251,7 +252,7 @@ function forsythe{T}(::Type{T}, n::Int , alpha, lambda)
     return F
 end
 forsythe{T}(::Type{T}, n::Int) = forsythe(T, n, sqrt(eps(T)), zero(T))
-
+forsythe(args...) = forsythe(Float64, args...)
 
 function oddmagic{T}(::Type{T}, n::Int)
     # compute the magic square of odd orders
@@ -317,6 +318,7 @@ function magic{T}(::Type{T}, n::Int)
     end
     return M
 end
+magic(n::Int) = magic(Float64, n)
 
 """
 Grcar Matrix
@@ -342,6 +344,7 @@ function grcar{T}(::Type{T}, n::Int, k::Int = 3)
     G = tril(triu(ones(T, n,n)), k) - diagm(ones(T, n-1), -1)
     return G
 end
+grcar(args...) = grcar(Float64, args...)
 
 """
 Triw Matrix
@@ -369,6 +372,7 @@ function triw{T}(::Type{T}, m::Int, n::Int, alpha, k::Int)
     return A
 end
 triw{T}(::Type{T}, n::Int) = triw(T, n, n,  -1, n-1)
+triw(args...) = triw(Float64, args...)
 
 """
 Moler Matrix
@@ -394,6 +398,7 @@ function moler{T}(::Type{T}, n::Int, alpha = -1.)
     M = triw(T, n, n, alpha, n - 1)' * triw(T, n, n, alpha, n -1 )
     return M
 end
+moler(args...) = moler(Float64, args...)
 
 """
 Pascal Matrix
@@ -427,6 +432,7 @@ function pascal{T}(::Type{T}, n::Int)
     end
     return P
 end
+pascal(n::Int) = pascal(Float64, n)
 
 """
 Kahan Matrix
@@ -466,6 +472,7 @@ function kahan{T}(::Type{T}, m::Int, n::Int, theta, pert)
 end
 kahan{T}(::Type{T}, n::Int, theta, pert) = kahan(T, n, n, theta, pert)
 kahan{T}(::Type{T}, n::Int) = kahan(T, n, n, 1.2, 25.)
+kahan(args...) = kahan(Float64, args...)
 
 """
 Pei Matrix
@@ -488,6 +495,7 @@ function pei{T}(::Type{T}, n::Int, alpha = 1)
     alpha = convert(T, alpha)
     return alpha*eye(T, n, n) + ones(T, n, n)
 end
+pei(args...) = pei(Float64, args...)
 
 """
 Vandermonde Matrix
@@ -525,6 +533,7 @@ function vand{T}(::Type{T}, p::Vector, n::Int)
 end
 vand{T}(::Type{T}, n::Int) = vand(T, [1:n;], n)
 vand{T}(::Type{T}, p::Vector) = vand(T, p, length(p))
+vand(args...) = vand(Float64, args...)
 
 """
 Involutory Matrix
@@ -551,6 +560,7 @@ function invol{T}(::Type{T}, n::Int)
     end
     return A
 end
+invol(n::Int) = invol(Float64, n)
 
 """
 Chebyshev spectral differentiation matrix
@@ -596,6 +606,7 @@ function chebspec{T}(::Type{T}, n::Int, k::Int = 0)
     k == 1 ? A = A[2:n, 2:n] : none
     return A
 end
+chebspec(args...) = chebspec(Float64, args...)
 
 """
 Lotkin matrix
@@ -617,6 +628,7 @@ function lotkin{T}(::Type{T}, n::Int)
     A[1,:] = ones(T,n)'
     return A
 end
+lotkin(n::Int) = lotkin(Float64, n)
 
 """
 Clement Matrix
@@ -655,6 +667,7 @@ function clement{T}(::Type{T}, n::Int, k::Int = 0)
     end
     return A
 end
+clement(args...) = clement(Float64, args...)
 
 """
 Fiedler Matrix
@@ -683,6 +696,7 @@ function fiedler{T}(::Type{T}, v::Vector)
     A = abs(A - A.') # nonconjugate transpose
 end
 fiedler{T}(::Type{T}, n::Int) = fiedler(T, [1:n;])
+fiedler(args...) = fiedler(Float64, args...)
 
 """
 MIN[I,J] matrix
@@ -706,6 +720,7 @@ function minij{T}(::Type{T}, n::Int)
     [A[i,j] = min(i,j) for i = 1:n, j = 1:n]
     return A
 end
+minij(n::Int) = minij(Float64, n)
 
 """
 Binomial Matrix
@@ -724,6 +739,7 @@ function binomialm{T}(::Type{T}, n::Int)
     U = L[n:-1:1, n:-1:1]
     return L*D*U
 end
+binomialm(n::Int) = binomialm(Float64, n)
 
 """
 Tridiagonal Matrix
@@ -749,7 +765,8 @@ Tridiagonal Matrix
             Numerical Algebra, Birkhauser, Basel, and Academic Press,
             New York, 1977, p. 155.
 """
-function tridiag{T}(::Type{T}, x::Vector, y::Vector, z::Vector)
+function tridiag{T}(::Type{T}, x::AbstractVector, y::AbstractVector, 
+                    z::AbstractVector)
     x = map((i)-> convert(T, i), x)
     y = map((i)-> convert(T, i), y)
     z = map((i)-> convert(T, i), z)
@@ -760,6 +777,7 @@ tridiag{T}(::Type{T}, n::Int, x::Int, y::Int, z::Int) =
 n == 1 ? y*ones(T,1,1) :
          tridiag(T, x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
 tridiag{T}(::Type{T}, n::Int) = tridiag(T, n, -1, 2, -1)
+tridiag(args...) = tridiag(Float64, args...)
 
 """
 Lehmer Matrix
@@ -785,6 +803,7 @@ function lehmer{T}(::Type{T}, n::Int)
     [A[i,j] = min(i,j) / max(i,j) for i = 1:n, j = 1:n]
     return A
 end
+lehmer(n::Int) = lehmer(Float64, n)
 
 """
 Parter Matrix
@@ -808,6 +827,7 @@ function parter{T}(::Type{T}, n::Int)
     [A[i,j] = one(T) / (i - j + 0.5) for i = 1:n, j = 1:n]
     return A
 end
+parter(n::Int) = parter(Float64, n)
 
 """
 Chow Matrix
@@ -843,6 +863,7 @@ function chow{T}(::Type{T}, n::Int, alpha, delta)
     return A
 end
 chow{T}(::Type{T}, n::Int) = chow(T, n, 1, 0)
+chow(args...) = chow(Float64, args...)
 
 #
 # newsign: newsign(0) = 1
@@ -903,6 +924,7 @@ function randcorr{T}(::Type{T}, n::Int)
     return (A + A')/2
 
 end
+randcorr(args...) = randcorr(Float64, args...)
 
 """
 Poisson Matrix
@@ -926,6 +948,7 @@ function poisson{T}(::Type{T}, n::Int)
     A = speye(T, n)
     return kron(A,S) + kron(S,A)
 end
+poisson(n::Int) = poisson(Float64, n)
 
 """
 Toeplitz Matrix
@@ -952,7 +975,7 @@ function toeplitz{T}(::Type{T}, vc::Vector, vr::Vector)
 end
 toeplitz{T}(::Type{T}, v::Vector) = toeplitz(T, v, v)
 toeplitz{T}(::Type{T}, n::Int) = toeplitz(T, [1:n;])
-
+toeplitz(args...) = toeplitz(Float64, args...)
 
 """
 Hankel Matrix
@@ -980,6 +1003,7 @@ function hankel{T}(::Type{T}, vc::Vector, vr::Vector)
 end
 hankel{T}(::Type{T}, v::Vector) = hankel(T, v, v)
 hankel{T}(::Type{T}, n::Int) = hankel(T, [1:n;])
+hankel(args...) = hankel(Float64, args...)
 
 """
 Prolate Matrix
@@ -1002,6 +1026,7 @@ function prolate{T}(::Type{T}, n::Int, w::Real)
     return toeplitz(T, v)
 end
 prolate{T}(::Type{T}, n::Int) = prolate(T, n, 0.25)
+prolate(args...) = prolate(Float64, args...)
 
 """
 Neumann matrix
@@ -1029,6 +1054,7 @@ function neumann{T}(::Type{T}, n::Int)
     A = speye(T, n)
     return kron(S,A) + kron(A,S)
 end
+neumann(n::Int) = neumann(Float64, n)
 
 #
 # Sylvester's orthogonal matrix
@@ -1127,7 +1153,7 @@ function rosser{T}(::Type{T}, n::Int, a, b)
     return A
 end
 rosser{T}(::Type{T}, n::Int) = rosser(T, n, rand(1:5), rand(1:5))
-
+rosser(args...) = rosser(Float64, args...)
 
 """
 Matrix with Application in Sampling Theory
@@ -1168,6 +1194,7 @@ function sampling{T}(::Type{T}, n::Int)
     p = T[1:n;] / n
     return sampling(T, p)
 end
+sampling(args...) = sampling(Float64, args...)
 
 """
 Wilkinson Matrix
@@ -1192,6 +1219,7 @@ function wilkinson{T}(::Type{T}, n::Int)
     A = Tridiagonal(ones(T,n-1), abs(T[-m:m;]), ones(T, n-1))
     return A
 end
+wilkinson(n::Int) = wilkinson(Float64, n)
 
 """
 Random Matrix with Element -1, 0, 1
@@ -1225,6 +1253,7 @@ function rando{T}(::Type{T}, m::Int, n::Int, k::Int)
 end
 rando{T}(::Type{T}, n::Int, k::Int) = rando(T, n, n, k)
 rando{T}(::Type{T}, n::Int) = rando(T, n, n, 1)
+rando(args...) = rando(Float64, args...)
 
 #
 # Pre-multiply by random orthogonal matrix
@@ -1318,6 +1347,7 @@ end
 randsvd{T}(::Type{T}, n::Int, kappa, mode) = randsvd(T, n, n, kappa, mode)
 randsvd{T}(::Type{T}, n::Int, kappa) = randsvd(T, n, kappa, 3)
 randsvd{T}(::Type{T}, n::Int) = randsvd(T, n, sqrt(1/eps(T)))
+randsvd(args...) = randsvd(Float64, args...)
 
 """
 Random Orthogonal Upper Hessenberg Matrix
@@ -1345,7 +1375,7 @@ function rohess{T}(::Type{T}, n::Int)
     end
     return H
 end
-
+rohess(n::Int) = rohess(Float64, n)
 
 """
 Kac-Murdock-Szego Toeplitz matrix
@@ -1373,6 +1403,7 @@ function kms{T}(::Type{T}, n::Int, rho::Number)
     return A
 end
 kms{T}(::Type{T}, n::Int) = kms(T, n, convert(T, 0.5))
+kms(args...) = kms(Float64, args...)
 
 """
 Wathen Matrix
@@ -1436,6 +1467,7 @@ function wathen{T}(::Type{T}, nx::Int, ny::Int)
     return sparse(Irow, Jrow, Xrow, n, n)
 end
 wathen{T}(::Type{T}, n::Int) = wathen(T, n, n)
+wathen(args...) = wathen(Float64, args...)
 
 """
 Golub matrix
@@ -1467,6 +1499,7 @@ function golub{T}(::Type{T}, n::Int)
     U = triu(U, 1) + eye(U)
     return L*U
 end
+golub(n::Int) = golub(Float64, n)
 
 """
 Companion matrix
@@ -1492,3 +1525,4 @@ function companion{T}(::Type{T}, v::AbstractVector)
     A
 end
 companion{T}(::Type{T}, n::Int) = companion(T, [1:n;])
+companion(args...) = companion(Float64, args...)

@@ -123,7 +123,7 @@ return a list of matrix names if `name` is a group name.
 function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
     if name in keys(matrixdict)
-        eval(parse("Base.Docs.@repl $(name)", raise = false))
+        eval(parse("Base.Docs.@repl $(matrixdict[name])", raise = false))
     elseif name in _matrix_class()
         matrices = matrixclass[name]
         return sort(matrices)
