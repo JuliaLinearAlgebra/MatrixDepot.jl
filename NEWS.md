@@ -1,5 +1,12 @@
 ## Matrix Depot Release Notes
 
+v0.5.0 (Coming soon)
+--------------------
+
+* drop support for Julia 0.3
+
+* better formatted documentation for matrix generators.
+
 v0.4.3
 ------
 

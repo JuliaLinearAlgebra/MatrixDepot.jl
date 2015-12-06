@@ -64,23 +64,24 @@ We can type the matrix name to get help.
 
 ```julia
 julia> matrixdepot("hilb")
-Hilbert matrix:
-             The Hilbert matrix is a very ill conditioned matrix. 
-             It is symmetric positive definite and totally positive. 
-             
- Input options:
-             
- 1. [type,] dim: the dimension of the matrix;
-             
- 2. [type,] row_dim, col_dim: the row and column dimension.
-             
- ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             
- Reference: M. D. Choi, Tricks or treats with the Hilbert matrix,
-             Amer. Math. Monthly, 90 (1983), pp. 301-312.
-             N. J. Higham, Accuracy and Stability of Numerical Algorithms,
-             Society for Industrial and Applied Mathematics, Philadelphia, PA,
-             USA, 2002; sec. 28.1.
+     Hilbert matrix
+    ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+  The Hilbert matrix is a very ill conditioned matrix. It is symmetric
+  positive definite and totally positive. 
+
+  Input options:
+
+    •  [type,] dim: the dimension of the matrix;
+
+    •  [type,] row_dim, col_dim: the row and column dimension.
+
+  ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+
+  Reference: M. D. Choi, Tricks or treats with the Hilbert matrix, Amer. Math.
+  Monthly, 90 (1983), pp. 301-312. N. J. Higham, Accuracy and Stability of
+  Numerical Algorithms, Society for Industrial and Applied Mathematics,
+  Philadelphia, PA, USA, 2002; sec. 28.1.
 ```
 
 We can also specify the data type
