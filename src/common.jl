@@ -176,12 +176,7 @@ function matrixdepot(name::AbstractString, method::Symbol)
         length(split(name, '/')) == 2 ? matdatadir = data_dir("uf"):
                                         matdatadir = data_dir("mm")
         pathfilename = string(matdatadir, '/', name, ".mtx")
-
-        if VERSION < v"0.4.0-dev+1419"
-            return MatrixMarket.mmread(pathfilename)
-        else
-            return sparse(Base.SparseMatrix.CHOLMOD.Sparse(pathfilename))
-        end
+        sparse(Base.SparseMatrix.CHOLMOD.Sparse(pathfilename))
     elseif method == :g || method == :get
         MatrixDepot.get(name)
     elseif method == :s || method == :search
@@ -335,4 +330,4 @@ function include_generator(::Type{Group}, groupname::AbstractString, f::Function
 end
 
 "return the name of the function `f` as a string."
-fname(f::Function) = VERSION < v"0.4-" ? string(f) : split(string(f), '.')[2]
+fname(f::Function) = split(string(f), '.')[2]

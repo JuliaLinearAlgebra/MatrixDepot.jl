@@ -1,20 +1,16 @@
 module MatrixDepot
-using Compat # support v3 and v4
 using GZip
-using MatrixMarket
+
 
 import Base: show, search
 
-if VERSION < v"0.4-"
-    using Docile
-end
 
 export
 
-# main function
-matrixdepot,
+  # main function
+  matrixdepot,
 
-@addgroup, @rmgroup
+  @addgroup, @rmgroup
 
 include("ufreader.jl")
 include("common.jl")        # main functions
