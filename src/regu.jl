@@ -109,9 +109,39 @@ end
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-#
-# Computation of the Second Derivative 
-# 
+"""
+Computation of the Second Derivative
+====================================
+A classical test problem for regularization algorithms:
+    This is a mildly ill-posed problem. It is a discretization
+    of a first kind Fredholm integral equation whose kernel K
+    is the Green's function for the second derivative.
+ 
+*Input options:*
+
++ [type,] n, example, [matrixonly]: the dimension of the 
+        matrix is n.  One choose between between the following right-hand
+        g and solution f: 
+
+ 
+        example = 1 gives g(s) = (s^3 - s)/6, f(t) = t.
+
+        example = 2 gives g(s) = exp(s) + (1 -e)s - 1, f(t) = exp(t)
+
+        example = 3 gives  g(s) = | (4s^3 - 3s)/24,  s < 0.5
+                                  | (-4s^3 + 12s^2 - 9s + 1)/24, s>= 0.5
+                           f(t) = | t, t < 0.5
+                           f(t) = | 1- t, t >= 0.5.
+
+        If `matrixonly = false`, the linear system A, b, x will be 
+        generated.  (`matrixonly = true` by default.)             
+
++ [type,] n, [matrixonly]: example = 1.
+
+*Reference:* P. C. Hansen, Regularization tools: A MATLAB pacakge for 
+    analysis and solution of discrete ill-posed problems. 
+    Numerical Algorithms, 6(1994), pp.1-35
+"""
 function deriv2{T}(::Type{T}, n::Int, example::Int, matrixonly::Bool = true)
     h = convert(T, one(T)/n); sqh = sqrt(h) 
     h32 = h*sqh; h2 = h^2; sqhi = one(T)/sqh
@@ -160,13 +190,26 @@ function deriv2{T}(::Type{T}, n::Int, example::Int, matrixonly::Bool = true)
         return RegProb(A, b, x)
     end
 end
-
 deriv2{T}(::Type{T}, n::Int, matrixonly::Bool = true) = deriv2(T, n, 1, matrixonly)
+deriv2(args...) = deriv2(Float64, args...)
 
 
-#
-# One-Dimensional Image Restoration Model
-# 
+"""
+One-Dimensional Image Restoration Model
+=======================================
+This test problem uses a first-kind Fredholm integral equation
+    to model a one-dimentional image restoration situation.
+
+*Input options:*
+
++ [type,] n, [matrixonly]: the dimesion of the matrix n must be even.
+    If matrixonly = false, the linear system A, b, x will be generated. 
+    (matrixonly = true by default.)
+
+*Reference:* C. B. Shaw, Jr., Improvements of the resolution of 
+    an instrument by numerical solution of an integral equation. 
+    J. Math. Ana. Appl. 37 (1972), 83-112.
+"""
 function shaw{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = pi/n; A = zeros(T, n, n)
@@ -197,9 +240,22 @@ function shaw{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     end
 end
 
-#
-# A Problem with a Discontinuous Solution
-#
+"""
+A Problem with a Discontinuous Solution
+=======================================
+
+*Input options:*
+
++ [type,] n, t1, t2, [matrixonly]: the dimension of matrix is n. 
+    t1 and t2 are two real scalars such that 0 < t1 < t2 < 1. 
+    If matrixonly = false, the linear system A, b, x will be generated. 
+    (matrixonly = true by default.);
+
++ [type,] n, [matrixonly]: t1 = 1/3 and t2 = 2/3.
+
+*Reference:* G. M. Wing, A Primer on Integral Equations of the 
+    First Kind, SIAM, 1991, p. 109.
+"""
 function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real, matrixonly = true)
     t1 < t2 || error("t1 must be smaller than t2")
     A = zeros(T, n, n); h = 1/n
@@ -222,9 +278,21 @@ function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real, matrixonly = true)
 end
 wing{T}(::Type{T}, n::Int, matrixonly = true) = wing(T, n, 1/3, 2/3, matrixonly)
 
-#
-# Severely Ill-posed Problem Suggested by Fox & Goodwin
-#
+"""
+Severely Ill-posed Problem Suggested by Fox & Goodwin
+=====================================================
+This is a model problem discretized by simple quadrature, which does 
+not satifiy the discrete Picard condition for the small singular values.
+
+*Input options:*
+
++ [type,] n, [matrixonly]: the dimension of the matrix is n.
+    If matrixonly = false, the linear system A, b, x will be generated. 
+    (matrixonly = true by default.)
+
+*Reference:* C. T. H. Baker, The Numerical Treatment of Integral
+    Equations, Clarendon Press, Oxford, 1977, p. 665.
+"""
 function foxgood{T}(::Type{T}, n::Int, matrixonly = true)
     h = 1/n; t = h*(T[1:n;] - one(T)/2)
 
@@ -240,9 +308,24 @@ function foxgood{T}(::Type{T}, n::Int, matrixonly = true)
     end
 end
 
-#
-# Inverse Heat Equation
-#
+"""
+Inverse Heat Equation
+=====================
+
+*Input options:*
+
++ [type,] n, κ, [matrixonly]: the dimension of the matrix is n and n 
+    must be even. κ controls the ill-conditioning of the matrix.
+    (κ = 5 gives a well-conditioned problem and κ = 1 
+     gives an ill conditoned problem). 
+    If matrixonly = false, the linear system A, b, x will be generated. 
+    (matrixonly = true by default.);
+
++ [type,] n, [matrixonly]: κ = 1.
+
+*Reference:* A. S. Carasso, Determining surface temperatures 
+    from interior observations, SIAM J. Appl. Math. 42 (1982), 558-574.
+"""
 function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = one(T)/n; t = T[h/2:h:1;]
@@ -277,9 +360,20 @@ function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly::Bool = true)
 end
 heat{T}(::Type{T}, n::Int, matrixonly::Bool = true) = heat(T, n, 1, matrixonly)
 
-#
-# First Kind Fredholm Integral Equation
-#
+"""
+Fredholm Integral Equation of the Fisrt Kind
+============================================
+
+*Input options:*
+
++ [type,] n, [matrixonly]: the dimenstion of the matrix is n.
+    If matrixonly = false, the linear system A, b, x will be generated. 
+    (matrixonly = true by default.)
+
+*Reference:* M. L. Baart, The use of auto-correlation for 
+    pesudo-rank determination in noisy ill-conditioned linear-squares
+    problems, IMA, J. Numer. Anal. 2 (1982), 241-247.
+"""
 function baart{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     hs = pi/(2*n); ht = pi/n; c = one(T)/(3*sqrt(2))
@@ -312,9 +406,20 @@ function baart{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     end
 end
 
-#
-# Phillips's "famous" problem
-#
+"""
+Phillips's \"famous\" problem
+=============================
+
+*Input options:*
+
++ [type,] n, [matrixonly]: the dimenstion of the matrix is n.
+    If matrixonly = false, the linear system A, b, x will be generated. 
+    (matrixonly = true by default.)
+
+*Reference:* D. L. Phillips, A technique for the numerical 
+    solution of certain integral equations of the first kind, J. ACM
+    9 (1962), 84-97.
+"""
 function phillips{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     mod(n, 4) == 0 || error("The dimension of the matrix must be a multiple of 4.")
 
@@ -366,9 +471,42 @@ end
 round_matlab{T<:Integer}(::Type{T}, x::AbstractFloat) = 
         @compat trunc(T,round_matlab(x))   
 
-#
-# one-dimensional gravity surveying problem
-#
+
+"""
+One-dimensional gravity surverying problem
+==========================================
+Discretization of a 1-D model problem in gravity surveying, in 
+    which a mass distribution f(t) is located at depth d, while the
+    vertical component of the gravity field g(s) is measured at the
+    surface. 
+
+*Input options:*
+
++ [type,] n, example, a, b, d, [matrixonly]: n is the dimension
+        of the matrix. Three examples are implemented.
+        
+
+       (a) example = 1 gives f(t) = sin(pi*t) + 0.5*sin(2*pi*t).
+
+       (b) example = 2 gives f(t) = piecewise linear function.
+
+       (c) example = 3 gives f(t) = piecewise constant function.
+ 
+       The t integration interval is fixed to [0, 1], while the s 
+       integration interval [a, b] can be specified by the user.
+       The parameter d is the depth at which the magnetic deposit is 
+       located. The larger the d, the faster the decay of the singular values. 
+
+       If matrixonly = false, the linear system A, b, x will be generated.
+       (matrixonly = true by default.)
+
++ [type,] n, example, [matrixonly]: a = 0, b = 1, d = 0.25;
+
++ [type,] n, [matrixonly]: example = 1, a = 0, b = 1, d = 0.25.            
+
+*Reference:* G. M. Wing and J. D. Zahrt, A Primer on Integral 
+            Equations of the First Kind, SIAM, Philadelphia, 1991, p. 17.
+"""
 function gravity{T}(::Type{T}, n::Int, example::Int, 
                     a::Number, b::Number, d::Number, matrixonly::Bool = true)
     dt = one(T)/n
@@ -406,9 +544,25 @@ gravity{T}(::Type{T}, n::Int, example::Int, matrixonly::Bool = true) =
 gravity{T}(::Type{T}, n::Int, matrixonly::Bool = true) = 
            gravity(T, n, 1, 0, 1, 0.25, matrixonly) 
 
-#
-# Image deblurring test problem
-#
+"""
+Image deblurring test problem
+=============================
+The generated matrix A is an n*n-by-n*n sparse, symmetric, 
+           doubly block Toeplitz matrix that models blurring of an n-by-n 
+           image by a Gaussian point spread function.
+
+*Input options:*
+
++ [type,] n, band, σ, [matrixonly]: the dimension of the matrix
+          is n^2. band is the half-bandwidth, only matrix elements within
+          a distance band-1 from the diagonal are nonzero. σ controls the
+          width of the Gaussin point spread function. The larger the σ, the 
+          wider the function and the more ill posed the problem. 
+          If matrixonly = false, the linear system A, b, x will be generated.
+              (matrixonly = true by default.)
+
++ [type,] n, [matrixonly]: band = 3, σ = 0.7.
+"""
 function blur{T}(::Type{T}, n::Int, band::Int, σ::Number, 
                  matrixonly::Bool = true)
     σ = convert(T, σ)
@@ -481,9 +635,22 @@ function parallax{T}(::Type{T}, n::Int)
 
 end
 
-#
-# Test problem with a "spiky" solution
-#
+"""
+Test problem with \"spike\" solution
+====================================
+Artifically generated discrete ill-posed problem.
+
+*Input options:*
+
++ [type,] n, t_max, [matrixonly]: the dimension of the 
+              matrix is n. t_max controls the length of the pulse train.
+              If matrixonly = false, the linear system A, b, x will be 
+              generated. (matrixonly = true by default.) The solution x
+              consists a unit step at t = .5 and a pulse train of spike
+              of decreasing magnitude at t = .5, 1.5, 2.5, ...;
+
++ [type,] n, [matrixonly]: t_max = 5.
+"""
 function spikes{T}(::Type{T}, n::Int, t_max::Int, matrixonly::Bool = true)
     del = convert(T, t_max/n)
     
@@ -525,9 +692,26 @@ function tomo{T}(::Type{T}, n::Int)
 
 end
 
-#
-# Integral equation with no square integrable solution
-#
+"""
+Integral equation with no square integrable solution 
+====================================================
+Discretization of a first kind Fredholm integral equation with 
+kernel `K` and right-hand side `g` given by
+                     `K(s,t) = 1/(s+t+1), g(s) = 1`,
+where both integration intervals are `[0, 1]`. The matrix `A`
+is a Hankel matrix.
+
+*Input options:*
+
++ [type,] n, [matrixonly]: the dimension of the matrix
+              is n. If matrixonly = false, the right-hand side b will also
+              be generated. (matrixonly = true by default).
+
+*Reference:* F. Ursell, Introduction to the theory of linear
+              integral equations., Chapter 1 in L. M. Delves & J. Walsh,
+              Numerical Solution of Integral Equations, Clarendon Press, 
+              1974.
+"""
 function ursell{T}(::Type{T}, n::Int, matrixonly::Bool = true)
     r = zeros(T, n); c = copy(r)
     for k = 1:n
