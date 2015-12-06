@@ -217,7 +217,7 @@ function matrixdepot(ur::UnitRange{Int})
     return matrixnamelist
 end
 
-IntOrUnitRange = @compat Union{Int, UnitRange{Int}}
+IntOrUnitRange = Union{Int, UnitRange{Int}}
 
 function matrixdepot(vs::IntOrUnitRange...)
     matrixnames = AbstractString[]

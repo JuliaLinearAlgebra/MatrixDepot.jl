@@ -474,8 +474,7 @@ function round_matlab(x::AbstractFloat)
     y = trunc(x)
     ifelse(x==y,y,trunc(2*x-y))
 end
-round_matlab{T<:Integer}(::Type{T}, x::AbstractFloat) = 
-        @compat trunc(T,round_matlab(x))   
+round_matlab{T<:Integer}(::Type{T}, x::AbstractFloat) = trunc(T,round_matlab(x))   
 
 
 """

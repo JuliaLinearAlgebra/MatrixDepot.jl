@@ -80,7 +80,7 @@ function hadamard{T}(::Type{T}, n::Integer)
     if n < 1
         lgn = 0
     else
-        lgn = @compat round(Integer, log2(n))
+        lgn = round(Integer, log2(n))
     end
     2^lgn != n && throw(ArgumentError("n must be positive integer and a power of 2."))
 
@@ -294,7 +294,7 @@ function magic{T}(::Type{T}, n::Integer)
         M = oddmagic(T, n)
     elseif mod(n, 4) == 0
         # n is doubly even
-        a = @compat floor(Integer, mod([1:n;], 4)/2)
+        a = floor(Integer, mod([1:n;], 4)/2)
         B = broadcast(==, a', a)
         M = broadcast(+, T[1:n:n^2;]',T[0:n-1;])
         for i = 1:n, j = 1:n
@@ -899,8 +899,8 @@ function randcorr{T}(::Type{T}, n::Integer)
 
     # Apply Given rotation to set A[i,i] = 1
     while length(l) > 0 && length(g) > 0
-        k =  @compat ceil(Integer, rand()*length(l))
-        h =  @compat ceil(Integer, rand()*length(g))
+        k =  ceil(Integer, rand()*length(l))
+        h =  ceil(Integer, rand()*length(g))
         i = l[k]
         j = g[h]
         if i > j
@@ -1090,7 +1090,7 @@ function rosser{T}(::Type{T}, n::Integer, a, b)
     if n < 1
         lgn = 0
     else
-        lgn = @compat round(Integer, log2(n))
+        lgn = round(Integer, log2(n))
     end
     2^lgn != n && throw(ArgumentError("n must be positive integer and a power of 2."))
 
@@ -1121,7 +1121,7 @@ function rosser{T}(::Type{T}, n::Integer, a, b)
         A = P' * B * P
     else
         lgn = lgn - 2
-        halfn = @compat round(Integer, n/2)
+        halfn = round(Integer, n/2)
         # using Sylvester's method
         P = P_block(T, a, b, b, a)
         m = 4
