@@ -1,5 +1,6 @@
 matrixdata = 
 """
+"random symmetric matrix"
 function randsym{T}(::Type{T}, n)
  A = zeros(T, n, n)
   for j = 1:n
@@ -10,10 +11,8 @@ function randsym{T}(::Type{T}, n)
   A = A + tril(A, -1)'
   return A
 end
+randsym(n) = randsym(Float64, n)
 include_generator(FunctionName, "randsym", randsym)
-helplines = "random symmetric matrix:
-          \n Input options: [type, n]: the dimension of the matrix is n."
-include_generator(Help, helplines, randsym)
 include_generator(Group, "random", randsym)
 include_generator(Group, "symmetric", randsym)
 """

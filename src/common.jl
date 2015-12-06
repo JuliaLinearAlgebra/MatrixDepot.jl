@@ -318,7 +318,6 @@ end
 abstract MatrixGenerator
 
 abstract FunctionName <: MatrixGenerator
-abstract Help <: MatrixGenerator
 abstract Group <: MatrixGenerator
 
 

@@ -239,6 +239,7 @@ function shaw{T}(::Type{T}, n::Int, matrixonly::Bool = true)
         return RegProb(A, b, x)
     end
 end
+shaw(args...) = shaw(Float64, args...)
 
 """
 A Problem with a Discontinuous Solution
@@ -277,6 +278,7 @@ function wing{T}(::Type{T}, n::Int, t1::Real, t2::Real, matrixonly = true)
     end
 end
 wing{T}(::Type{T}, n::Int, matrixonly = true) = wing(T, n, 1/3, 2/3, matrixonly)
+wing(args...) = wing(Float64, args...)
 
 """
 Severely Ill-posed Problem Suggested by Fox & Goodwin
@@ -307,6 +309,7 @@ function foxgood{T}(::Type{T}, n::Int, matrixonly = true)
         return RegProb(A, b, x)
     end
 end
+foxgood(args...) = foxgood(Float64, args...)
 
 """
 Inverse Heat Equation
@@ -359,6 +362,7 @@ function heat{T}(::Type{T}, n::Int, κ::Real, matrixonly::Bool = true)
     end
 end
 heat{T}(::Type{T}, n::Int, matrixonly::Bool = true) = heat(T, n, 1, matrixonly)
+heat(args...) = heat(Float64, args...)
 
 """
 Fredholm Integral Equation of the Fisrt Kind
@@ -405,6 +409,7 @@ function baart{T}(::Type{T}, n::Int, matrixonly::Bool = true)
         return RegProb(A, b, x)
     end
 end
+baart(args...) = baart(Float64, args...)
 
 """
 Phillips's \"famous\" problem
@@ -453,6 +458,7 @@ function phillips{T}(::Type{T}, n::Int, matrixonly::Bool = true)
         return RegProb(A, b, x)
     end
 end
+phillips(args...) = phillips(Float64, args...)
 
 # replicates the grid vectors xgv and ygv to produce a full grid. 
 function meshgrid(xgv, ygv)
@@ -543,6 +549,7 @@ gravity{T}(::Type{T}, n::Int, example::Int, matrixonly::Bool = true) =
 
 gravity{T}(::Type{T}, n::Int, matrixonly::Bool = true) = 
            gravity(T, n, 1, 0, 1, 0.25, matrixonly) 
+gravity(args...) = gravity(Float64, args...)
 
 """
 Image deblurring test problem
@@ -619,6 +626,7 @@ function blur{T}(::Type{T}, n::Int, band::Int, σ::Number,
     end
 end
 blur{T}(::Type{T}, n::Int, matrixonly::Bool = true) = blur(T, n, 3, 0.7, matrixonly)
+blur(args...) = blur(Float64, args...)
 
 
 #
@@ -680,10 +688,10 @@ function spikes{T}(::Type{T}, n::Int, t_max::Int, matrixonly::Bool = true)
         b = A*x
         return RegProb(A, b, x) 
     end
-
 end
 spikes{T}(::Type{T}, n::Int, matrixonly::Bool = true) = 
          spikes(T, n, 5, matrixonly)
+spikes(args...) = spikes(Float64, args...)
 
 #
 # Two-dimensional tomography problem with sparse matrix
@@ -733,3 +741,4 @@ function ursell{T}(::Type{T}, n::Int, matrixonly::Bool = true)
         return RegProbNoSolution(A, b) 
     end
 end
+ursell(args...) = ursell(Float64, args...)
