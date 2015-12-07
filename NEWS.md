@@ -1,11 +1,19 @@
 ## Matrix Depot Release Notes
 
-v0.5.0 (Coming soon)
---------------------
+v0.5.0 
+------
 
-* drop support for Julia 0.3
+* Drop support for Julia 0.3
 
-* better formatted documentation for matrix generators.
+* Various enhancements, including:
+
+  - better formatted documentation for matrix generators.
+
+  - automatically includes all Julia files in the directory
+	`myMatrixDepot`, so that adding new matrix generators is more
+	convenient and flexible. See
+	http://matrixdepotjl.readthedocs.org/en/latest/user.html more
+	details.
 
 v0.4.3
 ------

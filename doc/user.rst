@@ -43,8 +43,8 @@ matrix generator ``randsym`` and ``randorth``::
   *Input options:* 
 
   + n: the dimension of the matrix
-    """
-    function randsym(n)
+  """
+  function randsym(n)
       A = zeros(n, n)
       for j = 1:n
         for i = j:n
@@ -53,17 +53,17 @@ matrix generator ``randsym`` and ``randorth``::
       end
       A = A + tril(A, -1)'
       return A
-   end
+  end
 
-   """
-   random Orthogonal matrix
-   ========================
+  """
+  random Orthogonal matrix
+  ========================
 
-   *Input options:*
+  *Input options:*
 
-   + n: the dimension of the matrix
-     """	
-     randorth(n) = qr(randn(n,n))[1]
+  + n: the dimension of the matrix
+  """	
+  randorth(n) = qr(randn(n,n))[1]
 
 We first need to find out where Matrix Depot is installed. This 
 can be done by::

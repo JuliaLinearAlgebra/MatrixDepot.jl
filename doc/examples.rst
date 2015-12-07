@@ -73,31 +73,43 @@ properties.
 .. code:: 
 
     matrixdepot("hilb")
+     Hilbert matrix
+    ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-   Hilbert matrix: 
-             
-    Input options: 
-             
-    [type,] dim: the dimension of the matrix
-             
-    [type,] row_dim, col_dim: the row and column dimension 
-             
-    ['inverse', 'ill-cond', 'symmetric', 'pos-def']
+    The Hilbert matrix is a very ill conditioned matrix. It is symmetric
+    positive definite and totally positive. 
 
+    Input options:
 
+      •  [type,] dim: the dimension of the matrix;
+
+      •  [type,] row_dim, col_dim: the row and column dimensions.
+
+    Groups: ["inverse", "ill-cond", "symmetric", "pos-def"]
+
+    Reference: M. D. Choi, Tricks or treats with the Hilbert matrix, Amer. Math.
+    Monthly, 90 (1983), pp. 301-312.
+
+    N. J. Higham, Accuracy and Stability of Numerical Algorithms, Society for
+    Industrial and Applied Mathematics, Philadelphia, PA, USA, 2002; sec. 28.1
 
 .. code::
 
    matrixdepot("hadamard")
+     Hadamard matrix
+    ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-   Hadamard matrix: 
-             
-    Input options: 
-             
-    [type,] dim: the dimension of the matrix, n is a power of 2 
-             
-    ['inverse', 'orthogonal', 'eigen']
+   The Hadamard matrix is a square matrix whose entries are 1 or -1. It was
+   named after Jacques Hadamard. The rows of a Hadamard matrix are orthogonal.
 
+   Input options:
+
+     •  [type,] n: the dimension of the matrix, n is a power of 2.
+
+   Groups: ["inverse", "orthogonal", "eigen"]
+
+   Reference: S. W. Golomb and L. D. Baumert, The search for Hadamard matrices,
+   Amer. Math. Monthly, 70 (1963) pp. 12-17
 
 
 From the information given, we notice that we can create a 4-by-6

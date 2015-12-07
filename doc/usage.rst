@@ -54,24 +54,25 @@ matrices is symbolized by ``"symmetric"``.
   Return the documentation of ``matrix_name``, including input
   options, groups and reference. For example::
 
-    julia> matrixdepot("moler")
-    Moler Matrix:
-                The Moler matrix is a symmetric positive definite matrix. 
-                It has one small eigenvalue.
-             
-    Input options:
-             
-    1. [type,] dim, alpha: dim is the dimension of the matrix,
-                 alpha is a scalar;
-             
-    2. [type,] dim: alpha = -1.
-             
-    ['inverse', 'ill-cond', 'symmetric', 'pos-def']
-             
-    Reference:  J.C. Nash, Compact Numerical Methods for Computers:
-                Linear Algebra and Function Minimisation, second edition,
-                Adam Hilger, Bristol, 1990 (Appendix 1).
+   julia> matrixdepot("moler")
+     Moler Matrix
+    ≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
+    The Moler matrix is a symmetric positive definite matrix. It has one small
+    eigenvalue.
+
+    Input options:
+
+      •  [type,] dim, alpha: dim is the dimension of the matrix, alpha is a
+         scalar;
+
+      •  [type,] dim: alpha = -1.
+
+    Groups: ["inverse", "ill-cond", "symmetric", "pos-def"]
+
+    Reference: J.C. Nash, Compact Numerical Methods for Computers: Linear
+    Algebra and Function Minimisation, second edition, Adam Hilger, Bristol,
+    1990 (Appendix 1).
 
 .. function:: matrixdepot(group_name)
 
