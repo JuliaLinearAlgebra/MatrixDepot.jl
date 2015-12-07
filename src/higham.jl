@@ -68,7 +68,7 @@ a Hadamard matrix are orthogonal.
          
 *Input options:*
 
-+ [type,] dim: the dimension of the matrix, n is a power of 2.
++ [type,] n: the dimension of the matrix, n is a power of 2.
 
 ['inverse', 'orthogonal', 'eigen']
          
@@ -164,7 +164,7 @@ Dingdong matrix
 ===============
 The Dingdong matrix is a symmetric Hankel matrix invented
 by DR. F. N. Ris of IBM, Thomas J Watson Research Centre.
-The eigenvalues cluster around π/2 and -π/2.
+The eigenvalues cluster around `π/2` and `-π/2`.
 
 *Input options:*
               
@@ -195,9 +195,10 @@ very ill conditioned.
 
 *Input options:*
               
-+ [type,] n, k: n is the dimension of the matrix, k = 0 or 1.
-    If k = 1 the matrix reflect about the anti-diagonal;
-    2. [type,] n: n is the dimension of the matrix.
++ [type,] n, k: `n` is the dimension of the matrix, `k = 0 or 1`.
+    If `k = 1` the matrix reflect about the anti-diagonal;
+
++ [type,] n: `n` is the dimension of the matrix.
 
    ['ill-cond', 'eigen']
 
@@ -236,11 +237,12 @@ This generator is adapted from N. J. Higham's Test Matrix Toolbox.
     
 *Input options:*
 
-+ [type,] n, alpha, lambda: n is the dimension of the matrix.
-    alpha and lambda are scalars;
++ [type,] n, alpha, lambda: `n` is the dimension of the matrix.
+    `alpha` and `lambda` are scalars;
 
-+ [type,] n: alpha = sqrt(eps(type)) and lambda = 0.
-    
++ [type,] n: `alpha = sqrt(eps(type))` and `lambda = 0`.
+
+
 ['inverse', 'ill-cond', 'eigen']  
 """
 function forsythe{T}(::Type{T}, n::Integer , alpha, lambda)
@@ -328,8 +330,8 @@ eigenvalues.
 
 *Input options:*
 
-+ [type,] dim, k: dim is the dimension of the matrix and
-    k is the number of superdiagonals;
++ [type,] dim, k: `dim` is the dimension of the matrix and
+    `k` is the number of superdiagonals;
 
 + [type,] dim: the dimension of the matrix.
 
@@ -353,10 +355,10 @@ Upper triangular matrices discussed by Wilkinson and others.
 
 *Input options:*
 
-+ [type,] row_dim, col_dim, α, k: row_dim and col_dim
-        are row and column dimension of the matrix. α is a
++ [type,] row_dim, col_dim, α, k: `row_dim` and `col_dim`
+        are row and column dimension of the matrix. `α` is a
         scalar representing the entries on the superdiagonals.
-        k is the number of superdiagonals;
+        `k` is the number of superdiagonals;
 
 + [type,] dim: the dimension of the matrix.
 
@@ -382,11 +384,12 @@ It has one small eigenvalue.
 
 *Input options:*
 
-+ [type,] dim, alpha: dim is the dimension of the matrix,
-        alpha is a scalar;
++ [type,] dim, alpha: `dim` is the dimension of the matrix,
+        `alpha` is a scalar;
 
-+ [type,] dim: alpha = -1.
-        
++ [type,] dim: `alpha = -1`.
+
+
 ['inverse', 'ill-cond', 'symmetric', 'pos-def']
 
 *Reference:*  J.C. Nash, Compact Numerical Methods for Computers:
