@@ -20,7 +20,7 @@ A2 = matrixdepot("randsvd", n, kappa, 2)
 A1 = matrixdepot("randsvd", n, kappa, 1)
 θ = matrixdepot("randsvd", 1)
 try 
-    matridepot("randsvd", n, kappa, 6)
+    matridepot("randsvd", 5, kappa, 6)
 catch ArgumentError
     println("randsvd: invalid mode value")
 end

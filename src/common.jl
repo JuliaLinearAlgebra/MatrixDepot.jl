@@ -233,16 +233,12 @@ end
 
 # Return a list of matrix names with common properties
 # when multiple properties are given.
-function matrixdepot(prop1::AbstractString, otherprops::AbstractString...)
-    if length(otherprops) == 0
-        matrixdepot(prop1)
-    else
-        commonprop = matrixdepot(prop1)
-        for prop in otherprops
-            commonprop = intersect(commonprop, matrixdepot(prop))
-        end
+function matrixdepot(props::AbstractString...)
+    common = matrixdepot(props[1])
+    for prop in props[2:end]
+        common = intersect(common, matrixdepot(prop))
     end
-    return commonprop
+    return common
 end
 
 
@@ -311,7 +307,6 @@ end
 ################################
 
 abstract MatrixGenerator
-
 abstract FunctionName <: MatrixGenerator
 abstract Group <: MatrixGenerator
 

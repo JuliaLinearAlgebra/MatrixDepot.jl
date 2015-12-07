@@ -36,7 +36,7 @@ matrixdepot("epb0", :get)
 
 # matrix market
 matrixdepot("Harwell-Boeing/lanpro/nos5", :get)
-
+matrixdepot()
 # rm data
 
 

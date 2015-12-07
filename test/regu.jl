@@ -20,6 +20,7 @@ A = matrixdepot("deriv2", n)
 
 
 r = matrixdepot("shaw", 2*n, false)
+A = matrixdepot("shaw", 2*n)
 
 print(r)
 
@@ -28,6 +29,7 @@ print(r)
 rf32 = matrixdepot("shaw", Float32, 2*n, false)
 
 r = matrixdepot("wing", n, false)
+A = matrixdepot("wing", n)
 
 @test r.A == matrixdepot("wing", n, 1/3, 2/3, false).A
 
