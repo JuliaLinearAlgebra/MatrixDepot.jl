@@ -8,11 +8,11 @@ It is symmetric positive definite and totally positive.
 
 *Input options:*
 
-+ `[type,] dim`: the dimension of the matrix;
++ [type,] dim: the dimension of the matrix;
 
-+ `[type,] row_dim, col_dim`: the row and column dimensions.
++ [type,] row_dim, col_dim: the row and column dimensions.
 
-*Groups:* `["inverse", "ill-cond", "symmetric", "pos-def"]`
+*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
 *Reference:* M. D. Choi, Tricks or treats with the Hilbert matrix,
 Amer. Math. Monthly, 90 (1983), pp. 301-312.
@@ -37,9 +37,9 @@ Inverse of Hilbert matrix
 =========================
 *Input options:*
 
-+ `[type,] dim`: the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 
-*Groups:* `["inverse", "ill-cond", "symmetric","pos-def"]`
+*Groups:* ["inverse", "ill-cond", "symmetric","pos-def"]
 
 *Reference:* M. D. Choi, Tricks or treats with the Hilbert matrix,
     Amer. Math. Monthly, 90 (1983), pp. 301-312.
@@ -70,9 +70,9 @@ a Hadamard matrix are orthogonal.
          
 *Input options:*
 
-+ `[type,] n`: the dimension of the matrix, `n` is a power of 2.
++ [type,] n: the dimension of the matrix, `n` is a power of 2.
 
-*Groups:* `["inverse", "orthogonal", "eigen"]`
+*Groups:* ["inverse", "orthogonal", "eigen"]
 
 *Reference:* S. W. Golomb and L. D. Baumert, The search for
 Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17
@@ -102,13 +102,13 @@ Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is
 
 *Input options*:
 
- + `[type,] vec1, vec2`: two vectors;
+ + [type,] vec1, vec2: two vectors;
 
- + `[type,] vec`: a vector;
+ + [type,] vec: a vector;
 
- + `[type,] dim`: the dimension of the matrix.
+ + [type,] dim: the dimension of the matrix.
 
-*Groups:* `["inverse", "ill-cond", "symmetric", "pos-def"]`
+*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
 *Reference:*  N. J. Higham, Accuracy and Stability of Numerical Algorithms,
 Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 
@@ -136,13 +136,13 @@ step forward.
                  
 *Input options:*
                  
-+ `[type,] vec, n`: a vector and the column dimension;
++ [type,] vec, n: a vector and the column dimension;
 
-+ `[type,] vec`: a vector;
++ [type,] vec: a vector;
 
-+ `[type,] dim`: the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 
-*Groups:* `["symmetric", "pos-def", "eigen"]`
+*Groups:* ["symmetric", "pos-def", "eigen"]
 
 *Reference:*  P. J. Davis, Circulant Matrices, John Wiley, 1977.
 """
@@ -170,7 +170,7 @@ The eigenvalues cluster around `π/2` and `-π/2`.
 
 *Input options:*
               
-+ `[type,] n`: the dimension of the matrix.
++ [type,] n: the dimension of the matrix.
 
 *Groups:* ["symmetric", "eigen"]
               
@@ -197,12 +197,12 @@ very ill conditioned.
 
 *Input options:*
               
-+ `[type,] n, k`: `n` is the dimension of the matrix, `k = 0 or 1`.
++ [type,] n, k: `n` is the dimension of the matrix, `k = 0 or 1`.
     If `k = 1` the matrix reflect about the anti-diagonal;
 
-+ `[type,] n`: `n` is the dimension of the matrix.
++ [type,] n: `n` is the dimension of the matrix.
 
-*Groups:* `["ill-cond", "eigen"]`
+*Groups:* ["ill-cond", "eigen"]
 
 *Reference:*  W. L. Frank, Computing eigenvalues of complex matrices
     by determinant evaluation and by methods of Danilewski and Wielandt,
@@ -245,7 +245,7 @@ This generator is adapted from N. J. Higham's Test Matrix Toolbox.
 + [type,] n: `alpha = sqrt(eps(type))` and `lambda = 0`.
 
 
-["inverse", "ill-cond", "eigen"]  
+*Groups:* ["inverse", "ill-cond", "eigen"]  
 """
 function forsythe{T}(::Type{T}, n::Integer , alpha, lambda)
     # Generate the forsythe matrix
@@ -288,7 +288,7 @@ The magic matrix is a matrix with integer entries such that
 
 + [type,] dim: the dimension of the matrix.
 
-["inverse"]
+*Groups:* ["inverse"]
 """
 function magic{T}(::Type{T}, n::Integer)
     # Compute a magic square of order n
@@ -337,7 +337,7 @@ eigenvalues.
 
 + [type,] dim: the dimension of the matrix.
 
-  ["eigen"]
+*Groups:* ["eigen"]
 
 *Reference:* J. F. Grcar, Operator coefficient methods
     for linear equations, Report SAND89-8691, Sandia National
@@ -364,7 +364,7 @@ Upper triangular matrices discussed by Wilkinson and others.
 
 + [type,] dim: the dimension of the matrix.
 
-["inverse", "ill-cond"]
+*Groups:* ["inverse", "ill-cond"]
 
 *Reference:*  G. H. Golub and J. H. Wilkinson, Ill-conditioned
 eigensystems and the computation of the Jordan canonical form,
@@ -391,8 +391,7 @@ It has one small eigenvalue.
 
 + [type,] dim: `alpha = -1`.
 
-
-["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
 *Reference:*  J.C. Nash, Compact Numerical Methods for Computers:
     Linear Algebra and Function Minimisation, second edition,
@@ -414,7 +413,7 @@ The Pascal matrix’s anti-diagonals form the Pascal’s triangle.
 
 + [type,] dim: the dimension of the matrix.
 
-["inverse", "ill-cond", "symmetric", "pos-def", "eigen"]
+*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def", "eigen"]
 
 *Reference:* R. Brawer and M. Pirovino, The linear algebra of
     the Pascal matrix, Linear Algebra and Appl., 174 (1992),
@@ -456,7 +455,7 @@ The Kahan matrix is an upper trapezoidal matrix, i.e., the
 
 + [type,] dim: `θ = 1.2`, `pert = 25`.
 
-["inverse", "ill-cond"]
+*Groups:* ["inverse", "ill-cond"]
 
 *Reference:* W. Kahan, Numerical linear algebra, Canadian Math.
     Bulletin, 9 (1966), pp. 757-801.
@@ -491,7 +490,7 @@ The Pei matrix is a symmetric matrix with known inversion.
 
 + [type,] dim: the dimension of the matrix.
 
-["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
 *Reference:* M. L. Pei, A test matrix for inversion procedures,
     Comm. ACM, 5 (1962), p. 508.
@@ -515,7 +514,7 @@ The inverse and determinat are known explicity.
 
 + [type,] dim
 
-["inverse", "ill-cond"]
+*Groups:* ["inverse", "ill-cond"]
 
 *Reference:* N. J. Higham, Stability analysis of algorithms
     for solving confluent Vandermonde-like systems, SIAM J.
@@ -547,9 +546,9 @@ An involutory matrix is a matrix that is its own inverse.
 
 *Input options:*
               
-+ `[type,] dim`: `dim` is the dimension of the matrix.
++ [type,] dim: `dim` is the dimension of the matrix.
 
-["inverse", "ill-cond", "eigen"]
+*Groups:* ["inverse", "ill-cond", "eigen"]
 
 *Reference:* A. S. Householder and J. A. Carpenter, The
         singular values of involutory and of idempotent matrices,
@@ -570,19 +569,19 @@ invol(n::Integer) = invol(Float64, n)
 """
 Chebyshev spectral differentiation matrix
 =========================================
-If k = 0,the generated matrix is nilpotent and a vector with 
-        all one entries is a null vector. If k = 1, the generated 
+If `k = 0`,the generated matrix is nilpotent and a vector with 
+        all one entries is a null vector. If `k = 1`, the generated 
         matrix is nonsingular and well-conditioned. Its eigenvalues 
         have negative real parts.
 
 *Input options:*
 
-+ [type,] dim, k: dim is the dimension of the matrix and
-        k = 0 or 1.
++ [type,] dim, k: `dim` is the dimension of the matrix and
+        `k = 0 or 1`.
 
 + [type,] dim.
 
-["eigen"]
+*Groups:* ["eigen"]
 
 *Reference:* L. N. Trefethen and M. R. Trummer, An instability
         phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.
@@ -622,9 +621,9 @@ The Lotkin matrix is the Hilbert matrix with its first row
 
 *Input options:*
 
-+ [type,] dim: dim is the dimension of the matrix.
++ [type,] dim: `dim` is the dimension of the matrix.
 
-["inverse", "ill-cond", "eigen"]
+*Groups:* ["inverse", "ill-cond", "eigen"]
 
 *Reference:* M. Lotkin, A set of test matrices, MTAC, 9 (1955), pp. 153-161.
 """
@@ -643,13 +642,13 @@ The Clement matrix is a tridiagonal matrix with zero
 
 *Input options:*
 
-+ [type,] dim, k: dim is the dimension of the matrix.
-        If k = 0, the matrix is Tridiagonal. If k = 1, the matrix
++ [type,] dim, k: `dim` is the dimension of the matrix.
+        If `k = 0`, the matrix is Tridiagonal. If `k = 1`, the matrix
         is SymTridiagonal;
 
-+ [type,] dim: k = 0.
++ [type,] dim: `k = 0`.
 
-["inverse", "symmetric", "eigen"]
+*Groups:* ["inverse", "symmetric", "eigen"]
 
 *Reference:* P. A. Clement, A class of triple-diagonal
         matrices for test purposes, SIAM Review, 1 (1959), pp. 50-52.
@@ -682,11 +681,11 @@ The Fiedler matrix is symmetric matrix with a dominant
 
 *Input options:*
 
-+ [type,] vec: vec is a vector;
++ [type,] vec: a vector;
 
-+ [type,] dim: dim is the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 
-["inverse", "symmetric", "eigen"]
+*Groups: *["inverse", "symmetric", "eigen"]
 
 *Reference:* G. Szego, Solution to problem 3705, Amer. Math.
             Monthly, 43 (1936), pp. 246-259.
@@ -712,9 +711,9 @@ A matrix with `(i,j)` entry `min(i,j)`. It is a symmetric positive
 
 *Input options:*
 
-+ [type,] dim: dim is the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 
-["inverse", "symmetric", "pos-def", "eigen"]
+*Groups:* ["inverse", "symmetric", "pos-def", "eigen"]
 
 *Reference:* J. Fortiana and C. M. Cuadras, A family of matrices,
             the discretized Brownian bridge, and distance-based regression,
@@ -734,7 +733,7 @@ The matrix is a multiple of an involutory matrix.
 
 *Input options:*
 
-+ [type,] dim: dim is the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 """
 function binomialm{T}(::Type{T}, n::Integer)
     # Mulitiple of involutory matrix
@@ -752,19 +751,19 @@ Tridiagonal Matrix
 
 *Input options:*
 
-+ [type,] v1, v2, v3: v1 and v3 are vectors of subdiagonal
-            and superdiagonal elements, respectively, and v2 is a vector
++ [type,] v1, v2, v3: `v1` and `v3` are vectors of subdiagonal
+            and superdiagonal elements, respectively, and `v2` is a vector
             of diagonal elements;
 
-+ [type,] dim, x, y, z: dim is the dimension of the matrix,
-            x, y, z are scalars. x and z are the subdiagonal and 
-            superdiagonal elements, respectively, and y is the diagonal 
++ [type,] dim, x, y, z: `dim` is the dimension of the matrix,
+            `x`, `y`, `z` are scalars. `x` and `z` are the subdiagonal and 
+            superdiagonal elements, respectively, and `y` is the diagonal 
             elements;
 
-+ [type,] dim: x = -1, y = 2, z = -1. This matrix is also
++ [type,] dim: `x = -1, y = 2, z = -1`. This matrix is also
             known as the second difference matrix.
 
-["inverse", "ill-cond", "pos-def", "eigen"]
+*Groups:* ["inverse", "ill-cond", "pos-def", "eigen"]
 
 *Reference:* J. Todd, Basic Numerical Mathematics, Vol. 2:
             Numerical Algebra, Birkhauser, Basel, and Academic Press,
@@ -795,7 +794,7 @@ The Lehmer matrix is a symmetric positive definite matrix.
 
 + [type,] dim: the dimension of the matrix.
 
-["inverse", "symmetric", "pos-def"]
+*Groups:* ["inverse", "symmetric", "pos-def"]
 
 *Reference:* M. Newman and J. Todd, The evaluation of
             matrix inversion programs, J. Soc. Indust. Appl. Math.,
@@ -814,13 +813,13 @@ lehmer(n::Integer) = lehmer(Float64, n)
 Parter Matrix
 =============
 The Parter matrix is a Toeplitz and Cauchy matrix 
-            with singular values near π.
+            with singular values near `π`.
 
 *Input options:*
 
 + [type,] dim: the dimension of the matrix.
 
-["eigen"]
+*Groups:* ["eigen"]
 
 *Reference:* The MathWorks Newsletter, Volume 1, Issue 1,
             March 1986, page 2. S. V. Parter, On the distribution of the
@@ -841,13 +840,13 @@ The Chow matrix is a singular Toeplitz lower Hessenberg matrix.
 
 *Input options:*
 
-+ [type,] dim, alpha, delta: dim is dimension of the matrix.
++ [type,] dim, alpha, delta: `dim` is dimension of the matrix.
             `alpha`, `delta` are scalars such that `A[i,i] = alpha + delta` and
             `A[i,j] = alpha^(i + 1 -j)` for `j + 1 <= i`;
 
 + [type,] dim: `alpha = 1`, `delta = 0`.
 
-["eigen"]
+*Groups:* ["eigen"]
 
 *Reference:* T. S. Chow, A class of Hessenberg matrices with known
                 eigenvalues and inverses, SIAM Review, 11 (1969), pp. 391-395.
@@ -888,7 +887,7 @@ A random correlation matrix is a symmetric positive
 
 + [type,] dim: the dimension of the matrix.
 
-["symmetric", 'pos-semidef', "random"]
+*Groups:* ["symmetric", 'pos-semidef', "random"]
 """
 function randcorr{T}(::Type{T}, n::Integer)
     x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
@@ -940,10 +939,10 @@ A block tridiagonal matrix from Poisson’s equation.
 
 *Input options:*
 
-+ [type,] n: the dimension of the matirx is n^2.
++ [type,] n: the dimension of the matirx is `n^2`.
 
            
-["inverse", "symmetric", "pos-def", "eigen", "sparse"]
+*Groups:* ["inverse", "symmetric", "pos-def", "eigen", "sparse"]
 
 *Reference:* G. H. Golub and C. F. Van Loan, Matrix Computations,
           second edition, Johns Hopkins University Press, Baltimore,
@@ -964,11 +963,11 @@ A Toeplitz matrix is a matrix in which each descending
 
 *Input options:*
 
-+ [type,] vc, vr: vc and vr are the first column and row of the matrix;
++ [type,] vc, vr: `vc` and `vr` are the first column and row of the matrix;
 
-+ [type,] v: symmatric case, i.e., vc = vr = v;
++ [type,] v: symmatric case, i.e., `vc = vr = v`;
 
-+ [type,] n: the dimension of the matrix is n, v = [1:n;] is the first
++ [type,] n: the dimension of the matrix is `n`, `v = [1:n;]` is the first
                 row and column vector.
 """
 function toeplitz{T}(::Type{T}, vc::Vector, vr::Vector)
@@ -991,13 +990,13 @@ A Hankel matrix is a matrix that is symmetric and constant
 
 *Input options:*
 
-+ [type,] vc, vr: vc and vc are the first column and last row of the 
-       matrix. If the last element of vc differs from the first element 
-                of vr, the last element of rc prevails;
++ [type,] vc, vr: `vc` and `vc` are the first column and last row of the 
+       matrix. If the last element of `vc` differs from the first element 
+                of `vr`, the last element of `rc` prevails;
 
-+ [type,] v: vc = vr = v;
++ [type,] v: `vc = vr = v`;
 
-+ [type,] n: the dimension of the matrix is n, v = [1:n;].
++ [type,] n: the dimension of the matrix is `n`, `v = [1:n;]`.
 """
 function hankel{T}(::Type{T}, vc::Vector, vr::Vector)
     p = [vc; vr[2:end]]
@@ -1018,9 +1017,9 @@ A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
 
 *Input options:*
 
-+ [type,] n, w: the dimension of the matrix is n, w is a real scalar;
++ [type,] n, w: the dimension of the matrix is `n`, `w` is a real scalar;
 
-+ [type,] n: the case when w = 0.25.
++ [type,] n: the case when `w = 0.25`.
 
 *Reference:* J. M. Varah. The Prolate Matrix. Linear Algebra and Appl.
              187:267--278, 1993.
@@ -1043,9 +1042,9 @@ A singular matrix from the discrete Neumann problem.
 
 *Input options:*
 
-+ [type,] n: the dimension of the matrix is n^2.
++ [type,] n: the dimension of the matrix is `n^2`.
 
-["eigen", "sparse"]
+*Groups:* ["eigen", "sparse"]
                 
 *Reference:* R. J. Plemmons, Regular splittings and the
           discrete Neumann problem, Numer. Math., 25 (1976), pp. 153-161.
@@ -1078,14 +1077,14 @@ The Rosser matrix’s eigenvalues are very close together
 
 *Input options:*
 
-+ [type,] dim, a, b: dim is the dimension of the matrix.
-            dim must be a power of 2.
-            a and b are scalars. For dim = 8, a = 2 and b = 1, the generated
++ [type,] dim, a, b: `dim` is the dimension of the matrix.
+            `dim` must be a power of 2.
+            `a` and `b` are scalars. For `dim = 8, a = 2` and `b = 1`, the generated
             matrix is the test matrix used by Rosser.
 
-+ [type,] dim: a = rand(1:5), b = rand(1:5).
++ [type,] dim: `a = rand(1:5), b = rand(1:5)`.
 
-["eigen", "ill-cond", "random"]
+*Groups:* ["eigen", "ill-cond", "random"]
 
 *Reference:* J. B. Rosser, C. Lanczos, M. R. Hestenes, W. Karush,
             Separation of close eigenvalues of a real symmetric matrix,
@@ -1168,11 +1167,11 @@ A nonsymmetric matrix with eigenvalues 0, 1, 2, ... n-1.
 
 *Input options:*
 
-+ [type,] vec: vec is a vector with no repeated elements;
++ [type,] vec: `vec` is a vector with no repeated elements;
 
-+ [type,] n: the dimension of the matrix is n.
++ [type,] n: the dimension of the matrix is `n`.
 
-["eigen"]
+*Groups:* ["eigen"]
 
 *Reference:* L. Bondesson and I. Traat, A nonsymmetric matrix
             with integer eigenvalues, linear and multilinear algebra, 55(3)
@@ -1212,7 +1211,7 @@ The Wilkinson matrix is a symmetric tridiagonal matrix with
 
 + [type,] dim: the dimension of the matrix.
 
-["symmetric", "eigen"]
+*Groups:* ["symmetric", "eigen"]
 
 *reference:* J. H. Wilkinson, Error analysis of direct methods
 of matrix inversion, J. Assoc. Comput. Mach., 8 (1961),  pp. 281-330.
@@ -1233,16 +1232,16 @@ Random Matrix with Element -1, 0, 1
 
 *Input options:*
 
-+ [type,] m, n, k: m and n are row and column dimensions,
-   k = 1: entries are 0 or 1.
-   k = 2: entries are -1 or 1.
-   k = 3: entries are -1, 0 or 1.
++ [type,] m, n, k: `m` and `n` are row and column dimensions,
+   `k = 1`: entries are 0 or 1.
+   `k = 2`: entries are -1 or 1.
+   `k = 3`: entries are -1, 0 or 1.
 
-+ [type,] n, k: m = n;
++ [type,] n, k: `m = n`;
 
-+ [type,] n: k = 1.
++ [type,] n: `k = 1`.
 
-["random"]
+*Groups:* ["random"]
 """
 function rando{T}(::Type{T}, m::Integer, n::Integer, k::Integer)
     A = Array(T, m, n)
@@ -1297,21 +1296,21 @@ Random Matrix with Pre-assigned Singular Values
 ===============================================
 *Input options:*
 
-+ [type,] m, n, kappa, mode: m, n are the dimensions of the matrix.
-  kappa is the condition number of the matrix.
-  mode = 1: one large singular value.
-  mode = 2: one small singular value.
-  mode = 3: geometrically distributed singular values.
-  mode = 4: arithmetrically distributed singular values.
-  mode = 5: random singular values with  unif. dist. logarithm;
++ [type,] m, n, kappa, mode: `m`, `n` are the dimensions of the matrix.
+  `kappa` is the condition number of the matrix.
+  `mode = 1`: one large singular value.
+  `mode = 2`: one small singular value.
+  `mode = 3`: geometrically distributed singular values.
+  `mode = 4`: arithmetrically distributed singular values.
+  `mode = 5`: random singular values with  unif. dist. logarithm;
 
-+ [type,] n, kappa, mode: m = n;
++ [type,] n, kappa, mode: `m = n`;
 
-+ [type,] n, kappa: mode = 3;
++ [type,] n, kappa: `mode = 3`;
 
-+ [type,] n: kappa = sqrt(1/eps()), mode = 3.
++ [type,] n: `kappa = sqrt(1/eps())`, `mode = 3`.
 
-["ill-cond", "random"]
+*Groups:* ["ill-cond", "random"]
 
 *Reference:* N. J. Higham, Accuracy and Stability of Numerical
 Algorithms, Society for Industrial and Applied Mathematics,
@@ -1362,9 +1361,9 @@ The matrix is constructed via a product of Givens rotations.
 
 *Input options:*
 
-+ [type,] n : n is the dimension of the matrix.
++ [type,] n : the dimension of the matrix.
 
-["random"]
+*Groups:* ["random"]
 
 *Reference:*  W. B. Gragg, The QR algorithm for unitary
     Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.
@@ -1389,12 +1388,12 @@ Kac-Murdock-Szego Toeplitz matrix
 
 *Input options:*
 
-+ [type,] n, rho: n is the dimension of the matrix, rho is a
-    scalar such that A[i,j] = rho^(abs(i-j)).
++ [type,] n, rho: `n` is the dimension of the matrix, `rho` is a
+    scalar such that `A[i,j] = rho^(abs(i-j))`.
 
-+ [type,] n: rho = 0.5
++ [type,] n: `rho = 0.5`
 
-["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
 *Reference:* W. F. Trench, Numerical solution of the eigenvalue
     problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis
@@ -1421,12 +1420,12 @@ the consistent mass matrix for a regular nx-by-ny grid of
 
 *Input options:*
 
-+ `[type,] nx, ny`: the dimension of the matrix is equal to
++ [type,] nx, ny: the dimension of the matrix is equal to
     `3 * nx * ny + 2 * nx * ny + 1`;
 
-+ `[type,] n`: `nx = ny = n`.
++ [type,] n: `nx = ny = n`.
 
-["symmetric", "pos-def", "eigen", "random", "sparse"]
+*Groups:* ["symmetric", "pos-def", "eigen", "random", "sparse"]
 
 *Reference:* A. J. Wathen, Realistic eigenvalue bounds for
     the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987),
@@ -1484,7 +1483,7 @@ Golub matrix is the product of two random unit lower and upper
 
 *Input options:*
 
-+ [type,] n: the dimension of the matrix is n.
++ [type,] n: the dimension of the matrix is `n`.
 
 *Reference:* D. Viswanath and N. Trefethen. Condition Numbers of 
     Random Triangular Matrices, SIAM J. Matrix Anal. Appl. 19, 564-581,
@@ -1511,15 +1510,15 @@ golub(n::Integer) = golub(Float64, n)
 Companion matrix
 ================
 The companion matrix to a monic polynomial 
-    a(x) = a_0 + a_1x + ... + a_{n-1}x^{n-1} + x^n
+    `a(x) = a_0 + a_1x + ... + a_{n-1}x^{n-1} + x^n`
     is the n-by-n matrix with ones on the subdiagonal and 
-    the last column given by the coefficients of a(x).     
+    the last column given by the coefficients of `a(x)`.     
 
 *Input options:*
 
-+ [type,] vec: vec is a vector of coefficients;
++ [type,] vec: `vec` is a vector of coefficients;
 
-+ [type,] n: vec = [1:n;], the dimension of the matrix is n.
++ [type,] n: `vec = [1:n;]`, the dimension of the matrix is n.
 """
 function companion{T}(::Type{T}, v::AbstractVector)
     n = length(v)

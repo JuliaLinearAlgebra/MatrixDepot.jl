@@ -1,8 +1,5 @@
-n = rand(1:10)
-M = matrixdepot("magic", n)
-if n == 2 # no magic square of order 2
-    return
-else
+for n in [3, 4, 5, 6]
+    M = matrixdepot("magic", n)
     @test sum(M,1) == sum(M,2)'
     k = rand(1:n)
     @test sum(M,1)[k] == sum(M,2)'[k]

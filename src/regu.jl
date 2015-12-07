@@ -5,21 +5,21 @@
 """
 Oscillating Matrix
 ==================
-A matrix A is called oscillating if A is totally 
-    nonnegative and if there exists an integer q > 0 such that 
-    A^q is totally positive.
+A matrix `A` is called oscillating if `A` is totally 
+    nonnegative and if there exists an integer `q > 0` such that 
+    `A^q` is totally positive.
 
 *Input options:*
 
 + [type,] Σ: the singular vaule spectrum of the matrix;
 
-+ [type,] n, mode: n is the dimension of the matrix. 
-        mode = 1: geometrically distributed singular values.
-        mode = 2: arithmetrically distributed singular values.
++ [type,] n, mode: `n` is the dimension of the matrix. 
+        `mode = 1`: geometrically distributed singular values.
+        `mode = 2`: arithmetrically distributed singular values.
 
-+ [type,] n: mode = 1.
++ [type,] n: `mode = 1`.
 
-['symmetric','pos-def', 'random', 'eigen'] 
+*Groups:* ['symmetric','pos-def', 'random', 'eigen'] 
 
 *Reference:* Per Christian Hansen, Test matrices for 
     regularization methods. SIAM J. SCI. COMPUT Vol 16, 
@@ -120,7 +120,7 @@ A classical test problem for regularization algorithms:
 *Input options:*
 
 + [type,] n, example, [matrixonly]: the dimension of the 
-        matrix is n.  One choose between between the following right-hand
+        matrix is `n`.  One choose between between the following right-hand
         g and solution f: 
 
  
@@ -136,7 +136,9 @@ A classical test problem for regularization algorithms:
         If `matrixonly = false`, the linear system A, b, x will be 
         generated.  (`matrixonly = true` by default.)             
 
-+ [type,] n, [matrixonly]: example = 1.
++ [type,] n, [matrixonly]: `example = 1`.
+
+*Groups:* ["regprob"]
 
 *Reference:* P. C. Hansen, Regularization tools: A MATLAB pacakge for 
     analysis and solution of discrete ill-posed problems. 
@@ -202,9 +204,11 @@ This test problem uses a first-kind Fredholm integral equation
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimesion of the matrix n must be even.
-    If matrixonly = false, the linear system A, b, x will be generated. 
-    (matrixonly = true by default.)
++ [type,] n, [matrixonly]: the dimesion of the matrix `n` must be even.
+    If `matrixonly = false`, the linear system A, b, x will be generated. 
+    (`matrixonly = true` by default.)
+
+*Groups:* ["regprob"]
 
 *Reference:* C. B. Shaw, Jr., Improvements of the resolution of 
     an instrument by numerical solution of an integral equation. 
@@ -247,12 +251,14 @@ A Problem with a Discontinuous Solution
 
 *Input options:*
 
-+ [type,] n, t1, t2, [matrixonly]: the dimension of matrix is n. 
-    t1 and t2 are two real scalars such that 0 < t1 < t2 < 1. 
-    If matrixonly = false, the linear system A, b, x will be generated. 
-    (matrixonly = true by default.);
++ [type,] n, t1, t2, [matrixonly]: the dimension of matrix is `n`. 
+    `t1` and `t2` are two real scalars such that `0 < t1 < t2 < 1`. 
+    If `matrixonly = false`, the linear system A, b, x will be generated. 
+    (`matrixonly = true` by default.);
 
-+ [type,] n, [matrixonly]: t1 = 1/3 and t2 = 2/3.
++ [type,] n, [matrixonly]: `t1 = 1/3` and `t2 = 2/3`.
+
+*Groups:* ["regprob"]
 
 *Reference:* G. M. Wing, A Primer on Integral Equations of the 
     First Kind, SIAM, 1991, p. 109.
@@ -288,9 +294,11 @@ not satifiy the discrete Picard condition for the small singular values.
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimension of the matrix is n.
-    If matrixonly = false, the linear system A, b, x will be generated. 
-    (matrixonly = true by default.)
++ [type,] n, [matrixonly]: the dimension of the matrix is `n`.
+    If `matrixonly = false`, the linear system A, b, x will be generated. 
+    (`matrixonly = true` by default.)
+
+*Groups:* ["regprob"]
 
 *Reference:* C. T. H. Baker, The Numerical Treatment of Integral
     Equations, Clarendon Press, Oxford, 1977, p. 665.
@@ -317,14 +325,16 @@ Inverse Heat Equation
 
 *Input options:*
 
-+ [type,] n, κ, [matrixonly]: the dimension of the matrix is n and n 
-    must be even. κ controls the ill-conditioning of the matrix.
-    (κ = 5 gives a well-conditioned problem and κ = 1 
++ [type,] n, κ, [matrixonly]: the dimension of the matrix is `n` and `n` 
+    must be even. `κ` controls the ill-conditioning of the matrix.
+    (`κ = 5` gives a well-conditioned problem and `κ = 1` 
      gives an ill conditoned problem). 
-    If matrixonly = false, the linear system A, b, x will be generated. 
-    (matrixonly = true by default.);
+    If `matrixonly = false`, the linear system A, b, x will be generated. 
+    (`matrixonly = true` by default.);
 
-+ [type,] n, [matrixonly]: κ = 1.
++ [type,] n, [matrixonly]: `κ = 1`.
+
+*Groups:* ["regprob"]
 
 *Reference:* A. S. Carasso, Determining surface temperatures 
     from interior observations, SIAM J. Appl. Math. 42 (1982), 558-574.
@@ -370,9 +380,11 @@ Fredholm Integral Equation of the Fisrt Kind
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimenstion of the matrix is n.
-    If matrixonly = false, the linear system A, b, x will be generated. 
-    (matrixonly = true by default.)
++ [type,] n, [matrixonly]: the dimenstion of the matrix is `n`.
+    If `matrixonly = false`, the linear system A, b, x will be generated. 
+    (`matrixonly = true` by default.)
+
+*Groups:* ["regprob"]
 
 *Reference:* M. L. Baart, The use of auto-correlation for 
     pesudo-rank determination in noisy ill-conditioned linear-squares
@@ -417,9 +429,11 @@ Phillips's \"famous\" problem
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimenstion of the matrix is n.
-    If matrixonly = false, the linear system A, b, x will be generated. 
-    (matrixonly = true by default.)
++ [type,] n, [matrixonly]: the dimenstion of the matrix is `n`.
+    If `matrixonly = false`, the linear system A, b, x will be generated. 
+    (`matrixonly = true` by default.)
+
+*Groups:* ["regprob"]
 
 *Reference:* D. L. Phillips, A technique for the numerical 
     solution of certain integral equations of the first kind, J. ACM
@@ -505,9 +519,10 @@ Discretization of a 1-D model problem in gravity surveying, in
        If matrixonly = false, the linear system A, b, x will be generated.
        (matrixonly = true by default.)
 
-+ [type,] n, example, [matrixonly]: a = 0, b = 1, d = 0.25;
++ [type,] n, example, [matrixonly]: `a = 0, b = 1, d = 0.25`;
 
-+ [type,] n, [matrixonly]: example = 1, a = 0, b = 1, d = 0.25.            
++ [type,] n, [matrixonly]: `example = 1, a = 0, b = 1, d = 0.25`.            
+*Groups:* ["regprob"]
 
 *Reference:* G. M. Wing and J. D. Zahrt, A Primer on Integral 
             Equations of the First Kind, SIAM, Philadelphia, 1991, p. 17.
@@ -567,7 +582,9 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
           If `matrixonly = false`, the linear system A, b, x will be generated.
               (`matrixonly = true` by default.)
 
-+ [type,] n, [matrixonly]: band = 3, σ = 0.7.
++ [type,] n, [matrixonly]: `band = 3, σ = 0.7`.
+
+*Groups:* ["regprob"]
 """
 function blur{T}(::Type{T}, n::Integer, band::Integer, σ::Number, 
                  matrixonly::Bool = true)
@@ -650,13 +667,15 @@ Artifically generated discrete ill-posed problem.
 *Input options:*
 
 + [type,] n, t_max, [matrixonly]: the dimension of the 
-              matrix is n. t_max controls the length of the pulse train.
-              If matrixonly = false, the linear system A, b, x will be 
-              generated. (matrixonly = true by default.) The solution x
+              matrix is `n`. `t_max` controls the length of the pulse train.
+              If `matrixonly = false`, the linear system A, b, x will be 
+              generated. (`matrixonly = true` by default.) The solution x
               consists a unit step at t = .5 and a pulse train of spike
               of decreasing magnitude at t = .5, 1.5, 2.5, ...;
 
-+ [type,] n, [matrixonly]: t_max = 5.
++ [type,] n, [matrixonly]: `t_max = 5`.
+
+*Groups:* ["regprob"]
 """
 function spikes{T}(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = true)
     del = convert(T, t_max/n)
@@ -711,8 +730,10 @@ is a Hankel matrix.
 *Input options:*
 
 + [type,] n, [matrixonly]: the dimension of the matrix
-              is n. If matrixonly = false, the right-hand side b will also
-              be generated. (matrixonly = true by default).
+              is `n`. If `matrixonly = false`, the right-hand side b will also
+              be generated. (`matrixonly = true` by default).
+
+*Groups:* ["regprob"]
 
 *Reference:* F. Ursell, Introduction to the theory of linear
               integral equations., Chapter 1 in L. M. Delves & J. Walsh,
