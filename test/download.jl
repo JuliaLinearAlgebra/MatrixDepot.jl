@@ -9,6 +9,7 @@ end
 #download
 MatrixDepot.update()
 # uf
+matrixdepot("1138_bus", :get)
 matrixdepot("HB/1138_bus", :get)
 # Matrix Markt
 #matrixdepot("Harwell-Boeing/smtape/bp___200", :get)
@@ -30,6 +31,12 @@ try
 catch ArgumentError
     println("download error: unknown argument :g")
 end
+
+matrixdepot("epb0", :get)
+
+# matrix market
+matrixdepot("Harwell-Boeing/lanpro/nos5", :get)
+
 # rm data
 
 
