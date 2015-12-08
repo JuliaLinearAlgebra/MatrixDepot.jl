@@ -1,5 +1,11 @@
 ## Matrix Depot Release Notes
 
+v0.5.1 (In preparation)
+-----------------------
+
+* Fix function `fname` for user defined generators.
+
+
 v0.5.0 
 ------
 
