@@ -325,4 +325,10 @@ function include_generator(::Type{Group}, groupname::AbstractString, f::Function
 end
 
 "return the name of the function `f` as a string."
-fname(f::Function) = split(string(f), '.')[2]
+function fname(f::Function)
+    for (key, value) in matrixdict
+        if value == f
+            return key
+        end
+    end
+end
