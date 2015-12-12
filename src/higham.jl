@@ -3,8 +3,9 @@
 """
 Hilbert matrix
 ==============
-The Hilbert matrix is a very ill conditioned matrix. 
-It is symmetric positive definite and totally positive. 
+The Hilbert matrix has `(i,j)` element `1/(i+j-1)`. It is 
+notorious for being ill conditioned. It is symmetric
+positive definite and totally positive.
 
 *Input options:*
 
@@ -17,9 +18,9 @@ It is symmetric positive definite and totally positive.
 *Reference:* M. D. Choi, Tricks or treats with the Hilbert matrix,
 Amer. Math. Monthly, 90 (1983), pp. 301-312.
 
-N. J. Higham, Accuracy and Stability of Numerical Algorithms,
-Society for Industrial and Applied Mathematics, Philadelphia, PA,
-    USA, 2002; sec. 28.1.
+N. J. Higham, Accuracy and Stability of Numerical Algorithms, 
+second edition, Society for Industrial and Applied Mathematics, 
+Philadelphia, PA, USA, 2002; sec. 28.1.
 """
 function hilb{T}(::Type{T}, m::Integer, n::Integer)
     # compute the Hilbert matrix
