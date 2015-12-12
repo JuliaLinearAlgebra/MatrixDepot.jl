@@ -15,10 +15,12 @@ positive definite and totally positive.
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
-*Reference:* M. D. Choi, Tricks or treats with the Hilbert matrix,
+*References:* 
+
+**M. D. Choi**, Tricks or treats with the Hilbert matrix,
 Amer. Math. Monthly, 90 (1983), pp. 301-312.
 
-N. J. Higham, Accuracy and Stability of Numerical Algorithms, 
+**N. J. Higham**, Accuracy and Stability of Numerical Algorithms, 
 second edition, Society for Industrial and Applied Mathematics, 
 Philadelphia, PA, USA, 2002; sec. 28.1.
 """
@@ -42,11 +44,13 @@ Inverse of Hilbert matrix
 
 *Groups:* ["inverse", "ill-cond", "symmetric","pos-def"]
 
-*Reference:* M. D. Choi, Tricks or treats with the Hilbert matrix,
+*References:* 
+
+**M. D. Choi**, Tricks or treats with the Hilbert matrix,
     Amer. Math. Monthly, 90 (1983), pp. 301-312.
 
-N. J. Higham, Accuracy and Stability of Numerical Algorithms,
-    Society for Industrial and Applied Mathematics, Philadelphia, PA,
+**N. J. Higham**, Accuracy and Stability of Numerical Algorithms, second 
+    edition, Society for Industrial and Applied Mathematics, Philadelphia, PA,
     USA, 2002; sec. 28.1.
 """
 function invhilb{T}(::Type{T}, n::Integer)
@@ -75,7 +79,9 @@ a Hadamard matrix are orthogonal.
 
 *Groups:* ["inverse", "orthogonal", "eigen"]
 
-*Reference:* S. W. Golomb and L. D. Baumert, The search for
+*References:* 
+
+**S. W. Golomb and L. D. Baumert**, The search for
 Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17
 """
 function hadamard{T}(::Type{T}, n::Integer)
@@ -111,8 +117,10 @@ Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
-*Reference:*  N. J. Higham, Accuracy and Stability of Numerical Algorithms,
-Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 
+*References:*  
+
+**N. J. Higham**, Accuracy and Stability of Numerical Algorithms,
+second edition, Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 
 2002; sec. 28.1
 """
 function cauchy{T}(::Type{T}, x::Vector, y::Vector)
@@ -145,7 +153,9 @@ step forward.
 
 *Groups:* ["symmetric", "pos-def", "eigen"]
 
-*Reference:*  P. J. Davis, Circulant Matrices, John Wiley, 1977.
+*References:*  
+
+**P. J. Davis**, Circulant Matrices, John Wiley, 1977.
 """
 function circul{T}(::Type{T}, v::Vector, w::Vector)
     # Compute the circul matrix
@@ -175,7 +185,9 @@ The eigenvalues cluster around `π/2` and `-π/2`.
 
 *Groups:* ["symmetric", "eigen"]
               
-*Reference:* J. C. Nash, Compact Numerical Methods for
+*References:* 
+
+**J. C. Nash**, Compact Numerical Methods for
 Computers: Linear Algebra and Function Minimisation,
 second edition, Adam Hilger, Bristol, 1990 (Appendix 1).
 """
@@ -205,7 +217,9 @@ very ill conditioned.
 
 *Groups:* ["ill-cond", "eigen"]
 
-*Reference:*  W. L. Frank, Computing eigenvalues of complex matrices
+*References:*  
+
+**W. L. Frank**, Computing eigenvalues of complex matrices
     by determinant evaluation and by methods of Danilewski and Wielandt,
     J. Soc. Indust. Appl. Math., 6 (1958), pp. 378-392 (see pp. 385, 388).
 """
@@ -340,7 +354,9 @@ eigenvalues.
 
 *Groups:* ["eigen"]
 
-*Reference:* J. F. Grcar, Operator coefficient methods
+*References:* 
+
+**J. F. Grcar**, Operator coefficient methods
     for linear equations, Report SAND89-8691, Sandia National
     Laboratories, Albuquerque, New Mexico, 1989 (Appendix 2).
 """
@@ -367,7 +383,9 @@ Upper triangular matrices discussed by Wilkinson and others.
 
 *Groups:* ["inverse", "ill-cond"]
 
-*Reference:*  G. H. Golub and J. H. Wilkinson, Ill-conditioned
+*References:*  
+
+**G. H. Golub and J. H. Wilkinson**, Ill-conditioned
 eigensystems and the computation of the Jordan canonical form,
 SIAM Review, 18(4), 1976, pp. 578-6
 """
@@ -394,7 +412,9 @@ It has one small eigenvalue.
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
-*Reference:*  J.C. Nash, Compact Numerical Methods for Computers:
+*References:*  
+
+**J.C. Nash**, Compact Numerical Methods for Computers:
     Linear Algebra and Function Minimisation, second edition,
     Adam Hilger, Bristol, 1990 (Appendix 1).
 """
@@ -416,13 +436,15 @@ The Pascal matrix’s anti-diagonals form the Pascal’s triangle.
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def", "eigen"]
 
-*Reference:* R. Brawer and M. Pirovino, The linear algebra of
+*References:* 
+
+**R. Brawer and M. Pirovino**, The linear algebra of
     the Pascal matrix, Linear Algebra and Appl., 174 (1992),
     pp. 13-23 (this paper gives a factorization of L = PASCAL(N,1)
                and a formula for the elements of L^k).
 
-N. J. Higham, Accuracy and Stability of Numerical Algorithms
-Society for Industrial and Applied Mathematics, Philadelphia, PA,
+**N. J. Higham**, Accuracy and Stability of Numerical Algorithms, 
+second edition, Society for Industrial and Applied Mathematics, Philadelphia, PA,
 USA, 2002; sec. 28.4.
 """
 function pascal{T}(::Type{T}, n::Integer)
@@ -458,7 +480,9 @@ The Kahan matrix is an upper trapezoidal matrix, i.e., the
 
 *Groups:* ["inverse", "ill-cond"]
 
-*Reference:* W. Kahan, Numerical linear algebra, Canadian Math.
+*References:* 
+
+**W. Kahan**, Numerical linear algebra, Canadian Math.
     Bulletin, 9 (1966), pp. 757-801.
 """
 function kahan{T}(::Type{T}, m::Integer, n::Integer, theta, pert)
@@ -493,7 +517,9 @@ The Pei matrix is a symmetric matrix with known inversion.
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
-*Reference:* M. L. Pei, A test matrix for inversion procedures,
+*References:* 
+
+**M. L. Pei**, A test matrix for inversion procedures,
     Comm. ACM, 5 (1962), p. 508.
 """
 function pei{T}(::Type{T}, n::Integer, alpha = 1)
@@ -517,7 +543,9 @@ The inverse and determinat are known explicity.
 
 *Groups:* ["inverse", "ill-cond"]
 
-*Reference:* N. J. Higham, Stability analysis of algorithms
+*References:* 
+
+**N. J. Higham**, Stability analysis of algorithms
     for solving confluent Vandermonde-like systems, SIAM J.
         Matrix Anal. Appl., 11 (1990), pp. 23-41.
 """
@@ -551,7 +579,9 @@ An involutory matrix is a matrix that is its own inverse.
 
 *Groups:* ["inverse", "ill-cond", "eigen"]
 
-*Reference:* A. S. Householder and J. A. Carpenter, The
+*References:* 
+
+**A. S. Householder and J. A. Carpenter**, The
         singular values of involutory and of idempotent matrices,
         Numer. Math. 5 (1963), pp. 234-237.
 """
@@ -584,7 +614,9 @@ If `k = 0`,the generated matrix is nilpotent and a vector with
 
 *Groups:* ["eigen"]
 
-*Reference:* L. N. Trefethen and M. R. Trummer, An instability
+*References:* 
+
+**L. N. Trefethen and M. R. Trummer**, An instability
         phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.
 """
 function chebspec{T}(::Type{T}, n::Integer, k::Integer = 0)
@@ -626,7 +658,9 @@ The Lotkin matrix is the Hilbert matrix with its first row
 
 *Groups:* ["inverse", "ill-cond", "eigen"]
 
-*Reference:* M. Lotkin, A set of test matrices, MTAC, 9 (1955), pp. 153-161.
+*References:* 
+
+**M. Lotkin**, A set of test matrices, MTAC, 9 (1955), pp. 153-161.
 """
 function lotkin{T}(::Type{T}, n::Integer)
     A = hilb(T, n)
@@ -651,7 +685,9 @@ The Clement matrix is a tridiagonal matrix with zero
 
 *Groups:* ["inverse", "symmetric", "eigen"]
 
-*Reference:* P. A. Clement, A class of triple-diagonal
+*References:* 
+
+**P. A. Clement**, A class of triple-diagonal
         matrices for test purposes, SIAM Review, 1 (1959), pp. 50-52.
 """
 function clement{T}(::Type{T}, n::Integer, k::Integer = 0)
@@ -688,10 +724,12 @@ The Fiedler matrix is symmetric matrix with a dominant
 
 *Groups: *["inverse", "symmetric", "eigen"]
 
-*Reference:* G. Szego, Solution to problem 3705, Amer. Math.
+*References:* 
+
+**G. Szego**, Solution to problem 3705, Amer. Math.
             Monthly, 43 (1936), pp. 246-259.
 
-J. Todd, Basic Numerical Mathematics, Vol. 2: Numerical Algebra,
+**J. Todd**, Basic Numerical Mathematics, Vol. 2: Numerical Algebra,
             Birkhauser, Basel, and Academic Press, New York, 1977, p. 159.
 """
 function fiedler{T}(::Type{T}, v::Vector)
@@ -716,7 +754,9 @@ A matrix with `(i,j)` entry `min(i,j)`. It is a symmetric positive
 
 *Groups:* ["inverse", "symmetric", "pos-def", "eigen"]
 
-*Reference:* J. Fortiana and C. M. Cuadras, A family of matrices,
+*References:* 
+
+**J. Fortiana and C. M. Cuadras**, A family of matrices,
             the discretized Brownian bridge, and distance-based regression,
             Linear Algebra Appl., 264 (1997), 173-188.  (For the eigensystem of A.)
 """
@@ -766,7 +806,9 @@ Tridiagonal Matrix
 
 *Groups:* ["inverse", "ill-cond", "pos-def", "eigen"]
 
-*Reference:* J. Todd, Basic Numerical Mathematics, Vol. 2:
+*References:* 
+
+**J. Todd**, Basic Numerical Mathematics, Vol. 2:
             Numerical Algebra, Birkhauser, Basel, and Academic Press,
             New York, 1977, p. 155.
 """
@@ -797,7 +839,9 @@ The Lehmer matrix is a symmetric positive definite matrix.
 
 *Groups:* ["inverse", "symmetric", "pos-def"]
 
-*Reference:* M. Newman and J. Todd, The evaluation of
+*References:* 
+
+**M. Newman and J. Todd**, The evaluation of
             matrix inversion programs, J. Soc. Indust. Appl. Math.,
             6 (1958), pp. 466-476.
             Solutions to problem E710 (proposed by D.H. Lehmer): The inverse
@@ -822,7 +866,9 @@ The Parter matrix is a Toeplitz and Cauchy matrix
 
 *Groups:* ["eigen"]
 
-*Reference:* The MathWorks Newsletter, Volume 1, Issue 1,
+*References:* 
+
+The MathWorks Newsletter, Volume 1, Issue 1,
             March 1986, page 2. S. V. Parter, On the distribution of the
             singular values of Toeplitz matrices, Linear Algebra and
             Appl., 80 (1986), pp. 115-130.
@@ -849,7 +895,9 @@ The Chow matrix is a singular Toeplitz lower Hessenberg matrix.
 
 *Groups:* ["eigen"]
 
-*Reference:* T. S. Chow, A class of Hessenberg matrices with known
+*References:* 
+
+**T. S. Chow**, A class of Hessenberg matrices with known
                 eigenvalues and inverses, SIAM Review, 11 (1969), pp. 391-395.
 """
 function chow{T}(::Type{T}, n::Integer, alpha, delta)
@@ -945,7 +993,9 @@ A block tridiagonal matrix from Poisson’s equation.
            
 *Groups:* ["inverse", "symmetric", "pos-def", "eigen", "sparse"]
 
-*Reference:* G. H. Golub and C. F. Van Loan, Matrix Computations,
+*References:* 
+
+**G. H. Golub and C. F. Van Loan**, Matrix Computations,
           second edition, Johns Hopkins University Press, Baltimore,
           Maryland, 1989 (Section 4.5.4).
 """
@@ -1022,7 +1072,9 @@ A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
 
 + [type,] n: the case when `w = 0.25`.
 
-*Reference:* J. M. Varah. The Prolate Matrix. Linear Algebra and Appl.
+*References:* 
+
+**J. M. Varah**. The Prolate Matrix. Linear Algebra and Appl.
              187:267--278, 1993.
 """
 function prolate{T}(::Type{T}, n::Integer, w::Real)
@@ -1047,7 +1099,9 @@ A singular matrix from the discrete Neumann problem.
 
 *Groups:* ["eigen", "sparse"]
                 
-*Reference:* R. J. Plemmons, Regular splittings and the
+*References:* 
+
+**R. J. Plemmons**, Regular splittings and the
           discrete Neumann problem, Numer. Math., 25 (1976), pp. 153-161.
 """
 function neumann{T}(::Type{T}, n::Integer)
@@ -1064,7 +1118,7 @@ neumann(n::Integer) = neumann(Float64, n)
 
 #
 # Sylvester's orthogonal matrix
-# See Rosser matrix Reference 2.
+# See Rosser matrix References 2.
 #
 # for a = d = 2, b = c = 1, P_block' * P_block = 10 * Identity
 #
@@ -1087,7 +1141,9 @@ The Rosser matrix’s eigenvalues are very close together
 
 *Groups:* ["eigen", "ill-cond", "random"]
 
-*Reference:* J. B. Rosser, C. Lanczos, M. R. Hestenes, W. Karush,
+*References:* 
+
+**J. B. Rosser, C. Lanczos, M. R. Hestenes, W. Karush**,
             Separation of close eigenvalues of a real symmetric matrix,
             Journal of Research of the National Bureau of Standards, v(47)
             (1951)
@@ -1174,7 +1230,9 @@ A nonsymmetric matrix with eigenvalues 0, 1, 2, ... n-1.
 
 *Groups:* ["eigen"]
 
-*Reference:* L. Bondesson and I. Traat, A nonsymmetric matrix
+*References:* 
+
+**L. Bondesson and I. Traat**, A nonsymmetric matrix
             with integer eigenvalues, linear and multilinear algebra, 55(3)
             (2007), pp. 239-247
 """
@@ -1214,7 +1272,9 @@ The Wilkinson matrix is a symmetric tridiagonal matrix with
 
 *Groups:* ["symmetric", "eigen"]
 
-*reference:* J. H. Wilkinson, Error analysis of direct methods
+*References:* 
+
+**J. H. Wilkinson**, Error analysis of direct methods
 of matrix inversion, J. Assoc. Comput. Mach., 8 (1961),  pp. 281-330.
 """
 function wilkinson{T}(::Type{T}, n::Integer)
@@ -1313,8 +1373,10 @@ Random Matrix with Pre-assigned Singular Values
 
 *Groups:* ["ill-cond", "random"]
 
-*Reference:* N. J. Higham, Accuracy and Stability of Numerical
-Algorithms, Society for Industrial and Applied Mathematics,
+*References:* 
+
+**N. J. Higham**, Accuracy and Stability of Numerical
+Algorithms, second edition, Society for Industrial and Applied Mathematics,
 Philadelphia, PA, USA, 2002; sec. 28.3.
 """
 function randsvd{T}(::Type{T}, m::Integer, n::Integer, kappa, mode::Integer)
@@ -1366,7 +1428,9 @@ The matrix is constructed via a product of Givens rotations.
 
 *Groups:* ["random"]
 
-*Reference:*  W. B. Gragg, The QR algorithm for unitary
+*References:*  
+
+**W. B. Gragg**, The QR algorithm for unitary
     Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.
 """
 function rohess{T}(::Type{T}, n::Integer)
@@ -1396,7 +1460,9 @@ Kac-Murdock-Szego Toeplitz matrix
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
-*Reference:* W. F. Trench, Numerical solution of the eigenvalue
+*References:* 
+
+**W. F. Trench**, Numerical solution of the eigenvalue
     problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis
     and Appl., 10 (1989), pp. 135-146 (and see the references therein).
 """
@@ -1428,7 +1494,9 @@ the consistent mass matrix for a regular nx-by-ny grid of
 
 *Groups:* ["symmetric", "pos-def", "eigen", "random", "sparse"]
 
-*Reference:* A. J. Wathen, Realistic eigenvalue bounds for
+*References:* 
+
+**A. J. Wathen**, Realistic eigenvalue bounds for
     the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987),
     pp. 449-457.
 """
@@ -1486,7 +1554,9 @@ Golub matrix is the product of two random unit lower and upper
 
 + [type,] n: the dimension of the matrix is `n`.
 
-*Reference:* D. Viswanath and N. Trefethen. Condition Numbers of 
+*References:*
+ 
+**D. Viswanath and N. Trefethen**. Condition Numbers of 
     Random Triangular Matrices, SIAM J. Matrix Anal. Appl. 19, 564-581,
     1998.
 """

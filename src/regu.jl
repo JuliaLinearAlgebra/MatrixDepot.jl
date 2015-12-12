@@ -21,7 +21,9 @@ A matrix `A` is called oscillating if `A` is totally
 
 *Groups:* ['symmetric','pos-def', 'random', 'eigen'] 
 
-*Reference:* Per Christian Hansen, Test matrices for 
+*References:* 
+
+**Per Christian Hansen**, Test matrices for 
     regularization methods. SIAM J. SCI. COMPUT Vol 16, 
     No2, pp 506-512 (1995).
 """
@@ -140,7 +142,9 @@ A classical test problem for regularization algorithms:
 
 *Groups:* ["regprob"]
 
-*Reference:* P. C. Hansen, Regularization tools: A MATLAB pacakge for 
+*References:* 
+
+**P. C. Hansen**, Regularization tools: A MATLAB pacakge for 
     analysis and solution of discrete ill-posed problems. 
     Numerical Algorithms, 6(1994), pp.1-35
 """
@@ -210,7 +214,9 @@ This test problem uses a first-kind Fredholm integral equation
 
 *Groups:* ["regprob"]
 
-*Reference:* C. B. Shaw, Jr., Improvements of the resolution of 
+*References:* 
+
+**C. B. Shaw, Jr.**, Improvements of the resolution of 
     an instrument by numerical solution of an integral equation. 
     J. Math. Ana. Appl. 37 (1972), 83-112.
 """
@@ -260,8 +266,10 @@ A Problem with a Discontinuous Solution
 
 *Groups:* ["regprob"]
 
-*Reference:* G. M. Wing, A Primer on Integral Equations of the 
-    First Kind, SIAM, 1991, p. 109.
+*References:* 
+
+**G. M. Wing**, A Primer on Integral Equations of the 
+    First Kind, Society for Industrial and Applied Mathematics, 1991, p. 109.
 """
 function wing{T}(::Type{T}, n::Integer, t1::Real, t2::Real, matrixonly = true)
     t1 < t2 || error("t1 must be smaller than t2")
@@ -300,7 +308,9 @@ not satifiy the discrete Picard condition for the small singular values.
 
 *Groups:* ["regprob"]
 
-*Reference:* C. T. H. Baker, The Numerical Treatment of Integral
+*References:* 
+
+**C. T. H. Baker**, The Numerical Treatment of Integral
     Equations, Clarendon Press, Oxford, 1977, p. 665.
 """
 function foxgood{T}(::Type{T}, n::Integer, matrixonly = true)
@@ -336,7 +346,9 @@ Inverse Heat Equation
 
 *Groups:* ["regprob"]
 
-*Reference:* A. S. Carasso, Determining surface temperatures 
+*References:* 
+
+**A. S. Carasso**, Determining surface temperatures 
     from interior observations, SIAM J. Appl. Math. 42 (1982), 558-574.
 """
 function heat{T}(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true)
@@ -386,7 +398,9 @@ Fredholm Integral Equation of the Fisrt Kind
 
 *Groups:* ["regprob"]
 
-*Reference:* M. L. Baart, The use of auto-correlation for 
+*References:* 
+
+**M. L. Baart**, The use of auto-correlation for 
     pesudo-rank determination in noisy ill-conditioned linear-squares
     problems, IMA, J. Numer. Anal. 2 (1982), 241-247.
 """
@@ -435,7 +449,9 @@ Phillips's \"famous\" problem
 
 *Groups:* ["regprob"]
 
-*Reference:* D. L. Phillips, A technique for the numerical 
+*References:* 
+
+**D. L. Phillips**, A technique for the numerical 
     solution of certain integral equations of the first kind, J. ACM
     9 (1962), 84-97.
 """
@@ -524,8 +540,10 @@ Discretization of a 1-D model problem in gravity surveying, in
 + [type,] n, [matrixonly]: `example = 1, a = 0, b = 1, d = 0.25`.            
 *Groups:* ["regprob"]
 
-*Reference:* G. M. Wing and J. D. Zahrt, A Primer on Integral 
-            Equations of the First Kind, SIAM, Philadelphia, 1991, p. 17.
+*References:* 
+
+**G. M. Wing and J. D. Zahrt**, A Primer on Integral Equations of 
+the First Kind, Society for Industrial and Applied Mathematics, Philadelphia, 1991, p. 17.
 """
 function gravity{T}(::Type{T}, n::Integer, example::Integer, 
                     a::Number, b::Number, d::Number, matrixonly::Bool = true)
@@ -723,7 +741,7 @@ Integral equation with no square integrable solution
 ====================================================
 Discretization of a first kind Fredholm integral equation with 
 kernel `K` and right-hand side `g` given by
-                     `K(s,t) = 1/(s+t+1), g(s) = 1`,
+                    `K(s,t) = 1/(s+t+1), g(s) = 1`,
 where both integration intervals are `[0, 1]`. The matrix `A`
 is a Hankel matrix.
 
@@ -735,7 +753,9 @@ is a Hankel matrix.
 
 *Groups:* ["regprob"]
 
-*Reference:* F. Ursell, Introduction to the theory of linear
+*References:* 
+
+**F. Ursell**, Introduction to the theory of linear
               integral equations., Chapter 1 in L. M. Delves & J. Walsh,
               Numerical Solution of Integral Equations, Clarendon Press, 
               1974.
