@@ -5,6 +5,9 @@ v0.5.1 (In preparation)
 
 * Fix function `fname` for user defined generators.
 
+* Fix reference formatting
+
+* Allow accessing matrices by different subtypes of Integer or UnitRange.
 
 v0.5.0 
 ------

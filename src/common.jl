@@ -200,7 +200,7 @@ end
 
 Access matrices by number, range or a mixture of numbers and ranges.
 """
-function matrixdepot(num::Int)
+function matrixdepot(num::Integer)
     matrixstrings = matrix_name_list()
     n = length(matrixstrings)
     if num > n
@@ -209,7 +209,7 @@ function matrixdepot(num::Int)
     return matrixstrings[num]
 end
 
-function matrixdepot(ur::UnitRange{Int})
+function matrixdepot(ur::UnitRange)
     matrixnamelist = AbstractString[]
     for i in ur
         push!(matrixnamelist, matrixdepot(i))
@@ -217,12 +217,12 @@ function matrixdepot(ur::UnitRange{Int})
     return matrixnamelist
 end
 
-IntOrUnitRange = Union{Int, UnitRange{Int}}
+IntOrUnitRange = Union{Integer, UnitRange}
 
 function matrixdepot(vs::IntOrUnitRange...)
     matrixnames = AbstractString[]
     for i in vs
-        if typeof(i) <: Int
+        if typeof(i) <: Integer
             push!(matrixnames, matrixdepot(i))
         else
             append!(matrixnames, matrixdepot(i))
