@@ -99,7 +99,7 @@ function hadamard{T}(::Type{T}, n::Integer)
     end
     return H
 end
-hadamard(n::Integer) = hadmard(Float64, n)
+hadamard(n::Integer) = hadamard(Float64, n)
 
 """
 Cauchy matrix
