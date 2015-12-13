@@ -159,10 +159,10 @@ Matrices
                     pp 506-512 (1995)
 
    wathen 
-      Wathen Matrix is a sparse, symmetric positive, random matrix arose 
-      from the finite element method [wath87]_. The generated matrix 
-      is the consistent mass matrix for a regular
-      `nx-by-ny` grid of 8-nodes.
+      The Wathen matrix is a sparse, symmetric positive, random matrix 
+      arising from the finite element method [wath87]_. 
+      It is the consistent mass matrix for a regular
+      `nx-by-ny` grid of 8-node elements.
 
       .. image:: images/wathen.png
 

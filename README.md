@@ -78,8 +78,10 @@ julia> matrixdepot("hilb")
 
   Groups: ["inverse", "ill-cond", "symmetric", "pos-def"]
 
-  Reference: M. D. Choi, Tricks or treats with the Hilbert matrix, Amer. Math.
-  Monthly, 90 (1983), pp. 301-312.
+  References: 
+
+  M. D. Choi, Tricks or treats with the Hilbert matrix, Amer. Math. Monthly,
+  90 (1983), pp. 301-312.
 
   N. J. Higham, Accuracy and Stability of Numerical Algorithms, second
   edition, Society for Industrial and Applied Mathematics, Philadelphia, PA,
