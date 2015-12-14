@@ -387,7 +387,7 @@ heat{T}(::Type{T}, n::Integer, matrixonly::Bool = true) = heat(T, n, 1, matrixon
 heat(args...) = heat(Float64, args...)
 
 """
-Fredholm Integral Equation of the Fisrt Kind
+Fredholm Integral Equation of the First Kind
 ============================================
 
 *Input options:*
