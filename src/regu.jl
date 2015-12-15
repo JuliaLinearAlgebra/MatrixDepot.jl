@@ -602,7 +602,7 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
 
 + [type,] n, [matrixonly]: `band = 3, σ = 0.7`.
 
-*Groups:* ["regprob"]
+*Groups:* ["regprob", "sparse"]
 """
 function blur{T}(::Type{T}, n::Integer, band::Integer, σ::Number, 
                  matrixonly::Bool = true)

@@ -58,7 +58,7 @@ matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
                            "rosser", "sampling", "wilkinson","wathen", 
                            "oscillate"],
 
-             "sparse" => ["poisson", "neumann", "wathen"],
+             "sparse" => ["poisson", "neumann", "wathen", "blur"],
 
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate", "golub"],
