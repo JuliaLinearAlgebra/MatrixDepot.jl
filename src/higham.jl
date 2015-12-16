@@ -678,8 +678,8 @@ The Clement matrix is a tridiagonal matrix with zero
 *Input options:*
 
 + [type,] dim, k: `dim` is the dimension of the matrix.
-        If `k = 0`, the matrix is Tridiagonal. If `k = 1`, the matrix
-        is SymTridiagonal;
+        If `k = 0`, the matrix is of type `Tridiagonal`. 
+        If `k = 1`, the matrix is of type `SymTridiagonal`;
 
 + [type,] dim: `k = 0`.
 
@@ -789,6 +789,7 @@ binomialm(n::Integer) = binomialm(Float64, n)
 """
 Tridiagonal Matrix
 ==================
+Construct a tridigonal matrix of type `Tridiagonal`.
 
 *Input options:*
 
@@ -984,7 +985,7 @@ Poisson Matrix
 ==============
 A block tridiagonal matrix from Poisson’s equation. 
      This matrix is sparse, symmetric positive definite and 
-     has known eigenvalues.
+     has known eigenvalues. The result is of type `SparseMatrixCSC`.
 
 *Input options:*
 
@@ -1090,8 +1091,7 @@ prolate(args...) = prolate(Float64, args...)
 Neumann matrix
 ==============
 A singular matrix from the discrete Neumann problem. 
-       This matrix is sparse and the null space is formed by 
-       a vector of ones
+       The matrix is sparse and the null space is formed by a vector of ones
 
 *Input options:*
 
@@ -1264,7 +1264,8 @@ sampling(args...) = sampling(Float64, args...)
 Wilkinson Matrix
 ================
 The Wilkinson matrix is a symmetric tridiagonal matrix with 
-            pairs of nearly equal eigenvalues. The most frequently used                 case is `matrixdepot("wilkinson", 21)`.
+            pairs of nearly equal eigenvalues. The most frequently used                 case is `matrixdepot("wilkinson", 21)`. The result is of 
+            type `Tridiagonal`.
 
 *Input options:*
 
