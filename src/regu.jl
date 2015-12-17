@@ -11,7 +11,7 @@ A matrix `A` is called oscillating if `A` is totally
 
 *Input options:*
 
-+ [type,] Σ: the singular vaule spectrum of the matrix;
++ [type,] Σ: the singular vaule spectrum of the matrix.
 
 + [type,] n, mode: `n` is the dimension of the matrix. 
         `mode = 1`: geometrically distributed singular values.
@@ -136,7 +136,7 @@ A classical test problem for regularization algorithms:
                            f(t) = | 1- t, t >= 0.5.
 
         If `matrixonly = false`, the linear system A, b, x will be 
-        generated.  (`matrixonly = true` by default.)             
+        generated (`matrixonly = true` by default).             
 
 + [type,] n, [matrixonly]: `example = 1`.
 
@@ -209,8 +209,8 @@ This test problem uses a first-kind Fredholm integral equation
 *Input options:*
 
 + [type,] n, [matrixonly]: the dimesion of the matrix `n` must be even.
-    If `matrixonly = false`, the linear system A, b, x will be generated. 
-    (`matrixonly = true` by default.)
+    If `matrixonly = false`, the linear system A, b, x will be generated 
+    (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
@@ -259,8 +259,8 @@ A Problem with a Discontinuous Solution
 
 + [type,] n, t1, t2, [matrixonly]: the dimension of matrix is `n`. 
     `t1` and `t2` are two real scalars such that `0 < t1 < t2 < 1`. 
-    If `matrixonly = false`, the linear system A, b, x will be generated. 
-    (`matrixonly = true` by default.);
+    If `matrixonly = false`, the linear system A, b, x will be generated 
+    (`matrixonly = true` by default).
 
 + [type,] n, [matrixonly]: `t1 = 1/3` and `t2 = 2/3`.
 
@@ -303,8 +303,8 @@ not satifiy the discrete Picard condition for the small singular values.
 *Input options:*
 
 + [type,] n, [matrixonly]: the dimension of the matrix is `n`.
-    If `matrixonly = false`, the linear system A, b, x will be generated. 
-    (`matrixonly = true` by default.)
+    If `matrixonly = false`, the linear system A, b, x will be generated 
+    (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
@@ -339,8 +339,8 @@ Inverse Heat Equation
     must be even. `κ` controls the ill-conditioning of the matrix.
     (`κ = 5` gives a well-conditioned problem and `κ = 1` 
      gives an ill conditoned problem). 
-    If `matrixonly = false`, the linear system A, b, x will be generated. 
-    (`matrixonly = true` by default.);
+    If `matrixonly = false`, the linear system A, b, x will be generated 
+    (`matrixonly = true` by default).
 
 + [type,] n, [matrixonly]: `κ = 1`.
 
@@ -393,8 +393,8 @@ Fredholm Integral Equation of the First Kind
 *Input options:*
 
 + [type,] n, [matrixonly]: the dimenstion of the matrix is `n`.
-    If `matrixonly = false`, the linear system A, b, x will be generated. 
-    (`matrixonly = true` by default.)
+    If `matrixonly = false`, the linear system A, b, x will be generated 
+    (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
@@ -444,8 +444,8 @@ Phillips's \"famous\" problem
 *Input options:*
 
 + [type,] n, [matrixonly]: the dimenstion of the matrix is `n`.
-    If `matrixonly = false`, the linear system A, b, x will be generated. 
-    (`matrixonly = true` by default.)
+    If `matrixonly = false`, the linear system A, b, x will be generated 
+    (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
@@ -532,8 +532,8 @@ Discretization of a 1-D model problem in gravity surveying, in
        The parameter d is the depth at which the magnetic deposit is 
        located. The larger the d, the faster the decay of the singular values. 
 
-       If matrixonly = false, the linear system A, b, x will be generated.
-       (matrixonly = true by default.)
+       If matrixonly = false, the linear system A, b, x will be generated
+       (matrixonly = true by default).
 
 + [type,] n, example, [matrixonly]: `a = 0, b = 1, d = 0.25`;
 
@@ -597,8 +597,8 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
           a distance `band-1` from the diagonal are nonzero. `σ` controls the
           width of the Gaussin point spread function. The larger the `σ`, the 
           wider the function and the more ill posed the problem. 
-          If `matrixonly = false`, the linear system A, b, x will be generated.
-              (`matrixonly = true` by default.)
+          If `matrixonly = false`, the linear system A, b, x will be generated
+              (`matrixonly = true` by default).
 
 + [type,] n, [matrixonly]: `band = 3, σ = 0.7`.
 
@@ -687,9 +687,9 @@ Artifically generated discrete ill-posed problem.
 + [type,] n, t_max, [matrixonly]: the dimension of the 
               matrix is `n`. `t_max` controls the length of the pulse train.
               If `matrixonly = false`, the linear system A, b, x will be 
-              generated. (`matrixonly = true` by default.) The solution x
+              generated (`matrixonly = true` by default). The solution x
               consists a unit step at t = .5 and a pulse train of spike
-              of decreasing magnitude at t = .5, 1.5, 2.5, ...;
+              of decreasing magnitude at t = .5, 1.5, 2.5, ....
 
 + [type,] n, [matrixonly]: `t_max = 5`.
 
@@ -749,7 +749,7 @@ is a Hankel matrix.
 
 + [type,] n, [matrixonly]: the dimension of the matrix
               is `n`. If `matrixonly = false`, the right-hand side b will also
-              be generated. (`matrixonly = true` by default).
+              be generated (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 

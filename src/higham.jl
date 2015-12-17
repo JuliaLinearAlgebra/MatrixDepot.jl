@@ -9,7 +9,7 @@ positive definite and totally positive.
 
 *Input options:*
 
-+ [type,] dim: the dimension of the matrix;
++ [type,] dim: the dimension of the matrix.
 
 + [type,] row_dim, col_dim: the row and column dimensions.
 
@@ -109,9 +109,9 @@ Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is
 
 *Input options*:
 
- + [type,] vec1, vec2: two vectors;
+ + [type,] vec1, vec2: two vectors.
 
- + [type,] vec: a vector;
+ + [type,] vec: a vector.
 
  + [type,] dim: the dimension of the matrix.
 
@@ -145,9 +145,9 @@ step forward.
                  
 *Input options:*
                  
-+ [type,] vec, n: a vector and the column dimension;
++ [type,] vec, n: a vector and the column dimension.
 
-+ [type,] vec: a vector;
++ [type,] vec: a vector.
 
 + [type,] dim: the dimension of the matrix.
 
@@ -211,7 +211,7 @@ very ill conditioned.
 *Input options:*
               
 + [type,] n, k: `n` is the dimension of the matrix, `k = 0 or 1`.
-    If `k = 1` the matrix reflect about the anti-diagonal;
+    If `k = 1` the matrix reflect about the anti-diagonal.
 
 + [type,] n: `n` is the dimension of the matrix.
 
@@ -255,7 +255,7 @@ This generator is adapted from N. J. Higham's Test Matrix Toolbox.
 *Input options:*
 
 + [type,] n, alpha, lambda: `n` is the dimension of the matrix.
-    `alpha` and `lambda` are scalars;
+    `alpha` and `lambda` are scalars.
 
 + [type,] n: `alpha = sqrt(eps(type))` and `lambda = 0`.
 
@@ -348,7 +348,7 @@ eigenvalues.
 *Input options:*
 
 + [type,] dim, k: `dim` is the dimension of the matrix and
-    `k` is the number of superdiagonals;
+    `k` is the number of superdiagonals.
 
 + [type,] dim: the dimension of the matrix.
 
@@ -377,7 +377,7 @@ Upper triangular matrices discussed by Wilkinson and others.
 + [type,] row_dim, col_dim, α, k: `row_dim` and `col_dim`
         are row and column dimension of the matrix. `α` is a
         scalar representing the entries on the superdiagonals.
-        `k` is the number of superdiagonals;
+        `k` is the number of superdiagonals.
 
 + [type,] dim: the dimension of the matrix.
 
@@ -406,7 +406,7 @@ It has one small eigenvalue.
 *Input options:*
 
 + [type,] dim, alpha: `dim` is the dimension of the matrix,
-        `alpha` is a scalar;
+        `alpha` is a scalar.
 
 + [type,] dim: `alpha = -1`.
 
@@ -472,9 +472,9 @@ The Kahan matrix is an upper trapezoidal matrix, i.e., the
 *Input options:*
 
 + [type,] m, n, θ, pert: `m` and `n` are the row and column
-    dimensions of the matrix. `θ` and `pert` are scalars;
+    dimensions of the matrix. `θ` and `pert` are scalars.
 
-+ [type,] dim, θ, pert: `dim` is the dimension of the matrix;
++ [type,] dim, θ, pert: `dim` is the dimension of the matrix.
 
 + [type,] dim: `θ = 1.2`, `pert = 25`.
 
@@ -511,7 +511,7 @@ The Pei matrix is a symmetric matrix with known inversion.
 *Input options:*
 
 + [type,] dim, α: `dim` is the dimension of the matrix.
-    `α` is a scalar;
+    `α` is a scalar.
 
 + [type,] dim: the dimension of the matrix.
 
@@ -679,7 +679,7 @@ The Clement matrix is a tridiagonal matrix with zero
 
 + [type,] dim, k: `dim` is the dimension of the matrix.
         If `k = 0`, the matrix is of type `Tridiagonal`. 
-        If `k = 1`, the matrix is of type `SymTridiagonal`;
+        If `k = 1`, the matrix is of type `SymTridiagonal`.
 
 + [type,] dim: `k = 0`.
 
@@ -718,7 +718,7 @@ The Fiedler matrix is symmetric matrix with a dominant
 
 *Input options:*
 
-+ [type,] vec: a vector;
++ [type,] vec: a vector.
 
 + [type,] dim: the dimension of the matrix.
 
@@ -795,12 +795,12 @@ Construct a tridigonal matrix of type `Tridiagonal`.
 
 + [type,] v1, v2, v3: `v1` and `v3` are vectors of subdiagonal
             and superdiagonal elements, respectively, and `v2` is a vector
-            of diagonal elements;
+            of diagonal elements.
 
 + [type,] dim, x, y, z: `dim` is the dimension of the matrix,
             `x`, `y`, `z` are scalars. `x` and `z` are the subdiagonal and 
             superdiagonal elements, respectively, and `y` is the diagonal 
-            elements;
+            elements.
 
 + [type,] dim: `x = -1, y = 2, z = -1`. This matrix is also
             known as the second difference matrix.
@@ -890,7 +890,7 @@ The Chow matrix is a singular Toeplitz lower Hessenberg matrix.
 
 + [type,] dim, alpha, delta: `dim` is dimension of the matrix.
             `alpha`, `delta` are scalars such that `A[i,i] = alpha + delta` and
-            `A[i,j] = alpha^(i + 1 -j)` for `j + 1 <= i`;
+            `A[i,j] = alpha^(i + 1 -j)` for `j + 1 <= i`.
 
 + [type,] dim: `alpha = 1`, `delta = 0`.
 
@@ -991,7 +991,6 @@ A block tridiagonal matrix from Poisson’s equation.
 
 + [type,] n: the dimension of the matirx is `n^2`.
 
-           
 *Groups:* ["inverse", "symmetric", "pos-def", "eigen", "sparse"]
 
 *References:* 
@@ -1015,9 +1014,9 @@ A Toeplitz matrix is a matrix in which each descending
 
 *Input options:*
 
-+ [type,] vc, vr: `vc` and `vr` are the first column and row of the matrix;
++ [type,] vc, vr: `vc` and `vr` are the first column and row of the matrix.
 
-+ [type,] v: symmatric case, i.e., `vc = vr = v`;
++ [type,] v: symmatric case, i.e., `vc = vr = v`.
 
 + [type,] n: the dimension of the matrix is `n`, `v = [1:n;]` is the first
                 row and column vector.
@@ -1044,9 +1043,9 @@ A Hankel matrix is a matrix that is symmetric and constant
 
 + [type,] vc, vr: `vc` and `vc` are the first column and last row of the 
        matrix. If the last element of `vc` differs from the first element 
-                of `vr`, the last element of `rc` prevails;
+                of `vr`, the last element of `rc` prevails.
 
-+ [type,] v: `vc = vr = v`;
++ [type,] v: `vc = vr = v`.
 
 + [type,] n: the dimension of the matrix is `n`, `v = [1:n;]`.
 """
@@ -1069,7 +1068,7 @@ A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
 
 *Input options:*
 
-+ [type,] n, w: the dimension of the matrix is `n`, `w` is a real scalar;
++ [type,] n, w: the dimension of the matrix is `n`, `w` is a real scalar.
 
 + [type,] n: the case when `w = 0.25`.
 
@@ -1224,7 +1223,7 @@ A nonsymmetric matrix with eigenvalues 0, 1, 2, ... n-1.
 
 *Input options:*
 
-+ [type,] vec: `vec` is a vector with no repeated elements;
++ [type,] vec: `vec` is a vector with no repeated elements.
 
 + [type,] n: the dimension of the matrix is `n`.
 
@@ -1263,9 +1262,9 @@ sampling(args...) = sampling(Float64, args...)
 """
 Wilkinson Matrix
 ================
-The Wilkinson matrix is a symmetric tridiagonal matrix with 
-            pairs of nearly equal eigenvalues. The most frequently used                 case is `matrixdepot("wilkinson", 21)`. The result is of 
-            type `Tridiagonal`.
+The Wilkinson matrix is a symmetric tridiagonal matrix with pairs 
+of nearly equal eigenvalues. The most frequently used case 
+is `matrixdepot("wilkinson", 21)`. The result is of type `Tridiagonal`.
 
 *Input options:*
 
@@ -1299,7 +1298,7 @@ Random Matrix with Element -1, 0, 1
    `k = 2`: entries are -1 or 1.
    `k = 3`: entries are -1, 0 or 1.
 
-+ [type,] n, k: `m = n`;
++ [type,] n, k: `m = n`.
 
 + [type,] n: `k = 1`.
 
@@ -1364,11 +1363,11 @@ Random Matrix with Pre-assigned Singular Values
   `mode = 2`: one small singular value.
   `mode = 3`: geometrically distributed singular values.
   `mode = 4`: arithmetrically distributed singular values.
-  `mode = 5`: random singular values with  unif. dist. logarithm;
+  `mode = 5`: random singular values with  unif. dist. logarithm.
 
-+ [type,] n, kappa, mode: `m = n`;
++ [type,] n, kappa, mode: `m = n`.
 
-+ [type,] n, kappa: `mode = 3`;
++ [type,] n, kappa: `mode = 3`.
 
 + [type,] n: `kappa = sqrt(1/eps())`, `mode = 3`.
 
@@ -1489,7 +1488,7 @@ the consistent mass matrix for a regular nx-by-ny grid of
 *Input options:*
 
 + [type,] nx, ny: the dimension of the matrix is equal to
-    `3 * nx * ny + 2 * nx * ny + 1`;
+    `3 * nx * ny + 2 * nx * ny + 1`.
 
 + [type,] n: `nx = ny = n`.
 
@@ -1588,7 +1587,7 @@ The companion matrix to a monic polynomial
 
 *Input options:*
 
-+ [type,] vec: `vec` is a vector of coefficients;
++ [type,] vec: `vec` is a vector of coefficients.
 
 + [type,] n: `vec = [1:n;]`, the dimension of the matrix is n.
 """
