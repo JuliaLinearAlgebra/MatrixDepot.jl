@@ -438,7 +438,7 @@ end
 baart(args...) = baart(Float64, args...)
 
 """
-Phillips's \"famous\" problem
+Phillips's \"Famous\" Problem
 =============================
 
 *Input options:*
@@ -508,7 +508,7 @@ round_matlab{T<:Integer}(::Type{T}, x::AbstractFloat) = trunc(T,round_matlab(x))
 
 
 """
-One-dimensional gravity surverying problem
+One-dimensional Gravity Surverying Problem
 ==========================================
 Discretization of a 1-D model problem in gravity surveying, in 
     which a mass distribution f(t) is located at depth d, while the
@@ -584,7 +584,7 @@ gravity{T}(::Type{T}, n::Integer, matrixonly::Bool = true) =
 gravity(args...) = gravity(Float64, args...)
 
 """
-Image deblurring test problem
+Image Deblurring Test Problem
 =============================
 The generated matrix A is an `n*n-by-n*n` sparse, symmetric, 
            doubly block Toeplitz matrix that models blurring of an n-by-n 
@@ -678,7 +678,7 @@ function parallax{T}(::Type{T}, n::Integer)
 end
 
 """
-Test problem with \"spike\" solution
+Test Problem with \"Spike\" Solution
 ====================================
 Artifically generated discrete ill-posed problem.
 
@@ -737,7 +737,7 @@ function tomo{T}(::Type{T}, n::Integer)
 end
 
 """
-Integral equation with no square integrable solution 
+Integral Equation with No square Integrable Solution 
 ====================================================
 Discretization of a first kind Fredholm integral equation with 
 kernel `K` and right-hand side `g` given by

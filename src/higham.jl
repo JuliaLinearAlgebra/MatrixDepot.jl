@@ -1,7 +1,7 @@
 # Higham Test Matrices
 
 """
-Hilbert matrix
+Hilbert Matrix
 ==============
 The Hilbert matrix has `(i,j)` element `1/(i+j-1)`. It is 
 notorious for being ill conditioned. It is symmetric
@@ -36,8 +36,8 @@ hilb{T}(::Type{T}, n::Integer) = hilb(T, n, n)
 hilb(args...) = hilb(Float64, args...)
 
 """
-Inverse of Hilbert matrix
-=========================
+Inverse of the Hilbert Matrix
+=============================
 *Input options:*
 
 + [type,] dim: the dimension of the matrix.
@@ -67,7 +67,7 @@ end
 invhilb(n::Integer) = invhilb(Float64, n)
 
 """
-Hadamard matrix
+Hadamard Matrix
 ===============
 The Hadamard matrix is a square matrix whose entries are 
 1 or -1. It was named after Jacques Hadamard. The rows of 
@@ -102,7 +102,7 @@ end
 hadamard(n::Integer) = hadamard(Float64, n)
 
 """
-Cauchy matrix
+Cauchy Matrix
 =============
 Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is 
 `1/(x[i]-y[j])`. 
@@ -137,7 +137,7 @@ cauchy{T}(::Type{T}, k::Integer) = cauchy(T, [1:k;])
 cauchy(arg...) = cauchy(Float64, arg...)
 
 """
-Circulant matrix
+Circulant Matrix
 ================
 A circulant matrix has the property that each row is obtained 
 by cyclically permuting the entries of the previous row one
@@ -145,7 +145,7 @@ step forward.
                  
 *Input options:*
                  
-+ [type,] vec, dim: a vector and the column dimension.
++ [type,] vec, col_dim: a vector and the column dimension.
 
 + [type,] vec: a vector.
 
@@ -173,7 +173,7 @@ circul{T}(::Type{T}, k::Integer) = circul(T, [1:k;])
 circul(arg...) = circul(Float64, arg...)
 
 """
-Dingdong matrix
+Dingdong Matrix
 ===============
 The Dingdong matrix is a symmetric Hankel matrix invented
 by DR. F. N. Ris of IBM, Thomas J Watson Research Centre.
@@ -202,7 +202,7 @@ end
 dingdong(args...) = dingdong(Float64, args...)
 
 """
-Frank matrix
+Frank Matrix
 ============
 The Frank matrix is an upper Hessenberg matrix with
 determinant 1. The eigenvalues are real, positive and 
@@ -247,7 +247,7 @@ function jordbloc{T}( n::Integer, lambda::T)
 end
 
 """
-Forsythe matrix
+Forsythe Matrix
 ===============
 The Forsythe matrix is a n-by-n perturbed Jordan block. 
 This generator is adapted from N. J. Higham's Test Matrix Toolbox.
@@ -293,7 +293,7 @@ function oddmagic{T}(::Type{T}, n::Integer)
 end
 
 """
-Magic square matrix
+Magic Square Matrix
 ===================
 The magic matrix is a matrix with integer entries such that 
     the row elements, column elements, diagonal elements and 
@@ -598,7 +598,7 @@ end
 invol(n::Integer) = invol(Float64, n)
 
 """
-Chebyshev spectral differentiation matrix
+Chebyshev Spectral Differentiation Matrix
 =========================================
 If `k = 0`,the generated matrix is nilpotent and a vector with 
         all one entries is a null vector. If `k = 1`, the generated 
@@ -646,7 +646,7 @@ end
 chebspec(args...) = chebspec(Float64, args...)
 
 """
-Lotkin matrix
+Lotkin Matrix
 =============
 The Lotkin matrix is the Hilbert matrix with its first row 
         altered to all ones. It is unsymmetric, ill-conditioned and 
@@ -742,7 +742,7 @@ fiedler{T}(::Type{T}, n::Integer) = fiedler(T, [1:n;])
 fiedler(args...) = fiedler(Float64, args...)
 
 """
-MIN[I,J] matrix
+MIN[I,J] Matrix
 ===============
 A matrix with `(i,j)` entry `min(i,j)`. It is a symmetric positive
      definite matrix. The eigenvalues and eigenvectors are known 
@@ -1087,7 +1087,7 @@ prolate{T}(::Type{T}, n::Integer) = prolate(T, n, 0.25)
 prolate(args...) = prolate(Float64, args...)
 
 """
-Neumann matrix
+Neumann Matrix
 ==============
 A singular matrix from the discrete Neumann problem. 
        The matrix is sparse and the null space is formed by a vector of ones
@@ -1546,7 +1546,7 @@ wathen{T}(::Type{T}, n::Integer) = wathen(T, n, n)
 wathen(args...) = wathen(Float64, args...)
 
 """
-Golub matrix
+Golub Matrix
 ============
 Golub matrix is the product of two random unit lower and upper
     triangular matrices respectively. LU factorization without pivoting
@@ -1580,7 +1580,7 @@ end
 golub(n::Integer) = golub(Float64, n)
 
 """
-Companion matrix
+Companion Matrix
 ================
 The companion matrix to a monic polynomial 
     `a(x) = a_0 + a_1x + ... + a_{n-1}x^{n-1} + x^n`
