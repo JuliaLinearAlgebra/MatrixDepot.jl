@@ -138,9 +138,7 @@ julia> matrixdepot(1:4, 6, 10:15)
  "grcar" 
 ```
 
-By typing a matrix name, we can see what properties that matrix have.
-Conversely, if we type a property (or properties), we can see all the 
-matrices (in the collection) having that property (or properties).
+We can type a group name to see all the matrices in that group.
 
 ```julia
 julia> matrixdepot("symmetric")
@@ -173,15 +171,14 @@ We can add more matrices to Matrix Depot by downloading them from UF
 sparse matrix collection and Matrix Market. See
 [here](http://matrixdepotjl.readthedocs.org/en/latest/interface.html)
 for more details.
-
-We can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
+In addition, 
+we can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
 and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/latest/properties.html).
 
 
 ## Interface to the UF Sparse Matrix Collection 
 
-Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection
-name + '/' + matrix name``, to download a test matrix from the University of
+Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection_name + '/' + matrix_name``, to download a test matrix from the University of
 Florida Sparse Matrix Collection:
 http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.  For
 example:
@@ -190,7 +187,7 @@ example:
 julia> matrixdepot("HB/1138_bus", :get)
 ```
 
-Use ``matrixdepot(collection name/*, :get )`` to download a group of all the matrices in ``collection name`` from UF sparse matrix collection. For example:
+Use ``matrixdepot(collection_name/*, :get )`` to download a group of all the matrices in ``collection_name`` from UF sparse matrix collection. For example:
 
 ```julia
 julia> matrixdepot("MathWorks/*", :get)
