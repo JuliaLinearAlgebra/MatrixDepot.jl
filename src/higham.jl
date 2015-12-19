@@ -75,7 +75,7 @@ a Hadamard matrix are orthogonal.
          
 *Input options:*
 
-+ [type,] n: the dimension of the matrix, `n` is a power of 2.
++ [type,] dim: the dimension of the matrix, `dim` is a power of 2.
 
 *Groups:* ["inverse", "orthogonal", "eigen"]
 
@@ -145,7 +145,7 @@ step forward.
                  
 *Input options:*
                  
-+ [type,] vec, n: a vector and the column dimension.
++ [type,] vec, dim: a vector and the column dimension.
 
 + [type,] vec: a vector.
 
@@ -181,7 +181,7 @@ The eigenvalues cluster around `π/2` and `-π/2`.
 
 *Input options:*
               
-+ [type,] n: the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 
 *Groups:* ["symmetric", "eigen"]
               
@@ -210,10 +210,10 @@ very ill conditioned.
 
 *Input options:*
               
-+ [type,] n, k: `n` is the dimension of the matrix, `k = 0 or 1`.
++ [type,] dim, k: `dim` is the dimension of the matrix, `k = 0 or 1`.
     If `k = 1` the matrix reflect about the anti-diagonal.
 
-+ [type,] n: `n` is the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 
 *Groups:* ["ill-cond", "eigen"]
 
@@ -254,10 +254,10 @@ This generator is adapted from N. J. Higham's Test Matrix Toolbox.
     
 *Input options:*
 
-+ [type,] n, alpha, lambda: `n` is the dimension of the matrix.
++ [type,] dim, alpha, lambda: `dim` is the dimension of the matrix.
     `alpha` and `lambda` are scalars.
 
-+ [type,] n: `alpha = sqrt(eps(type))` and `lambda = 0`.
++ [type,] dim: `alpha = sqrt(eps(type))` and `lambda = 0`.
 
 
 *Groups:* ["inverse", "ill-cond", "eigen"]  
@@ -471,7 +471,7 @@ The Kahan matrix is an upper trapezoidal matrix, i.e., the
 
 *Input options:*
 
-+ [type,] m, n, θ, pert: `m` and `n` are the row and column
++ [type,] row_dim, col_dim, θ, pert: `row_dim` and `col_dim` are the row and column
     dimensions of the matrix. `θ` and `pert` are scalars.
 
 + [type,] dim, θ, pert: `dim` is the dimension of the matrix.
@@ -535,11 +535,11 @@ The inverse and determinat are known explicity.
 
 *Input options:*
 
-+ [type,] vec, dim: `vec` is a vector, `dim` is the number of columns.
++ [type,] vec, col_dim: `vec` is a vector, `col_dim` is the number of columns.
 
-+ [type,] vec
++ [type,] vec: `col_dim = length(vec)`
 
-+ [type,] dim
++ [type,] dim: `vec = [1:dim;]`
 
 *Groups:* ["inverse", "ill-cond"]
 
@@ -610,7 +610,7 @@ If `k = 0`,the generated matrix is nilpotent and a vector with
 + [type,] dim, k: `dim` is the dimension of the matrix and
         `k = 0 or 1`.
 
-+ [type,] dim.
++ [type,] dim: `k=0`.
 
 *Groups:* ["eigen"]
 
@@ -720,7 +720,7 @@ The Fiedler matrix is symmetric matrix with a dominant
 
 + [type,] vec: a vector.
 
-+ [type,] dim: the dimension of the matrix.
++ [type,] dim: `dim` is the dimension of the matrix. `vec=[1:dim;]`. 
 
 *Groups: *["inverse", "symmetric", "eigen"]
 
@@ -989,7 +989,7 @@ A block tridiagonal matrix from Poisson’s equation.
 
 *Input options:*
 
-+ [type,] n: the dimension of the matirx is `n^2`.
++ [type,] dim: the dimension of the matirx is `dim^2`.
 
 *Groups:* ["inverse", "symmetric", "pos-def", "eigen", "sparse"]
 
@@ -1018,7 +1018,7 @@ A Toeplitz matrix is a matrix in which each descending
 
 + [type,] v: symmatric case, i.e., `vc = vr = v`.
 
-+ [type,] n: the dimension of the matrix is `n`, `v = [1:n;]` is the first
++ [type,] dim: `dim` is the dimension of the matrix. `v = [1:dim;]` is the first
                 row and column vector.
 """
 function toeplitz{T}(::Type{T}, vc::Vector, vr::Vector)
@@ -1047,7 +1047,7 @@ A Hankel matrix is a matrix that is symmetric and constant
 
 + [type,] v: `vc = vr = v`.
 
-+ [type,] n: the dimension of the matrix is `n`, `v = [1:n;]`.
++ [type,] dim: `dim` is the dimension of the matrix. `v = [1:dim;]`.
 """
 function hankel{T}(::Type{T}, vc::Vector, vr::Vector)
     p = [vc; vr[2:end]]
@@ -1068,9 +1068,9 @@ A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
 
 *Input options:*
 
-+ [type,] n, w: the dimension of the matrix is `n`, `w` is a real scalar.
++ [type,] dim, w: `dim` is the dimension of the matrix. `w` is a real scalar.
 
-+ [type,] n: the case when `w = 0.25`.
++ [type,] dim: the case when `w = 0.25`.
 
 *References:* 
 
@@ -1094,7 +1094,7 @@ A singular matrix from the discrete Neumann problem.
 
 *Input options:*
 
-+ [type,] n: the dimension of the matrix is `n^2`.
++ [type,] dim: the dimension of the matrix is `dim^2`.
 
 *Groups:* ["eigen", "sparse"]
                 
@@ -1225,7 +1225,8 @@ A nonsymmetric matrix with eigenvalues 0, 1, 2, ... n-1.
 
 + [type,] vec: `vec` is a vector with no repeated elements.
 
-+ [type,] n: the dimension of the matrix is `n`.
++ [type,] dim: `dim` is the dimension of the matrix. 
+            `vec = [1:dim;]/dim`.
 
 *Groups:* ["eigen"]
 
@@ -1293,14 +1294,14 @@ Random Matrix with Element -1, 0, 1
 
 *Input options:*
 
-+ [type,] m, n, k: `m` and `n` are row and column dimensions,
++ [type,] row_dim, col_dim, k: `row_dim` and `col_dim` are row and column dimensions,
    `k = 1`: entries are 0 or 1.
    `k = 2`: entries are -1 or 1.
    `k = 3`: entries are -1, 0 or 1.
 
-+ [type,] n, k: `m = n`.
++ [type,] dim, k: `row_dim = col_dim = dim`.
 
-+ [type,] n: `k = 1`.
++ [type,] dim: `k = 1`.
 
 *Groups:* ["random"]
 """
@@ -1357,7 +1358,8 @@ Random Matrix with Pre-assigned Singular Values
 ===============================================
 *Input options:*
 
-+ [type,] m, n, kappa, mode: `m`, `n` are the dimensions of the matrix.
++ [type,] row_dim, col_dim, kappa, mode: `row_dim` and `col_dim` 
+    are the row and column dimensions.
   `kappa` is the condition number of the matrix.
   `mode = 1`: one large singular value.
   `mode = 2`: one small singular value.
@@ -1365,11 +1367,11 @@ Random Matrix with Pre-assigned Singular Values
   `mode = 4`: arithmetrically distributed singular values.
   `mode = 5`: random singular values with  unif. dist. logarithm.
 
-+ [type,] n, kappa, mode: `m = n`.
++ [type,] dim, kappa, mode: `row_dim = col_dim = dim`.
 
-+ [type,] n, kappa: `mode = 3`.
++ [type,] dim, kappa: `mode = 3`.
 
-+ [type,] n: `kappa = sqrt(1/eps())`, `mode = 3`.
++ [type,] dim: `kappa = sqrt(1/eps())`, `mode = 3`.
 
 *Groups:* ["ill-cond", "random"]
 
@@ -1424,7 +1426,7 @@ The matrix is constructed via a product of Givens rotations.
 
 *Input options:*
 
-+ [type,] n : the dimension of the matrix.
++ [type,] dim: the dimension of the matrix.
 
 *Groups:* ["random"]
 
@@ -1453,10 +1455,10 @@ Kac-Murdock-Szego Toeplitz matrix
 
 *Input options:*
 
-+ [type,] n, rho: `n` is the dimension of the matrix, `rho` is a
++ [type,] dim, rho: `dim` is the dimension of the matrix, `rho` is a
     scalar such that `A[i,j] = rho^(abs(i-j))`.
 
-+ [type,] n: `rho = 0.5`
++ [type,] dim: `rho = 0.5`
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
@@ -1552,7 +1554,7 @@ Golub matrix is the product of two random unit lower and upper
 
 *Input options:*
 
-+ [type,] n: the dimension of the matrix is `n`.
++ [type,] dim: the dimension of the matrix.
 
 *References:*
  
@@ -1589,7 +1591,7 @@ The companion matrix to a monic polynomial
 
 + [type,] vec: `vec` is a vector of coefficients.
 
-+ [type,] n: `vec = [1:n;]`, the dimension of the matrix is n.
++ [type,] dim: `vec = [1:dim;]`. `dim` is the dimension of the matrix.
 """
 function companion{T}(::Type{T}, v::AbstractVector)
     n = length(v)
