@@ -13,6 +13,7 @@ Predefined Groups
 -----------------
 
 .. glossary::
+   :sorted:
 
    symmetric
       The matrix is symmetric for some parameter values.
@@ -27,7 +28,7 @@ Predefined Groups
        The matrix is positive definite for some parameter values.
 
    eigen
-       The eigensystem of the matrix has some known results.
+       Part of the eigensystem of the matrix is explicitly known.
 
    sparse
       The matrix is sparse.
@@ -36,8 +37,8 @@ Predefined Groups
       The matrix has random entries.
 
    data
-      The matrix is downloaded from UF sparse matrix collection or
-      NIST Matrix Market. 
+      The matrix has been downloaded from UF sparse matrix collection or
+      the Matrix Market collection. 
 
    regprob
       The output is a test problem for Regularization Methods.

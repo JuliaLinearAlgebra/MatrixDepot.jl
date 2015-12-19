@@ -1,11 +1,16 @@
 ## Matrix Depot Release Notes
 
+v0.5.2
+------
+
+* Update documentation.
+
 v0.5.1
 ------
 
 * Fix a bug in user defined generators.
 
-* Fix reference formatting
+* Fix reference formatting.
 
 * Allow accessing matrices by different subtypes of Integer or UnitRange.
 

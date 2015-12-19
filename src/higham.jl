@@ -1458,7 +1458,7 @@ Kac-Murdock-Szego Toeplitz matrix
 + [type,] dim, rho: `dim` is the dimension of the matrix, `rho` is a
     scalar such that `A[i,j] = rho^(abs(i-j))`.
 
-+ [type,] dim: `rho = 0.5`
++ [type,] dim: `rho = 0.5`.
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 

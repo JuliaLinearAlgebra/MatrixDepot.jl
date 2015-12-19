@@ -18,10 +18,10 @@ in this directory. Hence, all we need to do is to copy
 the generator files to ``path/to/MatrixDepot/myMatrixDepot`` and use
 the function ``include_generator`` to declare them.
 
-.. function:: include_generator(Stuff To Be Included, Stuff, f)
+.. function:: include_generator(Stuff_To_Be_Included, Stuff, f)
 
    Includes a piece of information of the function ``f`` to Matrix Depot,
-   where ``Stuff To Be Included`` is one of the following:
+   where ``Stuff_To_Be_Included`` is one of the following:
    
     * ``FunctionName``: the function name of ``f``. In this case, 
       ``Stuff`` is a string representing ``f``.
@@ -49,9 +49,9 @@ matrix generator ``randsym`` and ``randorth``::
       for j = 1:n
         for i = j:n
            A[i,j] = randn()
+	   if i != j; A[j,i] = A[i,j] end
         end
       end
-      A = A + tril(A, -1)'
       return A
   end
 
@@ -179,7 +179,7 @@ Now if we type::
   "wathen"   
   "wilkinson"
 
-the function ``randsym`` is now part of the group ``symmetric`` and
+the function ``randsym`` will be part of the group ``symmetric`` and
 ``random``.
 
 
@@ -189,8 +189,7 @@ could save it on GitHub by creating a new repository named ``myMatrixDepot``.
 Then we go to the directory ``path/to/MatrixDepot/myMatrixDepot`` and type::
 
   git init
-  git add group.jl
-  git add generator.jl
+  git add *.jl
   git commit -m "first commit"
   git remote add origin https://github.com/your-user-name/myMatrixDepot.git
   git push -u origin master

@@ -67,8 +67,7 @@ and generate a circul matrix of size 5 by
 
 
 
-We can type the matrix name to see the parameter options or matrix
-properties.
+We can type the matrix name to get help.
 
 .. code:: 
 
@@ -112,7 +111,7 @@ properties.
    Amer. Math. Monthly, 70 (1963) pp. 12-17
 
 
-From the information given, we notice that we can create a 4-by-6
+From the information given, we can create a 4-by-6
 rectanglular Hilbert matrix by
 
 .. code::
@@ -142,9 +141,7 @@ We can aslo specify the data type
 
 
 
-By inputing a matrix name, we can see what properties that matrix have.
-Conversely, if we input a property (or properties), we can see all the
-matrices (in the collection) having that property (or properties).
+Matrices can be accessed by groups. 
 
 .. code:: 
 
@@ -201,60 +198,10 @@ matrices (in the collection) having that property (or properties).
 
 
 
-Given a property, we can loop through all the matrices having this
-propery
+User Defined Groups
+-------------------
 
-.. code:: 
-
-    # Multiply all matrices of the class "symmetric" and "ill-cond" and "inverse"
-    A = eye(4)
-    print("Identity matrix")
-    for mat in intersect(matrixdepot("symmetric"), matrixdepot("ill-cond"), matrixdepot("inverse")) 
-        print(" x $mat matrix")
-        A = A * full(matrixdepot(mat, 4))    
-    end
-    println(" =")
-    A    
-
-    Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x pascal matrix x pei matrix x tridiag matrix =
-
-
-    4x4 Array{Float64,2}:
-     153.12    -11.919    -15.4345   296.937
-     109.896    -8.91857  -11.5976   214.433
-      86.7524   -7.15714   -9.32857  169.702
-      71.9139   -5.98707   -7.81497  140.876
-
-
-
-The loop above can also be written as
-
-.. code::
-
-    A = eye(4)
-    print("Identity matrix")
-    for mat in matrixdepot("symmetric", "ill-cond", "inverse")
-        print(" x $mat matrix")
-        A = A * full(matrixdepot(mat, 4))
-    end
-    println(" =")
-    A
-
-
-    Identity matrix x hilb matrix x cauchy matrix x invhilb matrix x moler matrix x pascal matrix x pei matrix x tridiag matrix =
-
-    4x4 Array{Float64,2}:
-     153.12    -11.919    -15.4345   296.937
-     109.896    -8.91857  -11.5976   214.433
-      86.7524   -7.15714   -9.32857  169.702
-      71.9139   -5.98707   -7.81497  140.876
-
-
-
-User Defined Properties
------------------------
-
-We can define properties in MatrixDepot. Since each property in Matrix
+We can add new groups to MatrixDepot. Since each group in Matrix
 Depot is a list of strings, you can simply do, for example,
 
 .. code:: 
@@ -314,10 +261,13 @@ To add a group of matrices permanently for future use, we put the macro
     @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]
     138
 
-We need to **restart** Julia to see the changes. Type
+We need to reload Julia to see the changes. Type
 
 .. code:: 
 
+    workspace()
+   
+    using MatrixDepot
     matrixdepot()
 
     Matrices:
@@ -351,9 +301,8 @@ Notice new defined groups have been included. We can use them as
      "hilb"  
 
 
-
 We can remove a group using the macro ``@rmgroup``. As before, we
-need to **restart** Julia to see the changes.
+need to reload Julia to see the changes.
 
 .. code:: 
 

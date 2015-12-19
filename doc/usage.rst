@@ -2,11 +2,11 @@ Usage
 -----
 
 Every matrix in the collection is represented by a string
-``"matrix name"``, for example, the Cauchy matrix is represented by
+``"matrix_name"``, for example, the Cauchy matrix is represented by
 ``"cauchy"`` and the Hilbert matrix is represented by ``"hilb"``.
 
-The matrix groups in the collection are also symbolized
-by strings ``"group name"``. For example, the class of the symmetric
+The matrix groups are also symbolized by strings. 
+For example, the class of the symmetric
 matrices is symbolized by ``"symmetric"``.
 
 .. function:: matrixdepot()
@@ -79,7 +79,7 @@ matrices is symbolized by ``"symmetric"``.
 
 .. function:: matrixdepot(group_name)
 
-  Return a list of matrices which belong to group `group_name`. For
+  Return a list of matrices which belong to group ``group_name``. For
   example::
 
     julia> matrixdepot("pos-def")
