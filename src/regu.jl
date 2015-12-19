@@ -13,11 +13,11 @@ A matrix `A` is called oscillating if `A` is totally
 
 + [type,] Σ: the singular vaule spectrum of the matrix.
 
-+ [type,] n, mode: `n` is the dimension of the matrix. 
++ [type,] dim, mode: `dim` is the dimension of the matrix. 
         `mode = 1`: geometrically distributed singular values.
         `mode = 2`: arithmetrically distributed singular values.
 
-+ [type,] n: `mode = 1`.
++ [type,] dim: `mode = 1`.
 
 *Groups:* ['symmetric','pos-def', 'random', 'eigen'] 
 
@@ -121,8 +121,8 @@ A classical test problem for regularization algorithms:
  
 *Input options:*
 
-+ [type,] n, example, [matrixonly]: the dimension of the 
-        matrix is `n`.  One choose between between the following right-hand
++ [type,] dim, example, [matrixonly]: the dimension of the 
+        matrix is `dim`.  One choose between between the following right-hand
         g and solution f: 
 
  
@@ -138,7 +138,7 @@ A classical test problem for regularization algorithms:
         If `matrixonly = false`, the linear system A, b, x will be 
         generated (`matrixonly = true` by default).             
 
-+ [type,] n, [matrixonly]: `example = 1`.
++ [type,] dim, [matrixonly]: `example = 1`.
 
 *Groups:* ["regprob"]
 
@@ -208,7 +208,7 @@ This test problem uses a first-kind Fredholm integral equation
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimesion of the matrix `n` must be even.
++ [type,] dim, [matrixonly]: the dimesion of the matrix `dim` must be even.
     If `matrixonly = false`, the linear system A, b, x will be generated 
     (`matrixonly = true` by default).
 
@@ -257,7 +257,7 @@ A Problem with a Discontinuous Solution
 
 *Input options:*
 
-+ [type,] n, t1, t2, [matrixonly]: the dimension of matrix is `n`. 
++ [type,] dim, t1, t2, [matrixonly]: the dimension of matrix is `dim`. 
     `t1` and `t2` are two real scalars such that `0 < t1 < t2 < 1`. 
     If `matrixonly = false`, the linear system A, b, x will be generated 
     (`matrixonly = true` by default).
@@ -302,7 +302,7 @@ not satifiy the discrete Picard condition for the small singular values.
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimension of the matrix is `n`.
++ [type,] dim, [matrixonly]: `dim` is the dimension of the matrix.
     If `matrixonly = false`, the linear system A, b, x will be generated 
     (`matrixonly = true` by default).
 
@@ -335,8 +335,8 @@ Inverse Heat Equation
 
 *Input options:*
 
-+ [type,] n, κ, [matrixonly]: the dimension of the matrix is `n` and `n` 
-    must be even. `κ` controls the ill-conditioning of the matrix.
++ [type,] dim, κ, [matrixonly]: `dim` is the dimension of the matrix and 
+    `dim` must be even. `κ` controls the ill-conditioning of the matrix.
     (`κ = 5` gives a well-conditioned problem and `κ = 1` 
      gives an ill conditoned problem). 
     If `matrixonly = false`, the linear system A, b, x will be generated 
@@ -392,7 +392,7 @@ Fredholm Integral Equation of the First Kind
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimenstion of the matrix is `n`.
++ [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
     If `matrixonly = false`, the linear system A, b, x will be generated 
     (`matrixonly = true` by default).
 
@@ -443,7 +443,7 @@ Phillips's \"famous\" problem
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimenstion of the matrix is `n`.
++ [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
     If `matrixonly = false`, the linear system A, b, x will be generated 
     (`matrixonly = true` by default).
 
@@ -517,7 +517,7 @@ Discretization of a 1-D model problem in gravity surveying, in
 
 *Input options:*
 
-+ [type,] n, example, a, b, d, [matrixonly]: n is the dimension
++ [type,] dim, example, a, b, d, [matrixonly]: `dim` is the dimension
         of the matrix. Three examples are implemented.
         
 
@@ -535,9 +535,9 @@ Discretization of a 1-D model problem in gravity surveying, in
        If matrixonly = false, the linear system A, b, x will be generated
        (matrixonly = true by default).
 
-+ [type,] n, example, [matrixonly]: `a = 0, b = 1, d = 0.25`;
++ [type,] dim, example, [matrixonly]: `a = 0, b = 1, d = 0.25`;
 
-+ [type,] n, [matrixonly]: `example = 1, a = 0, b = 1, d = 0.25`.            
++ [type,] dim, [matrixonly]: `example = 1, a = 0, b = 1, d = 0.25`.            
 *Groups:* ["regprob"]
 
 *References:* 
@@ -592,15 +592,15 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
 
 *Input options:*
 
-+ [type,] n, band, σ, [matrixonly]: the dimension of the matrix
-          is `n^2`. `band` is the half-bandwidth, only matrix elements within
++ [type,] dim, band, σ, [matrixonly]: the dimension of the matrix
+          is `dim^2`. `band` is the half-bandwidth, only matrix elements within
           a distance `band-1` from the diagonal are nonzero. `σ` controls the
           width of the Gaussin point spread function. The larger the `σ`, the 
           wider the function and the more ill posed the problem. 
           If `matrixonly = false`, the linear system A, b, x will be generated
               (`matrixonly = true` by default).
 
-+ [type,] n, [matrixonly]: `band = 3, σ = 0.7`.
++ [type,] dim, [matrixonly]: `band = 3, σ = 0.7`.
 
 *Groups:* ["regprob", "sparse"]
 """
@@ -684,14 +684,14 @@ Artifically generated discrete ill-posed problem.
 
 *Input options:*
 
-+ [type,] n, t_max, [matrixonly]: the dimension of the 
-              matrix is `n`. `t_max` controls the length of the pulse train.
++ [type,] dim, t_max, [matrixonly]: `dim` is the dimension of the 
+              matrix. `t_max` controls the length of the pulse train.
               If `matrixonly = false`, the linear system A, b, x will be 
               generated (`matrixonly = true` by default). The solution x
               consists a unit step at t = .5 and a pulse train of spike
               of decreasing magnitude at t = .5, 1.5, 2.5, ....
 
-+ [type,] n, [matrixonly]: `t_max = 5`.
++ [type,] dim, [matrixonly]: `t_max = 5`.
 
 *Groups:* ["regprob"]
 """
@@ -747,8 +747,8 @@ is a Hankel matrix.
 
 *Input options:*
 
-+ [type,] n, [matrixonly]: the dimension of the matrix
-              is `n`. If `matrixonly = false`, the right-hand side b will also
++ [type,] dim, [matrixonly]: `dim` is the dimension of the matrix. 
+              If `matrixonly = false`, the right-hand side b will also
               be generated (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
