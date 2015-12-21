@@ -109,11 +109,12 @@ Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is
 
 *Input options*:
 
- + [type,] vec1, vec2: two vectors.
+ + [type,] x, y: two vectors.
 
- + [type,] vec: a vector.
+ + [type,] x: a vector. `y` defaults to `x`.
 
- + [type,] dim: the dimension of the matrix.
+ + [type,] dim: the dimension of the matrix. `x` and `y` default to 
+    `[1:dim;]`.
 
 *Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
 
