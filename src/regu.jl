@@ -702,8 +702,8 @@ function parallax{T}(::Type{T}, n::Integer, matrixonly::Bool=true)
     # Intialization
     a = zero(T); b = T(0.1); m = 26; σ = T(0.014234)
     hs = T(0.130/m); hx = (b-a)/n; hsh = hs/2; hxh = hx/2;
-    ss = (-T(0.03) + [0:m-1;]*hs)*ones(n)'
-    xx = ones(m)*(a + [0:n-1;]'*hx)
+    ss = (-T(0.03) + T[0:m-1;]*hs)*ones(T, n)'
+    xx = ones(T, m)*(a + T[0:n-1;]'*hx)
 
     # compute matrix A
     A = 16*exp(-T(0.5)*((ss + hsh - xx - hxh)/σ).^2)
@@ -718,14 +718,14 @@ function parallax{T}(::Type{T}, n::Integer, matrixonly::Bool=true)
              exp(-T(0.5)*((ss - xx - hx)/σ).^2) + 
              exp(-T(0.5)*((ss + hs - xx - hx)/σ).^2))
     
-    A = sqrt(hs*hx)/(36*σ*sqrt(2*T(pi)))*A
+    A = T(sqrt(hs*hx)/(36*σ*sqrt(2*pi)))*A
     
     if matrixonly
         return A
     else
         # compute b
-        b = [3;7;7;17;27;39;46;51;56;50;43;45;43;32;33;29;
-             21;12;17;13;15;12;6;6;5;5]/(sqrt(hs)*640)
+        b = T[3;7;7;17;27;39;46;51;56;50;43;45;43;32;33;29;
+             21;12;17;13;15;12;6;6;5;5]/T(sqrt(hs)*640)
         return RegProbNoSolution(A,b)
     end        
 end
