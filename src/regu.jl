@@ -663,19 +663,73 @@ blur{T}(::Type{T}, n::Integer, matrixonly::Bool = true) = blur(T, n, 3, 0.7, mat
 blur(args...) = blur(Float64, args...)
 
 
-#
-# Inverse Laplace transformation
-#
+"""
+Inverse Laplace Transformation
+"""
 function ilaplace{T}(::Type{T}, n::Integer)
 
 end
 
-#
-# Stellar parallax problem with real observations
-#
-function parallax{T}(::Type{T}, n::Integer)
 
+"""
+Stellar Parallax Problem with 26 Fixed, Real Observations
+=========================================================
+The underlying problem is a Fredholm integral equation of the first
+kind with kernel
+
+   `K(s,t) = (1/(σ√(2π)))*exp(-0.5*((s-t)/σ)^2)`,
+
+with `σ = 0.014234`, and it is dscretized by means of a Galerkin method
+with `n` orthonormal basis functions. The right-hand side `b` consists of 
+a measured distribution function of stellar parallaxes, and its length
+is fixed at `26`, i.e, the matrix `A` is `26×n`. The exact solution, 
+which represents the true distribution of stellar parallaxes, is unknown.
+
+*Input options:*
+
++ [type,] dim, [matrixonly]: the generated matrix is `26×dim`. If 
+    `matrixonly = false`, the right-hand side b will be generated 
+    (`matrixonly = true` by default). 
+
+*Groups:* ["regprob"]
+
+*References:*
+
+**W. M. Smart**, Stellar Dynamics, Cambridge University Press, Cambridge,
+(1938), p. 30. 
+"""
+function parallax{T}(::Type{T}, n::Integer, matrixonly::Bool=true)
+    # Intialization
+    a = zero(T); b = T(0.1); m = 26; σ = T(0.014234)
+    hs = T(0.130/m); hx = (b-a)/n; hsh = hs/2; hxh = hx/2;
+    ss = (-T(0.03) + [0:m-1;]*hs)*ones(n)'
+    xx = ones(m)*(a + [0:n-1;]'*hx)
+
+    # compute matrix A
+    A = 16*exp(-T(0.5)*((ss + hsh - xx - hxh)/σ).^2)
+
+    A = A + 4*(exp(-T(0.5)*((ss + hsh - xx)/σ).^2) +
+               exp(-T(0.5)*((ss + hsh -xx - hx)/σ).^2) + 
+               exp(-T(0.5)*((ss - xx - hxh)/σ).^2) + 
+               exp(-T(0.5)*((ss + hs - xx - hxh)/σ).^2))
+
+    A = A + (exp(-T(0.5)*((ss - xx)/σ).^2) + 
+             exp(-T(0.5)*((ss + hs - xx)/σ).^2) + 
+             exp(-T(0.5)*((ss - xx - hx)/σ).^2) + 
+             exp(-T(0.5)*((ss + hs - xx - hx)/σ).^2))
+    
+    A = sqrt(hs*hx)/(36*σ*sqrt(2*T(pi)))*A
+    
+    if matrixonly
+        return A
+    else
+        # compute b
+        b = [3;7;7;17;27;39;46;51;56;50;43;45;43;32;33;29;
+             21;12;17;13;15;12;6;6;5;5]/(sqrt(hs)*640)
+        return RegProbNoSolution(A,b)
+    end        
 end
+parallax(args...) = parallax(Float64, args...)
 
 """
 Test Problem with \"Spike\" Solution
