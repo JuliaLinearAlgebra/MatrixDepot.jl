@@ -1,5 +1,12 @@
 ## Matrix Depot Release Notes
 
+v0.5.3 (In preparation)
+-----------------------
+
+* Add new test problems for regularization methods:
+
+ - `parallax`: http://matrixdepotjl.readthedocs.org/en/latest/regu.html#term-parallax
+
 v0.5.2
 ------
 
