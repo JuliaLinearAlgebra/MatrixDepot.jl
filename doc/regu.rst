@@ -91,11 +91,13 @@ Here is a list of test problems in the collection:
 * :term:`foxgood`
 * :term:`gravity`
 * :term:`heat`
+* :term:`parallax`
 * :term:`phillips`
 * :term:`shaw`
 * :term:`spikes`
 * :term:`ursell`
 * :term:`wing`
+
 
 .. glossary::
    :sorted:
@@ -295,3 +297,21 @@ Here is a list of test problems in the collection:
 
       The symmetric matrix :math:`A` and vectors :math:`x` and :math:`b` 
       are computed from :math:`K,f` and :math:`g` using the Galerkin method.
+
+
+   parallax 
+      Stellar parallax problem with 26 fixed, real observations.
+      The underlying problem is a Fredholm integral equation of the
+      first kind with kernel
+
+      .. math::
+
+          K(s,t) = \frac{1}{\sigma \sqrt{2\pi}}\exp\Big(-\frac{1}{2}\big(\frac{s-t}{\sigma}\big)^2\Big),
+
+      with :math:`\sigma = 0.014234` and it is discretized by means of
+      a Galerkin method with n orthonormal basis functions. The
+      right-hand side b consists of a measured distribution function of
+      stellar parallaxes, and its length is fixed at 26; i.e., the
+      matrix :math:`A` is :math:`26\times n`. The exact solution, which
+      represents the true distribution of stellar parallaxes, is
+      unknown.

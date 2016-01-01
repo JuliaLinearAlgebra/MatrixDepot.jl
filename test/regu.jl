@@ -73,3 +73,10 @@ A = matrixdepot("ursell", n)
 @test matrixdepot("ursell", Float64, n) == A
 r1 = matrixdepot("ursell", Float32, n, false)
 print(r1)
+
+A = matrixdepot("parallax", n)
+
+m, n = size(A)
+@test m == 26
+@test matrixdepot("parallax", Float64, n) == A
+r1 = matrixdepot("parallax", Float32, n, false) 
