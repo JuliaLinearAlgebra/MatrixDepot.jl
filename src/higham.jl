@@ -622,7 +622,9 @@ If `k = 0`,the generated matrix is nilpotent and a vector with
 """
 function chebspec{T}(::Type{T}, n::Integer, k::Integer = 0)
     # k = 0 or 1
-    k == 1 ? n = n + 1 : none
+    if k == 1
+        n = n + 1
+    end
     c = ones(T, n)
     c[1] = 2.
     c[2:n-1] = one(T)
@@ -641,7 +643,9 @@ function chebspec{T}(::Type{T}, n::Integer, k::Integer = 0)
         i == n ? A[i,i] = - (2 * (n-1)^2 + 1) / 6 :
         A[i,i] = - 0.5 * x[i] / (1 - x[i]^2)
     end
-    k == 1 ? A = A[2:n, 2:n] : none
+    if k == 1
+        A = A[2:n, 2:n]
+    end
     return A
 end
 chebspec(args...) = chebspec(Float64, args...)
