@@ -11,8 +11,9 @@ MatrixDepot.update()
 # uf
 matrixdepot("1138_bus", :get)
 matrixdepot("HB/1138_bus", :get)
+matrixdepot("Pajek/Journals", :get)
 # Matrix Markt
-#matrixdepot("Harwell-Boeing/smtape/bp___200", :get)
+matrixdepot("Harwell-Boeing/smtape/bp___200", :get)
  
 # read data
 A = matrixdepot("HB/1138_bus", :r)
@@ -20,7 +21,10 @@ matrixdepot("HB/1138_bus")
 matrixdepot("1138_bus", :s) #search
 #B = matrixdepot("Harwell-Boeing/psadmit/662_bus", :read)
 #matrixdepot("Harwell-Boeing/psadmit/662_bus")
+r = matrixdepot("Pajek/Journals", :read, meta = true)
+display(r["Journals"])
 MatrixDepot.update()
+
 
 matrixdepot("Bates/*", :get)
 B = matrixdepot("Bates/Chem97Zt", :r)

@@ -44,7 +44,8 @@ function ufreader(dir::AbstractString, name::AbstractString;
     if info
         println(ufinfo(string(dirname, '/', name, ".mtx")))
         if length(files) > 1
-            println("metadata $(files)")
+            println("metadata:")
+            display(files)
         end
         #println("use matrixdepot(\"$name\", :read) to read the data")
     else
@@ -54,9 +55,13 @@ function ufreader(dir::AbstractString, name::AbstractString;
             datafiles = readdir(dirname)
             for data in datafiles
                 dataname = split(data, '.')[1]
-                try
-                    metadict[dataname] =  sparse(Base.SparseMatrix.CHOLMOD.Sparse(string(dirname, '/', data)))
-                catch
+                if endswith(data, "mtx")
+                    try
+                        metadict[dataname] =  sparse(Base.SparseMatrix.CHOLMOD.Sparse(string(dirname, '/', data)))
+                    catch
+                        metadict[dataname] = readall(string(dirname,'/', data))
+                    end
+                else
                     metadict[dataname] = readall(string(dirname,'/', data))
                 end
             end

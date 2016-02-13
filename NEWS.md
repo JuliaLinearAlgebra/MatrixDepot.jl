@@ -7,6 +7,8 @@ v0.5.3 (In preparation)
 
  - `parallax`: http://matrixdepotjl.readthedocs.org/en/latest/regu.html#term-parallax
 
+* Allow UF sparse matrix collection interface to store metadata. 
+
 v0.5.2
 ------
 
