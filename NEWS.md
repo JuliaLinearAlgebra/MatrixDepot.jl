@@ -1,13 +1,13 @@
 ## Matrix Depot Release Notes
 
-v0.5.3 (In preparation)
------------------------
+v0.5.3
+---------
 
 * Add new test problems for regularization methods:
 
  - `parallax`: http://matrixdepotjl.readthedocs.org/en/latest/regu.html#term-parallax
 
-* Allow UF sparse matrix collection interface to store metadata. 
+* Allow the UF sparse matrix collection interface to store metadata. 
 
 v0.5.2
 ------
