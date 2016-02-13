@@ -170,10 +170,10 @@ matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
 
 Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
 """
-function matrixdepot(name::AbstractString, method::Symbol, meta::Bool = false)
+function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
     if method == :r || method == :read
-        namelist = length(split(name, '/')) 
-        if  namelist == 2 
+        namelist = split(name, '/') 
+        if  length(namelist) == 2 
             ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2], info = false, meta = meta)
         else
             mmreader(data_dir("mm"), name, info = false)

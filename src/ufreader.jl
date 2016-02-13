@@ -40,7 +40,7 @@ meta: wehterh to return metadata
 function ufreader(dir::AbstractString, name::AbstractString;
                   info::Bool = true, meta::Bool = false)
     dirname = string(dir, '/', name)
-    files = filenames(dir)
+    files = filenames(dirname)
     if info
         println(ufinfo(string(dirname, '/', name, ".mtx")))
         if length(files) > 1
@@ -51,10 +51,16 @@ function ufreader(dir::AbstractString, name::AbstractString;
         A = sparse(Base.SparseMatrix.CHOLMOD.Sparse(string(dirname, '/', name, ".mtx")))
         if meta
             metadict = Dict{AbstractString, Any}()
-            metadict["A"] = A
-            for f in files
-                metadict[f] =  sparse(Base.SparseMatrix.CHOLMOD.Sparse(string(dirname, '/', f, ".mtx")))
+            datafiles = readdir(dirname)
+            for data in datafiles
+                dataname = split(data, '.')[1]
+                try
+                    metadict[dataname] =  sparse(Base.SparseMatrix.CHOLMOD.Sparse(string(dirname, '/', data)))
+                catch
+                    metadict[dataname] = readall(string(dirname,'/', data))
+                end
             end
+            metadict
         else
             A
         end        
