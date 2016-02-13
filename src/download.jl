@@ -164,15 +164,18 @@ function get(name::AbstractString)
             uzfn = string(matrixname, ".mtx")
             url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
     
-            dir = string(DATA_DIR, '/', "uf", '/', collectionname, '/')
+            dir = string(DATA_DIR, '/', "uf", '/', collectionname)
             if !isdir(dir)
-                mkdir(string(DATA_DIR, '/', "uf", '/', collectionname))
+                mkdir(dir)
             end
-            dirfn = string(dir, fn)
-            diruzfn = string(dir, matrixname, '/', uzfn)
             
-            !isfile(string(dir, uzfn)) || error("file $(uzfn) exits, no need to download")
-        
+            dirfn = string(dir, '/', fn)
+            diruzfn = string(dir, '/', matrixname, '/', uzfn)
+            
+            if isfile(diruzfn)
+                error("$(collectionname)/$(matrixname) exits, no need to download")
+            end
+
             try
                 download(url, dirfn)
                 println("download:", dirfn)
@@ -184,11 +187,8 @@ function get(name::AbstractString)
                 gunzip(dirfn)
             end
             rm(dirfn)
-    
             run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
-            cp("$(diruzfn)", "$(dir)/$(uzfn)")
             rm(string(dir,'/', matrixname, ".tar"))
-            rm(string(dir, '/', matrixname), recursive=true)
         end
     elseif length(namelist) == 3 # Matrix Market collection 
         

@@ -128,14 +128,13 @@ function matrixdepot(name::AbstractString)
         matrices = matrixclass[name]
         return sort(matrices)
     elseif '/' in name  # print matrix data info
-        namelist = split(name, '/')
-        length(namelist) == 2 ? matdatadir = data_dir("uf") :
-                                matdatadir = data_dir("mm")
 
-        pathfilename = string(matdatadir, '/', name, ".mtx")
-        println(ufinfo(pathfilename))
-        println("use matrixdepot(\"$name\", :read) to read the data")
-        return
+        namelist = split(name, '/')
+        if length(namelist) == 2
+            ufreader(data_dir("uf"), name)
+        else
+            mmreader(data_dir("mm"), name)
+        end
 
     elseif name == "data" # deal with the group "data"
         return matrix_data_name_list()
@@ -171,12 +170,15 @@ matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
 
 Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
 """
-function matrixdepot(name::AbstractString, method::Symbol)
+function matrixdepot(name::AbstractString, method::Symbol, meta::Bool = false)
     if method == :r || method == :read
-        length(split(name, '/')) == 2 ? matdatadir = data_dir("uf"):
-                                        matdatadir = data_dir("mm")
-        pathfilename = string(matdatadir, '/', name, ".mtx")
-        sparse(Base.SparseMatrix.CHOLMOD.Sparse(pathfilename))
+
+        if length(split(name, '/')) == 2 
+            ufreader(data_dir("uf"), name, info = false, meta = meta)
+        else
+            mmreader(data_dir("mm"), name, info = false)
+        end
+
     elseif method == :g || method == :get
         MatrixDepot.get(name)
     elseif method == :s || method == :search
@@ -194,7 +196,7 @@ end
 # access matrices
 #########################
 
-# access matrices by number
+
 """
 `matrixdepot(number, range...)` 
 
