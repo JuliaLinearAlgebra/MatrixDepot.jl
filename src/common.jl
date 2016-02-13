@@ -131,7 +131,7 @@ function matrixdepot(name::AbstractString)
 
         namelist = split(name, '/')
         if length(namelist) == 2
-            ufreader(data_dir("uf"), name)
+            ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2])
         else
             mmreader(data_dir("mm"), name)
         end
@@ -172,9 +172,9 @@ Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g
 """
 function matrixdepot(name::AbstractString, method::Symbol, meta::Bool = false)
     if method == :r || method == :read
-
-        if length(split(name, '/')) == 2 
-            ufreader(data_dir("uf"), name, info = false, meta = meta)
+        namelist = length(split(name, '/')) 
+        if  namelist == 2 
+            ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2], info = false, meta = meta)
         else
             mmreader(data_dir("mm"), name, info = false)
         end

@@ -42,11 +42,11 @@ function ufreader(dir::AbstractString, name::AbstractString;
     dirname = string(dir, '/', name)
     files = filenames(dir)
     if info
-        println(ufinfo(dirname))
+        println(ufinfo(string(dirname, '/', name, ".mtx")))
         if length(files) > 1
             println("metadata $(files)")
         end
-        println("use matrixdepot(\"$name\", :read) to read the data")
+        #println("use matrixdepot(\"$name\", :read) to read the data")
     else
         A = sparse(Base.SparseMatrix.CHOLMOD.Sparse(string(dirname, '/', name, ".mtx")))
         if meta
