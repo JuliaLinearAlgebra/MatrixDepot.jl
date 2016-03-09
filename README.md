@@ -215,7 +215,7 @@ and generate it with the Symbol ``:r`` or ``:read``.
 
 ```julia
 julia> matrixdepot("HB/1138_bus", :r)
-1138x1138 Base.LinAlg.Symmetric{Float64,Base.SparseMatrix.SparseMatrixCSC{Float64,Int64}}:
+1138x1138 Symmetric{Float64,SparseMatrixCSC{Float64,Int64}}:
  1474.78      0.0       0.0     …   0.0       0.0         0.0    0.0  
     0.0       9.13665   0.0         0.0       0.0         0.0    0.0  
     0.0       0.0      69.6147      0.0       0.0         0.0    0.0  
