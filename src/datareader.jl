@@ -1,4 +1,5 @@
 # return info comment strings for UF sparse matrix
+
 function ufinfo(filename::AbstractString)
     mmfile = open(filename,"r")
     info = "\n"
@@ -27,7 +28,7 @@ function mmreader(dir::AbstractString, name::AbstractString; info::Bool = true)
         sparse(Base.SparseArrays.CHOLMOD.Sparse(pathfilename))
     end
 end
-    
+
 # read UF sparse matrix data
 """
 `ufreader(dir, name, info, meta)`
@@ -59,7 +60,7 @@ function ufreader(dir::AbstractString, name::AbstractString;
                     try
                         metadict[dataname] =  sparse(Base.SparseArrays.CHOLMOD.Sparse(string(dirname, '/', data)))
                     catch
-                        metadict[dataname] = readall(string(dirname,'/', data))
+                        metadict[dataname] = denseread(string(dirname,'/', data))
                     end
                 else
                     metadict[dataname] = readall(string(dirname,'/', data))
