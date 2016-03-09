@@ -1,4 +1,9 @@
 # return info comment strings for UF sparse matrix
+if isdefined(:SparseArrays)
+    Sparse = Base.SparseArrays.CHOLMOD.Sparse
+else
+    Sparse = Base.SparseMatrix.CHOLMOD.Sparse
+end
 
 function ufinfo(filename::AbstractString)
     mmfile = open(filename,"r")
@@ -25,7 +30,7 @@ function mmreader(dir::AbstractString, name::AbstractString; info::Bool = true)
         println(ufinfo(pathfilename))
         println("use matrixdepot(\"$name\", :read) to read the data")
     else
-        sparse(Base.SparseArrays.CHOLMOD.Sparse(pathfilename))
+        sparse(Sparse(pathfilename))
     end
 end
 
@@ -50,7 +55,7 @@ function ufreader(dir::AbstractString, name::AbstractString;
         end
         #println("use matrixdepot(\"$name\", :read) to read the data")
     else
-        A = sparse(Base.SparseArrays.CHOLMOD.Sparse(string(dirname, '/', name, ".mtx")))
+        A = sparse(Sparse(string(dirname, '/', name, ".mtx")))
         if meta
             metadict = Dict{AbstractString, Any}()
             datafiles = readdir(dirname)
@@ -58,7 +63,7 @@ function ufreader(dir::AbstractString, name::AbstractString;
                 dataname = split(data, '.')[1]
                 if endswith(data, "mtx")
                     try
-                        metadict[dataname] =  sparse(Base.SparseArrays.CHOLMOD.Sparse(string(dirname, '/', data)))
+                        metadict[dataname] =  sparse(Sparse(string(dirname, '/', data)))
                     catch
                         metadict[dataname] = denseread(string(dirname,'/', data))
                     end
