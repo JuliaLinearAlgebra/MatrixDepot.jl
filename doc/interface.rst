@@ -12,8 +12,8 @@ the database::
 Interface to the UF Sparse Matrix Collection
 ---------------------------------------------
 
-Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection name
-+'/' + matrix name``,  to download a test matrix from the
+Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection_name
++'/' + matrix_name``,  to download a test matrix from the
 `UF Sparse Matrix Collection <http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html>`_.
 For example::
 
@@ -25,7 +25,7 @@ For example::
    data can be found by ``matrixdepot("data")``. 
 	  
 If the matrix name is unique in the collections, we could use
-``matrixdepot(matrix name, :get)`` to download the data. If more than
+``matrixdepot(matrix_name, :get)`` to download the data. If more than
 one matrix has the same name, a list of options will be returned. For
 example::
   
@@ -102,8 +102,18 @@ and generate it with the Symbol ``:r`` or  ``:read`` ::
 	[417498, 916428]  =  1.0
 	[843845, 916428]  =  1.0
 
-We can use ``matrixdepot(collection name/*)`` to download all the matrices
-in a given ``collection name``. For example, we can get all the 
+The metadata of a given matrix can be obtained by 
+``matrixdepot(collection_name/matrix_name, :read, meta = true)``. For example::
+
+  julia> matrixdepot("TKK/t520", :get)
+  julia> matrixdepot("TKK/t520", :read, meta = true)
+  Dict{AbstractString,Any} with 3 entries:
+    "t520"       => 5563x5563 Symmetric{Float64,SparseMatrixCSC{Float64,Int64}}:…
+    "t520_b"     => "%%MatrixMarket matrix array real general\n%-----------------…
+    "t520_coord" => "%%MatrixMarket matrix array real general\n%-----------------…
+
+We can use ``matrixdepot(collection_name/*)`` to download all the matrices
+in a given ``collection_name``. For example, we can get all the 
 matrices contributed by The Mathworks, Inc. by ``matrixdepot("MathWorks/*", :get)``::
 
    julia> matrixdepot()
