@@ -1,5 +1,12 @@
 ## Matrix Depot Release Notes
 
+v0.5.4
+--------
+
+* Fix `SparseMatrix` deprecation for Julia v0.5.
+
+* Enhance the UF sparse matrix collection's meta data storage.
+
 v0.5.3
 ---------
 
@@ -7,7 +14,7 @@ v0.5.3
 
  - `parallax`: http://matrixdepotjl.readthedocs.org/en/latest/regu.html#term-parallax
 
-* Allow the UF sparse matrix collection interface to store metadata. 
+* Allow the UF sparse matrix collection interface to store meta data. 
 
 v0.5.2
 ------
