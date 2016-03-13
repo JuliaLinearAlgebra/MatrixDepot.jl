@@ -135,7 +135,7 @@ A classical test problem for regularization algorithms:
                            f(t) = | t, t < 0.5
                            f(t) = | 1- t, t >= 0.5.
 
-        If `matrixonly = false`, the linear system A, b, x will be 
+        If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be 
         generated (`matrixonly = true` by default).             
 
 + [type,] dim, [matrixonly]: `example = 1`.
@@ -209,7 +209,7 @@ This test problem uses a first-kind Fredholm integral equation
 *Input options:*
 
 + [type,] dim, [matrixonly]: the dimesion of the matrix `dim` must be even.
-    If `matrixonly = false`, the linear system A, b, x will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
@@ -259,7 +259,7 @@ A Problem with a Discontinuous Solution
 
 + [type,] dim, t1, t2, [matrixonly]: the dimension of matrix is `dim`. 
     `t1` and `t2` are two real scalars such that `0 < t1 < t2 < 1`. 
-    If `matrixonly = false`, the linear system A, b, x will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
     (`matrixonly = true` by default).
 
 + [type,] n, [matrixonly]: `t1 = 1/3` and `t2 = 2/3`.
@@ -303,7 +303,7 @@ not satifiy the discrete Picard condition for the small singular values.
 *Input options:*
 
 + [type,] dim, [matrixonly]: `dim` is the dimension of the matrix.
-    If `matrixonly = false`, the linear system A, b, x will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
@@ -339,7 +339,7 @@ Inverse Heat Equation
     `dim` must be even. `κ` controls the ill-conditioning of the matrix.
     (`κ = 5` gives a well-conditioned problem and `κ = 1` 
      gives an ill conditoned problem). 
-    If `matrixonly = false`, the linear system A, b, x will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
     (`matrixonly = true` by default).
 
 + [type,] n, [matrixonly]: `κ = 1`.
@@ -393,7 +393,7 @@ Fredholm Integral Equation of the First Kind
 *Input options:*
 
 + [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
-    If `matrixonly = false`, the linear system A, b, x will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
@@ -444,7 +444,7 @@ Phillips's \"Famous\" Problem
 *Input options:*
 
 + [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
-    If `matrixonly = false`, the linear system A, b, x will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
@@ -532,7 +532,7 @@ Discretization of a 1-D model problem in gravity surveying, in
        The parameter d is the depth at which the magnetic deposit is 
        located. The larger the d, the faster the decay of the singular values. 
 
-       If matrixonly = false, the linear system A, b, x will be generated
+       If matrixonly = false, the matrix A and vectors b and x in the linear system Ax = b will be generated
        (matrixonly = true by default).
 
 + [type,] dim, example, [matrixonly]: `a = 0, b = 1, d = 0.25`;
@@ -597,7 +597,7 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
           a distance `band-1` from the diagonal are nonzero. `σ` controls the
           width of the Gaussin point spread function. The larger the `σ`, the 
           wider the function and the more ill posed the problem. 
-          If `matrixonly = false`, the linear system A, b, x will be generated
+          If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
               (`matrixonly = true` by default).
 
 + [type,] dim, [matrixonly]: `band = 3, σ = 0.7`.
@@ -688,7 +688,7 @@ which represents the true distribution of stellar parallaxes, is unknown.
 *Input options:*
 
 + [type,] dim, [matrixonly]: the generated matrix is `26×dim`. If 
-    `matrixonly = false`, the right-hand side b will be generated 
+    `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
     (`matrixonly = true` by default). 
 
 *Groups:* ["regprob"]
@@ -740,7 +740,7 @@ Artifically generated discrete ill-posed problem.
 
 + [type,] dim, t_max, [matrixonly]: `dim` is the dimension of the 
               matrix. `t_max` controls the length of the pulse train.
-              If `matrixonly = false`, the linear system A, b, x will be 
+              If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be 
               generated (`matrixonly = true` by default). The solution x
               consists a unit step at t = .5 and a pulse train of spike
               of decreasing magnitude at t = .5, 1.5, 2.5, ....
@@ -802,7 +802,7 @@ is a Hankel matrix.
 *Input options:*
 
 + [type,] dim, [matrixonly]: `dim` is the dimension of the matrix. 
-              If `matrixonly = false`, the right-hand side b will also
+              If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will also
               be generated (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
