@@ -1,5 +1,10 @@
 ## Matrix Depot Release Notes
 
+v0.5.5
+--------
+
+* Improve the documentation of regularization problems.
+
 v0.5.4
 --------
 
