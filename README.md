@@ -275,8 +275,8 @@ for more details.
 
 - Weijian Zhang and Nicholas J. Higham,
   "Matrix Depot: An Extensible Test Matrix Collection for Julia",
-  *MIMS EPrint*, 2015.118, (2015).
-  [[pdf]](http://eprints.ma.man.ac.uk/2426/01/covered/MIMS_ep2015_118.pdf)
+  *PeerJ Comput. Sci.*, 2:e58 (2016), 
+  [[pdf]](https://peerj.com/articles/cs-58/)
 
 - Nicholas J. Higham,
   "Algorithm 694, A Collection of Test Matrices in MATLAB",
