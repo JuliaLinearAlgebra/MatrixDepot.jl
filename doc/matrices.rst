@@ -351,7 +351,7 @@ Matrices
       .. image:: images/vand.png
 
    pei
-      The Pei matrix is a symmetric matrix with known inversison [pei62]_. 
+      The Pei matrix is a symmetric matrix with known inverse [pei62]_. 
 
       .. image:: images/pei.png
 

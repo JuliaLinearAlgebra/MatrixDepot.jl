@@ -238,7 +238,7 @@ julia> matrixdepot("HB/1138_bus", :r)
     0.0       0.0       0.0         0.0       0.0         0.0  117.647
 ```
 
-Note ``matrixdepot()`` displays all the matrices in the colleciton,
+Note ``matrixdepot()`` displays all the matrices in the collection,
 including the newly downloaded matrices.
 
 ```julia

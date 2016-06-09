@@ -112,7 +112,7 @@ We can type the matrix name to get help.
 
 
 From the information given, we can create a 4-by-6
-rectanglular Hilbert matrix by
+rectangular Hilbert matrix by
 
 .. code::
 
@@ -126,7 +126,7 @@ rectanglular Hilbert matrix by
 
 
 
-We can aslo specify the data type
+We can also specify the data type
 
 .. code:: 
 
