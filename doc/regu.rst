@@ -46,7 +46,7 @@ Here is an example::
              If matrixonly = false, the linear system A, b, x will be generated. 
              (matrixonly = true by default.)
            
-  Reference: P.C. Hansen, Regularization tools: A MATLAB pacakge for 
+  Reference: P.C. Hansen, Regularization tools: A MATLAB package for 
              analysis and solution of discrete ill-posed problems. 
              Numerical Algorithms, 6(1994), pp.1-35
 
@@ -183,13 +183,13 @@ Here is a list of test problems in the collection:
 
         g(s)=2\frac{\sin (s)}{s}, \quad f(t) = \sin(t). 
 
-     .. [baart82] M.L. Baart, The use of auto-correlation for pesudo-rank
+     .. [baart82] M.L. Baart, The use of auto-correlation for pseudo-rank
 		  determination in noisy ill-conditioned linear least-squares
 		  problems, IMA, J. Numer. Anal. 2 (1982), 241-247.
 
    phillips
      Phillips's "famous" problem. Discretization of the "famous" Fredholm
-     integral equation of the first kind deviced by D.L. Phillips [phillips62]_. 
+     integral equation of the first kind devised by D.L. Phillips [phillips62]_. 
      The kernel :math:`K` and solution :math:`f` are given by
 
      .. math::
