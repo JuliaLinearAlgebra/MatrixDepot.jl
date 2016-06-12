@@ -1,5 +1,10 @@
 ## Matrix Depot Release Notes
 
+v0.5.6
+--------
+
+* Fix various typos in documentation, thanks to @jiahao.
+
 v0.5.5
 --------
 
