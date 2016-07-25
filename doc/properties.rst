@@ -46,6 +46,8 @@ Predefined Groups
    all
       All the matrices in the collection. 
 
+   graph
+      An adjacency matrix of a graph.  
 
 Adding New Groups
 -----------------
