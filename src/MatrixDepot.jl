@@ -9,10 +9,12 @@ export matrixdepot, @addgroup, @rmgroup
 include("common.jl")        # main functions
 include("higham.jl")          # test matrices
 include("regu.jl")               # regularization test problem
+include("graph.jl")             # adjacency matrices for graphs
 include("data.jl")               # matrix data
 include("download.jl")      # download data from the UF sparse matrix collection
 include("datareader.jl")    # read matrix data 
 include("matrixmarket.jl")
+
 
 const MY_DEPOT_DIR = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
 
