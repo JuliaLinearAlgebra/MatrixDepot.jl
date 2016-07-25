@@ -29,6 +29,7 @@ To install the release version, type::
 
    usage.rst
    matrices.rst
+   graphs.rst
    properties.rst
    regu.rst
    interface.rst
