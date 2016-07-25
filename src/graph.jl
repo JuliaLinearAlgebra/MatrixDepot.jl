@@ -40,7 +40,7 @@ function erdrey{T}(::Type{T}, n::Integer, m::Integer)
     end
     A = sign(sparse([is;js], [js;is], ones(T, m*2), n, n))
     while nnz(A) != 2*m
-        diff = m - nnz(A)/2
+        diff = round(Int, m - nnz(A)/2)
         is_new = zeros(Int, diff)
         js_new = zeros(Int, diff)
         for count = 1:diff
@@ -57,3 +57,12 @@ function erdrey{T}(::Type{T}, n::Integer, m::Integer)
 end
 erdrey{T}(::Type{T}, n::Integer) = erdrey(T, n, ceil(Int, n*log(n)/2))
 erdrey(arg...) = erdrey(Float64, arg...)
+
+"""
+Gilbert Random Graph
+==================
+Generate an adjecency matrix of a Gilbert random graph: an undirected graph
+with pairs of nodes are connected with indepdent probability `p`.
+
+
+"""
