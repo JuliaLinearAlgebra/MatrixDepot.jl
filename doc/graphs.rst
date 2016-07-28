@@ -4,6 +4,7 @@ Random Graphs
 ==============
 
 * :term:`erdrey`
+* :term:`gilbert`
 
 .. glossary::
    :sorted:
@@ -22,3 +23,7 @@ Random Graphs
 	   [2, 3]  =  1.0
 	   [5, 4]  =  1.0
 	   [4, 5]  =  1.0
+
+   gilbert
+         An adjacency matrix of a Gilbert random graph: each possible edge occurs
+	 independently with a given probability.
