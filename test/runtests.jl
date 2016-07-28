@@ -45,6 +45,7 @@ include("test_hankel.jl")
 include("test_golub.jl")
 include("test_companion.jl")
 include("test_erdrey.jl")
+include("test_gilbert.jl")
 
 tests = [
          "common",

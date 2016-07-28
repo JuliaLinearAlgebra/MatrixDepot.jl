@@ -26,7 +26,8 @@ matrixdict = Dict("hilb" => hilb, "hadamard" => hadamard,
                   "baart" => baart, "phillips" => phillips,
                   "gravity" => gravity, "blur" => blur,
                   "spikes" => spikes, "ursell" => ursell,
-                  "parallax" => parallax, "erdrey" => erdrey
+                  "parallax" => parallax, "erdrey" => erdrey,
+                  "gilbert" => gilbert
                   );
 
 matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
@@ -59,7 +60,7 @@ matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
                            "rosser", "sampling", "wilkinson","wathen", 
                            "oscillate"],
 
-             "sparse" => ["poisson", "neumann", "wathen", "blur", "erdrey"],
+             "sparse" => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert"],
 
              "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate", "golub"],
@@ -67,5 +68,5 @@ matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
              "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", 
                            "baart", "phillips", "gravity", "blur", 
                            "spikes", "ursell", "parallax"],
-              "graph" => ["erdrey"]
+              "graph" => ["erdrey", "gilbert"]
                );

@@ -1,5 +1,8 @@
-# adjacency matrices for graphs
-
+# adjacency matrices
+#
+# The code is adapted from CONTEST(Controlable TEST matrices) 
+# by Alan Taylor and Professor Des Higham
+# http://www.mathstat.strath.ac.uk/outreach/contest/
 
 """
 Erdos-Renyi Random Graph
@@ -64,5 +67,42 @@ Gilbert Random Graph
 Generate an adjecency matrix of a Gilbert random graph: an undirected graph
 with pairs of nodes are connected with indepdent probability `p`.
 
+*Input options:*
 
++ [type,] n, p: the dimension of the matrix is `n` and the probability that any two nodes
+    are connected is `p`.
+
++ [type,] n: p = log(n)/n.
+
+*Groups:* ["sparse", "graph"]
+
+*References:*
+
+**E.N. Gilbert**, Random Graphs, Ann. Math. Statist., 30, (1959) pp. 1141-1144.
 """
+function gilbert{T}(::Type{T}, n::Integer, p::AbstractFloat)
+    v = zeros(Int, n)
+    for k = 1:n
+        v[k] = round(Int, k*(k-1)/2)
+    end
+    
+    is = zeros(Int, 0)
+    js = zeros(Int, 0)
+    
+    w = zero(Int)
+
+    w += one(Int) + floor(Int, log(1 - rand()) / log(1 - p))
+    
+    while w < n*(n-1)/2
+        i = minimum(find(x -> x >= w, v))
+        j = w - round(Int, (i -1)*(i - 2)/2)
+        push!(is, i)
+        push!(js, j)
+        w += one(Int) + floor(Int, log(1 - rand()) / log(1-p))
+    end
+    
+    s = ones(T, length(is))
+    return sparse([is;js], [js;is], [s;s], n, n)
+end
+gilbert{T}(::Type{T}, n::Integer) = gilbert(T, n, log(n)/n)
+gilbert(arg...) = gilbert(Float64, arg...)
