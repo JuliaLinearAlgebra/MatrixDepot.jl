@@ -49,6 +49,7 @@ include("test_gilbert.jl")
 include("test_smallworld.jl")
 
 tests = [
+         "clean",
          "common",
          "include_generator",
          "download",

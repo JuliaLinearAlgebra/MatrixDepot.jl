@@ -104,7 +104,13 @@ function gilbert{T}(::Type{T}, n::Integer, p::AbstractFloat)
     s = ones(T, length(is))
     return sparse([is;js], [js;is], [s;s], n, n)
 end
-gilbert{T}(::Type{T}, n::Integer) = n == 1? gilbert(T, n, 0,2) : gilbert(T, n, log(n)/n)
+function gilbert{T}(::Type{T}, n::Integer)
+    if n == 1
+        return gilbert(T, n, 0.2) 
+    else
+        return gilbert(T, n, log(n)/n)
+    end
+end
 gilbert(arg...) = gilbert(Float64, arg...)
 
 
