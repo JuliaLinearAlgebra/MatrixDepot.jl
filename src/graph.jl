@@ -106,3 +106,63 @@ function gilbert{T}(::Type{T}, n::Integer, p::AbstractFloat)
 end
 gilbert{T}(::Type{T}, n::Integer) = gilbert(T, n, log(n)/n)
 gilbert(arg...) = gilbert(Float64, arg...)
+
+
+# utility function
+# shortcuts: randomly add entries (shortcuts) to a matrix.
+function shortcuts{T}(A::SparseMatrixCSC{T}, p::Real)
+    n, = size(A)
+    Ihat = find(x -> x <= p, rand(n))
+    Jhat = ceil(Int, n*rand(size(Ihat)))
+    Ehat = ones(T, size(Ihat))
+    
+    # an edge
+    for (i, ele) in enumerate(Ihat)
+        if ele == Jhat[i]
+            Ehat[i] = zero(T)
+        end
+    end
+
+    is, js, es = findnz(A)
+    
+    return sparse([is; Ihat; Jhat], [js; Jhat; Ihat], [es; Ehat; Ehat], n, n)
+end
+
+"""
+Small World Network
+=================
+Generate an adjacency matrix for a small world network. We model
+it by adding shortcuts to a kth nearest neighbour ring network 
+(nodes i and j are connected iff |i -j| <= k or |n - |i -j|| <= k.) with n nodes. 
+
+*Input options:* 
+
++ [type,] n, k, p: the dimension of the matrix is `n`. The number of 
+    nearest-neighbours to connect is `k`. The probability of adding a shortcut
+    in a given row is `p`.
+
++ [type,] n: `k = 2` and `p = 0.1`.
+
+*References:*
+
+**D. J. Watts and S. H. Strogatz**, Collective Dynamics of Small World Networks,
+Nature 393 (1998), pp. 440-442.
+"""
+function smallworld{T}(::Type{T}, n::Integer, k::Integer, p::Real)
+    twok = 2*k
+    is = zeros(Int, 2*k*n)
+    js = zeros(Int, 2*k*n)
+    es = zeros(T, 2*k*n)
+
+    for count = 1:n
+        is[(count-1)*twok+1 : count*twok] = count*ones(Int, twok)
+        js[(count-1)*twok+1 : count*twok] = mod([count : count+k-1; 
+                                                                               n-k+count-1 : n+count-2], n) + 1
+        es[(count-1)*twok+1 : count*twok] = ones(T, twok)
+    end
+
+    A = sparse(is, js, es, n, n)
+    return sign(shortcuts(A, p))
+end
+smallworld{T}(::Type{T}, n::Integer) = smallworld(T, n, 2, 0.1)
+smallworld(arg...) = smallworld(Float64, arg...)
