@@ -30,8 +30,8 @@ To install the release version, type::
    usage.rst
    matrices.rst
    graphs.rst
-   properties.rst
    regu.rst
+   properties.rst
    interface.rst
    user.rst
    examples.rst   

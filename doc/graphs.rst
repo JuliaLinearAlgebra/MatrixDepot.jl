@@ -5,6 +5,7 @@ Random Graphs
 
 * :term:`erdrey`
 * :term:`gilbert`
+* :term:`smallworld`
 
 .. glossary::
    :sorted:
@@ -27,3 +28,12 @@ Random Graphs
    gilbert
          An adjacency matrix of a Gilbert random graph: each possible edge occurs
 	 independently with a given probability.
+
+   smallworld
+         Motivated by the small world model proposed by Watts and Strogatz [wast98]_, 
+	 we proposed a random graph model by adding shortcuts to a kth nearest 
+	 neighbor ring (node :math:`i` and :math:`j` are connected iff :math:`|i-j| \leq k` or 
+	 :math:`|n - |i-j|| \leq k`).
+
+         .. [wast98] D.J. Watts and S. H. Strogatz. Collective Dynamics of Small World 
+		   Networks, Nature 393 (1998), pp. 440-442. 
