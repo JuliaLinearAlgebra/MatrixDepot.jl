@@ -59,7 +59,7 @@ function erdrey{T}(::Type{T}, n::Integer, m::Integer)
     A
 end
 erdrey{T}(::Type{T}, n::Integer) = erdrey(T, n, ceil(Int, n*log(n)/2))
-erdrey(arg...) = erdrey(Float64, arg...)
+erdrey(n::Integer, arg...) = erdrey(Float64, n, arg...)
 
 """
 Gilbert Random Graph
@@ -111,7 +111,7 @@ function gilbert{T}(::Type{T}, n::Integer)
         return gilbert(T, n, log(n)/n)
     end
 end
-gilbert(arg...) = gilbert(Float64, arg...)
+gilbert(n::Integer, arg...) = gilbert(Float64, n, arg...)
 
 
 # utility function
@@ -171,4 +171,9 @@ function smallworld{T}(::Type{T}, n::Integer, k::Integer, p::Real)
     return sign(shortcuts(A, p))
 end
 smallworld{T}(::Type{T}, n::Integer) = smallworld(T, n, 2, 0.1)
-smallworld(arg...) = smallworld(Float64, arg...)
+smallworld(n::Integer, arg...) = smallworld(Float64, n, arg...)
+
+
+function geo(n::Integer)
+
+end

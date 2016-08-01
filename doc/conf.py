@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Matrix Depot'
-copyright = u'2015, Weijian Zhang'
+copyright = u'2016, Weijian Zhang'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
