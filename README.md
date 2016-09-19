@@ -26,6 +26,7 @@ julia> Pkg.add("MatrixDepot")
 To see all the matrices in the collection, type
 
 ```julia
+julia> using MatrixDepot
 julia> matrixdepot()
 
 Matrices:
