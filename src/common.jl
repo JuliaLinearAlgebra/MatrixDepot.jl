@@ -259,7 +259,7 @@ function addgroup(ex)
     end
 
     user = joinpath(user_file("group.jl"))
-    s = readall(user)
+    s = readstring(user)
     iofile = open(user, "w")
     newprop = s[1:end-4] * "\""  * propname * "\" => ["
     for str in eval(ex.args[2])
@@ -285,7 +285,7 @@ function rmgroup(ex)
     propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
 
     user = joinpath(user_file("group.jl"))
-    s = readall(user)
+    s = readstring(user)
     iofile = open(user, "w")
     rg = Regex("""\"""" * eval(propname) * ".+")
     key = search(s, rg) # locate the propname in user.jl to remove.
