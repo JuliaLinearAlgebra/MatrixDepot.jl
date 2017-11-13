@@ -15,7 +15,7 @@ if n != 1 # this test does not apply for n = 1
                   (i == n && j == 1)? a : 0.0
     end
 
-    @test_approx_eq matrixdepot("forsythe", n, a, b) A
+    @test matrixdepot("forsythe", n, a, b) ≈ A
 end
 println("'forsythe' passed test...")
 

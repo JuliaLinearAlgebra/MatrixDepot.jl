@@ -51,6 +51,6 @@ end
     
 A = matrixdepot("neumann", n_mesh)
 
-@test_approx_eq full(A)  B
+@test full(A) ≈ B
 
 println("'neumann' passed test...")

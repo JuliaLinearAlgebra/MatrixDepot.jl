@@ -1,6 +1,6 @@
 n = rand(40:100)
 A = matrixdepot("gilbert", n)
-@test issym(A)
+@test issymmetric(A)
 
 B = matrixdepot("gilbert", n, 0.2)
 C = matrixdepot("gilbert", Int, n, 0.5)

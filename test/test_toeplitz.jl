@@ -9,6 +9,6 @@ println("'toeplitz' passed test...")
 
 n = rand(2:10)
 A = matrixdepot("prolate", n)
-@test issym(A)
+@test issymmetric(A)
 
 println("'prolate' passed test...")

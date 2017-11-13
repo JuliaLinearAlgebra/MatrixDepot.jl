@@ -5,7 +5,7 @@ if n == 1
 end
 A = matrixdepot("chebspec", n)
 # A has null vector ones(n)
-@test_approx_eq_eps A*ones(n) zeros(n) 1e-6
+@test A*ones(n) ≈ zeros(n) atol = 1e-6
 B = matrixdepot("chebspec", n, 1)
 # B's eigenvalues have negative real parts.
 v = real(eigvals(B))

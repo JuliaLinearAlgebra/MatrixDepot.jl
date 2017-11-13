@@ -4,5 +4,5 @@ n = rand(1:10)
 
 A = matrixdepot("tridiag", n)
 @test isposdef(full(A))
-@test issym(full(A))
+@test issymmetric(full(A))
 println("'tridiag' passed test...")

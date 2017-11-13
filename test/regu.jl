@@ -15,8 +15,8 @@ end
 
 A = matrixdepot("deriv2", n)
 
-@test_approx_eq r.A*r.x  r.b
-@test issym(r.A)
+@test r.A*r.x ≈ r.b
+@test issymmetric(r.A)
 
 
 r = matrixdepot("shaw", 2*n, false)
@@ -24,7 +24,7 @@ A = matrixdepot("shaw", 2*n)
 
 print(r)
 
-@test issym(r.A)
+@test issymmetric(r.A)
 
 rf32 = matrixdepot("shaw", Float32, 2*n, false)
 

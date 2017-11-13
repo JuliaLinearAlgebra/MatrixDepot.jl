@@ -1,6 +1,6 @@
 n = rand(1:10)
 A = matrixdepot("randcorr", n)
-@test issym(A) # symmetric
+@test issymmetric(A) # symmetric
 
 # positive semidefinite 
 for eig in eigvals(A)
@@ -8,5 +8,5 @@ for eig in eigvals(A)
 end
 
 # 1s on the diagonal
-@test_approx_eq diag(A) ones(Float64, n)
+@test diag(A) ≈ ones(Float64, n)
 println("'randcorr' passed test...")

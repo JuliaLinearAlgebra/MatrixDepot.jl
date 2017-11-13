@@ -40,6 +40,6 @@ for i_mesh in 1 : n_mesh
     end
 end
 
-@test_approx_eq A B
+@test A ≈ B
 println("'poisson' passed test...")
 

@@ -3,8 +3,8 @@ n = rand(1:10)
 
 A = matrixdepot("fiedler", n)
 
-@test issym(A)
+@test issymmetric(A)
 for i = 1:n, j =1:n
-    @test_approx_eq A[i,j] abs(i-j)
+    @test A[i,j] ≈ abs(i-j)
 end
 println("'fiedler' passed test...")
