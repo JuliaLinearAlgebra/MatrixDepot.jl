@@ -314,7 +314,8 @@ not satifiy the discrete Picard condition for the small singular values.
     Equations, Clarendon Press, Oxford, 1977, p. 665.
 """
 function foxgood{T}(::Type{T}, n::Integer, matrixonly = true)
-    h = 1/n; t = h*(T[1:n;] - one(T)/2)
+    h = T(1/n)
+    t = h*(T[1:n;] - one(T)/2)
 
     A = h*sqrt((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
 
@@ -323,7 +324,9 @@ function foxgood{T}(::Type{T}, n::Integer, matrixonly = true)
     else
         x = t
         b = zeros(T, n)
-        [b[i] = ((one(T) + t[i]^2)^1.5 - t[i]^3)/3 for i in 1:n]
+        for i in 1:n
+            b[i] = ((one(T) + t[i]^2)^T(1.5) - t[i]^3)/3
+        end
         return RegProb(A, b, x)
     end
 end
@@ -406,29 +409,39 @@ Fredholm Integral Equation of the First Kind
 """
 function baart{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
-    hs = pi/(2*n); ht = pi/n; c = one(T)/(3*sqrt(2))
-    ht = convert(T, ht)
-    A = zeros(T, n, n); ihs = T[0:n;]*hs; n1 = n+1; nh = div(n,2)
-    f3 = exp(ihs[2:n1]) - exp(ihs[1:n])
+    hs  = T(pi/(2*n))
+    ht  = T(pi/n)
+    c   = one(T)/(3*sqrt(2))
+    A   = zeros(T, n, n)
+    ihs = T[0:n;]*hs
+    n1  = n + 1
+    nh  = div(n,2)
+    f3  = exp.(ihs[2:n1]) .- exp.(ihs[1:n])
     
     # compute A
     for j = 1:n
-        f1 = f3; co2 = cos((j - one(T)/2)*ht); co3 = cos(j*ht)
-        f2 = (exp(ihs[2:n1]*co2) - exp(ihs[1:n]*co2))/co2
-        j == nh ? f3 = hs*ones(T, n) : 
-                  f3 = (exp(ihs[2:n1]*co3) - exp(ihs[1:n]*co3))/co3
-        A[:,j] = c*(f1 + 4*f2 + f3)
+        f1  = f3
+        co2 = cos((j - one(T)/2)*ht)
+        co3 = cos(j*ht)
+        f2 = (exp.(ihs[2:n1].*co2) .- exp.(ihs[1:n].*co2))./co2
+        if j == nh
+            f3 = hs*ones(T, n)
+        else
+            f3 = (exp.(ihs[2:n1].*co3) .- exp.(ihs[1:n].*co3))./co3
+        end
+        A[:,j] .= c.*(f1 .+ 4.*f2 .+ f3)
     end
     
     if matrixonly
         return A
     else
         # compute vector b
-        si = T[.5:.5:n;]*hs; si = sinh(si)./si
-        b = zeros(T, n)
-        b[1] = 1 + 4*si[1] + si[2]
-        b[2:n] = si[2:2:2*n-2] + 4*si[3:2:2*n-1] + si[4:2:2*n]
-        b = b*sqrt(hs)/3
+        si      = T[.5:.5:n;]*hs
+        si      = sinh(si)./si
+        b       = zeros(T, n)
+        b[1]    = 1 + 4*si[1] + si[2]
+        b[2:n] .= si[2:2:2*n-2] .+ 4*si[3:2:2*n-1] .+ si[4:2:2*n]
+        b      .= b.*sqrt(hs)./3
 
         # compute vector x
         x = -diff(cos(T[0:n;]*ht))/sqrt(ht)
@@ -548,26 +561,28 @@ the First Kind, Society for Industrial and Applied Mathematics, Philadelphia, 19
 function gravity{T}(::Type{T}, n::Integer, example::Integer, 
                     a::Number, b::Number, d::Number, matrixonly::Bool = true)
     dt = one(T)/n
-    a = convert(T, a); b = convert(T, b); d = convert(T, d)
-    ds = (b-a)/n
-    tv = dt*(T[1:n;] - one(T)/2)
-    sv = a + ds*(T[1:n;] - one(T)/2)
-    Tm,Sm = meshgrid(tv,sv)
-    A = dt*d*ones(T, n, n)./(d^2 + (Sm-Tm).^2).^(convert(T, 3/2))
+    a  = T(a)
+    b  = T(b)
+    d  = T(d)
+    ds = (b - a)/n
+    tv = dt .* (T[1:n;] .- one(T) ./ 2)
+    sv = a .+ ds .* (T[1:n;] .- one(T) ./ 2)
+    Tm, Sm = meshgrid(tv, sv)
+    A = dt .* d .* ones(T, n, n) ./ (d^2 .+ (Sm .- Tm).^2).^T(3/2)
     if matrixonly
         return A
     else
         x = ones(T, n)
-        nt = round_matlab(Integer, n/3)
-        nn = round_matlab(Integer, n*7/8)
+        nt = round_matlab(Int, n/3)
+        nn = round_matlab(Int, n*7/8)
         if example == 1
-            x = sin(pi*tv) + 0.5*sin(2*pi*tv)
+            x .= sin.(π .* tv) .+ sin.(2 .* π .* tv) ./ 2
         elseif example == 2
-            x[1:nt] = (2/nt)*[1:nt;]
-            x[nt+1:nn] = ((2*nn - nt) - [nt+1:nn;])/ (nn-nt)
-            x[nn+1:n] = (n - [nn+1:n;])/(n-nn)
+            x[1:nt]        .= 2 ./ nt .* [1:nt;]
+            x[(nt + 1):nn] .= ((2 .* nn .- nt) .- [(nt .+ 1):nn;]) ./ (nn .- nt)
+            x[(nn + 1):n]  .= (n .- [(nn .+ 1):n;]) ./ (n .- nn)
         elseif example == 3
-            x[1:nt] = 2*ones(T, nt)
+            x[1:nt] .= 2
         else
             error("Illegal value of example")
         end
@@ -606,56 +621,65 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
 """
 function blur{T}(::Type{T}, n::Integer, band::Integer, σ::Number, 
                  matrixonly::Bool = true)
-    σ = convert(T, σ)
-    z = [exp(-(T[0:band-1;].^2)/(2*σ^2)); zeros(T, n-band)]
+    σ = T(σ)
+    z = [exp.(-(T[0:band-1;].^2) / (2 * σ^2)); zeros(T, n - band)]
     A = toeplitz(T, z)
     A = sparse(A)
-    A = (1/(2*pi*σ^2))*kron(A, A)
+    A = (1 / T(2 * π * σ^2)) * kron(A, A)
     if matrixonly
         return A
     else
         # start with an image of all zeros
-        n2 = round_matlab(Integer, n/2)
-        n3 = round_matlab(Integer, n/3)
-        n6 = round_matlab(Integer, n/6)
-        n12 = round_matlab(Integer, n/12)
+        n2  = round_matlab(Int, n/2)
+        n3  = round_matlab(Int, n/3)
+        n6  = round_matlab(Int, n/6)
+        n12 = round_matlab(Int, n/12)
 
-        m = max(n, 2*n6+1+n2+n12)
+        m = max(n, 2 * n6 + 1 + n2 + n12)
         x = zeros(T, m, m)
         
         # add a large ellipse
         Te = zeros(T, n6, n3)
-        [if ((i/n6)^2 + (j/n3)^2 < 1) Te[i,j] = 1 end for i = 1:n6, j = 1:n3]
+        for i = 1:n6
+            for j = 1:n3
+                if (i / n6)^2 + (j / n3)^2 < 1
+                    Te[i,j] = 1
+                end
+            end
+        end
         Te = [flipdim(Te, 2) Te;]
         Te = [flipdim(Te, 1); Te]
 
-        x[2+[1:2*n6;], n3-1+[1:2*n3;]] = Te
+        x[2 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] = Te
 
-        
         # add a smaller ellipse
         Te = zeros(T, n6, n3)
-        [if ((i/n6)^2 + (j/n3)^2 < 0.6) Te[i,j] = 1 end for i = 1:n6, j = 1:n3]
+        for i = 1:n6
+            for j = 1:n3
+                if (i / n6)^2 + (j / n3)^2 < 0.6
+                    Te[i,j] = 1
+                end
+            end
+        end
         Te = [flipdim(Te, 2) Te;]
         Te = [flipdim(Te, 1); Te]
-        x[n6+[1:2*n6;], n3-1+[1:2*n3;]] = x[n6+[1:2*n6;],n3-1+[1:2*n3;]] + 2*Te
-        f = find((i) -> i==3, x)
-        x[f] = 2*ones(T, length(f))
+        x[n6 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] = x[n6 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] + 2 * Te
+        x[find((i) -> i==3, x)] = 2
         
         # Add a triangle
         Te = triu(ones(T, n3, n3))
         mT, nT = size(Te)
-        x[n3+n12+[1:nT;], 1+[1:mT;]] = 3*Te
-
+        x[n3 + n12 + [1:nT;], 1 + [1:mT;]] = 3*Te
 
         # add a cross
-        Te = zeros(T, 2*n6+1, 2*n6+1)
+        Te = zeros(T, 2 * n6 + 1, 2 * n6 + 1)
         mT, nT = size(Te)
         Te[n6+1, 1:nT] = ones(T, nT)
         Te[1:mT, n6+1] = ones(T, mT)
-        x[n2+n12+[1:mT;], n2+[1:nT;]] = 4*Te
+        x[n2 + n12 + [1:mT;], n2 + [1:nT;]] = 4 * Te
 
         x = reshape(x[1:n, 1:n], n^2)
-        b = A*x 
+        b = A * x 
         return RegProb(A, b, x) 
     end
 end
