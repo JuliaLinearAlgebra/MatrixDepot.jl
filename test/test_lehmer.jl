@@ -5,6 +5,6 @@ A = ones(n, 1) * [1:n;]'
 A = A./A'
 A = tril(A) + tril(A)' - eye(n)
 
-@test_approx_eq matrixdepot("lehmer", n) A
+@test matrixdepot("lehmer", n) ≈ A
 println("'lehmer' passed test...")
 

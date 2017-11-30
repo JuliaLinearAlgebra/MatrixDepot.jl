@@ -3,7 +3,11 @@ n = rand(1: 10)
 
 M = matrixdepot("moler", n)
 for i = 1:n, j = 1:n
-    i != j ? (@test_approx_eq M[i,j] min(i,j) - 2) : (@test_approx_eq M[i,i] i)
+    if i != j
+        @test M[i,j] ≈ min(i,j) - 2
+    else
+        @test M[i,i] ≈ i
+    end
 end
 
 println("'moler' passed test...")

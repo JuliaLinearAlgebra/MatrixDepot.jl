@@ -4,5 +4,5 @@ x = ones(Float64, n)
 y = x + 2
 A = zeros(Float64, n, n)
 fill!(A, 0.25)
-@test_approx_eq matrixdepot("cauchy", x, y) A
+@test matrixdepot("cauchy", x, y) ≈ A
 println("'cauchy' passed test...")

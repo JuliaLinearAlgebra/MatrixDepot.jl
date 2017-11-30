@@ -68,7 +68,7 @@ function ufreader(dir::AbstractString, name::AbstractString;
                         metadict[dataname] = denseread(string(dirname,'/', data))
                     end
                 else
-                    metadict[dataname] = readall(string(dirname,'/', data))
+                    metadict[dataname] = readstring(string(dirname,'/', data))
                 end
             end
             metadict

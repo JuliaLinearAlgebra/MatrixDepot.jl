@@ -16,16 +16,16 @@ B = [611 196 -192 407 -8 -52 -49 29;
 # test eigenvalues
 e1 = eigvals(matrixdepot("rosser", 2, 2, 1))
 e2 = [500, 510]
-@test_approx_eq e1 e2
+@test e1 ≈ e2
 
 e1 = eigvals(matrixdepot("rosser", 4, 2, 1))
 e2 = [0.1, 1000, 1019.9, 1020]
-@test_approx_eq_eps e1 e2 1e-2
+@test e1 ≈ e2 atol=1e-2
 
 e1 = eigvals(matrixdepot("rosser", 16, 2, 1))
 e2 = [-1020, -1020, 0, 0, 0.098, 0.098, 1000, 1000, 1000, 1000, 1000, 
       1020, 1020, 1020, 1020, 1020]
-@test_approx_eq_eps e1 e2 1e+1
+@test e1 ≈ e2 atol=11
 
 try
     matrixdepot("rosser", 0)

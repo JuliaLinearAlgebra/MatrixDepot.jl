@@ -222,13 +222,13 @@ This test problem uses a first-kind Fredholm integral equation
 """
 function shaw{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
-    h = pi/n; A = zeros(T, n, n)
+    h = π/n; A = zeros(T, n, n)
     
     # compute A
-    co = cos(-pi/2 + T[.5:n-.5;]*h)
-    psi = pi*sin(-pi/2 + T[.5:n-.5;]*h)
-    for i = 1:div(n,2)
-        for j = i:n-i
+    co = cos.(-π/2 .+ T[.5:n-.5;] .* h)
+    psi = π .* sin.(-π/2 .+ T[.5:n-.5;] .* h)
+    for i in 1:div(n,2)
+        for j in i:n-i
             ss = psi[i] +psi[j]
             A[i,j] = ((co[i] + co[j])*sin(ss)/ss)^2
             A[n-j+1, n-i+1] = A[i,j]
@@ -241,10 +241,14 @@ function shaw{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
         return A
     else
         # compute x and b
-        a1 = 2; c1 = 6; t1 = .8
-        a2 = 1; c2 = 2; t2 = -.5
-        x = a1*exp(-c1*(-pi/2 + T[.5:n-.5;]*h - t1).^2) + 
-            a2*exp(-c2*(-pi/2 + T[.5:n-.5;]*h - t2).^2)
+        a1 = 2
+        c1 = 6
+        t1 = .8
+        a2 = 1
+        c2 = 2
+        t2 = -.5
+        x = a1 .* exp.(-c1 .* (-π/2 .+ T[.5:n-.5;] .* h .- t1).^2) .+
+            a2 .* exp.(-c2 .* (-π/2 .+ T[.5:n-.5;] .* h .- t2).^2)
         b = A*x
         return RegProb(A, b, x)
     end
@@ -273,17 +277,20 @@ A Problem with a Discontinuous Solution
 """
 function wing{T}(::Type{T}, n::Integer, t1::Real, t2::Real, matrixonly = true)
     t1 < t2 || error("t1 must be smaller than t2")
-    A = zeros(T, n, n); h = 1/n
+    A = zeros(T, n, n)
+    h = T(1/n)
     
     # compute A
-    sti = (T[1:n;]-0.5)*h
-    [A[i,:] = h*sti.*exp(-sti[i] * sti.^2) for i = 1:n]
+    sti = (T[1:n;]-0.5) * h
+    for i in 1:n
+        A[i,:] .= h .* sti .* exp.(-sti[i] .* sti.^2)
+    end
 
     if matrixonly
         return A
     else
         # compute b
-        b = sqrt(h)*0.5*(exp(-sti*t1^2) - exp(-sti*t2^2))./sti
+        b = sqrt(h) .* 0.5 .* (exp.(-sti .* t1^2) .- exp.(-sti .* t2^2))./sti
 
         # compute x
         indices = [findfirst(t1 .< sti, true): findlast(t2 .> sti, true);]
@@ -314,16 +321,19 @@ not satifiy the discrete Picard condition for the small singular values.
     Equations, Clarendon Press, Oxford, 1977, p. 665.
 """
 function foxgood{T}(::Type{T}, n::Integer, matrixonly = true)
-    h = 1/n; t = h*(T[1:n;] - one(T)/2)
+    h = T(1/n)
+    t = h*(T[1:n;] - one(T)/2)
 
-    A = h*sqrt((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
+    A = h*sqrt.((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
 
     if matrixonly
         return A
     else
         x = t
         b = zeros(T, n)
-        [b[i] = ((one(T) + t[i]^2)^1.5 - t[i]^3)/3 for i in 1:n]
+        for i in 1:n
+            b[i] = ((one(T) + t[i]^2)^T(1.5) - t[i]^3)/3
+        end
         return RegProb(A, b, x)
     end
 end
@@ -354,7 +364,7 @@ Inverse Heat Equation
 function heat{T}(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = one(T)/n; t = T[h/2:h:1;]
-    c = h/(2*κ*sqrt(pi))
+    c = h/(2*κ*sqrt(π))
     d = one(T)/(4*κ^2)
 
     # compute the matrix A
@@ -406,32 +416,42 @@ Fredholm Integral Equation of the First Kind
 """
 function baart{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
-    hs = pi/(2*n); ht = pi/n; c = one(T)/(3*sqrt(2))
-    ht = convert(T, ht)
-    A = zeros(T, n, n); ihs = T[0:n;]*hs; n1 = n+1; nh = div(n,2)
-    f3 = exp(ihs[2:n1]) - exp(ihs[1:n])
+    hs  = T(π/(2*n))
+    ht  = T(π/n)
+    c   = one(T)/(3*sqrt(2))
+    A   = zeros(T, n, n)
+    ihs = T[0:n;]*hs
+    n1  = n + 1
+    nh  = div(n,2)
+    f3  = exp.(ihs[2:n1]) .- exp.(ihs[1:n])
     
     # compute A
     for j = 1:n
-        f1 = f3; co2 = cos((j - one(T)/2)*ht); co3 = cos(j*ht)
-        f2 = (exp(ihs[2:n1]*co2) - exp(ihs[1:n]*co2))/co2
-        j == nh ? f3 = hs*ones(T, n) : 
-                  f3 = (exp(ihs[2:n1]*co3) - exp(ihs[1:n]*co3))/co3
-        A[:,j] = c*(f1 + 4*f2 + f3)
+        f1  = f3
+        co2 = cos((j - one(T)/2)*ht)
+        co3 = cos(j*ht)
+        f2 = (exp.(ihs[2:n1].*co2) .- exp.(ihs[1:n].*co2))./co2
+        if j == nh
+            f3 = hs*ones(T, n)
+        else
+            f3 = (exp.(ihs[2:n1].*co3) .- exp.(ihs[1:n].*co3))./co3
+        end
+        A[:,j] .= c.*(f1 .+ 4.*f2 .+ f3)
     end
     
     if matrixonly
         return A
     else
         # compute vector b
-        si = T[.5:.5:n;]*hs; si = sinh(si)./si
-        b = zeros(T, n)
-        b[1] = 1 + 4*si[1] + si[2]
-        b[2:n] = si[2:2:2*n-2] + 4*si[3:2:2*n-1] + si[4:2:2*n]
-        b = b*sqrt(hs)/3
+        si      = T[.5:.5:n;]*hs
+        si      = sinh.(si)./si
+        b       = zeros(T, n)
+        b[1]    = 1 + 4*si[1] + si[2]
+        b[2:n] .= si[2:2:2*n-2] .+ 4*si[3:2:2*n-1] .+ si[4:2:2*n]
+        b      .= b.*sqrt(hs)./3
 
         # compute vector x
-        x = -diff(cos(T[0:n;]*ht))/sqrt(ht)
+        x = -diff(cos.(T[0:n;] * ht))/sqrt(ht)
         return RegProb(A, b, x)
     end
 end
@@ -459,31 +479,38 @@ function phillips{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
     mod(n, 4) == 0 || error("The dimension of the matrix must be a multiple of 4.")
 
     # compute A
-    h = 12/n; n4 = div(n, 4); r1 = zeros(T,n)
-    c = cos(T[-1:n4;]*4*pi/n)
-    [r1[i] = h + 9/(h*pi^2)*(2*c[i+1] - c[i] - c[i+2]) for i in 1:n4]
-    r1[n4+1] = h/2 + 9/(h*pi^2)*(cos(4*pi/n)-1)
+    h = 12/n
+    n4 = div(n, 4)
+    r1 = zeros(T,n)
+    c = cos.(T[-1:n4; ] * 4 * π/n)
+    for i in 1:n4
+        r1[i] = h + 9 / (h * π^2) * (2 * c[i + 1] - c[i] - c[i + 2])
+    end
+    r1[n4 + 1] = h / 2 + 9 / (h * π^2) * (cos(4 * π / n) - 1)
     A = toeplitz(T, r1)
     
-
     if matrixonly
         return A
     else
         # compute the vector b
-        b = zeros(T, n); c = pi/3
-        for i = div(n,2)+1:n
-            t1 = -6 + i*h; t2 = t1 - h
+        b = zeros(T, n)
+        c = π/3
+        for i = (div(n,2) + 1):n
+            t1 = -6 + i*h
+            t2 = t1 - h
             b[i] = t1*(6-abs(t1)/2) + 
-                ((3-abs(t1)/2)*sin(c*t1) - 2/c*(cos(c*t1) - one(T)))/c -  
-                t2*(6-abs(t2)/2) -
-                ((3-abs(t2)/2)*sin(c*t2) - 2/c*(cos(c*t2) - one(T)))/c
-            b[n-i+1] = b[i]
+                ((3 - abs(t1)/2)*sin(c*t1) - 2/c*(cos(c*t1) - one(T)))/c -  
+                t2*(6 - abs(t2)/2) -
+                ((3 - abs(t2)/2)*sin(c*t2) - 2/c*(cos(c*t2) - one(T)))/c
+            b[n - i + 1] = b[i]
         end
-        [b[i] = b[i]/sqrt(h) for i=1:n]
+        for i in 1:n
+            b[i] ./= sqrt(h)
+        end
     
         # compute x
         x = zeros(T, n)
-        x[2*n4+1:3*n4] = (h + diff(sin(T[0:h:(3+10*eps(T));]*c))/c)/sqrt(h)
+        x[(2 * n4 + 1):(3 * n4)] = (h + diff(sin.(T[0:h:(3 + 10 * eps(T));] * c)) / c) / sqrt(h)
         x[n4+1:2*n4] = x[3*n4:-1:2*n4+1]
         return RegProb(A, b, x)
     end
@@ -521,7 +548,7 @@ Discretization of a 1-D model problem in gravity surveying, in
         of the matrix. Three examples are implemented.
         
 
-       (a) example = 1 gives f(t) = sin(pi*t) + 0.5*sin(2*pi*t).
+       (a) example = 1 gives f(t) = sin(π*t) + 0.5*sin(2*π*t).
 
        (b) example = 2 gives f(t) = piecewise linear function.
 
@@ -548,26 +575,28 @@ the First Kind, Society for Industrial and Applied Mathematics, Philadelphia, 19
 function gravity{T}(::Type{T}, n::Integer, example::Integer, 
                     a::Number, b::Number, d::Number, matrixonly::Bool = true)
     dt = one(T)/n
-    a = convert(T, a); b = convert(T, b); d = convert(T, d)
-    ds = (b-a)/n
-    tv = dt*(T[1:n;] - one(T)/2)
-    sv = a + ds*(T[1:n;] - one(T)/2)
-    Tm,Sm = meshgrid(tv,sv)
-    A = dt*d*ones(T, n, n)./(d^2 + (Sm-Tm).^2).^(convert(T, 3/2))
+    a  = T(a)
+    b  = T(b)
+    d  = T(d)
+    ds = (b - a)/n
+    tv = dt .* (T[1:n;] .- one(T) ./ 2)
+    sv = a .+ ds .* (T[1:n;] .- one(T) ./ 2)
+    Tm, Sm = meshgrid(tv, sv)
+    A = dt .* d .* ones(T, n, n) ./ (d^2 .+ (Sm .- Tm).^2).^T(3/2)
     if matrixonly
         return A
     else
         x = ones(T, n)
-        nt = round_matlab(Integer, n/3)
-        nn = round_matlab(Integer, n*7/8)
+        nt = round_matlab(Int, n/3)
+        nn = round_matlab(Int, n*7/8)
         if example == 1
-            x = sin(pi*tv) + 0.5*sin(2*pi*tv)
+            x .= sin.(π .* tv) .+ sin.(2 .* π .* tv) ./ 2
         elseif example == 2
-            x[1:nt] = (2/nt)*[1:nt;]
-            x[nt+1:nn] = ((2*nn - nt) - [nt+1:nn;])/ (nn-nt)
-            x[nn+1:n] = (n - [nn+1:n;])/(n-nn)
+            x[1:nt]        .= 2 ./ nt .* [1:nt;]
+            x[(nt + 1):nn] .= ((2 .* nn .- nt) .- [(nt .+ 1):nn;]) ./ (nn .- nt)
+            x[(nn + 1):n]  .= (n .- [(nn .+ 1):n;]) ./ (n .- nn)
         elseif example == 3
-            x[1:nt] = 2*ones(T, nt)
+            x[1:nt] .= 2
         else
             error("Illegal value of example")
         end
@@ -606,56 +635,65 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
 """
 function blur{T}(::Type{T}, n::Integer, band::Integer, σ::Number, 
                  matrixonly::Bool = true)
-    σ = convert(T, σ)
-    z = [exp(-(T[0:band-1;].^2)/(2*σ^2)); zeros(T, n-band)]
+    σ = T(σ)
+    z = [exp.(-(T[0:band-1;].^2) / (2 * σ^2)); zeros(T, n - band)]
     A = toeplitz(T, z)
     A = sparse(A)
-    A = (1/(2*pi*σ^2))*kron(A, A)
+    A = (1 / T(2 * π * σ^2)) * kron(A, A)
     if matrixonly
         return A
     else
         # start with an image of all zeros
-        n2 = round_matlab(Integer, n/2)
-        n3 = round_matlab(Integer, n/3)
-        n6 = round_matlab(Integer, n/6)
-        n12 = round_matlab(Integer, n/12)
+        n2  = round_matlab(Int, n/2)
+        n3  = round_matlab(Int, n/3)
+        n6  = round_matlab(Int, n/6)
+        n12 = round_matlab(Int, n/12)
 
-        m = max(n, 2*n6+1+n2+n12)
+        m = max(n, 2 * n6 + 1 + n2 + n12)
         x = zeros(T, m, m)
         
         # add a large ellipse
         Te = zeros(T, n6, n3)
-        [if ((i/n6)^2 + (j/n3)^2 < 1) Te[i,j] = 1 end for i = 1:n6, j = 1:n3]
+        for i = 1:n6
+            for j = 1:n3
+                if (i / n6)^2 + (j / n3)^2 < 1
+                    Te[i,j] = 1
+                end
+            end
+        end
         Te = [flipdim(Te, 2) Te;]
         Te = [flipdim(Te, 1); Te]
 
-        x[2+[1:2*n6;], n3-1+[1:2*n3;]] = Te
+        x[2 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] = Te
 
-        
         # add a smaller ellipse
         Te = zeros(T, n6, n3)
-        [if ((i/n6)^2 + (j/n3)^2 < 0.6) Te[i,j] = 1 end for i = 1:n6, j = 1:n3]
+        for i = 1:n6
+            for j = 1:n3
+                if (i / n6)^2 + (j / n3)^2 < 0.6
+                    Te[i,j] = 1
+                end
+            end
+        end
         Te = [flipdim(Te, 2) Te;]
         Te = [flipdim(Te, 1); Te]
-        x[n6+[1:2*n6;], n3-1+[1:2*n3;]] = x[n6+[1:2*n6;],n3-1+[1:2*n3;]] + 2*Te
-        f = find((i) -> i==3, x)
-        x[f] = 2*ones(T, length(f))
+        x[n6 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] = x[n6 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] + 2 * Te
+        x[find((i) -> i==3, x)] = 2
         
         # Add a triangle
         Te = triu(ones(T, n3, n3))
         mT, nT = size(Te)
-        x[n3+n12+[1:nT;], 1+[1:mT;]] = 3*Te
-
+        x[n3 + n12 + [1:nT;], 1 + [1:mT;]] = 3*Te
 
         # add a cross
-        Te = zeros(T, 2*n6+1, 2*n6+1)
+        Te = zeros(T, 2 * n6 + 1, 2 * n6 + 1)
         mT, nT = size(Te)
         Te[n6+1, 1:nT] = ones(T, nT)
         Te[1:mT, n6+1] = ones(T, mT)
-        x[n2+n12+[1:mT;], n2+[1:nT;]] = 4*Te
+        x[n2 + n12 + [1:mT;], n2 + [1:nT;]] = 4 * Te
 
         x = reshape(x[1:n, 1:n], n^2)
-        b = A*x 
+        b = A * x 
         return RegProb(A, b, x) 
     end
 end
@@ -700,25 +738,31 @@ which represents the true distribution of stellar parallaxes, is unknown.
 """
 function parallax{T}(::Type{T}, n::Integer, matrixonly::Bool=true)
     # Intialization
-    a = zero(T); b = T(0.1); m = 26; σ = T(0.014234)
-    hs = T(0.130/m); hx = (b-a)/n; hsh = hs/2; hxh = hx/2;
+    a = zero(T)
+    b = T(0.1)
+    m = 26
+    σ = T(0.014234)
+    hs = T(0.130/m)
+    hx = (b-a)/n
+    hsh = hs/2
+    hxh = hx/2
     ss = (-T(0.03) + T[0:m-1;]*hs)*ones(T, n)'
     xx = ones(T, m)*(a + T[0:n-1;]'*hx)
 
     # compute matrix A
-    A = 16*exp(-T(0.5)*((ss + hsh - xx - hxh)/σ).^2)
+    A = 16.*exp.(-T(0.5).*((ss .+ hsh .- xx .- hxh)./σ).^2)
 
-    A = A + 4*(exp(-T(0.5)*((ss + hsh - xx)/σ).^2) +
-               exp(-T(0.5)*((ss + hsh -xx - hx)/σ).^2) + 
-               exp(-T(0.5)*((ss - xx - hxh)/σ).^2) + 
-               exp(-T(0.5)*((ss + hs - xx - hxh)/σ).^2))
+    A .+= 4.*(exp.(-T(0.5).*((ss .+ hsh .- xx)./σ).^2) .+
+              exp.(-T(0.5).*((ss .+ hsh .- xx .- hx)./σ).^2) .+ 
+              exp.(-T(0.5).*((ss .- xx .- hxh)./σ).^2) .+ 
+              exp.(-T(0.5).*((ss .+ hs .- xx .- hxh)./σ).^2))
 
-    A = A + (exp(-T(0.5)*((ss - xx)/σ).^2) + 
-             exp(-T(0.5)*((ss + hs - xx)/σ).^2) + 
-             exp(-T(0.5)*((ss - xx - hx)/σ).^2) + 
-             exp(-T(0.5)*((ss + hs - xx - hx)/σ).^2))
+    A .+= (exp.(-T(0.5).*((ss .- xx)./σ).^2) .+ 
+           exp.(-T(0.5).*((ss .+ hs .- xx)./σ).^2) .+ 
+           exp.(-T(0.5).*((ss .- xx .- hx)./σ).^2) .+ 
+           exp.(-T(0.5).*((ss .+ hs .- xx .- hx)./σ).^2))
     
-    A = T(sqrt(hs*hx)/(36*σ*sqrt(2*pi)))*A
+    A = T(sqrt(hs*hx)/(36*σ*sqrt(2*π)))*A
     
     if matrixonly
         return A
@@ -754,7 +798,7 @@ function spikes{T}(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = tru
     
     # compute A
     t, sigma = meshgrid(T[del:del:t_max;], T[del:del:t_max;])
-    A = sigma./(2*sqrt(pi*t.^3)).*exp(-(sigma.^2)./(4*t))
+    A = sigma ./ (2 .* sqrt.(π .* t.^3)) .* exp.(-(sigma.^2) ./ (4 .* t))
     
     if matrixonly
         return A

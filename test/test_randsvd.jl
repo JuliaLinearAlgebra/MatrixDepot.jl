@@ -10,7 +10,7 @@ B = matrixdepot("randsvd", n, kappa)
 if mode == 5
     @test cond(A) <= kappa
 else 
-    @test_approx_eq cond(A) kappa
+    @test cond(A) ≈ kappa
 end
 
 A5 = matrixdepot("randsvd", n, kappa, 5)

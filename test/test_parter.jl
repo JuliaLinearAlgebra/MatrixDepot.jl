@@ -3,5 +3,5 @@ n = rand(1:10)
 
 A = matrixdepot("cauchy", [1.:n;] + 0.5, -[1.:n;])
 
-@test_approx_eq matrixdepot("parter", n) A
+@test matrixdepot("parter", n) ≈ A
 println("'parter' passed test...")
