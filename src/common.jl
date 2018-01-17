@@ -45,7 +45,7 @@ function matrix_data_name_list()
 end
 
 
-# return a list of matrix name in the collection 
+# return a list of matrix name in the collection
 function matrix_name_list()
     matrices = sort(collect(keys(matrixdict)))
     append!(matrices, matrix_data_name_list())
@@ -54,11 +54,11 @@ end
 
 # return a list of groups in the collection
 _matrix_class() = collect(keys(matrixclass))
-_user_matrix_class() = collect(keys(usermatrixclass)) 
+_user_matrix_class() = collect(keys(usermatrixclass))
 
 function group_list()
     groups = _matrix_class()
-    try 
+    try
         append!(groups, _user_matrix_class())
     end
     push!(groups, "data")
@@ -72,7 +72,7 @@ end
 
 # print info about all matrices in the collection
 """
-`matrixdepot()` 
+`matrixdepot()`
 
 Print all the matrices and groups in the collection.
 """
@@ -99,8 +99,8 @@ function matrixdepot()
 
     groups = group_list()
 
-    j = 1    
-    for name in groups        
+    j = 1
+    for name in groups
         if j < 4 && length(name) < 12
             j += 1
             @printf "  %-12s" name
@@ -115,7 +115,7 @@ end
 # Return information strings if name is a matrix name
 # and return a list of matrix names if name is a group.
 """
-`matrixdepot(name)` 
+`matrixdepot(name)`
 
 Return the documentation if `name` is a matrix name;
 return a list of matrix names if `name` is a group name.
@@ -150,13 +150,13 @@ end
 
 
 #############################
-# matrix generators 
+# matrix generators
 #############################
 
 """
-`matrixdepot(matrix name, p1, p2...)` 
+`matrixdepot(matrix name, p1, p2...)`
 
-Return a matrix specified by the query string `matrix name`. 
+Return a matrix specified by the query string `matrix name`.
 `p1, p2...` are input parameters depending on `matrix name`.
 """
 matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
@@ -166,14 +166,14 @@ matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
 #          :get    (or :g) download matrix data
 #          :search (or :s) search collection information
 """
-`matrixdepot(data, symbol)` 
+`matrixdepot(data, symbol)`
 
 Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
 """
 function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
     if method == :r || method == :read
-        namelist = split(name, '/') 
-        if  length(namelist) == 2 
+        namelist = split(name, '/')
+        if  length(namelist) == 2
             ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2], info = false, meta = meta)
         else
             mmreader(data_dir("mm"), name, info = false)
@@ -198,7 +198,7 @@ end
 
 
 """
-`matrixdepot(number, range...)` 
+`matrixdepot(number, range...)`
 
 Access matrices by number, range or a mixture of numbers and ranges.
 """
@@ -308,14 +308,14 @@ end
 # user defined matrix generators
 ################################
 
-abstract MatrixGenerator
-abstract FunctionName <: MatrixGenerator
-abstract Group <: MatrixGenerator
+abstract type MatrixGenerator end
+abstract type FunctionName <: MatrixGenerator end
+abstract type Group <: MatrixGenerator end
 
 
 include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (matrixdict[fn] = f)
 
-function include_generator(::Type{Group}, groupname::AbstractString, f::Function) 
+function include_generator(::Type{Group}, groupname::AbstractString, f::Function)
     if groupname in keys(matrixclass)
         push!(matrixclass[groupname], fname(f))
     elseif groupname in keys(usermatrixclass)
