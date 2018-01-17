@@ -1,8 +1,8 @@
 
-# ![logo](doc/logo2.png) Matrix Depot 
+# ![logo](doc/logo2.png) Matrix Depot
 
-[![Build Status](https://travis-ci.org/weijianzhang/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/weijianzhang/MatrixDepot.jl)
-[![codecov.io](https://codecov.io/github/weijianzhang/MatrixDepot.jl/coverage.svg?branch=master)](https://codecov.io/github/weijianzhang/MatrixDepot.jl?branch=master)
+[![Build Status](https://travis-ci.org/JuliaMatrices/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/JuliaMatrices/MatrixDepot.jl)
+[![codecov.io](https://codecov.io/github/JuliaMatrices/MatrixDepot.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaMatrices/MatrixDepot.jl?branch=master)
 
 An extensible test matrix collection for Julia.
 
@@ -47,7 +47,7 @@ Matrices:
 Groups:
   all           data          eigen         ill-cond    
   inverse       pos-def       random        regprob     
-  sparse        symmetric 
+  sparse        symmetric
 ```
 
 We can generate a 4-by-4 Hilbert matrix by typing
@@ -61,7 +61,7 @@ julia> matrixdepot("hilb", 4)
  0.25      0.2       0.166667  0.142857
 ```
 
-We can type the matrix name to get help. 
+We can type the matrix name to get help.
 
 ```julia
 julia> matrixdepot("hilb")
@@ -79,7 +79,7 @@ julia> matrixdepot("hilb")
 
   Groups: ["inverse", "ill-cond", "symmetric", "pos-def"]
 
-  References: 
+  References:
 
   M. D. Choi, Tricks or treats with the Hilbert matrix, Amer. Math. Monthly,
   90 (1983), pp. 301-312.
@@ -119,7 +119,7 @@ julia> matrixdepot(5:10)
 6-element Array{AbstractString,1}:
  "chow"    
  "circul"  
- "clement" 
+ "clement"
  "deriv2"  
  "dingdong"
  "fiedler"
@@ -131,12 +131,12 @@ julia> matrixdepot(1:4, 6, 10:15)
  "cauchy"  
  "chebspec"
  "circul"  
- "fiedler" 
+ "fiedler"
  "forsythe"
- "foxgood" 
+ "foxgood"
  "frank"   
- "gravity" 
- "grcar" 
+ "gravity"
+ "grcar"
 ```
 
 We can type a group name to see all the matrices in that group.
@@ -147,7 +147,7 @@ julia> matrixdepot("symmetric")
  "cauchy"   
  "circul"   
  "clement"  
- "dingdong" 
+ "dingdong"
  "fiedler"  
  "hankel"   
  "hilb"     
@@ -160,7 +160,7 @@ julia> matrixdepot("symmetric")
  "pei"      
  "poisson"  
  "prolate"  
- "randcorr" 
+ "randcorr"
  "tridiag"  
  "wathen"   
  "wilkinson"
@@ -172,12 +172,12 @@ We can add more matrices to Matrix Depot by downloading them from UF
 sparse matrix collection and Matrix Market. See
 [here](http://matrixdepotjl.readthedocs.org/en/latest/interface.html)
 for more details.
-In addition, 
+In addition,
 we can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
 and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/latest/properties.html).
 
 
-## Interface to the UF Sparse Matrix Collection 
+## Interface to the UF Sparse Matrix Collection
 
 Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection_name + '/' + matrix_name``, to download a test matrix from the University of
 Florida Sparse Matrix Collection:
@@ -276,7 +276,7 @@ for more details.
 
 - Weijian Zhang and Nicholas J. Higham,
   "Matrix Depot: An Extensible Test Matrix Collection for Julia",
-  *PeerJ Comput. Sci.*, 2:e58 (2016), 
+  *PeerJ Comput. Sci.*, 2:e58 (2016),
   [[pdf]](https://peerj.com/articles/cs-58/)
 
 - Nicholas J. Higham,
