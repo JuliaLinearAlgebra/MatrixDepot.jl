@@ -6,6 +6,9 @@ os:
 julia:
   - 0.6
   - nightly
+matrix:
+  allow_failures:
+        - julia: nightly
 notifications:
   email: false
 
@@ -15,4 +18,3 @@ script:
   - julia -e ' Pkg.test("MatrixDepot"; coverage=true)'
 after_success:
   - julia -e 'cd(Pkg.dir("MatrixDepot")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
-
