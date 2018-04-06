@@ -1,7 +1,7 @@
 matrixdata = 
 """
 "random symmetric matrix"
-function randsym{T}(::Type{T}, n)
+function randsym(::Type{T}, n) where T
  A = zeros(T, n, n)
   for j = 1:n
       for i = j:n
@@ -21,9 +21,8 @@ user_dir = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
 open(string(user_dir, "/generator.jl"), "w") do f
     write(f, matrixdata)
 end
-workspace()
-using MatrixDepot
-using Base.Test
+
+MatrixDepot.init()
 
 n = rand(1:8)
 A = matrixdepot("randsym", n)
@@ -33,6 +32,5 @@ matrixdepot("randsym")
 
 user_dir = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
 rm(user_dir, recursive = true)
-workspace()
-using MatrixDepot
-using Base.Test
+
+MatrixDepot.init()

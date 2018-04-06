@@ -14,13 +14,13 @@ function denseread(filename::AbstractString)
     firstline = chomp(readline(file))
     tokens = split(firstline)
     if tokens[1] != "%%MatrixMarket"
-        throw(ParseError(string("Not a valid MatrixMarket header:", ll)))
+        throw(Meta.ParseError(string("Not a valid MatrixMarket header:", ll)))
     end
     (head1, rep, field, symm) = map(lowercase, tokens[2:5])
     eltype = field == "real" ? Float64 :
-                  field == "complex" ? Complex128 :
+                  field == "complex" ? ComplexF64 :
                   field == "pattern" ? Bool :
-                  throw(ParseError("Unsupported field $field (only real and complex are supported)"))
+                  throw(Meta.ParseError("Unsupported field $field (only real and complex are supported)"))
     # Skip all comments and empty lines
     ll   = readline(file)
     while length(chomp(ll))==0 || (length(ll) > 0 && ll[1] == '%')

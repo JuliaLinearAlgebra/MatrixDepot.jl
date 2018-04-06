@@ -3,7 +3,7 @@ n = rand(1:10)
 
 A = ones(n, 1) * [1:n;]'
 A = A./A'
-A = tril(A) + tril(A)' - eye(n)
+A = tril(A) + tril(A)' - Matrix(1.0I, n, n)
 
 @test matrixdepot("lehmer", n) ≈ A
 println("'lehmer' passed test...")

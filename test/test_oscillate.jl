@@ -7,11 +7,7 @@
 mode = rand(1:2) # 2 different modes
 n = rand(2:10)
 A = matrixdepot("oscillate", n, mode)
-try
-    matrixdepot("oscillate", n, 4)
-catch ArgumentError
-    println("oscillate invalid mode value")
-end
+@test_throws ArgumentError matrixdepot("oscillate", n, 4)
 
 eva, evc = eig(A)
 for i in eva
@@ -23,7 +19,7 @@ evc = evc[:,p]
 
 # compute the number of sign change
 function num_sign_change(v)
-    signv = sign(v)
+    signv = sign.(v)
     change = signv[1]
     num = 0
     for i in signv

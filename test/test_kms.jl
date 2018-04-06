@@ -3,7 +3,7 @@ n = rand(1:10)
 A = matrixdepot("kms", n)
 
 B = [1:n;]*ones(n)'
-B = abs(B - B')
+B = abs.(B - B')
 B = 0.5.^B
 
 @test A ≈ B

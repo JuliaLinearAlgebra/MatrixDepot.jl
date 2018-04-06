@@ -1,9 +1,8 @@
 n = rand(1:n)
 
-
 @test matrixdepot("poisson", Float64, n) == matrixdepot("poisson", n)
 
-A = full(matrixdepot("poisson", n))
+A = Matrix(matrixdepot("poisson", n))
 
 n_mesh, n = n, n^2
 

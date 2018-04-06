@@ -16,11 +16,7 @@ for i in length(C)
     @test C[i] == -1 || C[i] == 0 || C[i] == 1
 end
 
-try 
-    matridepot("rando", 3, 3, 5)
-catch ArgumentError
-    println("rando: invalid k value")
-end
+@test_throws ArgumentError matrixdepot("rando", 3, 3, 5)
 
 θ = matrixdepot("rando", n)
 

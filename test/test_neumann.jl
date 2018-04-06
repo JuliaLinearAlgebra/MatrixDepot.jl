@@ -51,6 +51,6 @@ end
     
 A = matrixdepot("neumann", n_mesh)
 
-@test full(A) ≈ B
+@test Matrix(A) ≈ B
 
 println("'neumann' passed test...")
