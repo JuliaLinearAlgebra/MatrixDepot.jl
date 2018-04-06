@@ -27,13 +27,7 @@ e2 = [-1020, -1020, 0, 0, 0.098, 0.098, 1000, 1000, 1000, 1000, 1000,
       1020, 1020, 1020, 1020, 1020]
 @test e1 ≈ e2 atol=11
 
-try
-    matrixdepot("rosser", 0)
-catch ArgumentError
-end
-try
-    matrixdepot("rosser", 1)
-catch ArgumentError
-end
+@test_throws ArgumentError matrixdepot("rosser", 0)
+@test matrixdepot("rosser", 1) isa Matrix
 
 println("'rosser' passed test...")

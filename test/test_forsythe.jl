@@ -12,10 +12,11 @@ if n != 1 # this test does not apply for n = 1
     for i = 1:n, j = 1:n
         A[i,j] = j == i ? b : 
                   j == i + 1 ? 1.0 : 
-                  (i == n && j == 1)? a : 0.0
+                  (i == n && j == 1) ? a : 0.0
     end
 
     @test matrixdepot("forsythe", n, a, b) ≈ A
 end
+
 println("'forsythe' passed test...")
 

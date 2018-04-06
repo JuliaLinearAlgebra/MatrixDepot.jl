@@ -1,5 +1,7 @@
 # return info comment strings for UF sparse matrix
-if isdefined(:SparseArrays)
+if VERSION >= v"0.7.0-"
+    Sparse = SuiteSparse.CHOLMOD.Sparse
+elseif isdefined(:SparseArrays)
     Sparse = Base.SparseArrays.CHOLMOD.Sparse
 else
     Sparse = Base.SparseMatrix.CHOLMOD.Sparse
@@ -68,7 +70,7 @@ function ufreader(dir::AbstractString, name::AbstractString;
                         metadict[dataname] = denseread(string(dirname,'/', data))
                     end
                 else
-                    metadict[dataname] = readstring(string(dirname,'/', data))
+                    metadict[dataname] = read(string(dirname,'/', data), String)
                 end
             end
             metadict

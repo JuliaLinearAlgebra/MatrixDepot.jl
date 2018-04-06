@@ -1,4 +1,4 @@
-spd = matrixdepot("symmetric", "pos-def")
+@test matrixdepot("symmetric", "pos-def") != nothing
 
-data = matrixdepot("data")
+@test matrixdepot("data") != nothing
 

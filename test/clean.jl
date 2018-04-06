@@ -9,6 +9,6 @@ end
 if isdir(string(dirdata, '/', "mm"))
     rm(string(dirdata, '/', "mm"), recursive = true)
 end
-workspace()
-using MatrixDepot
-using Base.Test
+
+MatrixDepot.init()
+

@@ -1,9 +1,8 @@
 n = rand(1:n)
 
-
 @test matrixdepot("poisson", Float64, n) == matrixdepot("poisson", n)
 
-A = full(matrixdepot("poisson", n))
+A = Matrix(matrixdepot("poisson", n))
 
 n_mesh, n = n, n^2
 
@@ -13,7 +12,7 @@ B = zeros(Float64, n, n)
 i = 0
 for i_mesh in 1 : n_mesh
     for j_mesh in 1 : n_mesh
-        i = i + 1
+        global i = i + 1
         
         if i_mesh > 1 
             j = i - n_mesh
@@ -41,5 +40,6 @@ for i_mesh in 1 : n_mesh
 end
 
 @test A ≈ B
+
 println("'poisson' passed test...")
 

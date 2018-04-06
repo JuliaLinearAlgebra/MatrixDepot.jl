@@ -1,3 +1,3 @@
 n = rand(1:38)
-mat = matrixdepot(n)
-matlist = matrixdepot(1:n)
+@test matrixdepot(n) != nothing
+@test matrixdepot(1:n) != nothing

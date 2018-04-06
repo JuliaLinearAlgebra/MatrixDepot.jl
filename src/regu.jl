@@ -27,15 +27,15 @@ A matrix `A` is called oscillating if `A` is totally
     regularization methods. SIAM J. SCI. COMPUT Vol 16, 
     No2, pp 506-512 (1995).
 """
-function oscillate{T}(Σ::Vector{T})
+function oscillate(Σ::Vector{T}) where T
     n = length(Σ)
-    dv = rand(T, 1, n)[:] + eps(T)
-    ev = rand(T, 1, n-1)[:] + eps(T)
-    B = Bidiagonal(dv, ev, true)
+    dv = rand(T, 1, n)[:] .+ eps(T)
+    ev = rand(T, 1, n-1)[:] .+ eps(T)
+    B = Bidiagonal(dv, ev, :U)
     U, S, V = svd(B)
-    return U*diagm(Σ)*U'
+    return U*Diagonal(Σ)*U'
 end
-function oscillate{T}(::Type{T}, n::Integer, mode::Integer)
+function oscillate(::Type{T}, n::Integer, mode::Integer) where T
     κ = sqrt(1/eps(T))
     if mode == 1
         factor = κ^(-1/(n-1))
@@ -47,16 +47,16 @@ function oscillate{T}(::Type{T}, n::Integer, mode::Integer)
     end
     return oscillate(Σ)
 end
-oscillate{T}(::Type{T}, n::Integer) = oscillate(T, n, 2)
+oscillate(::Type{T}, n::Integer) where T = oscillate(T, n, 2)
 oscillate(args...) = oscillate(Float64, args...)
 
-immutable RegProb{T}
+struct RegProb{T}
     A::AbstractMatrix{T}  # matrix of interest
     b::AbstractVector{T}  # right-hand side
     x::AbstractVector{T}  # the solution to Ax = b
 end
 
-immutable RegProbNoSolution{T}
+struct RegProbNoSolution{T}
     A::AbstractMatrix{T}  # matrix of interest
     b::AbstractVector{T}  # right-hand side
 end
@@ -148,7 +148,7 @@ A classical test problem for regularization algorithms:
     analysis and solution of discrete ill-posed problems. 
     Numerical Algorithms, 6(1994), pp.1-35
 """
-function deriv2{T}(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true)
+function deriv2(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true) where T
     h = convert(T, one(T)/n); sqh = sqrt(h) 
     h32 = h*sqh; h2 = h^2; sqhi = one(T)/sqh
     t = 2/3; A = zeros(T, n, n)
@@ -196,7 +196,7 @@ function deriv2{T}(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = t
         return RegProb(A, b, x)
     end
 end
-deriv2{T}(::Type{T}, n::Integer, matrixonly::Bool = true) = deriv2(T, n, 1, matrixonly)
+deriv2(::Type{T}, n::Integer, matrixonly::Bool = true) where T = deriv2(T, n, 1, matrixonly)
 deriv2(args...) = deriv2(Float64, args...)
 
 
@@ -220,7 +220,7 @@ This test problem uses a first-kind Fredholm integral equation
     an instrument by numerical solution of an integral equation. 
     J. Math. Ana. Appl. 37 (1972), 83-112.
 """
-function shaw{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
+function shaw(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = π/n; A = zeros(T, n, n)
     
@@ -275,13 +275,13 @@ A Problem with a Discontinuous Solution
 **G. M. Wing**, A Primer on Integral Equations of the 
     First Kind, Society for Industrial and Applied Mathematics, 1991, p. 109.
 """
-function wing{T}(::Type{T}, n::Integer, t1::Real, t2::Real, matrixonly = true)
+function wing(::Type{T}, n::Integer, t1::Real, t2::Real, matrixonly = true) where T
     t1 < t2 || error("t1 must be smaller than t2")
     A = zeros(T, n, n)
     h = T(1/n)
     
     # compute A
-    sti = (T[1:n;]-0.5) * h
+    sti = (T[1:n;] .- 0.5) * h
     for i in 1:n
         A[i,:] .= h .* sti .* exp.(-sti[i] .* sti.^2)
     end
@@ -293,12 +293,12 @@ function wing{T}(::Type{T}, n::Integer, t1::Real, t2::Real, matrixonly = true)
         b = sqrt(h) .* 0.5 .* (exp.(-sti .* t1^2) .- exp.(-sti .* t2^2))./sti
 
         # compute x
-        indices = [findfirst(t1 .< sti, true): findlast(t2 .> sti, true);]
+        indices = [findfirst(t1 .< sti):findlast(t2 .> sti);]
         x = zeros(T,n); x[indices] = sqrt(h)*ones(length(indices))
         return RegProb(A, b, x)
     end
 end
-wing{T}(::Type{T}, n::Integer, matrixonly = true) = wing(T, n, 1/3, 2/3, matrixonly)
+wing(::Type{T}, n::Integer, matrixonly = true) where T = wing(T, n, 1/3, 2/3, matrixonly)
 wing(args...) = wing(Float64, args...)
 
 """
@@ -320,9 +320,9 @@ not satifiy the discrete Picard condition for the small singular values.
 **C. T. H. Baker**, The Numerical Treatment of Integral
     Equations, Clarendon Press, Oxford, 1977, p. 665.
 """
-function foxgood{T}(::Type{T}, n::Integer, matrixonly = true)
+function foxgood(::Type{T}, n::Integer, matrixonly = true) where T
     h = T(1/n)
-    t = h*(T[1:n;] - one(T)/2)
+    t = h*(T[1:n;] .- one(T)/2)
 
     A = h*sqrt.((t.^2)*ones(T,n)' + ones(T, n) * (t.^2)')
 
@@ -361,7 +361,7 @@ Inverse Heat Equation
 **A. S. Carasso**, Determining surface temperatures 
     from interior observations, SIAM J. Appl. Math. 42 (1982), 558-574.
 """
-function heat{T}(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true)
+function heat(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true) where T
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = one(T)/n; t = T[h/2:h:1;]
     c = h/(2*κ*sqrt(π))
@@ -393,7 +393,7 @@ function heat{T}(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true)
         return RegProb(A, b, x)
     end
 end
-heat{T}(::Type{T}, n::Integer, matrixonly::Bool = true) = heat(T, n, 1, matrixonly)
+heat(::Type{T}, n::Integer, matrixonly::Bool = true) where T = heat(T, n, 1, matrixonly)
 heat(args...) = heat(Float64, args...)
 
 """
@@ -414,7 +414,7 @@ Fredholm Integral Equation of the First Kind
     pesudo-rank determination in noisy ill-conditioned linear-squares
     problems, IMA, J. Numer. Anal. 2 (1982), 241-247.
 """
-function baart{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
+function baart(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     hs  = T(π/(2*n))
     ht  = T(π/n)
@@ -436,7 +436,7 @@ function baart{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
         else
             f3 = (exp.(ihs[2:n1].*co3) .- exp.(ihs[1:n].*co3))./co3
         end
-        A[:,j] .= c.*(f1 .+ 4.*f2 .+ f3)
+        A[:,j] .= c.*(f1 .+ 4f2 .+ f3)
     end
     
     if matrixonly
@@ -475,7 +475,7 @@ Phillips's \"Famous\" Problem
     solution of certain integral equations of the first kind, J. ACM
     9 (1962), 84-97.
 """
-function phillips{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
+function phillips(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     mod(n, 4) == 0 || error("The dimension of the matrix must be a multiple of 4.")
 
     # compute A
@@ -510,7 +510,7 @@ function phillips{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
     
         # compute x
         x = zeros(T, n)
-        x[(2 * n4 + 1):(3 * n4)] = (h + diff(sin.(T[0:h:(3 + 10 * eps(T));] * c)) / c) / sqrt(h)
+        x[2n4+1:3n4] = (h .+ diff(sin.(T[0:h:(3 + 10 * eps(T));] * c)) / c) / sqrt(h)
         x[n4+1:2*n4] = x[3*n4:-1:2*n4+1]
         return RegProb(A, b, x)
     end
@@ -531,7 +531,7 @@ function round_matlab(x::AbstractFloat)
     y = trunc(x)
     ifelse(x==y,y,trunc(2*x-y))
 end
-round_matlab{T<:Integer}(::Type{T}, x::AbstractFloat) = trunc(T,round_matlab(x))   
+round_matlab(::Type{T}, x::AbstractFloat) where T<:Integer = trunc(T,round_matlab(x))
 
 
 """
@@ -572,8 +572,8 @@ Discretization of a 1-D model problem in gravity surveying, in
 **G. M. Wing and J. D. Zahrt**, A Primer on Integral Equations of 
 the First Kind, Society for Industrial and Applied Mathematics, Philadelphia, 1991, p. 17.
 """
-function gravity{T}(::Type{T}, n::Integer, example::Integer, 
-                    a::Number, b::Number, d::Number, matrixonly::Bool = true)
+function gravity(::Type{T}, n::Integer, example::Integer, 
+                    a::Number, b::Number, d::Number, matrixonly::Bool = true) where T
     dt = one(T)/n
     a  = T(a)
     b  = T(b)
@@ -605,10 +605,10 @@ function gravity{T}(::Type{T}, n::Integer, example::Integer,
     end
 end
 
-gravity{T}(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true) = 
+gravity(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true) where T = 
     gravity(T, n, example, 0, 1, 0.25, matrixonly)
 
-gravity{T}(::Type{T}, n::Integer, matrixonly::Bool = true) = 
+gravity(::Type{T}, n::Integer, matrixonly::Bool = true) where T = 
            gravity(T, n, 1, 0, 1, 0.25, matrixonly) 
 gravity(args...) = gravity(Float64, args...)
 
@@ -633,8 +633,8 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
 
 *Groups:* ["regprob", "sparse"]
 """
-function blur{T}(::Type{T}, n::Integer, band::Integer, σ::Number, 
-                 matrixonly::Bool = true)
+function blur(::Type{T}, n::Integer, band::Integer, σ::Number, 
+                 matrixonly::Bool = true) where T
     σ = T(σ)
     z = [exp.(-(T[0:band-1;].^2) / (2 * σ^2)); zeros(T, n - band)]
     A = toeplitz(T, z)
@@ -661,10 +661,10 @@ function blur{T}(::Type{T}, n::Integer, band::Integer, σ::Number,
                 end
             end
         end
-        Te = [flipdim(Te, 2) Te;]
-        Te = [flipdim(Te, 1); Te]
+        Te = [reverse(Te, dims=2) Te;]
+        Te = [reverse(Te, dims=1); Te]
 
-        x[2 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] = Te
+        x[2 .+ [1:2n6;], n3 - 1 .+ [1:2n3;]] = Te
 
         # add a smaller ellipse
         Te = zeros(T, n6, n3)
@@ -675,36 +675,36 @@ function blur{T}(::Type{T}, n::Integer, band::Integer, σ::Number,
                 end
             end
         end
-        Te = [flipdim(Te, 2) Te;]
-        Te = [flipdim(Te, 1); Te]
-        x[n6 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] = x[n6 + [1:(2 * n6);], n3 - 1 + [1:(2 * n3);]] + 2 * Te
-        x[find((i) -> i==3, x)] = 2
+        Te = [reverse(Te, dims=2) Te;]
+        Te = [reverse(Te, dims=1); Te]
+        x[n6 .+ [1:2n6;], n3 - 1 .+ [1:2n3;]] = x[n6 .+ [1:2n6;], n3 - 1 .+ [1:2n3;]] .+ 2Te
+        x[findall((i) -> i==3, x)] = 2
         
         # Add a triangle
         Te = triu(ones(T, n3, n3))
         mT, nT = size(Te)
-        x[n3 + n12 + [1:nT;], 1 + [1:mT;]] = 3*Te
+        x[n3 + n12 .+ [1:nT;], 1 .+ [1:mT;]] = 3Te
 
         # add a cross
         Te = zeros(T, 2 * n6 + 1, 2 * n6 + 1)
         mT, nT = size(Te)
         Te[n6+1, 1:nT] = ones(T, nT)
         Te[1:mT, n6+1] = ones(T, mT)
-        x[n2 + n12 + [1:mT;], n2 + [1:nT;]] = 4 * Te
+        x[n2 + n12 .+ [1:mT;], n2 .+ [1:nT;]] = 4Te
 
         x = reshape(x[1:n, 1:n], n^2)
         b = A * x 
         return RegProb(A, b, x) 
     end
 end
-blur{T}(::Type{T}, n::Integer, matrixonly::Bool = true) = blur(T, n, 3, 0.7, matrixonly)
+blur(::Type{T}, n::Integer, matrixonly::Bool = true) where T = blur(T, n, 3, 0.7, matrixonly)
 blur(args...) = blur(Float64, args...)
 
 
 """
 Inverse Laplace Transformation
 """
-function ilaplace{T}(::Type{T}, n::Integer)
+function ilaplace(::Type{T}, n::Integer) where T
 
 end
 
@@ -736,7 +736,7 @@ which represents the true distribution of stellar parallaxes, is unknown.
 **W. M. Smart**, Stellar Dynamics, Cambridge University Press, Cambridge,
 (1938), p. 30. 
 """
-function parallax{T}(::Type{T}, n::Integer, matrixonly::Bool=true)
+function parallax(::Type{T}, n::Integer, matrixonly::Bool=true) where T
     # Intialization
     a = zero(T)
     b = T(0.1)
@@ -746,13 +746,13 @@ function parallax{T}(::Type{T}, n::Integer, matrixonly::Bool=true)
     hx = (b-a)/n
     hsh = hs/2
     hxh = hx/2
-    ss = (-T(0.03) + T[0:m-1;]*hs)*ones(T, n)'
-    xx = ones(T, m)*(a + T[0:n-1;]'*hx)
+    ss = (-T(0.03) .+ T[0:m-1;] * hs) * ones(T, n)'
+    xx = ones(T, m) * (a .+ T[0:n-1;]' * hx)
 
     # compute matrix A
-    A = 16.*exp.(-T(0.5).*((ss .+ hsh .- xx .- hxh)./σ).^2)
+    A = 16exp.(-T(0.5).*((ss .+ hsh .- xx .- hxh)./σ).^2)
 
-    A .+= 4.*(exp.(-T(0.5).*((ss .+ hsh .- xx)./σ).^2) .+
+    A .+= 4(exp.(-T(0.5).*((ss .+ hsh .- xx)./σ).^2) .+
               exp.(-T(0.5).*((ss .+ hsh .- xx .- hx)./σ).^2) .+ 
               exp.(-T(0.5).*((ss .- xx .- hxh)./σ).^2) .+ 
               exp.(-T(0.5).*((ss .+ hs .- xx .- hxh)./σ).^2))
@@ -793,7 +793,7 @@ Artifically generated discrete ill-posed problem.
 
 *Groups:* ["regprob"]
 """
-function spikes{T}(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = true)
+function spikes(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = true) where T
     del = convert(T, t_max/n)
     
     # compute A
@@ -823,14 +823,14 @@ function spikes{T}(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = tru
         return RegProb(A, b, x) 
     end
 end
-spikes{T}(::Type{T}, n::Integer, matrixonly::Bool = true) = 
+spikes(::Type{T}, n::Integer, matrixonly::Bool = true) where T = 
          spikes(T, n, 5, matrixonly)
 spikes(args...) = spikes(Float64, args...)
 
 #
 # Two-dimensional tomography problem with sparse matrix
 #
-function tomo{T}(::Type{T}, n::Integer)
+function tomo(::Type{T}, n::Integer) where T
 
 end
 
@@ -858,7 +858,7 @@ is a Hankel matrix.
               Numerical Solution of Integral Equations, Clarendon Press, 
               1974.
 """
-function ursell{T}(::Type{T}, n::Integer, matrixonly::Bool = true)
+function ursell(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     r = zeros(T, n); c = copy(r)
     for k = 1:n
         d1 = one(T) + (one(T) + k)/n

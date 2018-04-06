@@ -12,7 +12,7 @@ B = zeros(Float64, n, n)
 i = 0
 
 for i_mesh in 1:n_mesh, j_mesh in 1:n_mesh
-    i = i + 1
+    global i = i + 1
     if i_mesh > 1
         j = i - n_mesh
     else
@@ -51,6 +51,6 @@ end
     
 A = matrixdepot("neumann", n_mesh)
 
-@test full(A) ≈ B
+@test Matrix(A) ≈ B
 
 println("'neumann' passed test...")

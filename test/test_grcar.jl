@@ -3,5 +3,5 @@ n = rand(3:10)
 
 A = matrixdepot("grcar", n, n-1)
 @test istril(A - ones(n,n))
-@test istriu(A + diagm(ones(n-1), -1))
+@test istriu(A + diagm(-1 => ones(n-1)))
 println("'grcar' passed test...")

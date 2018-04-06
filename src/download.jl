@@ -45,7 +45,7 @@ function downloaddata(; generate_list::Bool = true)
         mm_matrixdata = Tuple[]
         open(matrices) do f
             for line in readlines(f)
-                if contains(line, """MAT</a>""")
+                if occursin("""MAT</a>""", line)
                     collectionname, matrixname = split(split(line, '"')[2], '/')[end-1:end]
                     matrixname = split(matrixname, '.')[1]
                     push!(uf_matrixdata, (collectionname, matrixname))
@@ -55,7 +55,7 @@ function downloaddata(; generate_list::Bool = true)
         
         open(mm_matrices) do f
             for line in readlines(f)
-                if contains(line, """<A HREF="/MatrixMarket/data/""")
+                if occursin("""<A HREF="/MatrixMarket/data/""", line)
                     collectionname, setname, matrixname = split(split(line, '"')[2], '/')[4:6]
                     matrixname = split(matrixname, '.')[1]
                     push!(mm_matrixdata, (collectionname, setname, matrixname))
@@ -77,19 +77,15 @@ function search(matrixname::AbstractString)
 
     datalist = AbstractString[]
     if (matrixname in uf_matrices) || (matrixname in mm_matrices)
-        uf_index = findin(uf_matrices, [matrixname])
-        mm_index = findin(mm_matrices, [matrixname])
-        if uf_index != 0
-            for i in uf_index
-                collectionname, matrixname = uf_matrixdata[i]
-                push!(datalist, string(collectionname, '/', matrixname))
-            end
+        uf_index = findall(isequal(matrixname), uf_matrices)
+        mm_index = findall(isequal(matrixname), mm_matrices)
+        for i in uf_index
+            collectionname, matrixname = uf_matrixdata[i]
+            push!(datalist, string(collectionname, '/', matrixname))
         end
-        if mm_index != 0
-            for i in mm_index
-                collectionname, setname, matrixname = mm_matrixdata[i]
-                push!(datalist, string(collectionname, '/', setname, '/', matrixname))
-            end
+        for i in mm_index
+            collectionname, setname, matrixname = mm_matrixdata[i]
+            push!(datalist, string(collectionname, '/', setname, '/', matrixname))
         end
         return datalist
     else
