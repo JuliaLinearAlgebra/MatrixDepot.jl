@@ -115,7 +115,7 @@ function gunzip(fname)
 
     open(destname, "w") do f
         GZip.open(fname) do g
-            write(f, readstring(g))
+            write(f, read(g))
         end
     end
     destname
@@ -169,7 +169,7 @@ function get(name::AbstractString)
             diruzfn = string(dir, '/', matrixname, '/', uzfn)
             
             if isfile(diruzfn)
-                error("$(collectionname)/$(matrixname) exits, no need to download")
+                continue
             end
 
             try
@@ -189,29 +189,40 @@ function get(name::AbstractString)
     elseif length(namelist) == 3 # Matrix Market collection 
         
         collectionname, setname, matrixname = namelist
-        mtxfname = string(matrixname, ".mtx")
-        uzfn = string(matrixname, ".mtx.gz")
-        
-        dir = string(DATA_DIR, '/', "mm", '/', collectionname)
-        isdir(dir) || mkdir(string(DATA_DIR, '/', "mm", '/', collectionname))
-   
-        dir = string(DATA_DIR, '/', "mm", '/', collectionname, '/', setname)
-        isdir(dir) || mkdir(string(DATA_DIR, '/', "mm", '/', collectionname, '/', setname))
-        
-        dirfn = string(dir, '/', mtxfname)
-        diruzfn = string(dir, '/', uzfn)
-        
-        !isfile(dirfn) || error("file $(mtxfname) exits, no need to download")
-        url =  "ftp://math.nist.gov/pub/MatrixMarket2/$(collectionname)/$(setname)/$(matrixname).mtx.gz"
-
-        try 
-            download(url, diruzfn)
-            println("download:", diruzfn)
-        catch
-            error("fail to download $uzfn")
+        matrixnames = AbstractString[]
+        if matrixname == "*"
+            println("Downloading all matrices in group $collectionname/$setname...")
+            for mm in mm_matrixdata
+                if mm[1] == collectionname && mm[2] == setname
+                    push!(matrixnames, mm[3])
+                end
+            end
+        else
+            push!(matrixnames, matrixname)
         end
-        gunzip(diruzfn)
-        rm(diruzfn)
+        
+        for matrixname in matrixnames
+            mtxfname = string(matrixname, ".mtx")
+            uzfn = string(matrixname, ".mtx.gz")
+            
+            dir = joinpath(DATA_DIR, "mm", collectionname, setname)
+            isdir(dir) || mkpath(dir)
+            
+            dirfn = joinpath(dir, mtxfname)
+            diruzfn = joinpath(dir, uzfn)
+            
+            !isfile(dirfn) || continue
+            url =  "ftp://math.nist.gov/pub/MatrixMarket2/$(collectionname)/$(setname)/$(matrixname).mtx.gz"
+
+            try 
+                download(url, diruzfn)
+                println("download:", diruzfn)
+            catch
+                error("fail to download $uzfn")
+            end
+            gunzip(diruzfn)
+            rm(diruzfn)
+        end
 
     elseif length(namelist) == 1
         stringvec = search(name)

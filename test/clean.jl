@@ -1,13 +1,10 @@
 user_dir = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
 dirdata = joinpath(dirname(@__FILE__),"..","data")
- if isdir(user_dir)
-     rm(user_dir, recursive = true)
+if isdir(user_dir)
+    mv(user_dir, string(user_dir, ".saved"))
 end
-if isdir(string(dirdata, '/', "uf"))
-    rm(string(dirdata, '/', "uf"), recursive = true)
-end
-if isdir(string(dirdata, '/', "mm"))
-    rm(string(dirdata, '/', "mm"), recursive = true)
+if isdir(dirdata)
+    mv(user_dir, string(dirdata, ".saved"))
 end
 
 MatrixDepot.init()
