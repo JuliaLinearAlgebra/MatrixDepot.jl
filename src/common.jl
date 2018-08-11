@@ -60,6 +60,7 @@ function group_list()
     groups = _matrix_class()
     try
         append!(groups, _user_matrix_class())
+    catch
     end
     push!(groups, "data")
     push!(groups, "all")
