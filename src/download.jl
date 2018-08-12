@@ -46,10 +46,12 @@ function downloaddata(; generate_list::Bool = true)
         mm_matrixdata = Tuple[]
         open(matrices) do f
             for line in readlines(f)
-                if occursin("""MAT</a>""", line)
-                    collectionname, matrixname = split(split(line, '"')[2], '/')[end-1:end]
-                    matrixname = split(matrixname, '.')[1]
-                    push!(uf_matrixdata, (collectionname, matrixname))
+                if occursin(""">MM</a>""", line)
+                    collectionname, matrixname = split(split(line, '"')[4], '/')[end-1:end]
+                    if endswith(matrixname, ".tar.gz")
+                        matrixname = rsplit(matrixname, ".", limit=3)[1]
+                        push!(uf_matrixdata, (collectionname, matrixname))
+                    end
                 end
             end
         end
@@ -58,8 +60,10 @@ function downloaddata(; generate_list::Bool = true)
             for line in readlines(f)
                 if occursin("""<A HREF="/MatrixMarket/data/""", line)
                     collectionname, setname, matrixname = split(split(line, '"')[2], '/')[4:6]
-                    matrixname = split(matrixname, '.')[1]
-                    push!(mm_matrixdata, (collectionname, setname, matrixname))
+                    if endswith(matrixname, ".html")
+                        matrixname = rsplit(matrixname, ".", limit=2)[1]
+                        push!(mm_matrixdata, (collectionname, setname, matrixname))
+                    end
                 end
             end
         end
