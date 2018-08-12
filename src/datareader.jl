@@ -43,7 +43,7 @@ end
 dir: directory of the file
 name: file name
 info: whether to return information
-meta: wehterh to return metadata
+meta: whether to return metadata
 """
 function ufreader(dir::AbstractString, name::AbstractString;
                   info::Bool = true, meta::Bool = false)

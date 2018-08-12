@@ -28,6 +28,7 @@
 #####################################################
 const UF_URL = "http://www.cise.ufl.edu/research/sparse/"
 const MM_URL = "http://math.nist.gov/MatrixMarket/matrices.html"
+const MM_URL2 = "ftp://math.nist.gov/pub/MatrixMarket2"
 const DATA_DIR = joinpath(dirname(@__FILE__),"..", "data")
 
 # download html files and store matrix data as a list of tuples
@@ -121,6 +122,14 @@ function gunzip(fname)
     destname
 end
 
+function matchnames(p, a)
+    n = length(a)
+    length(p) == n || (return false)
+    for i = 1:n
+        p[i] in ("*", a[i]) || (return false)
+    end
+    true
+end
 
 # get
 # --------------
@@ -140,43 +149,35 @@ function get(name::AbstractString)
     uf_matrixdata, mm_matrixdata = downloaddata()
 
     namelist = split(name, '/')
-    collectionname = namelist[1]
     if length(namelist) == 2 # UF sparse matrix collection
-        matrixnames = AbstractString[]
-        if namelist[2] == "*"
-            println("Downloading all matrices in group $(collectionname)...")
-            for uf in uf_matrixdata
-                if uf[1] == collectionname
-                    push!(matrixnames, uf[2])
-                end
+        matrixnames = Tuple{<:AbstractString,<:AbstractString}[]
+        println("Downloading all matrices named $name...")
+        for uf in uf_matrixdata
+            if matchnames(namelist, uf)
+                push!(matrixnames, uf)
             end
-        else
-            push!(matrixnames, namelist[2])
         end
-        for matrixname in matrixnames           
-            (collectionname, matrixname) in uf_matrixdata ||
-                       error("can not find $collectionname/$matrixname in UF sparse matrix collection")
+        for fullname in matrixnames           
+            collectionname, matrixname = fullname
             fn = string(matrixname, ".tar.gz")
             uzfn = string(matrixname, ".mtx")
-            url = string(UF_URL, "MM", '/', collectionname, '/', matrixname, ".tar.gz")
-    
-            dir = string(DATA_DIR, '/', "uf", '/', collectionname)
-            if !isdir(dir)
-                mkdir(dir)
-            end
+            url = join((UF_URL, "MM", fullname...), "/") * ".tar.gz"
+
+            dir = joinpath(DATA_DIR, "uf", collectionname)
+            isdir(dir) || mkdir(dir)
             
-            dirfn = string(dir, '/', fn)
-            diruzfn = string(dir, '/', matrixname, '/', uzfn)
+            dirfn = joinpath(dir, fn)
+            diruzfn = joinpath(dir, matrixname, uzfn)
             
             if isfile(diruzfn)
                 continue
             end
 
             try
+                println("downloading: ", url)
                 download(url, dirfn)
-                println("download:", dirfn)
             catch
-                error("fail to download $fn")
+                error("failed to download $uzfn")
             end
             
             if !isfile(diruzfn)
@@ -188,20 +189,16 @@ function get(name::AbstractString)
         end
     elseif length(namelist) == 3 # Matrix Market collection 
         
-        collectionname, setname, matrixname = namelist
-        matrixnames = AbstractString[]
-        if matrixname == "*"
-            println("Downloading all matrices in group $collectionname/$setname...")
-            for mm in mm_matrixdata
-                if mm[1] == collectionname && mm[2] == setname
-                    push!(matrixnames, mm[3])
-                end
+        matrixnames = Tuple{<:AbstractString,<:AbstractString,<:AbstractString}[]
+        println("Downloading all matrices named $name...")
+        for mm in mm_matrixdata
+            if matchnames( namelist, mm)
+                push!(matrixnames, mm)
             end
-        else
-            push!(matrixnames, matrixname)
         end
         
-        for matrixname in matrixnames
+        for fullname in matrixnames
+            collectionname, setname, matrixname = fullname
             mtxfname = string(matrixname, ".mtx")
             uzfn = string(matrixname, ".mtx.gz")
             
@@ -212,13 +209,13 @@ function get(name::AbstractString)
             diruzfn = joinpath(dir, uzfn)
             
             !isfile(dirfn) || continue
-            url =  "ftp://math.nist.gov/pub/MatrixMarket2/$(collectionname)/$(setname)/$(matrixname).mtx.gz"
+            url = join((MM_URL2, fullname...), "/") * ".mtx.gz"
 
             try 
+                println("downloading: ", url)
                 download(url, diruzfn)
-                println("download:", diruzfn)
             catch
-                error("fail to download $uzfn")
+                error("failed to download $uzfn")
             end
             gunzip(diruzfn)
             rm(diruzfn)
