@@ -71,3 +71,5 @@ matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
                            "spikes", "ursell", "parallax"],
               "graph" => ["erdrey", "gilbert", "smallworld"]
                );
+
+matrixaliases = Dict{AbstractString,AbstractString}()

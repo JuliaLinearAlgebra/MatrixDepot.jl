@@ -27,7 +27,14 @@ function matrix_data_name_list()
     if isdir(data_dir("uf"))
         for col in filenames("uf")
             for mat in filenames("uf/$(col)")
-                push!(matrices, string(col, '/', mat))
+                file = data_dir(joinpath("uf", col, mat, mat * ".mtx"))
+                if isfile(file)
+                    name = join((col, mat), "/")
+                    push!(matrices, name)
+                    id = ufinfo(file, "id")
+                    matrixaliases[id] = name
+                    matrixaliases[mat] = name
+                end
             end
         end
     end
@@ -145,6 +152,8 @@ function matrixdepot(name::AbstractString)
     elseif name in _user_matrix_class()
         matrices = usermatrixclass[name]
         return sort(matrices)
+    elseif name in keys(matrixaliases)
+        matrixdepot(matrixaliases[name])
     else
         throw(ArgumentError("No information is available for \"$(name)\"."))
     end
@@ -177,14 +186,19 @@ function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
         namelist = split(name, '/')
         if  length(namelist) == 2
             ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2], info = false, meta = meta)
-        else
+        elseif length(namelist) == 3
             mmreader(data_dir("mm"), name, info = false)
+        else
+            matrixdepot(matrixaliases[name], method, meta=meta)
         end
-
     elseif method == :g || method == :get
         MatrixDepot.get(name)
     elseif method == :s || method == :search
-        MatrixDepot.search(name)
+        try
+            MatrixDepot.search(name)
+        catch
+            [matrixaliases[name]]
+        end
     else
         throw(ArgumentError("unknown symbol $method.
               use :read (or :r) to read matrix data;

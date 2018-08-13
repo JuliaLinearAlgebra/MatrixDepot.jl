@@ -8,14 +8,29 @@ else
 end
 
 function ufinfo(filename::AbstractString)
-    mmfile = open(filename,"r")
-    info = "\n"
-    ll = readline(mmfile)
-    while length(ll) > 0 && ll[1] == '%'
-        info = string(info, ll)
+    open(filename,"r") do mmfile
+        info = ""
         ll = readline(mmfile)
+        while length(ll) > 0 && ll[1] == '%'
+            info = string(info, ll, "\n")
+            ll = readline(mmfile)
+        end
+        info
     end
-    return info
+end
+
+function ufinfo(filename::AbstractString, name::AbstractString)
+    strt = "% " * name * ":"
+    open(filename,"r") do mmfile
+        ll = readline(mmfile)
+        while length(ll) > 0 && ll[1] == '%'
+            if startswith(ll, strt)
+                return strip(ll[length(strt)+1:end])
+            end
+            ll = readline(mmfile)
+        end
+        ""
+    end
 end
 
 # read Matrix Market data

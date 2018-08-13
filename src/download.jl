@@ -26,7 +26,7 @@
 #####################################################
 # Download data from UF Sparse Matrix Collection
 #####################################################
-const UF_URL = "http://www.cise.ufl.edu/research/sparse/"
+const UF_URL = "http://www.cise.ufl.edu/research/sparse"
 const MM_URL = "http://math.nist.gov/MatrixMarket/matrices.html"
 const MM_URL2 = "ftp://math.nist.gov/pub/MatrixMarket2"
 const DATA_DIR = joinpath(dirname(@__FILE__),"..", "data")
@@ -34,7 +34,7 @@ const DATA_DIR = joinpath(dirname(@__FILE__),"..", "data")
 # download html files and store matrix data as a list of tuples
 function downloaddata(; generate_list::Bool = true)
     # UF Sparse matrix collection
-    dlurl = string(UF_URL, "matrices/list_by_id.html")
+    dlurl = join((UF_URL, "matrices", "list_by_id.html"), "/")
     matrices = string(DATA_DIR, "/uf_matrices.html")
     mm_matrices = string(DATA_DIR, "/mm_matrices.html")
 
