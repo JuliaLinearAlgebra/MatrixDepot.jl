@@ -31,9 +31,9 @@ function matrix_data_name_list()
                 if isfile(file)
                     name = join((col, mat), "/")
                     push!(matrices, name)
-                    id = ufinfo(file, "id")
-                    matrixaliases[id] = name
-                    matrixaliases[mat] = name
+                    # id = ufinfo(file, "id")
+                    # matrixaliases[id] = name
+                    # matrixaliases[mat] = name
                 end
             end
         end

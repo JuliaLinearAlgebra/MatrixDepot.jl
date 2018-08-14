@@ -26,47 +26,86 @@
 #####################################################
 # Download data from UF Sparse Matrix Collection
 #####################################################
-const UF_URL = "http://www.cise.ufl.edu/research/sparse"
+const UF_URL = "http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html"
+const UF_URL2 = "http://www.cise.ufl.edu/research/sparse/MM"
+const TA_URL = "https://sparse.tamu.edu/?per_page=All"
+const TA_URL2 = "https://sparse.tamu.edu/MM"
 const MM_URL = "http://math.nist.gov/MatrixMarket/matrices.html"
 const MM_URL2 = "ftp://math.nist.gov/pub/MatrixMarket2"
 const DATA_DIR = joinpath(dirname(@__FILE__),"..", "data")
 
+uf_url = TA_URL2
+
+# extract loading url base and matrix names from index file
+function extract_names(matrices::AbstractString)
+    global uf_url
+    TAMUID = """<title>SuiteSparse Matrix Collection</title>"""
+    UFID = """<title>UF Sparse Matrix Collection - sorted by id</title>"""
+    MMID = """<TITLE>The Matrix Market Matrices by Name</TITLE>"""
+    params = nothing
+    matrixdata = Tuple[]
+    open(matrices) do f
+        id = nothing
+        for line in readlines(f)
+            if params === nothing
+                params = if occursin(TAMUID, line)
+                    uf_url = TA_URL2
+                    ("""">Matrix Market""", 4, ".tar.gz", 2,
+                     r"<td class='column-id'>([[:digit:]]*)</td>")
+                elseif occursin(UFID, line)
+                    uf_url = UF_URL2
+                    (""">MM</a>""", 4, ".tar.gz", 2,
+                    r"<td>([[:digit:]]*)</td>")
+                elseif occursin(MMID, line)
+                    ("""<A HREF="/MatrixMarket/data/""", 2, ".html", 3, nothing)
+                else
+                    nothing
+                end
+                continue
+            end
+            grepex, spquote, ending, parts, regexid = params
+            m = regexid === nothing ? nothing : match(regexid, line)
+            if m != nothing
+                id = m.captures[1]
+            end
+            if occursin(grepex, line)
+                murl = split(line, '"')[spquote]
+                if endswith(murl, ending)
+                    list = rsplit(murl[1:end-length(ending)], '/', limit=parts+1)[2:end]
+                    push!(matrixdata, Tuple(list))
+                    if id != nothing
+                        name = join(list, '/')
+                        matrixaliases[id] = name
+                        matrixaliases[list[end]] = name
+                    end
+                end
+            end
+        end
+    end
+    matrixdata
+end
+
 # download html files and store matrix data as a list of tuples
 function downloaddata(; generate_list::Bool = true)
     # UF Sparse matrix collection
-    dlurl = join((UF_URL, "matrices", "list_by_id.html"), "/")
-    matrices = string(DATA_DIR, "/uf_matrices.html")
+    dlurl = TA_URL
+    uf_matrices = string(DATA_DIR, "/uf_matrices.html")
     mm_matrices = string(DATA_DIR, "/mm_matrices.html")
 
-    isfile(matrices) || download(dlurl, matrices)
+    if !isfile(uf_matrices)
+        try
+            download(dlurl, uf_matrices)
+        catch
+            dlurl = UF_URL
+            download(dlurl, uf_matrices)
+        end
+    end
+
     isfile(mm_matrices) || download(MM_URL, mm_matrices)
 
     if generate_list
-        uf_matrixdata = Tuple[]
-        mm_matrixdata = Tuple[]
-        open(matrices) do f
-            for line in readlines(f)
-                if occursin(""">MM</a>""", line)
-                    collectionname, matrixname = split(split(line, '"')[4], '/')[end-1:end]
-                    if endswith(matrixname, ".tar.gz")
-                        matrixname = rsplit(matrixname, ".", limit=3)[1]
-                        push!(uf_matrixdata, (collectionname, matrixname))
-                    end
-                end
-            end
-        end
-        
-        open(mm_matrices) do f
-            for line in readlines(f)
-                if occursin("""<A HREF="/MatrixMarket/data/""", line)
-                    collectionname, setname, matrixname = split(split(line, '"')[2], '/')[4:6]
-                    if endswith(matrixname, ".html")
-                        matrixname = rsplit(matrixname, ".", limit=2)[1]
-                        push!(mm_matrixdata, (collectionname, setname, matrixname))
-                    end
-                end
-            end
-        end
+        uf_matrixdata = extract_names(uf_matrices)
+        mm_matrixdata = extract_names(mm_matrices)
         return uf_matrixdata, mm_matrixdata
     end
 
@@ -165,7 +204,7 @@ function get(name::AbstractString)
             collectionname, matrixname = fullname
             fn = string(matrixname, ".tar.gz")
             uzfn = string(matrixname, ".mtx")
-            url = join((UF_URL, "MM", fullname...), "/") * ".tar.gz"
+            url = join((uf_url, fullname...), "/") * ".tar.gz"
 
             dir = joinpath(DATA_DIR, "uf", collectionname)
             isdir(dir) || mkdir(dir)

@@ -43,7 +43,8 @@ function init()
         include(string(MY_DEPOT_DIR, "/generator.jl"))
     end
 
-    matrix_data_name_list()
+    downloaddata()
+    nothing
 end
 
 init()
