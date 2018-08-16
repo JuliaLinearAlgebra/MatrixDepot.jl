@@ -43,6 +43,7 @@ function init()
         include(string(MY_DEPOT_DIR, "/generator.jl"))
     end
 
+    empty!(matrixaliases)
     downloaddata()
     nothing
 end

@@ -37,33 +37,34 @@ const DATA_DIR = joinpath(dirname(@__FILE__),"..", "data")
 uf_url = TA_URL2
 
 # extract loading url base and matrix names from index file
-function extract_names(matrices::AbstractString)
+function extract_names(matrices::AbstractString, md)
     global uf_url
     TAMUID = """<title>SuiteSparse Matrix Collection</title>"""
     UFID = """<title>UF Sparse Matrix Collection - sorted by id</title>"""
     MMID = """<TITLE>The Matrix Market Matrices by Name</TITLE>"""
     params = nothing
     matrixdata = Tuple[]
+    count = 0
     open(matrices) do f
         id = nothing
         for line in readlines(f)
             if params === nothing
                 params = if occursin(TAMUID, line)
                     uf_url = TA_URL2
-                    ("""">Matrix Market""", 4, ".tar.gz", 2,
+                    ("", """">Matrix Market""", 4, ".tar.gz", 2,
                      r"<td class='column-id'>([[:digit:]]*)</td>")
                 elseif occursin(UFID, line)
                     uf_url = UF_URL2
-                    (""">MM</a>""", 4, ".tar.gz", 2,
+                    ("", """>MM</a>""", 4, ".tar.gz", 2,
                     r"<td>([[:digit:]]*)</td>")
                 elseif occursin(MMID, line)
-                    ("""<A HREF="/MatrixMarket/data/""", 2, ".html", 3, nothing)
+                    ("M", """<A HREF="/MatrixMarket/data/""", 2, ".html", 3, nothing)
                 else
                     nothing
                 end
                 continue
             end
-            grepex, spquote, ending, parts, regexid = params
+            atyp, grepex, spquote, ending, parts, regexid = params
             m = regexid === nothing ? nothing : match(regexid, line)
             if m != nothing
                 id = m.captures[1]
@@ -73,11 +74,16 @@ function extract_names(matrices::AbstractString)
                 if endswith(murl, ending)
                     list = rsplit(murl[1:end-length(ending)], '/', limit=parts+1)[2:end]
                     push!(matrixdata, Tuple(list))
-                    if id != nothing
-                        name = join(list, '/')
-                        matrixaliases[id] = name
-                        matrixaliases[list[end]] = name
+                    count += 1
+                    name = join(list, '/')
+                    alias = id === nothing ? string(count) : id
+                    le = string('%', list[end])
+                    matrixaliases["#$atyp$alias"] = name
+                    while Base.get(matrixaliases, le, nothing) !== nothing
+                        le = string('%', le)
                     end
+                    matrixaliases[le] = name
+                    id = nothing
                 end
             end
         end
@@ -104,8 +110,9 @@ function downloaddata(; generate_list::Bool = true)
     isfile(mm_matrices) || download(MM_URL, mm_matrices)
 
     if generate_list
-        uf_matrixdata = extract_names(uf_matrices)
-        mm_matrixdata = extract_names(mm_matrices)
+        md = matrix_data_name_list()
+        uf_matrixdata = extract_names(uf_matrices, md)
+        mm_matrixdata = extract_names(mm_matrices, md)
         return uf_matrixdata, mm_matrixdata
     end
 

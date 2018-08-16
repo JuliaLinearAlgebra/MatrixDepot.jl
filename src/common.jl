@@ -11,7 +11,7 @@ function filenames(directory::AbstractString)
     matdatadir = joinpath(dirname(@__FILE__),"..", "data", "$directory")
     matvec = readdir(matdatadir)
     for file in matvec
-        filename = split(file, '.')[1]
+        filename = rsplit(file, '.', limit=2)[1]
         push!(namevec, filename)
     end
     return namevec
@@ -31,9 +31,6 @@ function matrix_data_name_list()
                 if isfile(file)
                     name = join((col, mat), "/")
                     push!(matrices, name)
-                    # id = ufinfo(file, "id")
-                    # matrixaliases[id] = name
-                    # matrixaliases[mat] = name
                 end
             end
         end
@@ -350,3 +347,50 @@ function fname(f::Function)
         end
     end
 end
+
+"return an array of full matrix names and aliases matching given pattern."
+function list(r::Regex)
+    result = AbstractString[]
+    
+    if startswith(r.pattern, "^#")
+        for alias in keys(matrixaliases)
+            if match(r, alias) != nothing
+                push!(result, alias)
+            end
+        end
+    else
+        for name in matrix_name_list()
+            if match(r, name) !== nothing
+                push!(result, name)
+            end
+        end
+        for (alias, name) in matrixaliases
+            if !startswith(alias, '#') && match(r, alias) !== nothing && ! ( name in result )
+                push!(result, name)
+            end
+            if match(r, name) !== nothing && ! ( name in result )
+                push!(result, name)
+            end
+        end
+    end
+    isempty(result) && error("no matching names found")
+    sort!(result)
+    result
+end
+
+function list(p::AbstractString)
+    p in keys(matrixclass) && ( return sort(matrixclass[p]) )
+    p in keys(usermatrixclass) && ( return sort(usermatrixclass[p]) )
+    p == "data" && ( return matrix_data_name_list() )
+    p == "available" && ( return matrix_name_list() )
+    p == "generated" && ( return sort!(collect(keys(matrixdict))) )
+    p == "all" && ( return sort!(union(matrix_name_list(), values(matrixaliases))) )
+
+    if occursin(r"[*?.]", p)
+        p = replace(p, '*' => "[^/]*")
+        p = replace(p, '?' => "[^/]")
+        p = replace(p, '.' => "[.]")
+    end
+    list(Regex("^" * p * '$'))
+end
+
