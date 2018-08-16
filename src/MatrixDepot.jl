@@ -4,7 +4,7 @@ using LinearAlgebra, SparseArrays, SuiteSparse
 
 import Base: show
 
-export matrixdepot, @addgroup, @rmgroup
+export matrixdepot, @addgroup, @rmgroupa, info, load, mdread
 
 
 include("common.jl")        # main functions

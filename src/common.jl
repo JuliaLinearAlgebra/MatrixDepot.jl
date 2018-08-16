@@ -189,7 +189,7 @@ function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
             matrixdepot(matrixaliases[name], method, meta=meta)
         end
     elseif method == :g || method == :get
-        MatrixDepot.get(name)
+        loadmatrix(name)
     elseif method == :s || method == :search
         try
             MatrixDepot.search(name)
@@ -353,9 +353,9 @@ function list(r::Regex)
     result = AbstractString[]
     
     if startswith(r.pattern, "^#")
-        for alias in keys(matrixaliases)
-            if match(r, alias) != nothing
-                push!(result, alias)
+        for (alias, name) in matrixaliases
+            if match(r, alias) !== nothing
+                push!(result, name)
             end
         end
     else
@@ -373,7 +373,6 @@ function list(r::Regex)
             end
         end
     end
-    isempty(result) && error("no matching names found")
     sort!(result)
     result
 end
@@ -392,5 +391,46 @@ function list(p::AbstractString)
         p = replace(p, '.' => "[.]")
     end
     list(Regex("^" * p * '$'))
+end
+
+aliasname(i) = string('#', i)
+flatten(a) = collect(Iterators.flatten(a))
+list(i::Integer) = list(Regex(string('^', aliasname(i), '$')))
+list(r::OrdinalRange) = flatten(list.(aliasname.(r) ∩ keys(matrixaliases)))
+list(a::AbstractVector{<:AbstractString}) = a
+
+const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,AbstractVector{<:AbstractString}}
+
+"return information about all matrices selected by pattern"
+function info(p::Pattern)
+    for name in list(p)
+        try
+            data = matrixdepot(name)
+            if data !== nothing && !isempty(data)
+                println("metadata:", data)
+            end
+        catch
+            println("no info available for $name")
+        end
+    end
+end
+
+"return a matrix given a name"
+function mdread(p::Pattern)
+    li = list(p)
+    length(li) == 0 && error("no matrix according to $p found")
+    length(li) > 1  && error("patternnot unique: $p -> $li")
+    matrixdepot(li[1], :read)
+end
+
+"load data from remote repository"
+function load(p::Pattern)
+    for name in list(p)
+        try
+            matrixdepot(name, :get)
+        catch ex
+            @warn "could not load $name: $ex"
+        end
+    end
 end
 

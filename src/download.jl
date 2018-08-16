@@ -181,17 +181,17 @@ function matchnames(p, a)
     true
 end
 
-# get
+# loadmatrix
 # --------------
-# get(NAME) download a matrix from UF sparse matrix collection
+# loadmatrix(NAME) download a matrix from UF or MM sparse matrix collection
 # where NAME is a string of collection name + '/' + matrix name.
 #
 # Example
 # -------
-# MatrixDepot.get("HB/1138_bus") # uf sparse matrix
-# MatrixDepot.get("1138_bus") # Matrix Market
+# MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
+# MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function get(name::AbstractString)   
+function loadmatrix(name::AbstractString)   
 
     isdir(string(DATA_DIR,'/', "uf")) || mkdir(string(DATA_DIR, '/', "uf"))
     isdir(string(DATA_DIR,'/', "mm")) || mkdir(string(DATA_DIR, '/', "mm"))
@@ -276,7 +276,7 @@ function get(name::AbstractString)
         if length(stringvec) == 1
             return matrixdepot(stringvec[1], :get)
         else
-            println("Try MatrixDepot.get(`name`), where `name` is one of the elements in the following Array:")
+            println("Try loadmatrix(`name`), where `name` is one of the elements in the following Array:")
             return stringvec
         end
     else
