@@ -51,13 +51,13 @@ end
 
 # return a list of matrix name in the collection
 function matrix_name_list()
-    matrices = sort(collect(keys(matrixdict)))
+    matrices = sort(collect(keys(MATRIXDICT)))
     append!(matrices, matrix_data_name_list())
     matrices
 end
 
 # return a list of groups in the collection
-_matrix_class() = collect(keys(matrixclass))
+_matrix_class() = collect(keys(MATRIXCLASS))
 _user_matrix_class() = collect(keys(usermatrixclass))
 
 function group_list()
@@ -82,10 +82,12 @@ end
 
 Print all the matrices and groups in the collection.
 """
-function matrixdepot()
+matrixdepot() = matrixdepot(stdout)
+
+function matrixdepot(io::IO)
     # Print information strings
-    println()
-    println("Matrices:")
+    println(io)
+    println(io, "Matrices:")
 
     matrices = matrix_name_list()
 
@@ -93,15 +95,15 @@ function matrixdepot()
     for (index, mat) in enumerate(matrices)
         if i < 4 && length(mat) < 14
             i += 1
-            @printf "%4d) %-14s" index mat
+            @printf io "%4d) %-14s" index mat
         else
             i = 1
-            @printf "%4d) %-14s\n" index mat
+            @printf io "%4d) %-14s\n" index mat
         end
     end
-    println()
+    println(io)
 
-    println("Groups:")
+    println(io, "Groups:")
 
     groups = group_list()
 
@@ -109,13 +111,13 @@ function matrixdepot()
     for name in groups
         if j < 4 && length(name) < 12
             j += 1
-            @printf "  %-12s" name
+            @printf io "  %-12s" name
         else
             j = 1
-            @printf "  %-12s\n" name
+            @printf io "  %-12s\n" name
         end
     end
-    println()
+    println(io)
 end
 
 # Return information strings if name is a matrix name
@@ -128,10 +130,10 @@ return a list of matrix names if `name` is a group name.
 """
 function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
-    if name in keys(matrixdict)
-        eval(Meta.parse("Docs.@doc $(matrixdict[name])", raise = false))
+    if name in keys(MATRIXDICT)
+        eval(Meta.parse("Docs.@doc $(MATRIXDICT[name])", raise = false))
     elseif name in _matrix_class()
-        matrices = matrixclass[name]
+        matrices = MATRIXCLASS[name]
         return sort(matrices)
     elseif '/' in name  # print matrix data info
 
@@ -149,8 +151,8 @@ function matrixdepot(name::AbstractString)
     elseif name in _user_matrix_class()
         matrices = usermatrixclass[name]
         return sort(matrices)
-    elseif name in keys(matrixaliases)
-        matrixdepot(matrixaliases[name])
+    elseif name in keys(db.aliases)
+        matrixdepot(db.aliases[name])
     else
         throw(ArgumentError("No information is available for \"$(name)\"."))
     end
@@ -167,7 +169,7 @@ end
 Return a matrix specified by the query string `matrix name`.
 `p1, p2...` are input parameters depending on `matrix name`.
 """
-matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
+matrixdepot(name::AbstractString, args...) = MATRIXDICT[name](args...)
 
 # generate the required matrix
 # method = :read   (or :r) read matrix data
@@ -178,7 +180,9 @@ matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
 
 Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
 """
-function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
+function matrixdepot(name::AbstractString, method::Symbol, db::MatrixDatabase=MATRIX_DB;
+                     meta::Bool = false)
+
     if method == :r || method == :read
         namelist = split(name, '/')
         if  length(namelist) == 2
@@ -186,7 +190,7 @@ function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
         elseif length(namelist) == 3
             mmreader(data_dir("mm"), name, info = false)
         else
-            matrixdepot(matrixaliases[name], method, meta=meta)
+            matrixdepot(db.aliases[name], method, meta=meta)
         end
     elseif method == :g || method == :get
         loadmatrix(name)
@@ -194,7 +198,7 @@ function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
         try
             MatrixDepot.search(name)
         catch
-            [matrixaliases[name]]
+            [db.aliases[name]]
         end
     else
         throw(ArgumentError("unknown symbol $method.
@@ -294,7 +298,7 @@ end
 # remove an added group
 function rmgroup(ex)
     propname = string(ex)
-    !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
+    !(propname in keys(MATRIXCLASS)) || throw(ArgumentError("$propname can not be removed."))
     propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
 
     user = joinpath(user_file("group.jl"))
@@ -326,11 +330,11 @@ abstract type FunctionName <: MatrixGenerator end
 abstract type Group <: MatrixGenerator end
 
 
-include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (matrixdict[fn] = f)
+include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (MATRIXDICT[fn] = f)
 
 function include_generator(::Type{Group}, groupname::AbstractString, f::Function)
-    if groupname in keys(matrixclass)
-        push!(matrixclass[groupname], fname(f))
+    if groupname in keys(MATRIXCLASS)
+        push!(MATRIXCLASS[groupname], fname(f))
     elseif groupname in keys(usermatrixclass)
         push!(usermatrixclass[groupname], fname(f))
     else
@@ -341,7 +345,7 @@ end
 
 "return the name of the function `f` as a string."
 function fname(f::Function)
-    for (key, value) in matrixdict
+    for (key, value) in MATRIXDICT
         if value == f
             return key
         end
@@ -349,11 +353,11 @@ function fname(f::Function)
 end
 
 "return an array of full matrix names and aliases matching given pattern."
-function list(r::Regex)
+function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
     result = AbstractString[]
     
     if startswith(r.pattern, "^#")
-        for (alias, name) in matrixaliases
+        for (alias, name) in db.aliases
             if match(r, alias) !== nothing
                 push!(result, name)
             end
@@ -364,7 +368,7 @@ function list(r::Regex)
                 push!(result, name)
             end
         end
-        for (alias, name) in matrixaliases
+        for (alias, name) in db.aliases
             if !startswith(alias, '#') && match(r, alias) !== nothing && ! ( name in result )
                 push!(result, name)
             end
@@ -374,35 +378,58 @@ function list(r::Regex)
         end
     end
     sort!(result)
+    unique!(result)
     result
 end
 
-function list(p::AbstractString)
-    p in keys(matrixclass) && ( return sort(matrixclass[p]) )
+function listdir(r::Regex, depth::Int, db::MatrixDatabase=MATRIX_DB)
+    result = AbstractString[]
+    f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
+    for name in (f(x, depth) for x in split.(keys(db.data), '/') if length(x) >= depth)
+        if match(r, name) !== nothing
+            push!(result, name)
+        end
+    end
+    sort!(result)
+    unique!(result)
+end
+
+function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
+    p in keys(MATRIXCLASS) && ( return sort(MATRIXCLASS[p]) )
     p in keys(usermatrixclass) && ( return sort(usermatrixclass[p]) )
     p == "data" && ( return matrix_data_name_list() )
     p == "available" && ( return matrix_name_list() )
-    p == "generated" && ( return sort!(collect(keys(matrixdict))) )
-    p == "all" && ( return sort!(union(matrix_name_list(), values(matrixaliases))) )
+    p == "generated" && ( return sort!(collect(keys(MATRIXDICT))) )
+    p == "all" && ( return sort!(union(matrix_name_list(), values(db.aliases))) )
+   
+    p = replace(p, "//+" => '/')
+    depth = count(x == '/' for x in p)
 
     if occursin(r"[*?.]", p)
-        p = replace(p, '*' => "[^/]*")
+        p = replace(p, "**" => "([^/]+/)*[^/]+")
+        p = replace(p, '*' => "[^/]+")
         p = replace(p, '?' => "[^/]")
         p = replace(p, '.' => "[.]")
     end
-    list(Regex("^" * p * '$'))
+    if endswith(p, '/')
+        length(p) == 1 && ( p = ".*/" )
+        listdir(Regex(string('^', p)), depth, db)
+    else
+        
+        list(Regex(string('^', p, '$')), db)
+    end
 end
 
 aliasname(i) = string('#', i)
 flatten(a) = collect(Iterators.flatten(a))
-list(i::Integer) = list(Regex(string('^', aliasname(i), '$')))
-list(r::OrdinalRange) = flatten(list.(aliasname.(r) ∩ keys(matrixaliases)))
-list(a::AbstractVector{<:AbstractString}) = a
+list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasname(i), '$')), db)
+list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB) = flatten(list.(aliasname.(r) ∩ keys(db.aliases), db))
+list(a::AbstractVector{<:AbstractString}, db::MatrixDatabase=MATRIX_DB) = a
 
 const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,AbstractVector{<:AbstractString}}
 
 "return information about all matrices selected by pattern"
-function info(p::Pattern)
+function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     for name in list(p)
         try
             data = matrixdepot(name)
@@ -416,18 +443,18 @@ function info(p::Pattern)
 end
 
 "return a matrix given a name"
-function mdread(p::Pattern)
+function mdread(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     li = list(p)
     length(li) == 0 && error("no matrix according to $p found")
     length(li) > 1  && error("patternnot unique: $p -> $li")
-    matrixdepot(li[1], :read)
+    matrixdepot(li[1], :read, db)
 end
 
 "load data from remote repository"
-function load(p::Pattern)
+function load(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     for name in list(p)
         try
-            matrixdepot(name, :get)
+            loadmatrix(name, db)
         catch ex
             @warn "could not load $name: $ex"
         end

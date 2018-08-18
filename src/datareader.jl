@@ -8,15 +8,15 @@ else
 end
 
 function ufinfo(filename::AbstractString)
+    io = IOBuffer()
     open(filename,"r") do mmfile
-        info = ""
         ll = readline(mmfile)
         while length(ll) > 0 && ll[1] == '%'
-            info = string(info, ll, "\n")
+            println(io, ll)
             ll = readline(mmfile)
         end
-        info
     end
+    String(take!(io))
 end
 
 function ufinfo(filename::AbstractString, name::AbstractString)

@@ -1,4 +1,7 @@
-matrixdict = Dict("hilb" => hilb, "hadamard" => hadamard,
+"""
+Associate names with matrix-generating functions
+"""
+const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
                   "cauchy" => cauchy, "circul" => circul,
                   "dingdong" => dingdong, "frank" => frank,
                   "invhilb" => invhilb, "forsythe" => forsythe,
@@ -30,7 +33,10 @@ matrixdict = Dict("hilb" => hilb, "hadamard" => hadamard,
                   "gilbert" => gilbert, "smallworld" => smallworld
                   );
 
-matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
+"""
+    predefined matrix classes (for the generated functions)
+"""
+const MATRIXCLASS = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
                                    "invhilb", "moler", "pascal", "pei",
                                    "clement", "fiedler", "minij", "tridiag",
                                    "lehmer", "randcorr", "poisson", "wilkinson",
@@ -72,4 +78,41 @@ matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
               "graph" => ["erdrey", "gilbert", "smallworld"]
                );
 
-matrixaliases = Dict{AbstractString,AbstractString}()
+# local storage directory
+const DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
+
+# remote parameters for several data sources
+const TA_REMOTE = TURemoteType(RemoteParameters(
+                    "https://sparse.tamu.edu/MM",
+                    "https://sparse.tamu.edu/?per_page=All",
+                    """<title>SuiteSparse Matrix Collection</title>""",
+                    ("", """">Matrix Market""", 4, ".tar.gz", 2,
+                     r"<td class='column-id'>([[:digit:]]*)</td>"),
+                    ".tar.gz"
+                   ))
+
+const UF_REMOTE = TURemoteType(RemoteParameters(
+                    "http://www.cise.ufl.edu/research/sparse/MM",
+                    "http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html",
+                    """<title>UF Sparse Matrix Collection - sorted by id</title>""",
+                    ("", """>MM</a>""", 4, ".tar.gz", 2, r"<td>([[:digit:]]*)</td>"),
+                    ".tar.gz"
+                   ))
+
+const MM_REMOTE = MMRemoteType(RemoteParameters(
+                    "ftp://math.nist.gov/pub/MatrixMarket2",
+                    "http://math.nist.gov/MatrixMarket/matrices.html",
+                    """<TITLE>The Matrix Market Matrices by Name</TITLE>""",
+                    ("M", """<A HREF="/MatrixMarket/data/""", 2, ".html", 3, nothing),
+                    ".mtx.gz"
+                   ))
+
+# preferred remote source for UF matrix collection (TAMU vs. UFl)
+uf_remote = TA_REMOTE # may be altered
+preferred_uf() = uf_remote
+alternate_Uf() = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOTE
+
+"""
+    The place to store all matrix data in process    
+"""
+const MATRIX_DB = MatrixDatabase()

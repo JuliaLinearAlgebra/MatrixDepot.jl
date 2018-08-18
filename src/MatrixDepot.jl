@@ -7,14 +7,15 @@ import Base: show
 export matrixdepot, @addgroup, @rmgroupa, info, load, mdread
 
 
-include("common.jl")        # main functions
+include("types.jl")         # common data type definitions
 include("higham.jl")          # test matrices
 include("regu.jl")               # regularization test problem
 include("graph.jl")             # adjacency matrices for graphs
-include("data.jl")               # matrix data
-include("download.jl")      # download data from the UF sparse matrix collection
-include("datareader.jl")    # read matrix data 
-include("matrixmarket.jl")
+include("data.jl")          # global varaibles and matrix data
+include("common.jl")        # main functions
+include("download.jl")      # download data from the UF and MM sparse matrix collection
+include("datareader.jl")    # read matrix data from local storage
+include("matrixmarket.jl")  # special handling for MM
 
 
 const MY_DEPOT_DIR = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
@@ -43,8 +44,7 @@ function init()
         include(string(MY_DEPOT_DIR, "/generator.jl"))
     end
 
-    empty!(matrixaliases)
-    downloaddata()
+    downloadindices(MATRIX_DB)
     nothing
 end
 

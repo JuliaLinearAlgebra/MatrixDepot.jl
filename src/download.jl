@@ -26,45 +26,38 @@
 #####################################################
 # Download data from UF Sparse Matrix Collection
 #####################################################
-const UF_URL = "http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html"
-const UF_URL2 = "http://www.cise.ufl.edu/research/sparse/MM"
-const TA_URL = "https://sparse.tamu.edu/?per_page=All"
-const TA_URL2 = "https://sparse.tamu.edu/MM"
-const MM_URL = "http://math.nist.gov/MatrixMarket/matrices.html"
-const MM_URL2 = "ftp://math.nist.gov/pub/MatrixMarket2"
-const DATA_DIR = joinpath(dirname(@__FILE__),"..", "data")
 
-uf_url = TA_URL2
+function remotetype(line::AbstractString)
+    global uf_remote
+    TAMUID = TA_REMOTE.params.indexgrep
+    UFID = UF_REMOTE.params.indexgrep
+    MMID = MM_REMOTE.params.indexgrep
+    if occursin(TAMUID, line)
+        uf_remote = TA_REMOTE
+        uf_remote
+    elseif occursin(UFID, line)
+        uf_remote = UF_REMOTE
+        uf_remote
+    elseif occursin(MMID, line)
+        MM_REMOTE
+    else
+        nothing
+    end
+end
 
 # extract loading url base and matrix names from index file
-function extract_names(matrices::AbstractString, md)
-    global uf_url
-    TAMUID = """<title>SuiteSparse Matrix Collection</title>"""
-    UFID = """<title>UF Sparse Matrix Collection - sorted by id</title>"""
-    MMID = """<TITLE>The Matrix Market Matrices by Name</TITLE>"""
-    params = nothing
-    matrixdata = Tuple[]
+function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
+    remote = nothing
+    matrixdata = RemoteMatrixData[]
     count = 0
     open(matrices) do f
         id = nothing
         for line in readlines(f)
-            if params === nothing
-                params = if occursin(TAMUID, line)
-                    uf_url = TA_URL2
-                    ("", """">Matrix Market""", 4, ".tar.gz", 2,
-                     r"<td class='column-id'>([[:digit:]]*)</td>")
-                elseif occursin(UFID, line)
-                    uf_url = UF_URL2
-                    ("", """>MM</a>""", 4, ".tar.gz", 2,
-                    r"<td>([[:digit:]]*)</td>")
-                elseif occursin(MMID, line)
-                    ("M", """<A HREF="/MatrixMarket/data/""", 2, ".html", 3, nothing)
-                else
-                    nothing
-                end
+            if remote === nothing
+                remote = remotetype(line)
                 continue
             end
-            atyp, grepex, spquote, ending, parts, regexid = params
+            atyp, grepex, spquote, ending, parts, regexid = remote.params.scan
             m = regexid === nothing ? nothing : match(regexid, line)
             if m != nothing
                 id = m.captures[1]
@@ -73,16 +66,19 @@ function extract_names(matrices::AbstractString, md)
                 murl = split(line, '"')[spquote]
                 if endswith(murl, ending)
                     list = rsplit(murl[1:end-length(ending)], '/', limit=parts+1)[2:end]
-                    push!(matrixdata, Tuple(list))
                     count += 1
                     name = join(list, '/')
                     alias = id === nothing ? string(count) : id
                     le = string('%', list[end])
-                    matrixaliases["#$atyp$alias"] = name
-                    while Base.get(matrixaliases, le, nothing) !== nothing
+                    db.aliases["#$atyp$alias"] = name
+                    while Base.get(db.aliases, le, nothing) !== nothing
                         le = string('%', le)
                     end
-                    matrixaliases[le] = name
+                    db.aliases[le] = name
+                    count = id != nothing ? parse(Int, id) : count
+                    data = RemoteMatrixData(name, le, count, remote)
+                    addmetadata!(data)
+                    push!(db, data)
                     id = nothing
                 end
             end
@@ -91,36 +87,38 @@ function extract_names(matrices::AbstractString, md)
     matrixdata
 end
 
-# download html files and store matrix data as a list of tuples
-function downloaddata(; generate_list::Bool = true)
-    # UF Sparse matrix collection
-    dlurl = TA_URL
-    uf_matrices = string(DATA_DIR, "/uf_matrices.html")
-    mm_matrices = string(DATA_DIR, "/mm_matrices.html")
+function downloadindex(remote::RemoteType)
+    file = localindex(remote)
+    url = indexurl(remote)
+    isfile(file) || download(url, file)
+    nothing
+end
 
-    if !isfile(uf_matrices)
-        try
-            download(dlurl, uf_matrices)
-        catch
-            dlurl = UF_URL
-            download(dlurl, uf_matrices)
-        end
+# download html files and store matrix data as a list of tuples
+function downloadindices(db::MatrixDatabase; generate_list::Bool = true)
+    # UF Sparse matrix collection
+    global uf_remote
+    empty!(db)
+    try
+        downloadindex(preferred_uf())
+    catch # fallback if first site does not succeed
+        uf_remote = alternate_uf()
+        downloadindex(uf_remote)
     end
 
-    isfile(mm_matrices) || download(MM_URL, mm_matrices)
+    downloadindex(MM_REMOTE)
 
     if generate_list
         md = matrix_data_name_list()
-        uf_matrixdata = extract_names(uf_matrices, md)
-        mm_matrixdata = extract_names(mm_matrices, md)
-        return uf_matrixdata, mm_matrixdata
+        uf_matrixdata = extract_names(localindex(preferred_uf()), db)
+        mm_matrixdata = extract_names(localindex(MM_REMOTE), db)
     end
-
+    nothing
 end
 
 # given a matrix name, 
-function search(matrixname::AbstractString)
-    uf_matrixdata, mm_matrixdata = downloaddata()
+function search(matrixname::AbstractString, db::MatrixDatabase=MATRIX_DB)
+    uf_matrixdata, mm_matrixdata = downloadindices(db)
     uf_matrices = AbstractString[]
     mm_matrices = AbstractString[]
     [push!(uf_matrices, m[2]) for m in uf_matrixdata]
@@ -144,25 +142,10 @@ function search(matrixname::AbstractString)
     end
 end
 
-
-# update database from the websites
-function update()
-    uf_matrices = string(DATA_DIR, "/uf_matrices.html")
-    mm_matrices = string(DATA_DIR, "/mm_matrices.html")
-    if isfile(uf_matrices)
-        rm(uf_matrices)
-    end
-    if isfile(mm_matrices)
-        rm(mm_matrices)
-    end
-    downloaddata(generate_list = false)
-end
-
-
 function gunzip(fname)
     endswith(fname, ".gz") || error("gunzip: $fname: unknown suffix")
 
-    destname = split(fname, ".gz")[1]
+    destname = rsplit(fname, ".gz", limit=2)[1]
 
     open(destname, "w") do f
         GZip.open(fname) do g
@@ -191,95 +174,50 @@ end
 # MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function loadmatrix(name::AbstractString)   
-
-    isdir(string(DATA_DIR,'/', "uf")) || mkdir(string(DATA_DIR, '/', "uf"))
-    isdir(string(DATA_DIR,'/', "mm")) || mkdir(string(DATA_DIR, '/', "mm"))
-                                               
-    uf_matrixdata, mm_matrixdata = downloaddata()
-
-    namelist = split(name, '/')
-    if length(namelist) == 2 # UF sparse matrix collection
-        matrixnames = Tuple{<:AbstractString,<:AbstractString}[]
-        println("Downloading all matrices named $name...")
-        for uf in uf_matrixdata
-            if matchnames(namelist, uf)
-                push!(matrixnames, uf)
-            end
-        end
-        for fullname in matrixnames           
-            collectionname, matrixname = fullname
-            fn = string(matrixname, ".tar.gz")
-            uzfn = string(matrixname, ".mtx")
-            url = join((uf_url, fullname...), "/") * ".tar.gz"
-
-            dir = joinpath(DATA_DIR, "uf", collectionname)
-            isdir(dir) || mkdir(dir)
-            
-            dirfn = joinpath(dir, fn)
-            diruzfn = joinpath(dir, matrixname, uzfn)
-            
-            if isfile(diruzfn)
-                continue
-            end
-
-            try
-                println("downloading: ", url)
-                download(url, dirfn)
-            catch
-                error("failed to download $uzfn")
-            end
-            
-            if !isfile(diruzfn)
-                gunzip(dirfn)
-            end
-            rm(dirfn)
-            run(`tar -vxf $(dir)/$(matrixname).tar -C $(dir)`)
-            rm(string(dir,'/', matrixname, ".tar"))
-        end
-    elseif length(namelist) == 3 # Matrix Market collection 
-        
-        matrixnames = Tuple{<:AbstractString,<:AbstractString,<:AbstractString}[]
-        println("Downloading all matrices named $name...")
-        for mm in mm_matrixdata
-            if matchnames( namelist, mm)
-                push!(matrixnames, mm)
-            end
-        end
-        
-        for fullname in matrixnames
-            collectionname, setname, matrixname = fullname
-            mtxfname = string(matrixname, ".mtx")
-            uzfn = string(matrixname, ".mtx.gz")
-            
-            dir = joinpath(DATA_DIR, "mm", collectionname, setname)
-            isdir(dir) || mkpath(dir)
-            
-            dirfn = joinpath(dir, mtxfname)
-            diruzfn = joinpath(dir, uzfn)
-            
-            !isfile(dirfn) || continue
-            url = join((MM_URL2, fullname...), "/") * ".mtx.gz"
-
-            try 
-                println("downloading: ", url)
-                download(url, diruzfn)
-            catch
-                error("failed to download $uzfn")
-            end
-            gunzip(diruzfn)
-            rm(diruzfn)
-        end
-
-    elseif length(namelist) == 1
-        stringvec = search(name)
-        if length(stringvec) == 1
-            return matrixdepot(stringvec[1], :get)
-        else
-            println("Try loadmatrix(`name`), where `name` is one of the elements in the following Array:")
-            return stringvec
-        end
-    else
-        error("can not find $name")
+function loadmatrix(name::AbstractString, db::MatrixDatabase=MATRIX_DB)   
+    data = get(db, name)
+    file = matrixfile(data)
+    if isfile(file)
+        return
     end
+    dirfn = localfile(data)
+    dir = dirname(localdir(data))
+    url = dataurl(data)
+
+    isdir(dir) || mkpath(dir)
+
+    try
+        println("downloading: ", url)
+        download(url, dirfn)
+        tarfile = gunzip(dirfn)
+        if endswith(tarfile, ".tar")
+            run(`tar -vxf $tarfile -C $dir`)
+            rm(tarfile)
+        end
+    finally
+        rm(dirfn)
+    end
+    nothing
+end
+
+function loadmatrix(data::MatrixData, db::MatrixDatabase=MATRIX_DB)   
+    stringvec = search(name)
+    if length(stringvec) == 1
+        return matrixdepot(stringvec[1], :get)
+    else
+        println("Try loadmatrix(`name`), where `name` is one of the elements in the following Array:")
+        return stringvec
+    end
+end
+
+function addmetadata!(data::RemoteMatrixData)
+    file = matrixfile(data)
+    dir = dirname(file)
+    empty!(data.metadata)
+    isdir(dir) || return
+    base = basename(file)
+    name, ext = rsplit(base, '.', limit=2)
+    filtop(x) = x == base || startswith(x, string(name, '_'))
+    append!(data.metadata, filter(filtop, readdir(dir)))
+    nothing
 end
