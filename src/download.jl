@@ -76,7 +76,7 @@ function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
                     end
                     db.aliases[le] = name
                     count = id != nothing ? parse(Int, id) : count
-                    data = RemoteMatrixData(name, le, count, remote)
+                    data = RemoteMatrixData{typeof(remote)}(name, le, count)
                     addmetadata!(data)
                     push!(db, data)
                     id = nothing
@@ -99,6 +99,9 @@ function downloadindices(db::MatrixDatabase; generate_list::Bool = true)
     # UF Sparse matrix collection
     global uf_remote
     empty!(db)
+    for (k, v) in MATRIXDICT
+        db.data[k] = GeneratedMatrixData(k, v)
+    end
     try
         downloadindex(preferred_uf())
     catch # fallback if first site does not succeed

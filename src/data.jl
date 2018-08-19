@@ -111,7 +111,8 @@ const MM_REMOTE = MMRemoteType(RemoteParameters(
 uf_remote = TA_REMOTE # may be altered
 preferred_uf() = uf_remote
 alternate_Uf() = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOTE
-
+singleton(::Type{TURemoteType}) = preferred_uf()
+singleton(::Type{MMRemoteType}) = MM_REMOTE
 """
     The place to store all matrix data in process    
 """

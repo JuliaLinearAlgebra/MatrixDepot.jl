@@ -1,6 +1,7 @@
 ########################
 # helper functions
 ########################
+using Markdown
 
 # return a list of file names without suffix in the directory
 # e.g. filenames(mm) and filenames(uf)
@@ -398,7 +399,7 @@ function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
     p in keys(MATRIXCLASS) && ( return sort(MATRIXCLASS[p]) )
     p in keys(usermatrixclass) && ( return sort(usermatrixclass[p]) )
     p == "data" && ( return matrix_data_name_list() )
-    p == "available" && ( return matrix_name_list() )
+    p == "loaded" && ( return matrix_name_list() )
     p == "generated" && ( return sort!(collect(keys(MATRIXDICT))) )
     p == "all" && ( return sort!(union(matrix_name_list(), values(db.aliases))) )
    
@@ -433,13 +434,26 @@ function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     for name in list(p)
         try
             data = matrixdepot(name)
+            println("info for $name:")
             if data !== nothing && !isempty(data)
-                println("metadata:", data)
+                display(data)
             end
         catch
-            println("no info available for $name")
+            println("no info loaded for $name")
         end
     end
+end
+
+function info(data::GeneratedMatrixData)
+    eval(Meta.parse("Docs.@doc $(data.func)", raise = false))
+end
+
+function info(data::RemoteMatrixData)
+    txt = ufinfo(matrixfile(data))
+    md = Markdown.parse(replace(replace(replace(txt,
+                   r"^%-+$"m => "---"), r"^%%" => "###### "), r"%+" => "* "))
+    insert!(md.content, 1, Markdown.Header{1}([data.name]))
+    md
 end
 
 "return a matrix given a name"

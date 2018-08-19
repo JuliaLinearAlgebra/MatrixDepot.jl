@@ -72,25 +72,23 @@ function ufreader(dir::AbstractString, name::AbstractString;
         end
         #println("use matrixdepot(\"$name\", :read) to read the data")
     else
-        A = sparse(Sparse(string(dirname, '/', name, ".mtx")))
         if meta
             metadict = Dict{AbstractString, Any}()
-            datafiles = readdir(dirname)
-            for data in datafiles
-                dataname = split(data, '.')[1]
-                if endswith(data, "mtx")
+            for data in readdir(dirname)
+                dataname = rsplit(data, '.', limit=2)[1]
+                if endswith(data, ".mtx")
                     try
                         metadict[dataname] =  sparse(Sparse(string(dirname, '/', data)))
                     catch
                         metadict[dataname] = denseread(string(dirname,'/', data))
                     end
                 else
-                    metadict[dataname] = read(string(dirname,'/', data), String)
+                    metadict[data] = read(string(dirname,'/', data), String)
                 end
             end
             metadict
         else
-            A
+            sparse(Sparse(string(dirname, '/', name, ".mtx")))
         end        
     end
 end
