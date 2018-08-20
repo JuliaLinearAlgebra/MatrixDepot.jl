@@ -50,7 +50,8 @@ function Base.push!(db::MatrixDatabase, data::MatrixData)
     db.aliases[aliasid(data)] = key
 end
 
-aliasid(data::RemoteMatrixData{TURemoteType}) = string('#', data.id)
+aliasid(i::Integer) = string('#', i)
+aliasid(data::RemoteMatrixData{TURemoteType}) = aliasid(data.id)
 aliasid(data::RemoteMatrixData{MMRemoteType}) = string('#', 'M', data.id)
 
 import Base: get, empty!

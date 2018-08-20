@@ -121,45 +121,6 @@ function matrixdepot(io::IO)
     println(io)
 end
 
-# Return information strings if name is a matrix name
-# and return a list of matrix names if name is a group.
-"""
-`matrixdepot(name)`
-
-Return the documentation if `name` is a matrix name;
-return a list of matrix names if `name` is a group name.
-"""
-function matrixdepot(name::AbstractString)
-    # name is the matrix name or matrix properties
-    if name in keys(MATRIXDICT)
-        eval(Meta.parse("Docs.@doc $(MATRIXDICT[name])", raise = false))
-    elseif name in _matrix_class()
-        matrices = MATRIXCLASS[name]
-        return sort(matrices)
-    elseif '/' in name  # print matrix data info
-
-        namelist = split(name, '/')
-        if length(namelist) == 2
-            ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2])
-        else
-            mmreader(data_dir("mm"), name)
-        end
-
-    elseif name == "data" # deal with the group "data"
-        return matrix_data_name_list()
-    elseif name == "all" # all the matrix names in the collection
-        return matrix_name_list()
-    elseif name in _user_matrix_class()
-        matrices = usermatrixclass[name]
-        return sort(matrices)
-    elseif name in keys(db.aliases)
-        matrixdepot(db.aliases[name])
-    else
-        throw(ArgumentError("No information is available for \"$(name)\"."))
-    end
-end
-
-
 #############################
 # matrix generators
 #############################
@@ -421,37 +382,58 @@ function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
     end
 end
 
-aliasname(i) = string('#', i)
 flatten(a) = collect(Iterators.flatten(a))
-list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasname(i), '$')), db)
-list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB) = flatten(list.(aliasname.(r) ∩ keys(db.aliases), db))
-list(a::AbstractVector{<:AbstractString}, db::MatrixDatabase=MATRIX_DB) = a
+list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasid(i), '$')), db)
+function list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB)
+    listdb(r) = list(r, db)
+    flatten(listdb.(aliasid.(r) ∩ keys(db.aliases)))
+end
+function list(r::AbstractVector, db::MatrixDatabase=MATRIX_DB)
+    listdb(r) = list(r, db)
+    flatten(listdb.(r))
+end
 
-const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,AbstractVector{<:AbstractString}}
+const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,AbstractVector}
 
 "return information about all matrices selected by pattern"
 function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
+    mdbuffer = Markdown.MD([])
+    md = mdbuffer
     for name in list(p)
         try
-            data = matrixdepot(name)
-            println("info for $name:")
+            md = info(db.data[name])
+            #=
             if data !== nothing && !isempty(data)
                 display(data)
             end
+            =#
         catch
-            println("no info loaded for $name")
+            md = Markdown.parse("# $name\nno info available")
+        finally
+            append!(mdbuffer.content, md.content)
         end
     end
+    mdbuffer
 end
 
+_mdheader(md::Markdown.MD) = isempty(md.content) ? nothing : _mdheader(md.content[1])
+_mdheader(md::Markdown.Header) = md
+_mdheader(md) = nothing
+
 function info(data::GeneratedMatrixData)
-    eval(Meta.parse("Docs.@doc $(data.func)", raise = false))
+    md = eval(Meta.parse("Docs.@doc $(data.func)", raise = false))
+    mdh = _mdheader(md)
+    mdh != nothing && length(mdh.text) == 1 && push!(mdh.text, " ($(data.name))")
+    md
 end
+
+_repl(a::AbstractString) = a
+_repl(a::AbstractString, p::Pair, q::Pair...) = _repl(replace(a, p), q...)
 
 function info(data::RemoteMatrixData)
     txt = ufinfo(matrixfile(data))
-    md = Markdown.parse(replace(replace(replace(txt,
-                   r"^%-+$"m => "---"), r"^%%" => "###### "), r"%+" => "* "))
+    txt = _repl(txt, r"^%-+$"m => "---", r"^%%" => "###### ", r"%+" => "* ")
+    md = Markdown.parse(txt)
     insert!(md.content, 1, Markdown.Header{1}([data.name]))
     md
 end
