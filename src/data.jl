@@ -78,9 +78,6 @@ const MATRIXCLASS = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
               "graph" => ["erdrey", "gilbert", "smallworld"]
                );
 
-# local storage directory
-const DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
-
 # remote parameters for several data sources
 const TA_REMOTE = TURemoteType(RemoteParameters(
                     "https://sparse.tamu.edu/MM",
@@ -109,11 +106,16 @@ const MM_REMOTE = MMRemoteType(RemoteParameters(
 
 # preferred remote source for UF matrix collection (TAMU vs. UFl)
 uf_remote = TA_REMOTE # may be altered
-preferred_uf() = uf_remote
-alternate_Uf() = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOTE
-singleton(::Type{TURemoteType}) = preferred_uf()
-singleton(::Type{MMRemoteType}) = MM_REMOTE
+preferred(::Type{TURemoteType}) = uf_remote
+preferred(::Type{MMRemoteType}) = MM_REMOTE
+alternate(::Type{TURemoteType}) = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOTE
+alternate(::Type{MMRemoteType}) = MM_REMOTE
 """
     The place to store all matrix data in process    
 """
 const MATRIX_DB = MatrixDatabase()
+
+# local storage directory
+DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
+MY_DEPOT_DIR = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
+

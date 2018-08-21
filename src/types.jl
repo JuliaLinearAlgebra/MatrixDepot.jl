@@ -84,8 +84,8 @@ localdir(data::MatrixData) = nothing
 
 indexurl(remote::RemoteType) = remote.params.indexurl
 dataurl(remote::RemoteType) = remote.params.dataurl
-dataurl(::Type{T}) where T<:RemoteType = dataurl(singleton(T))
-extension(::Type{T}) where T<:RemoteType = extension(singleton(T))
+dataurl(::Type{T}) where T<:RemoteType = dataurl(preferred(T))
+extension(::Type{T}) where T<:RemoteType = extension(preferred(T))
 extension(remote::RemoteType) = remote.params.extension
 dataurl(data::RemoteMatrixData{T}) where T = join((dataurl(T), data.name), '/') * extension(T)
 filename(data::RemoteMatrixData) = joinpath(split(data.name, '/')...)

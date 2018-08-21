@@ -4,8 +4,7 @@ using LinearAlgebra, SparseArrays, SuiteSparse
 
 import Base: show
 
-export matrixdepot, @addgroup, @rmgroupa, info, load, mdread
-
+export matrixdepot, @addgroup, @rmgroupa, info, load, mdopen, matrix, rhs, solution
 
 include("types.jl")         # common data type definitions
 include("higham.jl")          # test matrices
@@ -15,10 +14,6 @@ include("data.jl")          # global varaibles and matrix data
 include("common.jl")        # main functions
 include("download.jl")      # download data from the UF and MM sparse matrix collection
 include("datareader.jl")    # read matrix data from local storage
-include("matrixmarket.jl")  # special handling for MM
-
-
-const MY_DEPOT_DIR = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
 
 function init()
 

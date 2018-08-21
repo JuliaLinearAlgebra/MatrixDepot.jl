@@ -94,8 +94,8 @@ function downloadindex(remote::RemoteType)
     nothing
 end
 
-# download html files and store matrix data as a list of tuples
-function downloadindices(db::MatrixDatabase; generate_list::Bool = true)
+# download html files and store matrix data in MATRIX_DB
+function downloadindices(db::MatrixDatabase)
     # UF Sparse matrix collection
     global uf_remote
     empty!(db)
@@ -103,46 +103,17 @@ function downloadindices(db::MatrixDatabase; generate_list::Bool = true)
         db.data[k] = GeneratedMatrixData(k, v)
     end
     try
-        downloadindex(preferred_uf())
+        downloadindex(preferred(TURemoteType))
     catch # fallback if first site does not succeed
-        uf_remote = alternate_uf()
+        uf_remote = alternate(TURemoteType)
         downloadindex(uf_remote)
     end
 
-    downloadindex(MM_REMOTE)
+    downloadindex(preferred(MMRemoteType))
 
-    if generate_list
-        md = matrix_data_name_list()
-        uf_matrixdata = extract_names(localindex(preferred_uf()), db)
-        mm_matrixdata = extract_names(localindex(MM_REMOTE), db)
-    end
+    extract_names(localindex(preferred(TURemoteType)), db)
+    extract_names(localindex(preferred(MMRemoteType)), db)
     nothing
-end
-
-# given a matrix name, 
-function search(matrixname::AbstractString, db::MatrixDatabase=MATRIX_DB)
-    uf_matrixdata, mm_matrixdata = downloadindices(db)
-    uf_matrices = AbstractString[]
-    mm_matrices = AbstractString[]
-    [push!(uf_matrices, m[2]) for m in uf_matrixdata]
-    [push!(mm_matrices, m[3]) for m in mm_matrixdata]
-
-    datalist = AbstractString[]
-    if (matrixname in uf_matrices) || (matrixname in mm_matrices)
-        uf_index = findall(isequal(matrixname), uf_matrices)
-        mm_index = findall(isequal(matrixname), mm_matrices)
-        for i in uf_index
-            collectionname, matrixname = uf_matrixdata[i]
-            push!(datalist, string(collectionname, '/', matrixname))
-        end
-        for i in mm_index
-            collectionname, setname, matrixname = mm_matrixdata[i]
-            push!(datalist, string(collectionname, '/', setname, '/', matrixname))
-        end
-        return datalist
-    else
-        error("can not find $matrixname in the database.")
-    end
 end
 
 function gunzip(fname)
@@ -177,8 +148,7 @@ end
 # MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function loadmatrix(name::AbstractString, db::MatrixDatabase=MATRIX_DB)   
-    data = get(db, name)
+function loadmatrix(data::MatrixData, db::MatrixDatabase=MATRIX_DB)   
     file = matrixfile(data)
     if isfile(file)
         return
@@ -195,22 +165,13 @@ function loadmatrix(name::AbstractString, db::MatrixDatabase=MATRIX_DB)
         tarfile = gunzip(dirfn)
         if endswith(tarfile, ".tar")
             run(`tar -vxf $tarfile -C $dir`)
-            rm(tarfile)
+            rm(tarfile; force=true)
         end
     finally
-        rm(dirfn)
+        rm(dirfn, force=true)
     end
+    addmetadata!(data)
     nothing
-end
-
-function loadmatrix(data::MatrixData, db::MatrixDatabase=MATRIX_DB)   
-    stringvec = search(name)
-    if length(stringvec) == 1
-        return matrixdepot(stringvec[1], :get)
-    else
-        println("Try loadmatrix(`name`), where `name` is one of the elements in the following Array:")
-        return stringvec
-    end
 end
 
 function addmetadata!(data::RemoteMatrixData)

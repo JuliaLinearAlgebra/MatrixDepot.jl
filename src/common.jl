@@ -135,8 +135,6 @@ matrixdepot(name::AbstractString, args...) = MATRIXDICT[name](args...)
 
 # generate the required matrix
 # method = :read   (or :r) read matrix data
-#          :get    (or :g) download matrix data
-#          :search (or :s) search collection information
 """
 `matrixdepot(data, symbol)`
 
@@ -154,19 +152,8 @@ function matrixdepot(name::AbstractString, method::Symbol, db::MatrixDatabase=MA
         else
             matrixdepot(db.aliases[name], method, meta=meta)
         end
-    elseif method == :g || method == :get
-        loadmatrix(name)
-    elseif method == :s || method == :search
-        try
-            MatrixDepot.search(name)
-        catch
-            [db.aliases[name]]
-        end
     else
-        throw(ArgumentError("unknown symbol $method.
-              use :read (or :r) to read matrix data;
-              use :get  (or :g) to download matrix data;
-              use :search (or :s) to search for collection information."))
+        error("unknown symbol $method. use :read (or :r) to read matrix data")
     end
 end
 
@@ -416,14 +403,21 @@ function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     mdbuffer
 end
 
-_mdheader(md::Markdown.MD) = isempty(md.content) ? nothing : _mdheader(md.content[1])
-_mdheader(md::Markdown.Header) = md
-_mdheader(md) = nothing
+_mdheader(md::Markdown.MD, p, o) = isempty(md.content) ? (nothing, o) : _mdheader(md.content[1], md, o)
+_mdheader(md::Markdown.Header, p, o) = (md, p)
+_mdheader(md, p, o) = (nothing, o)
 
 function info(data::GeneratedMatrixData)
+    # func = data.fuc
+    # md = @eval :(Docs.@doc $$func)
     md = eval(Meta.parse("Docs.@doc $(data.func)", raise = false))
-    mdh = _mdheader(md)
-    mdh != nothing && length(mdh.text) == 1 && push!(mdh.text, " ($(data.name))")
+    # As md is cached internally, need to make copies
+    mdh, md = _mdheader(md, nothing, md)
+    if mdh != nothing
+        mdh, md = Markdown.Header(copy(mdh.text)), copy(md)
+        push!(mdh.text, " ($(data.name))")
+        md.content[1] = mdh
+    end
     md
 end
 
@@ -438,22 +432,53 @@ function info(data::RemoteMatrixData)
     md
 end
 
-"return a matrix given a name"
-function mdread(p::Pattern, db::MatrixDatabase=MATRIX_DB)
-    li = list(p)
-    length(li) == 0 && error("no matrix according to $p found")
-    length(li) > 1  && error("patternnot unique: $p -> $li")
-    matrixdepot(li[1], :read, db)
-end
+"""
+    matrix(p, [db,] args...)
+return a matrix given a name
+* `p` is a unique problem identifier (`String`, `Regex`, `Integer`)
+* `db` is optional `MatrixDatabase` defaulting to global `MATRIX_DB`
+* `args` are optional arguments - only used for generated matrices
+"""
+matrix(p::Pattern, db::MatrixDatabase=MATRIX_DB, args...) = matrix(mdopen(p, db), args...)
+matrix(p::Pattern, args...) = matrix(mdopen(p), args...)
 
-"load data from remote repository"
+"""
+    rhs(p[, db]
+return right hand side of problem or `nothing`.
+see also @matrix.
+"""
+rhs(p::Pattern, db::MatrixDatabase=MATRIX_DB) = rhs(mdopen(p))
+
+"""
+    solution(p[, db])
+return solution of problem corresponding to right hand side or `nothing`.
+see also @matrix.
+"""
+solution(p::Pattern, db::MatrixDatabase=MATRIX_DB) = solution(mdopen(p))
+
+"""
+    load(pattern[, db])
+load data from remote repository for all problems matching pattern"
+"""
 function load(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     for name in list(p)
         try
-            loadmatrix(name, db)
+            loadmatrix(db.data[name], db)
         catch ex
             @warn "could not load $name: $ex"
         end
     end
 end
+
+"""
+    mdopen(pattern[ ,db])
+return `MatrixData` object, which can be used with data access functions.
+If the pattern has not a unique resolution, en error is thrown.
+"""
+function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB)
+    li = list(p)
+    length(li) == 0 && error("no matrix according to $p found")
+    length(li) > 1  && error("pattern not unique: $p -> $li")
+    db.data[li[1]]
+end    
 
