@@ -1,11 +1,5 @@
 # return info comment strings for UF sparse matrix
-if VERSION >= v"0.7.0-"
-    Sparse = SuiteSparse.CHOLMOD.Sparse
-elseif isdefined(:SparseArrays)
-    Sparse = Base.SparseArrays.CHOLMOD.Sparse
-else
-    Sparse = Base.SparseMatrix.CHOLMOD.Sparse
-end
+Sparse = SuiteSparse.CHOLMOD.Sparse
 
 function ufinfo(filename::AbstractString)
     mmfile = open(filename,"r")
