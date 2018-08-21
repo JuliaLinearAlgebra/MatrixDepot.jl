@@ -1,10 +1,9 @@
 module MatrixDepot
 using GZip, Printf, DelimitedFiles
 using LinearAlgebra, SparseArrays, SuiteSparse
-
 import Base: show
 
-export matrixdepot, @addgroup, @rmgroupa, info, load, mdopen, matrix, rhs, solution
+export matrixdepot, @addgroup, @rmgroupa, info, load, mdopen, matrix, rhs, solution, list
 
 include("types.jl")         # common data type definitions
 include("higham.jl")          # test matrices
@@ -16,28 +15,26 @@ include("download.jl")      # download data from the UF and MM sparse matrix col
 include("datareader.jl")    # read matrix data from local storage
 
 function init()
+    GROUP = "group.jl"
+    GENERATOR = "generator.jl"
 
     if !isdir(MY_DEPOT_DIR)
-        mkdir(MY_DEPOT_DIR)
-        open(string(MY_DEPOT_DIR, "/group.jl"), "w") do f
-            write(f, "usermatrixclass = \n Dict( \n \n \n );")
+        mkpath(MY_DEPOT_DIR)
+        open(joinpath(MY_DEPOT_DIR, GROUP), "w") do f
+            write(f, "usermatrixclass =\n Dict(\n\n\n);")
         end
-        open(string(MY_DEPOT_DIR, "/generator.jl"), "w") do f
+        open(joinpath(MY_DEPOT_DIR, GENERATOR), "w") do f
             write(f, "# include your matrix generators below ")
         end
         println("created dir $MY_DEPOT_DIR")
     end
 
-    files = Set(readdir(MY_DEPOT_DIR))
-    delete!(files, "generator.jl")
-    if isdir(MY_DEPOT_DIR)
-        for file in files
-            if split(file, '.')[2] == "jl"
-                include("$(MY_DEPOT_DIR)/$(file)")
-            end
+    for file in readdir(MY_DEPOT_DIR)
+        if endswith(file, ".jl") && file != GENERATOR
+            include(joinpath(MY_DEPOT_DIR, file))
         end
-        include(string(MY_DEPOT_DIR, "/generator.jl"))
     end
+    include(joinpath(MY_DEPOT_DIR, GENERATOR))
 
     downloadindices(MATRIX_DB)
     nothing

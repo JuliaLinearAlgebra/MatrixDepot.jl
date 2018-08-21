@@ -301,7 +301,19 @@ function fname(f::Function)
     end
 end
 
-"return an array of full matrix names and aliases matching given pattern."
+"""
+    list(p::Pattern[, db]
+return a vector of full matrix names where name or alias match given pattern.
+p can be one of the following:
++ a plain string (without characters `*` and `?`) which must match exactly
++ a string containing `*` and `?` acting like a shell path pattern
++ a regular expression
++ an integer p matching equivalent to the alias string `"#\$p"`
++ a range of integers
++ one of the symbols `:local`, `:remote`, `:loaded`, `:all`
++ a vector of patterns meaning the union
++ a tuple of patterns meaning the intersection
+"""
 function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
     result = AbstractString[]
     
@@ -343,31 +355,55 @@ function listdir(r::Regex, depth::Int, db::MatrixDatabase=MATRIX_DB)
     unique!(result)
 end
 
+function list(p::Symbol, db::MatrixDatabase=MATRIX_DB)
+    if haskey(SUBSETS,p)
+        sort!(SUBSETS[p](db))
+    else
+        String[]
+    end
+end
+
 function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
     p in keys(MATRIXCLASS) && ( return sort(MATRIXCLASS[p]) )
     p in keys(usermatrixclass) && ( return sort(usermatrixclass[p]) )
-    p == "data" && ( return matrix_data_name_list() )
-    p == "loaded" && ( return matrix_name_list() )
-    p == "generated" && ( return sort!(collect(keys(MATRIXDICT))) )
-    p == "all" && ( return sort!(union(matrix_name_list(), values(db.aliases))) )
    
     p = replace(p, "//+" => '/')
     depth = count(x == '/' for x in p)
 
     if occursin(r"[*?.]", p)
-        p = replace(p, "**" => "([^/]+/)*[^/]+")
+        p = replace(p, "**" => "([^/]+/)\x01[^/]\x01")
         p = replace(p, '*' => "[^/]+")
         p = replace(p, '?' => "[^/]")
         p = replace(p, '.' => "[.]")
+        p = replace(p, '\x01' => '*')
     end
     if endswith(p, '/')
         length(p) == 1 && ( p = ".*/" )
         listdir(Regex(string('^', p)), depth, db)
     else
-        
         list(Regex(string('^', p, '$')), db)
     end
 end
+
+list_all(db::MatrixDatabase) = sort!(collect(keys(db.data)))
+function list_remote(db::MatrixDatabase)
+    collect(d.name for d in values(db.data) if d isa RemoteMatrixData)
+end
+function list_loaded(db::MatrixDatabase)
+    collect(d.name for d in values(db.data) if d isa RemoteMatrixData && !isempty(d.metadata))
+end
+function list_unloaded(db::MatrixDatabase)
+    collect(d.name for d in values(db.data) if d isa RemoteMatrixData && isempty(d.metadata))
+end
+list_local(db::MatrixDatabase) = collect(keys(MATRIXDICT))
+
+const SUBSETS = Dict(
+                     :remote => list_remote,
+                     :loaded => list_loaded,
+                     :unloaded => list_unloaded,
+                     :local => list_local,
+                     :all => list_all,
+)
 
 flatten(a) = collect(Iterators.flatten(a))
 list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasid(i), '$')), db)
@@ -377,7 +413,11 @@ function list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB)
 end
 function list(r::AbstractVector, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
-    flatten(listdb.(r))
+    sort!(flatten(listdb.(r)))
+end
+function list(r::Tuple, db::MatrixDatabase=MATRIX_DB)
+    listdb(r) = list(r, db)
+    sort!(intersect(listdb.(r)...))
 end
 
 const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,AbstractVector}

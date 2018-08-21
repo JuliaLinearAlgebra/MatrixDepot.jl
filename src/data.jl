@@ -31,7 +31,7 @@ const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
                   "spikes" => spikes, "ursell" => ursell,
                   "parallax" => parallax, "erdrey" => erdrey,
                   "gilbert" => gilbert, "smallworld" => smallworld
-                  );
+ )
 
 """
     predefined matrix classes (for the generated functions)
@@ -76,7 +76,8 @@ const MATRIXCLASS = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
                            "baart", "phillips", "gravity", "blur", 
                            "spikes", "ursell", "parallax"],
               "graph" => ["erdrey", "gilbert", "smallworld"]
-               );
+)
+
 
 # remote parameters for several data sources
 const TA_REMOTE = TURemoteType(RemoteParameters(
