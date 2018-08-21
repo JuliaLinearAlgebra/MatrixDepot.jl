@@ -32,7 +32,7 @@ function mreader(data::RemoteMatrixData)
         end
         mdata = Dict{AbstractString,Any}()
         for name in data.metadata
-            path = joinpath(localdir(data), name)
+            path = joinpath(dirname(matrixfile(data)), name)
             mdata[name] = endswith(name, ".mtx") ? sparse(Sparse(path)) : read(path, String)
         end
         data.datacache.value = mdata
@@ -56,7 +56,7 @@ function readmetaext(data::RemoteMatrixData, exli::AbstractString...)
     base = rsplit(data.name, '/', limit=2)[end]
     mdata = mreader(data)
     for ext in exli
-        f = string(base, '_', ext, ".mtx")
+        f = string(base, ext, ".mtx")
         if haskey(mdata, f)
             return mdata[f]
         end

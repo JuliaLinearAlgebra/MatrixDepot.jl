@@ -69,9 +69,9 @@ function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
                     count += 1
                     name = join(list, '/')
                     alias = id === nothing ? string(count) : id
-                    le = string('%', list[end])
                     db.aliases["#$atyp$alias"] = name
-                    while Base.get(db.aliases, le, nothing) !== nothing
+                    le = list[end]
+                    while haskey(db.aliases, le)
                         le = string('%', le)
                     end
                     db.aliases[le] = name
@@ -148,7 +148,7 @@ end
 # MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function loadmatrix(data::MatrixData, db::MatrixDatabase=MATRIX_DB)   
+function loadmatrix(data::RemoteMatrixData, db::MatrixDatabase=MATRIX_DB)   
     file = matrixfile(data)
     if isfile(file)
         return
@@ -171,6 +171,23 @@ function loadmatrix(data::MatrixData, db::MatrixDatabase=MATRIX_DB)
         rm(dirfn, force=true)
     end
     addmetadata!(data)
+    nothing
+end
+
+function removeduplicates!(data::RemoteMatrixData, db::MatrixDatabase)
+    name2 = data.name
+    ali = split(name2, '/')[end]
+    if haskey(db.aliases, ali)
+        name1 = db.aliases[ali]
+        if name2 != name1
+            m1 = matrix(data)
+            data1 = db.data[name1]
+            m2 = matrix(data1)
+            if m1 == m2
+                db.data[name2] = data1
+            end
+        end
+    end
     nothing
 end
 
