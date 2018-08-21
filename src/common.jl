@@ -372,7 +372,7 @@ function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
 
     if occursin(r"[*?.]", p)
         p = replace(p, "**" => "([^/]+/)\x01[^/]\x01")
-        p = replace(p, '*' => "[^/]+")
+        p = replace(p, '*' => "[^/]*")
         p = replace(p, '?' => "[^/]")
         p = replace(p, '.' => "[.]")
         p = replace(p, '\x01' => '*')
