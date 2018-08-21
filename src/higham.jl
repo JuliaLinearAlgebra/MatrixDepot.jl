@@ -472,7 +472,7 @@ The Kahan matrix is an upper trapezoidal matrix, i.e., the
 
 *Input options:*
 
-+ [type,] row_dim, col_dim, θ, pert: `row_dim` and `col_dim` are the row and column
++ [type,] rowdim, coldim, θ, pert: `rowdim` and `coldim` are the row and column
     dimensions of the matrix. `θ` and `pert` are scalars.
 
 + [type,] dim, θ, pert: `dim` is the dimension of the matrix.
@@ -502,6 +502,7 @@ function kahan(::Type{T}, m::Integer, n::Integer, theta, pert) where T
 end
 kahan(::Type{T}, n::Integer, theta, pert) where T = kahan(T, n, n, theta, pert)
 kahan(::Type{T}, n::Integer) where T = kahan(T, n, n, 1.2, 25.)
+kahan(::Type, args...) = throw(MethodError(kahan, Tuple(args)))
 kahan(args...) = kahan(Float64, args...)
 
 """
