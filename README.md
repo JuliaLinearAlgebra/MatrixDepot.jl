@@ -53,7 +53,7 @@ Groups:
 We can generate a 4-by-4 Hilbert matrix by typing
 
 ```julia
-julia> matrixdepot("hilb", 4)
+julia> matrix("hilb", 4)
 4x4 Array{Float64,2}:
  1.0       0.5       0.333333  0.25    
  0.5       0.333333  0.25      0.2     
@@ -64,7 +64,7 @@ julia> matrixdepot("hilb", 4)
 We can type the matrix name to get help.
 
 ```julia
-julia> matrixdepot("hilb")
+julia> info("hilb")
      Hilbert matrix
     ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -92,7 +92,7 @@ julia> matrixdepot("hilb")
 We can also specify the data type
 
 ```julia
-julia> matrixdepot("hilb", Float16, 5, 3)
+julia> matrix("hilb", Float16, 5, 3)
 5x3 Array{Float16,2}:
  1.0      0.5      0.33325
  0.5      0.33325  0.25   
@@ -100,7 +100,7 @@ julia> matrixdepot("hilb", Float16, 5, 3)
  0.25     0.19995  0.16663
  0.19995  0.16663  0.14282
 
-julia> matrixdepot("hilb", Rational, 4)
+julia> matrix("hilb", Rational, 4)
 4x4 Array{Rational{T<:Integer},2}:
  1//1  1//2  1//3  1//4
  1//2  1//3  1//4  1//5
@@ -108,14 +108,15 @@ julia> matrixdepot("hilb", Rational, 4)
  1//4  1//5  1//6  1//7
 ```
 
-Matrices can be accessed by number, range or a mixture of numbers and
-ranges.
+Matrices can be accessed by a variety of patterns and composed patterns.
+Integer numbers refer to the ident numbers of the TAMU/UFl collection.
 
 ```julia
-julia> matrixdepot(5)
-"chow"
+julia> list(1)
+1-element Array{AbstractString,1}:
+ "HB/1138_bus"
 
-julia> matrixdepot(5:10)
+julia> list(5:10)
 6-element Array{AbstractString,1}:
  "chow"    
  "circul"  
@@ -179,7 +180,7 @@ and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/late
 
 ## Interface to the UF Sparse Matrix Collection
 
-Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection_name + '/' + matrix_name``, to download a test matrix from the University of
+Use ``load(NAME)``, where ``NAME`` is ``collection_name + '/' + matrix_name``, to download a test matrix from the University of
 Florida Sparse Matrix Collection:
 http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.  For
 example:
