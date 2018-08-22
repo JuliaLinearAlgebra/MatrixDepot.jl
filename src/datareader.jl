@@ -48,7 +48,7 @@ The `key` must be contained in data.metadata or `nothing` is returned.
 """
 function mreader(data::RemoteMatrixData, metaname::AbstractString)
     mdata = reader(data)
-    mdata !== nothing ? mdata[metaname] : nothing
+    mdata !== nothing ? get(mdata, metaname, nothing) : nothing
 end
 
 #internal helper to select special metadata (matrix, rhs, or solution)
