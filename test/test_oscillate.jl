@@ -1,3 +1,4 @@
+let mode, n, A, p, k, A
 # test two properties of oscillating matrix
 # For an n x n oscillating matrix A, the following holds:
 # 1. A has n distinct and postive eigenvalues λ_1 > λ_2 > ... > λ_n > 0
@@ -7,15 +8,11 @@
 mode = rand(1:2) # 2 different modes
 n = rand(2:10)
 A = matrixdepot("oscillate", n, mode)
-try
-    matrixdepot("oscillate", n, 4)
-catch ArgumentError
-    println("oscillate invalid mode value")
-end
+@test_throws ArgumentError matrixdepot("oscillate", n, 4)
 
 eva, evc = eig(A)
-for i in eva
-    @test i > 0
+for ei in eva
+    @test ei > 0
 end
 
 p = sortperm(eva, rev = true)
@@ -23,7 +20,7 @@ evc = evc[:,p]
 
 # compute the number of sign change
 function num_sign_change(v)
-    signv = sign(v)
+    signv = sign.(v)
     change = signv[1]
     num = 0
     for i in signv
@@ -39,5 +36,5 @@ k = rand(1:n)
 @test num_sign_change(evc[:,k]) == k - 1
 
 A = matrixdepot("oscillate", n)
-
+end
 println("'oscillate' passed test...")

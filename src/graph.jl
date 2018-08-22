@@ -25,8 +25,8 @@ of all symmetric graphs with `n` nodes and `m` edges.
 **P. Erdos and A. Renyi**, On Random Graphs, Publ. Math. Debrecen, 6, 1959, 
 pp. 290-297
 """
-function erdrey{T}(::Type{T}, n::Integer, m::Integer)
-    nzeros = ceil(Int, 0.5*n*(n-1)*rand(m))
+function erdrey(::Type{T}, n::Integer, m::Integer) where T
+    nzeros = ceil.(Int, 0.5*n*(n-1)*rand(m))
     v = zeros(Int, n)
     for count in 1:n
         v[count] = count*(count -one(Int))/2
@@ -36,29 +36,29 @@ function erdrey{T}(::Type{T}, n::Integer, m::Integer)
     js = zeros(Int, m)
     
     for count in 1:m
-        i = minimum(find(x -> x >=nzeros[count], v))
+        i = minimum(findall(x -> x >=nzeros[count], v))
         j = nzeros[count] - (i-1)*(i-2)/2
         is[count] = i
         js[count] = j
     end
-    A = sign(sparse([is;js], [js;is], ones(T, m*2), n, n))
+    A = sign.(sparse([is;js], [js;is], ones(T, m*2), n, n))
     while nnz(A) != 2*m
         diff = round(Int, m - nnz(A)/2)
         is_new = zeros(Int, diff)
         js_new = zeros(Int, diff)
         for count = 1:diff
             idx = ceil(Int, 0.5*n*(n-1)*rand())
-            is_new[count] = minimum(find(x -> x >= idx, v))
+            is_new[count] = minimum(findall(x -> x >= idx, v))
             js_new[count] = idx - (is_new[count] - 1)*(is_new[count] - 2)/2
         end
         append!(is, is_new)
         append!(js, js_new)
         s = ones(T, length(is))
-        A = sign(sparse([is;js], [js;is], [s;s], n,n))
+        A = sign.(sparse([is;js], [js;is], [s;s], n,n))
     end
     A
 end
-erdrey{T}(::Type{T}, n::Integer) = erdrey(T, n, ceil(Int, n*log(n)/2))
+erdrey(::Type{T}, n::Integer) where T = erdrey(T, n, ceil(Int, n*log(n)/2))
 erdrey(n::Integer, arg...) = erdrey(Float64, n, arg...)
 
 """
@@ -80,7 +80,7 @@ with pairs of nodes are connected with indepdent probability `p`.
 
 **E.N. Gilbert**, Random Graphs, Ann. Math. Statist., 30, (1959) pp. 1141-1144.
 """
-function gilbert{T}(::Type{T}, n::Integer, p::AbstractFloat)
+function gilbert(::Type{T}, n::Integer, p::AbstractFloat) where T
     v = zeros(Int, n)
     for k = 1:n
         v[k] = round(Int, k*(k-1)/2)
@@ -94,7 +94,7 @@ function gilbert{T}(::Type{T}, n::Integer, p::AbstractFloat)
     w += one(Int) + floor(Int, log(1 - rand()) / log(1 - p))
     
     while w < n*(n-1)/2
-        i = minimum(find(x -> x >= w, v))
+        i = minimum(findall(x -> x >= w, v))
         j = w - round(Int, (i -1)*(i - 2)/2)
         push!(is, i)
         push!(js, j)
@@ -104,7 +104,7 @@ function gilbert{T}(::Type{T}, n::Integer, p::AbstractFloat)
     s = ones(T, length(is))
     return sparse([is;js], [js;is], [s;s], n, n)
 end
-function gilbert{T}(::Type{T}, n::Integer)
+function gilbert(::Type{T}, n::Integer) where T
     if n == 1
         return gilbert(T, n, 0.2) 
     else
@@ -116,10 +116,10 @@ gilbert(n::Integer, arg...) = gilbert(Float64, n, arg...)
 
 # utility function
 # shortcuts: randomly add entries (shortcuts) to a matrix.
-function shortcuts{T}(A::SparseMatrixCSC{T}, p::Real)
+function shortcuts(A::SparseMatrixCSC{T}, p::Real) where T
     n, = size(A)
-    Ihat = find(x -> x <= p, rand(n))
-    Jhat = ceil(Int, n*rand(size(Ihat)))
+    Ihat = findall(x -> x <= p, rand(n))
+    Jhat = ceil.(Int, n*rand(Float64, size(Ihat)))
     Ehat = ones(T, size(Ihat))
     
     # an edge
@@ -154,7 +154,7 @@ it by adding shortcuts to a kth nearest neighbour ring network
 **D. J. Watts and S. H. Strogatz**, Collective Dynamics of Small World Networks,
 Nature 393 (1998), pp. 440-442.
 """
-function smallworld{T}(::Type{T}, n::Integer, k::Integer, p::Real)
+function smallworld(::Type{T}, n::Integer, k::Integer, p::Real) where T
     twok = 2*k
     is = zeros(Int, 2*k*n)
     js = zeros(Int, 2*k*n)
@@ -162,15 +162,15 @@ function smallworld{T}(::Type{T}, n::Integer, k::Integer, p::Real)
 
     for count = 1:n
         is[(count-1)*twok+1 : count*twok] = count*ones(Int, twok)
-        js[(count-1)*twok+1 : count*twok] = mod([count : count+k-1; 
-                                                                               n-k+count-1 : n+count-2], n) + 1
+        js[(count-1)*twok+1 : count*twok] = mod.([count : count+k-1;
+                                                  n-k+count-1 : n+count-2], n) .+ 1
         es[(count-1)*twok+1 : count*twok] = ones(T, twok)
     end
 
     A = sparse(is, js, es, n, n)
-    return sign(shortcuts(A, p))
+    return sign.(shortcuts(A, p))
 end
-smallworld{T}(::Type{T}, n::Integer) = smallworld(T, n, 2, 0.1)
+smallworld(::Type{T}, n::Integer) where T = smallworld(T, n, 2, 0.1)
 smallworld(n::Integer, arg...) = smallworld(Float64, n, arg...)
 
 

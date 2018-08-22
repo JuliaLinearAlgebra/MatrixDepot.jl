@@ -3,6 +3,6 @@ n = rand(1:10)
 @test matrixdepot("tridiag", Float64, n) == matrixdepot("tridiag", n)
 
 A = matrixdepot("tridiag", n)
-@test isposdef(full(A))
-@test issymmetric(full(A))
+@test isposdef(Array(A))
+@test issymmetric(Array(A))
 println("'tridiag' passed test...")

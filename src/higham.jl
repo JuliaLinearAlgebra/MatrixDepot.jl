@@ -24,7 +24,7 @@ Amer. Math. Monthly, 90 (1983), pp. 301-312.
 second edition, Society for Industrial and Applied Mathematics,
 Philadelphia, PA, USA, 2002; sec. 28.1.
 """
-function hilb{T}(::Type{T}, m::Integer, n::Integer)
+function hilb(::Type{T}, m::Integer, n::Integer) where T
     # compute the Hilbert matrix
     H = zeros(T, m, n)
     for j = 1:n, i= 1:m
@@ -32,7 +32,7 @@ function hilb{T}(::Type{T}, m::Integer, n::Integer)
     end
     return H
 end
-hilb{T}(::Type{T}, n::Integer) = hilb(T, n, n)
+hilb(::Type{T}, n::Integer) where T = hilb(T, n, n)
 hilb(args...) = hilb(Float64, args...)
 
 """
@@ -53,7 +53,7 @@ Inverse of the Hilbert Matrix
     edition, Society for Industrial and Applied Mathematics, Philadelphia, PA,
     USA, 2002; sec. 28.1.
 """
-function invhilb{T}(::Type{T}, n::Integer)
+function invhilb(::Type{T}, n::Integer) where T
     # compute the inverse of Hilbert matrix
     # Type: data type
     # n: the dimension of the matrix
@@ -84,7 +84,7 @@ a Hadamard matrix are orthogonal.
 **S. W. Golomb and L. D. Baumert**, The search for
 Hadamard matrices, Amer. Math. Monthly, 70 (1963) pp. 12-17
 """
-function hadamard{T}(::Type{T}, n::Integer)
+function hadamard(::Type{T}, n::Integer) where T
     #Compute the hadamard matrix
     if n < 1
         lgn = 0
@@ -124,7 +124,7 @@ Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is
 second edition, Society for Industrial and Applied Mathematics, Philadelphia, PA, USA,
 2002; sec. 28.1
 """
-function cauchy{T}(::Type{T}, x::Vector, y::Vector)
+function cauchy(::Type{T}, x::Vector, y::Vector) where T
     # Compute the cauchy matrix
     m = size(x,1)
     n = size(y,1)
@@ -133,8 +133,8 @@ function cauchy{T}(::Type{T}, x::Vector, y::Vector)
     return C
 end
 
-cauchy{T}(::Type{T}, x::Vector) = cauchy(T, x, x)
-cauchy{T}(::Type{T}, k::Integer) = cauchy(T, [1:k;])
+cauchy(::Type{T}, x::Vector) where T = cauchy(T, x, x)
+cauchy(::Type{T}, k::Integer) where T = cauchy(T, [1:k;])
 cauchy(arg...) = cauchy(Float64, arg...)
 
 """
@@ -158,7 +158,7 @@ step forward.
 
 **P. J. Davis**, Circulant Matrices, John Wiley, 1977.
 """
-function circul{T}(::Type{T}, v::Vector, w::Vector)
+function circul(::Type{T}, v::Vector, w::Vector) where T
     # Compute the circul matrix
     # v: the first row of the matrix
     # w: the length of the vector is the dimension of the column
@@ -168,9 +168,9 @@ function circul{T}(::Type{T}, v::Vector, w::Vector)
     [C[i,j] = v[1 + mod(j - i, n)] for i = 1:m, j = 1:n]
     return C
 end
-circul{T}(::Type{T}, v::Vector, n::Integer) = circul(T, v, T[1:n;])
-circul{T}(::Type{T}, v::Vector) = circul(T, v, v)
-circul{T}(::Type{T}, k::Integer) = circul(T, [1:k;])
+circul(::Type{T}, v::Vector, n::Integer) where T = circul(T, v, T[1:n;])
+circul(::Type{T}, v::Vector) where T = circul(T, v, v)
+circul(::Type{T}, k::Integer) where T = circul(T, [1:k;])
 circul(arg...) = circul(Float64, arg...)
 
 """
@@ -192,7 +192,7 @@ The eigenvalues cluster around `π/2` and `-π/2`.
 Computers: Linear Algebra and Function Minimisation,
 second edition, Adam Hilger, Bristol, 1990 (Appendix 1).
 """
-function dingdong{T}(::Type{T}, n::Integer)
+function dingdong(::Type{T}, n::Integer) where T
     # Compute the dingdong matrix
     # type: data type
     # n: the dimension of the matrix
@@ -224,26 +224,26 @@ very ill conditioned.
     by determinant evaluation and by methods of Danilewski and Wielandt,
     J. Soc. Indust. Appl. Math., 6 (1958), pp. 378-392 (see pp. 385, 388).
 """
-function frank{T}(::Type{T}, n::Integer, k::Integer)
+function frank(::Type{T}, n::Integer, k::Integer) where T
     # Compute the frank matrix
     # type: data type
     # n: the dimension of the matrix
     # k = 0 or 1: k = 1 reflect about the anti-diagonal
     p = T[n:-1:1;];
-    F = triu(ones(T, n, 1)*p') + diagm(p[2:n], -1);
+    F = triu(ones(T, n, 1)*p') + diagm(-1 => p[2:n]);
     k == 0 ?  F :
     k == 1 ?  F[p,p]' : error("k = 0 or 1, but get ", k)
 end
-frank{T}(::Type{T}, n::Integer) = frank(T, n, 0)
+frank(::Type{T}, n::Integer) where T = frank(T, n, 0)
 frank(args...) = frank(Float64, args...)
 
 #
 # Jordan block
 #
-function jordbloc{T}( n::Integer, lambda::T)
+function jordbloc( n::Integer, lambda::T) where T
     # Generate a n-by-n jordan block with eigenvalue
     # lambda
-    J = lambda*eye(T, n) + diagm(ones(T, n-1, 1)[:,1] , 1)
+    J = lambda*Matrix{T}(I, n, n) + diagm(1 => ones(T, n-1, 1)[:,1])
     return J
 end
 
@@ -263,7 +263,7 @@ This generator is adapted from N. J. Higham's Test Matrix Toolbox.
 
 *Groups:* ["inverse", "ill-cond", "eigen"]
 """
-function forsythe{T}(::Type{T}, n::Integer , alpha, lambda)
+function forsythe(::Type{T}, n::Integer , alpha, lambda) where T
     # Generate the forsythe matrix
     alpha = convert(T, alpha)
     lambda = convert(T, lambda)
@@ -271,10 +271,10 @@ function forsythe{T}(::Type{T}, n::Integer , alpha, lambda)
     F[n,1] = alpha;
     return F
 end
-forsythe{T}(::Type{T}, n::Integer) = forsythe(T, n, sqrt(eps(T)), zero(T))
+forsythe(::Type{T}, n::Integer) where T = forsythe(T, n, sqrt(eps(T)), zero(T))
 forsythe(args...) = forsythe(Float64, args...)
 
-function oddmagic{T}(::Type{T}, n::Integer)
+function oddmagic(::Type{T}, n::Integer) where T
     # compute the magic square of odd orders
     A = zeros(T, n, n)
     i = 1
@@ -306,7 +306,7 @@ The magic matrix is a matrix with integer entries such that
 
 *Groups:* ["inverse"]
 """
-function magic{T}(::Type{T}, n::Integer)
+function magic(::Type{T}, n::Integer) where T
     # Compute a magic square of order n
     # Learnt from Cleve Moler, Experiments with MATLAB, 2011
     if mod(n, 2) == 1
@@ -314,7 +314,7 @@ function magic{T}(::Type{T}, n::Integer)
         M = oddmagic(T, n)
     elseif mod(n, 4) == 0
         # n is doubly even
-        a = floor(Integer, mod([1:n;], 4)/2)
+        a = floor.(Integer, mod.([1:n;], 4)/2)
         B = broadcast(==, a', a)
         M = broadcast(+, T[1:n:n^2;]',T[0:n-1;])
         for i = 1:n, j = 1:n
@@ -324,14 +324,14 @@ function magic{T}(::Type{T}, n::Integer)
         # n is singly even
         p = div(n,2)
         M = oddmagic(T, p)
-        M = [M M+2*p^2; M+3*p^2 M+p^2]
+        M = [M M.+2*p^2; M.+3*p^2 M.+p^2]
         if n == 2
             return M
         end
         i = [1:p;]
         k = div(n-2, 4)
         j = [[1:k;]; [(n-k+2) : n;]]
-        M[[i;i+p],j] = M[[i+p;i],j]
+        M[[i;i.+p],j] = M[[i.+p;i],j]
         i = k+1
         j = [1, i]
         M[[i;i+p],j] = M[[i+p;i],j]
@@ -361,9 +361,9 @@ eigenvalues.
     for linear equations, Report SAND89-8691, Sandia National
     Laboratories, Albuquerque, New Mexico, 1989 (Appendix 2).
 """
-function grcar{T}(::Type{T}, n::Integer, k::Integer = 3)
+function grcar(::Type{T}, n::Integer, k::Integer = 3) where T
     # Compute grcar matrix
-    G = tril(triu(ones(T, n,n)), k) - diagm(ones(T, n-1), -1)
+    G = tril(triu(ones(T, n,n)), min(k, n-1)) - diagm(-1 => ones(T, n-1))
     return G
 end
 grcar(args...) = grcar(Float64, args...)
@@ -390,12 +390,12 @@ Upper triangular matrices discussed by Wilkinson and others.
 eigensystems and the computation of the Jordan canonical form,
 SIAM Review, 18(4), 1976, pp. 578-6
 """
-function triw{T}(::Type{T}, m::Integer, n::Integer, alpha, k::Integer)
+function triw(::Type{T}, m::Integer, n::Integer, alpha, k::Integer) where T
     alpha = convert(T, alpha)
-    A = tril(eye(T, m,n) + alpha * triu(ones(T, m,n), 1), k)
+    A = tril(Matrix{T}(I, m, n) + alpha * triu(ones(T, m,n), 1), min(k, n-1))
     return A
 end
-triw{T}(::Type{T}, n::Integer) = triw(T, n, n,  -1, n-1)
+triw(::Type{T}, n::Integer) where T = triw(T, n, n,  -1, n-1)
 triw(args...) = triw(Float64, args...)
 
 """
@@ -419,7 +419,7 @@ It has one small eigenvalue.
     Linear Algebra and Function Minimisation, second edition,
     Adam Hilger, Bristol, 1990 (Appendix 1).
 """
-function moler{T}(::Type{T}, n::Integer, alpha = -1.)
+function moler(::Type{T}, n::Integer, alpha = -1.) where T
     alpha = convert(T, alpha)
     M = triw(T, n, n, alpha, n - 1)' * triw(T, n, n, alpha, n -1 )
     return M
@@ -448,7 +448,7 @@ The Pascal matrix’s anti-diagonals form the Pascal’s triangle.
 second edition, Society for Industrial and Applied Mathematics, Philadelphia, PA,
 USA, 2002; sec. 28.4.
 """
-function pascal{T}(::Type{T}, n::Integer)
+function pascal(::Type{T}, n::Integer) where T
     P = zeros(T, n,n)
     for j = 1:n
         for i = 1:n
@@ -486,7 +486,7 @@ The Kahan matrix is an upper trapezoidal matrix, i.e., the
 **W. Kahan**, Numerical linear algebra, Canadian Math.
     Bulletin, 9 (1966), pp. 757-801.
 """
-function kahan{T}(::Type{T}, m::Integer, n::Integer, theta, pert)
+function kahan(::Type{T}, m::Integer, n::Integer, theta, pert) where T
     theta = convert(T, theta)
     pert = convert(T, pert)
     s = sin(theta)
@@ -500,8 +500,8 @@ function kahan{T}(::Type{T}, m::Integer, n::Integer, theta, pert)
     end
     return A
 end
-kahan{T}(::Type{T}, n::Integer, theta, pert) = kahan(T, n, n, theta, pert)
-kahan{T}(::Type{T}, n::Integer) = kahan(T, n, n, 1.2, 25.)
+kahan(::Type{T}, n::Integer, theta, pert) where T = kahan(T, n, n, theta, pert)
+kahan(::Type{T}, n::Integer) where T = kahan(T, n, n, 1.2, 25.)
 kahan(args...) = kahan(Float64, args...)
 
 """
@@ -523,9 +523,9 @@ The Pei matrix is a symmetric matrix with known inversion.
 **M. L. Pei**, A test matrix for inversion procedures,
     Comm. ACM, 5 (1962), p. 508.
 """
-function pei{T}(::Type{T}, n::Integer, alpha = 1)
+function pei(::Type{T}, n::Integer, alpha = 1) where T
     alpha = convert(T, alpha)
-    return alpha*eye(T, n, n) + ones(T, n, n)
+    return alpha*Matrix{T}(I, n, n) + ones(T, n, n)
 end
 pei(args...) = pei(Float64, args...)
 
@@ -550,11 +550,11 @@ The inverse and determinat are known explicity.
     for solving confluent Vandermonde-like systems, SIAM J.
         Matrix Anal. Appl., 11 (1990), pp. 23-41.
 """
-function vand{T}(::Type{T}, p::Vector, n::Integer)
+function vand(::Type{T}, p::Vector, n::Integer) where T
     # n: number of rows
     # p: a vector
     m = length(p)
-    V = Array{T,2}(m, n)
+    V = Array{T,2}(undef, m, n)
     for j = 1:m
         @inbounds V[j, 1] = 1
     end
@@ -565,8 +565,8 @@ function vand{T}(::Type{T}, p::Vector, n::Integer)
     end
     return V
 end
-vand{T}(::Type{T}, n::Integer) = vand(T, [1:n;], n)
-vand{T}(::Type{T}, p::Vector) = vand(T, p, length(p))
+vand(::Type{T}, n::Integer) where T = vand(T, [1:n;], n)
+vand(::Type{T}, p::Vector) where T = vand(T, p, length(p))
 vand(args...) = vand(Float64, args...)
 
 """
@@ -586,7 +586,7 @@ An involutory matrix is a matrix that is its own inverse.
         singular values of involutory and of idempotent matrices,
         Numer. Math. 5 (1963), pp. 234-237.
 """
-function invol{T}(::Type{T}, n::Integer)
+function invol(::Type{T}, n::Integer) where T
     A = hilb(T, n)
     d = -n
     A[:,1] = d*A[:, 1]
@@ -620,7 +620,7 @@ If `k = 0`,the generated matrix is nilpotent and a vector with
 **L. N. Trefethen and M. R. Trummer**, An instability
         phenomenon in spectral methods, SIAM J. Numer. Anal., 24 (1987), pp. 1008-1023.
 """
-function chebspec{T}(::Type{T}, n::Integer, k::Integer = 0)
+function chebspec(::Type{T}, n::Integer, k::Integer = 0) where T
     # k = 0 or 1
     if k == 1
         n = n + 1
@@ -667,7 +667,7 @@ The Lotkin matrix is the Hilbert matrix with its first row
 
 **M. Lotkin**, A set of test matrices, MTAC, 9 (1955), pp. 153-161.
 """
-function lotkin{T}(::Type{T}, n::Integer)
+function lotkin(::Type{T}, n::Integer) where T
     A = hilb(T, n)
     A[1,:] = ones(T,n)'
     return A
@@ -695,7 +695,7 @@ The Clement matrix is a tridiagonal matrix with zero
 **P. A. Clement**, A class of triple-diagonal
         matrices for test purposes, SIAM Review, 1 (1959), pp. 50-52.
 """
-function clement{T}(::Type{T}, n::Integer, k::Integer = 0)
+function clement(::Type{T}, n::Integer, k::Integer = 0) where T
     # construct Tridiagonal matrix
     # n is the dimension of the matrix
     # k = 0 or 1
@@ -708,7 +708,7 @@ function clement{T}(::Type{T}, n::Integer, k::Integer = 0)
     if k == 0
         A = Tridiagonal(x,zeros(T,n+1),z)
     else
-        y = sqrt(x.*z)
+        y = sqrt.(x.*z)
         A = SymTridiagonal(zeros(T,n+1), y)
     end
     return A
@@ -737,13 +737,13 @@ The Fiedler matrix is symmetric matrix with a dominant
 **J. Todd**, Basic Numerical Mathematics, Vol. 2: Numerical Algebra,
             Birkhauser, Basel, and Academic Press, New York, 1977, p. 159.
 """
-function fiedler{T}(::Type{T}, v::Vector)
+function fiedler(::Type{T}, v::Vector) where T
     n = length(v)
-    v = v[:].'
+    v = transpose(v[:])
     A = ones(T, n) * v
-    A = abs(A - A.') # nonconjugate transpose
+    A = abs.(A - transpose(A)) # nonconjugate transpose
 end
-fiedler{T}(::Type{T}, n::Integer) = fiedler(T, [1:n;])
+fiedler(::Type{T}, n::Integer) where T = fiedler(T, [1:n;])
 fiedler(args...) = fiedler(Float64, args...)
 
 """
@@ -765,7 +765,7 @@ A matrix with `(i,j)` entry `min(i,j)`. It is a symmetric positive
             the discretized Brownian bridge, and distance-based regression,
             Linear Algebra Appl., 264 (1997), 173-188.  (For the eigensystem of A.)
 """
-function minij{T}(::Type{T}, n::Integer)
+function minij(::Type{T}, n::Integer) where T
     A = zeros(T, n, n)
     [A[i,j] = min(i,j) for i = 1:n, j = 1:n]
     return A
@@ -781,9 +781,9 @@ The matrix is a multiple of an involutory matrix.
 
 + [type,] dim: the dimension of the matrix.
 """
-function binomialm{T}(::Type{T}, n::Integer)
+function binomialm(::Type{T}, n::Integer) where T
     # Mulitiple of involutory matrix
-    L = Array{T,2}(n, n)
+    L = Array{T,2}(undef, n, n)
     D = Diagonal((-2).^[0:n-1;])
     [L[i,j] = binomial(i-1, j-1) for i = 1:n, j = 1:n]
     U = L[n:-1:1, n:-1:1]
@@ -818,18 +818,18 @@ Construct a tridigonal matrix of type `Tridiagonal`.
             Numerical Algebra, Birkhauser, Basel, and Academic Press,
             New York, 1977, p. 155.
 """
-function tridiag{T}(::Type{T}, x::AbstractVector, y::AbstractVector,
-                    z::AbstractVector)
+function tridiag(::Type{T}, x::AbstractVector, y::AbstractVector,
+                    z::AbstractVector) where T
     x = map((i)-> convert(T, i), x)
     y = map((i)-> convert(T, i), y)
     z = map((i)-> convert(T, i), z)
     return Tridiagonal(x,y,z)
 end
 # Toeplitz tridiagonal matrix
-tridiag{T}(::Type{T}, n::Integer, x::Integer, y::Integer, z::Integer) =
+tridiag(::Type{T}, n::Integer, x::Integer, y::Integer, z::Integer) where T =
 n == 1 ? y*ones(T,1,1) :
          tridiag(T, x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
-tridiag{T}(::Type{T}, n::Integer) = tridiag(T, n, -1, 2, -1)
+tridiag(::Type{T}, n::Integer) where T = tridiag(T, n, -1, 2, -1)
 tridiag(args...) = tridiag(Float64, args...)
 
 """
@@ -853,14 +853,14 @@ The Lehmer matrix is a symmetric positive definite matrix.
             Solutions to problem E710 (proposed by D.H. Lehmer): The inverse
             of a matrix, Amer. Math. Monthly, 53 (1946), pp. 534-535.
 """
-function lehmer{T}(::Type{T}, n::Integer)
-    A = Array{T,2}(n, n) #Array{T,2}(n, n)
+function lehmer(::Type{T}, n::Integer) where T
+    A = Array{T,2}(undef, n, n)
     [A[i,j] = min(i,j) / max(i,j) for i = 1:n, j = 1:n]
     return A
 end
 lehmer(n::Integer) = lehmer(Float64, n)
 #=
-function lehmer{T}(::Type{T}, n::Integer)
+function lehmer(::Type{T}, n::Integer) where T
     A = Array{T,2}(n, n)
     [A[i,j] = min(i,j) / max(i,j) for i = 1:n, j = 1:n]
     return A
@@ -886,8 +886,8 @@ The MathWorks Newsletter, Volume 1, Issue 1,
             singular values of Toeplitz matrices, Linear Algebra and
             Appl., 80 (1986), pp. 115-130.
 """
-function parter{T}(::Type{T}, n::Integer)
-    A = Array{T,2}(n, n)
+function parter(::Type{T}, n::Integer) where T
+    A = Array{T,2}(undef, n, n)
     [A[i,j] = one(T) / (i - j + 0.5) for i = 1:n, j = 1:n]
     return A
 end
@@ -913,7 +913,7 @@ The Chow matrix is a singular Toeplitz lower Hessenberg matrix.
 **T. S. Chow**, A class of Hessenberg matrices with known
                 eigenvalues and inverses, SIAM Review, 11 (1969), pp. 391-395.
 """
-function chow{T}(::Type{T}, n::Integer, alpha, delta)
+function chow(::Type{T}, n::Integer, alpha, delta) where T
     A = zeros(T, n, n)
     alpha = convert(T, alpha)
     delta = convert(T, delta)
@@ -928,7 +928,7 @@ function chow{T}(::Type{T}, n::Integer, alpha, delta)
     end
     return A
 end
-chow{T}(::Type{T}, n::Integer) = chow(T, n, 1, 0)
+chow(::Type{T}, n::Integer) where T = chow(T, n, 1, 0)
 chow(args...) = chow(Float64, args...)
 
 #
@@ -951,17 +951,17 @@ A random correlation matrix is a symmetric positive
 
 *Groups:* ["symmetric", 'pos-semidef', "random"]
 """
-function randcorr{T}(::Type{T}, n::Integer)
+function randcorr(::Type{T}, n::Integer) where T
     x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
     x = n * x / sum(x) # x has nonnegtive elements.
-    A = diagm(x)
+    A = diagm(0 => x)
     F = qrfact(randn(n,n));
-    Q = F[:Q]*diagm(sign(diag(F[:R]))) # form a random orthogonal matrix.
-    copy!(A, Q*A*Q')
+    Q = F.Q*diagm(0 => sign.(diag(F.R))) # form a random orthogonal matrix.
+    copyto!(A, Q*A*Q')
 
     a = diag(A)
-    l = find(a .< 1)
-    g = find(a .> 1)
+    l = findall(a .< 1)
+    g = findall(a .> 1)
 
     # Apply Given rotation to set A[i,i] = 1
     while length(l) > 0 && length(g) > 0
@@ -983,8 +983,8 @@ function randcorr{T}(::Type{T}, n::Integer)
 
         A[i,i] = 1
         a = diag(A)
-        l = find(a.<1)
-        g = find(a.>1)
+        l = findall(a.<1)
+        g = findall(a.>1)
     end
     [A[i,i] = 1 for i = 1:n]
     return (A + A')/2
@@ -1011,9 +1011,9 @@ A block tridiagonal matrix from Poisson’s equation.
           second edition, Johns Hopkins University Press, Baltimore,
           Maryland, 1989 (Section 4.5.4).
 """
-function poisson{T}(::Type{T}, n::Integer)
-    S = full(tridiag(T, n))
-    A = speye(T, n)
+function poisson(::Type{T}, n::Integer) where T
+    S = Array(tridiag(T, n))
+    A = sparse(T(1)I, n, n)
     return kron(A,S) + kron(S,A)
 end
 poisson(n::Integer) = poisson(Float64, n)
@@ -1033,16 +1033,16 @@ A Toeplitz matrix is a matrix in which each descending
 + [type,] dim: `dim` is the dimension of the matrix. `v = [1:dim;]` is the first
                 row and column vector.
 """
-function toeplitz{T}(::Type{T}, vc::Vector, vr::Vector)
+function toeplitz(::Type{T}, vc::Vector, vr::Vector) where T
     n = length(vc)
     length(vr) == n || throw(DimensionMismatch(""))
     vc[1] == vr[1] || error("The first element of the vectors must be the same.")
-    A = Array{T,2}(n, n)
-    [i>=j ? A[i,j] = vc[i-j+1]: A[i,j] = vr[j-i+1] for i=1:n, j=1:n]
+    A = Array{T,2}(undef, n, n)
+    [i>=j ? A[i,j] = vc[i-j+1] : A[i,j] = vr[j-i+1] for i=1:n, j=1:n]
     A
 end
-toeplitz{T}(::Type{T}, v::Vector) = toeplitz(T, v, v)
-toeplitz{T}(::Type{T}, n::Integer) = toeplitz(T, [1:n;])
+toeplitz(::Type{T}, v::Vector) where T = toeplitz(T, v, v)
+toeplitz(::Type{T}, n::Integer) where T = toeplitz(T, [1:n;])
 toeplitz(args...) = toeplitz(Float64, args...)
 
 """
@@ -1061,16 +1061,16 @@ A Hankel matrix is a matrix that is symmetric and constant
 
 + [type,] dim: `dim` is the dimension of the matrix. `v = [1:dim;]`.
 """
-function hankel{T}(::Type{T}, vc::Vector, vr::Vector)
+function hankel(::Type{T}, vc::Vector, vr::Vector) where T
     p = [vc; vr[2:end]]
     m = length(vc)
     n = length(vr)
-    H = Array{T,2}(m, n)
+    H = Array{T,2}(undef, m, n)
     [H[i,j] = p[i+j-1] for i=1:m, j=1:n]
     H
 end
-hankel{T}(::Type{T}, v::Vector) = hankel(T, v, v)
-hankel{T}(::Type{T}, n::Integer) = hankel(T, [1:n;])
+hankel(::Type{T}, v::Vector) where T = hankel(T, v, v)
+hankel(::Type{T}, n::Integer) where T = hankel(T, [1:n;])
 hankel(args...) = hankel(Float64, args...)
 
 """
@@ -1089,13 +1089,13 @@ A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
 **J. M. Varah**. The Prolate Matrix. Linear Algebra and Appl.
              187:267--278, 1993.
 """
-function prolate{T}(::Type{T}, n::Integer, w::Real)
-    v = Array{T,1}(n)
+function prolate(::Type{T}, n::Integer, w::Real) where T
+    v = Array{T,1}(undef, n)
     v[1] = 2*w
     [v[i] = sin(2*pi*w*i)/pi*i for i = 2:n]
     return toeplitz(T, v)
 end
-prolate{T}(::Type{T}, n::Integer) = prolate(T, n, 0.25)
+prolate(::Type{T}, n::Integer) where T = prolate(T, n, 0.25)
 prolate(args...) = prolate(Float64, args...)
 
 """
@@ -1115,14 +1115,14 @@ A singular matrix from the discrete Neumann problem.
 **R. J. Plemmons**, Regular splittings and the
           discrete Neumann problem, Numer. Math., 25 (1976), pp. 153-161.
 """
-function neumann{T}(::Type{T}, n::Integer)
+function neumann(::Type{T}, n::Integer) where T
     if n == 1
         return 4 * ones(T, 1,1) #handle 1-d case.
     end
-    S = full(tridiag(T, n))
+    S = Matrix(tridiag(T, n))
     S[1,2] = -2
     S[n, n-1] = -2
-    A = speye(T, n)
+    A = sparse(T(1)I, n, n)
     return kron(S,A) + kron(A,S)
 end
 neumann(n::Integer) = neumann(Float64, n)
@@ -1133,7 +1133,8 @@ neumann(n::Integer) = neumann(Float64, n)
 #
 # for a = d = 2, b = c = 1, P_block' * P_block = 10 * Identity
 #
-P_block{T}(::Type{T}, a, b, c, d) = reshape(T[a, b, c, d, b, -a, -d, c, c, d, -a, -b, d, -c, b, -a], 4,4)
+P_block(::Type{T}, a, b, c, d) where T =
+    reshape(T[a, b, c, d, b, -a, -d, c, c, d, -a, -b, d, -c, b, -a], 4,4)
 
 """
 Rosser Matrix
@@ -1159,7 +1160,7 @@ The Rosser matrix’s eigenvalues are very close together
             Journal of Research of the National Bureau of Standards, v(47)
             (1951)
 """
-function rosser{T}(::Type{T}, n::Integer, a, b)
+function rosser(::Type{T}, n::Integer, a, b) where T
     if n < 1
         lgn = 0
     else
@@ -1225,7 +1226,7 @@ function rosser{T}(::Type{T}, n::Integer, a, b)
 
     return A
 end
-rosser{T}(::Type{T}, n::Integer) = rosser(T, n, rand(1:5), rand(1:5))
+rosser(::Type{T}, n::Integer) where T = rosser(T, n, rand(1:5), rand(1:5))
 rosser(args...) = rosser(Float64, args...)
 
 """
@@ -1248,7 +1249,7 @@ A nonsymmetric matrix with eigenvalues 0, 1, 2, ... n-1.
             with integer eigenvalues, linear and multilinear algebra, 55(3)
             (2007), pp. 239-247
 """
-function sampling{T}(::Type{T}, x::Vector)
+function sampling(::Type{T}, x::Vector) where T
     n = length(x)
     A = zeros(T, n, n)
     for j = 1:n, i = 1:n
@@ -1256,8 +1257,8 @@ function sampling{T}(::Type{T}, x::Vector)
             A[i,j] = x[i] / (x[i] - x[j])
         end
     end
-    d = sum(A, 2)
-    A = A + diagm(d[:])
+    d = sum(A, dims=2)
+    A = A + diagm(0 => d[:])
     return A
 end
 #
@@ -1266,7 +1267,7 @@ end
 #   L. Bondesson and I. Traat, A Nonsymmetric Matrix with Integer
 #   Eigenvalues, Linear and Multilinear Algebra, 55(3)(2007), pp. 239-247.
 #
-function sampling{T}(::Type{T}, n::Integer)
+function sampling(::Type{T}, n::Integer) where T
     p = T[1:n;] / n
     return sampling(T, p)
 end
@@ -1290,12 +1291,12 @@ is `matrixdepot("wilkinson", 21)`. The result is of type `Tridiagonal`.
 **J. H. Wilkinson**, Error analysis of direct methods
 of matrix inversion, J. Assoc. Comput. Mach., 8 (1961),  pp. 281-330.
 """
-function wilkinson{T}(::Type{T}, n::Integer)
+function wilkinson(::Type{T}, n::Integer) where T
     if n == 1 # handle 1-d case
         return ones(T, 1, 1)
     end
     m = (n-1)/2
-    A = Tridiagonal(ones(T,n-1), abs(T[-m:m;]), ones(T, n-1))
+    A = Tridiagonal(ones(T,n-1), abs.(T[-m:m;]), ones(T, n-1))
     return A
 end
 wilkinson(n::Integer) = wilkinson(Float64, n)
@@ -1317,27 +1318,27 @@ Random Matrix with Element -1, 0, 1
 
 *Groups:* ["random"]
 """
-function rando{T}(::Type{T}, m::Integer, n::Integer, k::Integer)
-    A = Array{T,2}(m, n)
+function rando(::Type{T}, m::Integer, n::Integer, k::Integer) where T
+    A = Array{T,2}(undef, m, n)
     if k == 1
-        copy!(A, floor(rand(m,n) + .5))
+        copyto!(A, floor.(rand(m,n) .+ .5))
     elseif k == 2
-        copy!(A, 2 * floor(rand(m,n) + .5) - one(T))
+        copyto!(A, 2 * floor.(rand(m,n) .+ .5) .- one(T))
     elseif k == 3
-        copy!(A, round(3 * rand(m,n) - 1.5))
+        copyto!(A, round.(3 * rand(m,n) .- 1.5))
     else
         throw(ArgumentError("invalid k value."))
     end
     return A
 end
-rando{T}(::Type{T}, n::Integer, k::Integer) = rando(T, n, n, k)
-rando{T}(::Type{T}, n::Integer) = rando(T, n, n, 1)
+rando(::Type{T}, n::Integer, k::Integer) where T = rando(T, n, n, k)
+rando(::Type{T}, n::Integer) where T = rando(T, n, n, 1)
 rando(args...) = rando(Float64, args...)
 
 #
 # Pre-multiply by random orthogonal matrix
 #
-function qmult!{T}(A::Matrix{T})
+function qmult!(A::Matrix{T}) where T
     n, m = size(A)
 
     d = zeros(T, n)
@@ -1393,7 +1394,7 @@ Random Matrix with Pre-assigned Singular Values
 Algorithms, second edition, Society for Industrial and Applied Mathematics,
 Philadelphia, PA, USA, 2002; sec. 28.3.
 """
-function randsvd{T}(::Type{T}, m::Integer, n::Integer, kappa, mode::Integer)
+function randsvd(::Type{T}, m::Integer, n::Integer, kappa, mode::Integer) where T
     kappa >= 1 || throw(ArgumentError("Condition number must be at least 1."))
     kappa = convert(T, kappa)
 
@@ -1408,7 +1409,7 @@ function randsvd{T}(::Type{T}, m::Integer, n::Integer, kappa, mode::Integer)
     elseif mode == 4
         sigma = ones(T, p) - T[0:p-1;]/(p-1)*(1 - 1/kappa)
     elseif mode == 5
-        sigma = exp(-rand(p) * log(kappa))
+        sigma = exp.(-rand(p) * log(kappa))
     elseif mode == 2
         sigma = ones(T, p)
         sigma[p] = one(T)/kappa
@@ -1420,15 +1421,15 @@ function randsvd{T}(::Type{T}, m::Integer, n::Integer, kappa, mode::Integer)
     end
 
     A = zeros(T, m, n)
-    A[1:p, 1:p] = diagm(sigma)
-    A = qmult!(A')
-    A = qmult!(A')
+    A[1:p, 1:p] = diagm(0 => sigma)
+    A = qmult!(copy(A'))
+    A = qmult!(copy(A'))
 
     return A
 end
-randsvd{T}(::Type{T}, n::Integer, kappa, mode) = randsvd(T, n, n, kappa, mode)
-randsvd{T}(::Type{T}, n::Integer, kappa) = randsvd(T, n, kappa, 3)
-randsvd{T}(::Type{T}, n::Integer) = randsvd(T, n, sqrt(1/eps(T)))
+randsvd(::Type{T}, n::Integer, kappa, mode) where T = randsvd(T, n, n, kappa, mode)
+randsvd(::Type{T}, n::Integer, kappa)  where T= randsvd(T, n, kappa, 3)
+randsvd(::Type{T}, n::Integer) where T = randsvd(T, n, sqrt(1/eps(T)))
 randsvd(args...) = randsvd(Float64, args...)
 
 """
@@ -1447,9 +1448,9 @@ The matrix is constructed via a product of Givens rotations.
 **W. B. Gragg**, The QR algorithm for unitary
     Hessenberg matrices, J. Comp. Appl. Math., 16 (1986), pp. 1-8.
 """
-function rohess{T}(::Type{T}, n::Integer)
+function rohess(::Type{T}, n::Integer) where T
     x = rand(n-1)*2*pi
-    H = eye(T, n)
+    H = Matrix{T}(I, n, n)
     H[n,n] = sign(randn())
     for i = n:-1:2
         theta = x[i-1]
@@ -1480,15 +1481,15 @@ Kac-Murdock-Szego Toeplitz matrix
     problem for Hermitian Toeplitz matrices, SIAM J. Matrix Analysis
     and Appl., 10 (1989), pp. 135-146 (and see the references therein).
 """
-function kms{T}(::Type{T}, n::Integer, rho::Number)
-    typeof(rho) <: Complex ? A = Array(typeof(rho), n, n): A = Array{T,2}(n, n)
+function kms(::Type{T}, n::Integer, rho::Number) where T
+    A = typeof(rho) <: Complex ? Array{typeof(rho)}(undef, n, n) : Array{T,2}(undef, n, n)
     [A[i,j] = rho^(abs(i-j)) for i = 1:n, j = 1:n]
     if typeof(rho) <: Complex
         A = conj(tril(A, -1)) + triu(A)
     end
     return A
 end
-kms{T}(::Type{T}, n::Integer) = kms(T, n, convert(T, 0.5))
+kms(::Type{T}, n::Integer) where T = kms(T, n, convert(T, 0.5))
 kms(args...) = kms(Float64, args...)
 
 """
@@ -1514,7 +1515,7 @@ the consistent mass matrix for a regular nx-by-ny grid of
     the Galerkin mass matrix, IMA J. Numer. Anal., 7 (1987),
     pp. 449-457.
 """
-function wathen{T}(::Type{T}, nx::Integer, ny::Integer)
+function wathen(::Type{T}, nx::Integer, ny::Integer) where T
     e1 = T[6 -6 2 -8;-6 32 -6 20;2 -6 6 -6;-8 20 -6 32]
     e2 = T[3 -8 2 -6;-8 16 -8 20;2 -8 3 -8;-6 20 -8 16]
     e3 = [e1 e2; e2' e1]/45
@@ -1554,7 +1555,7 @@ function wathen{T}(::Type{T}, nx::Integer, ny::Integer)
     end
     return sparse(Irow, Jrow, Xrow, n, n)
 end
-wathen{T}(::Type{T}, n::Integer) = wathen(T, n, n)
+wathen(::Type{T}, n::Integer) where T = wathen(T, n, n)
 wathen(args...) = wathen(Float64, args...)
 
 """
@@ -1574,10 +1575,10 @@ Golub matrix is the product of two random unit lower and upper
     Random Triangular Matrices, SIAM J. Matrix Anal. Appl. 19, 564-581,
     1998.
 """
-function golub{T}(::Type{T}, n::Integer)
+function golub(::Type{T}, n::Integer) where T
     s = 10
-    L = Array{T,2}(n, n)
-    U = Array{T,2}(n, n)
+    L = Array{T,2}(undef, n, n)
+    U = Array{T,2}(undef, n, n)
     if T <: Integer
         [L[i,j] = round_matlab(T, s*randn()) for j = 1:n, i = 1:n]
         [U[i,j] = round_matlab(T, s*randn()) for j = 1:n, i = 1:n]
@@ -1585,8 +1586,8 @@ function golub{T}(::Type{T}, n::Integer)
         [L[i,j] = s*randn() for j = 1:n, i = 1:n]
         [U[i,j] = s*randn() for j = 1:n, i = 1:n]
     end
-    L = tril(L, -1) + eye(L)
-    U = triu(U, 1) + eye(U)
+    L = tril(L, -1) + Matrix{T}(I, n, n)
+    U = triu(U, 1) + Matrix{T}(I, n, n)
     return L*U
 end
 golub(n::Integer) = golub(Float64, n)
@@ -1605,7 +1606,7 @@ The companion matrix to a monic polynomial
 
 + [type,] dim: `vec = [1:dim;]`. `dim` is the dimension of the matrix.
 """
-function companion{T}(::Type{T}, v::AbstractVector)
+function companion(::Type{T}, v::AbstractVector) where T
     n = length(v)
     A = zeros(T, n, n)
     A[:, end] = v
@@ -1614,5 +1615,5 @@ function companion{T}(::Type{T}, v::AbstractVector)
     end
     A
 end
-companion{T}(::Type{T}, n::Integer) = companion(T, [1:n;])
+companion(::Type{T}, n::Integer) where T = companion(T, [1:n;])
 companion(args...) = companion(Float64, args...)

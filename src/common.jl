@@ -60,6 +60,8 @@ function group_list()
     groups = _matrix_class()
     try
         append!(groups, _user_matrix_class())
+    catch
+        nothing
     end
     push!(groups, "data")
     push!(groups, "all")
@@ -123,7 +125,7 @@ return a list of matrix names if `name` is a group name.
 function matrixdepot(name::AbstractString)
     # name is the matrix name or matrix properties
     if name in keys(matrixdict)
-        eval(parse("Base.Docs.@repl $(matrixdict[name])", raise = false))
+        eval(Meta.parse("Docs.@doc $(matrixdict[name])", raise = false))
     elseif name in _matrix_class()
         matrices = matrixclass[name]
         return sort(matrices)
@@ -250,7 +252,7 @@ end
 
 #add new group
 function addgroup(ex)
-    isdir(MY_DEPOT_DIR) || error("can not find directory myMatrixDepot")
+    isdir(MY_DEPOT_DIR) || error("can not find directory '$MY_DEPOT_DIR'")
     propname = string(ex.args[1])
     !(propname in group_list()) || throw(ArgumentError("$propname is an existing group."))
 
@@ -259,7 +261,7 @@ function addgroup(ex)
     end
 
     user = joinpath(user_file("group.jl"))
-    s = readstring(user)
+    s = read(user, String)
     iofile = open(user, "w")
     newprop = s[1:end-4] * "\""  * propname * "\" => ["
     for str in eval(ex.args[2])
@@ -285,10 +287,10 @@ function rmgroup(ex)
     propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
 
     user = joinpath(user_file("group.jl"))
-    s = readstring(user)
+    s = read(user, String)
     iofile = open(user, "w")
     rg = Regex("""\"""" * eval(propname) * ".+")
-    key = search(s, rg) # locate the propname in user.jl to remove.
+    key = coalesce(findfirst(rg, s), 0:-1) # locate the propname in user.jl to remove.
     start_char = key[1] # the start of the line
     end_char = key[end] # the end of the line
     s = s[1:start_char - 2] * s[end_char+1:end]

@@ -7,11 +7,7 @@ r2 = matrixdepot("deriv2", Float32, n, 2, false)
 if mod(n, 2) == 0
     r3 = matrixdepot("deriv2", Float32, n, 3, false)
 end
-try 
-    matrixdepot("deriv2", Float64, n, 4, false)
-catch ArgumentError
-    println("deriv2: illegal value of example.")
-end
+@test_throws ArgumentError matrixdepot("deriv2", Float64, n, 4, false)
 
 A = matrixdepot("deriv2", n)
 
