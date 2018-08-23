@@ -1,5 +1,7 @@
 using MatrixDepot
 using Test
+using LinearAlgebra
+using SparseArrays
 
 macro inc(a)
     :(@testset $a begin let n, p, i; include($a) end end)
@@ -65,7 +67,7 @@ end
             ]
 
     @testset "$t" for t in tests
-        tp = joinpath(Pkg.dir("MatrixDepot"), "test", "$(t).jl")
+        tp = joinpath(@__DIR__(), "$(t).jl")
         println("running $(tp) ...")
         include(tp)
     end

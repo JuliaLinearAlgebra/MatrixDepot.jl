@@ -2,9 +2,9 @@ module MatrixDepot
 using GZip, Printf, DelimitedFiles
 using LinearAlgebra, SparseArrays, SuiteSparse
 
-import Base: show, search
+import Base: show
 
-export matrixdepot, @addgroup, @rmgroup
+export matrixdepot, @addgroup, @rmgroup, search
 
 
 include("common.jl")        # main functions
