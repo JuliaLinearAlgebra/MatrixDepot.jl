@@ -19,7 +19,7 @@ A matrix `A` is called oscillating if `A` is totally
 
 + [type,] dim: `mode = 1`.
 
-*Groups:* ['symmetric','pos-def', 'random', 'eigen'] 
+*Groups:* ['symmetric','posdef', 'random', 'eigen'] 
 
 *References:* 
 

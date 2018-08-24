@@ -18,58 +18,11 @@ function filenames(directory::AbstractString)
     return namevec
 end
 
-# return the path to a folder inside the data directory
-data_dir(name::AbstractString) = joinpath(dirname(@__FILE__), "..", "data", name)
-user_file(name::AbstractString) = string(MY_DEPOT_DIR, "/$(name)")
-
-# return a list of matrix data name in the collection
-function matrix_data_name_list()
-    matrices = AbstractString[]
-    if isdir(data_dir("uf"))
-        for col in filenames("uf")
-            for mat in filenames("uf/$(col)")
-                file = data_dir(joinpath("uf", col, mat, mat * ".mtx"))
-                if isfile(file)
-                    name = join((col, mat), "/")
-                    push!(matrices, name)
-                end
-            end
-        end
-    end
-
-    if isdir(data_dir("mm"))
-        for col in filenames("mm")
-            for d in filenames("mm/$(col)")
-                for mat in filenames("mm/$(col)/$(d)")
-                    push!(matrices, string(col, '/', d, '/', mat))
-                end
-            end
-        end
-    end
-    matrices
-end
-
-
-# return a list of matrix name in the collection
-function matrix_name_list()
-    matrices = sort(collect(keys(MATRIXDICT)))
-    append!(matrices, matrix_data_name_list())
-    matrices
-end
-
-# return a list of groups in the collection
-_matrix_class() = collect(keys(MATRIXCLASS))
-_user_matrix_class() = collect(keys(usermatrixclass))
-
 function group_list()
-    groups = _matrix_class()
-    try
-        append!(groups, _user_matrix_class())
-    finally
-        nothing
-    end
-    push!(groups, "data")
-    push!(groups, "all")
+    groups = Symbol[]
+    append!(groups, keys(MATRIXCLASS))
+    append!(groups, keys(usermatrixclass))
+    append!(groups, keys(SUBSETS))
     sort(groups)
 end
 
@@ -79,18 +32,17 @@ end
 
 # print info about all matrices in the collection
 """
-`matrixdepot()`
+    overview([db])
 
-Print all the matrices and groups in the collection.
+return formatted overview about matrices and groups in the collection.
 """
-matrixdepot() = matrixdepot(stdout)
-
-function matrixdepot(io::IO)
+function overview(db::MatrixDatabase=MATRIX_DB)
     # Print information strings
+    io = IOBuffer()
     println(io)
     println(io, "Matrices:")
 
-    matrices = matrix_name_list()
+    matrices = list(:local)
 
     i = 1
     for (index, mat) in enumerate(matrices)
@@ -110,7 +62,7 @@ function matrixdepot(io::IO)
 
     j = 1
     for name in groups
-        if j < 4 && length(name) < 12
+        if j < 4 && length(string(name)) < 12
             j += 1
             @printf io "  %-12s" name
         else
@@ -119,66 +71,78 @@ function matrixdepot(io::IO)
         end
     end
     println(io)
+    String(take!(io))
 end
 
 #######################
 # matrix group
 #######################
 
-#add new group
-function addgroup(ex)
-    isdir(MY_DEPOT_DIR) || error("can not find directory '$MY_DEPOT_DIR'")
-    propname = string(ex.args[1])
-    !(propname in group_list()) || throw(ArgumentError("$propname is an existing group."))
+# write one property association
+function propline(io::IO, propname, matnames)
+    println(matnames)
+    write(io, repr(propname))
+    write(io, " => [")
+    for str in matnames
+        write(io, repr(str))
+        write(io, ", ")
+    end
+    write(io, "],\n")
+end
 
-    for matname in eval(ex.args[2])
-        matname in matrix_name_list() || throw(ArgumentError("$matname is not in the collection."))
-    end
+# add, remove, or replace complete user group
+function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
+    prop in keys(MATRIXCLASS) && throw(ArgumentError("$prop can not be modified."))
 
-    user = joinpath(user_file("group.jl"))
-    s = read(user, String)
-    iofile = open(user, "w")
-    newprop = s[1:end-4] * "\""  * propname * "\" => ["
-    for str in eval(ex.args[2])
-        newprop *= "\"" * str * "\", "
+    user = abspath(MY_DEPOT_DIR, "group.jl")
+    s = read(user, String)          # read complete file into s
+    rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
+    ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
+    if ppos !== nothing
+        start_char = first(ppos) - 1    # the start of the line
+        end_char = last(ppos)           # the end of the line
+    else
+        ppos = findnext(r"\);", s, 1)
+        if ppos !== nothing
+            start_char = end_char = first(ppos) - 1
+        else
+            start_char = end_char = length(s)
+        end
     end
-    newprop = newprop * "],\n" * s[end-3:end]
-    try
-        write(iofile, newprop);
-    finally
-        close(iofile)
+    if mats !== nothing
+        mats = sort(mats)
     end
+    open(user, "w") do io
+        write(io, s[1:start_char])
+        if mats !== nothing
+            propline(io, prop, mats)
+        end
+        write(io, s[end_char+1:end])
+    end
+    if mats !== nothing
+        usermatrixclass[prop] = mats
+    else
+        delete!(usermatrixclass, prop)
+    end
+    return nothing
 end
 
 "add a group to Matrix Depot"
 macro addgroup(ex)
-    esc(addgroup(ex))
+    name = Symbol(ex.args[1])
+    esc(modgroup(name, eval(ex.args[2])))
 end
 
-# remove an added group
-function rmgroup(ex)
-    propname = string(ex)
-    !(propname in keys(MATRIXCLASS)) || throw(ArgumentError("$propname can not be removed."))
-    propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
-
-    user = joinpath(user_file("group.jl"))
-    s = read(user, String)
-    iofile = open(user, "w")
-    rg = Regex("""\"""" * eval(propname) * ".+")
-    key = coalesce(findfirst(rg, s), 0:-1) # locate the propname in user.jl to remove.
-    start_char = key[1] # the start of the line
-    end_char = key[end] # the end of the line
-    s = s[1:start_char - 2] * s[end_char+1:end]
-    try
-        write(iofile, s);
-    finally
-        close(iofile)
-    end
+"add or replace group in Matrix Depot"
+macro modifygroup(ex)
+    name = Symbol(ex.args[1])
+    esc(modgroup(name, eval(ex.args[2])))
 end
 
 "remove an added group from Matrix Depot"
 macro rmgroup(ex)
-    esc(rmgroup(ex))
+    name = Symbol(ex)
+    esc(modgroup(name, nothing))
 end
 
 ################################
@@ -190,7 +154,9 @@ abstract type FunctionName <: MatrixGenerator end
 abstract type Group <: MatrixGenerator end
 
 
-include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (MATRIXDICT[fn] = f)
+function include_generator(::Type{FunctionName}, fn::AbstractString, f::Function)
+    (haskey(MATRIXDICT, fn) ? MATRIXDICT : USERMATRIXDICT)[fn] = f
+end
 
 function include_generator(::Type{Group}, groupname::AbstractString, f::Function)
     if groupname in keys(MATRIXCLASS)
@@ -206,20 +172,22 @@ end
 "return the name of the function `f` as a string."
 function fname(f::Function)
     for (key, value) in MATRIXDICT
-        if value == f
-            return key
-        end
+        value == f && return key
     end
+    for (key, value) in USERMATRIXDICT
+        value == f && return key
+    end
+    "unknown-function"
 end
 
 """
     list(p::Pattern[, db]
 return a vector of full matrix names where name or alias match given pattern.
-p can be one of the following:
+`p` can be one of the following:
 + a plain string (without characters `*` and `?`) which must match exactly
 + a string containing `*` and `?` acting like a shell path pattern
 + a regular expression
-+ an integer p matching equivalent to the alias string `"#\$p"`
++ an integer matching equivalent to the alias string `"#\$p"`
 + a range of integers
 + one of the symbols `:local`, `:remote`, `:loaded`, `:all`
 + a vector of patterns meaning the union
@@ -235,16 +203,8 @@ function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
             end
         end
     else
-        for name in matrix_name_list()
+        for name in keys(db.data)
             if match(r, name) !== nothing
-                push!(result, name)
-            end
-        end
-        for (alias, name) in db.aliases
-            if !startswith(alias, '#') && match(r, alias) !== nothing && ! ( name in result )
-                push!(result, name)
-            end
-            if match(r, name) !== nothing && ! ( name in result )
                 push!(result, name)
             end
         end
@@ -255,31 +215,40 @@ function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
 end
 
 function listdir(r::Regex, depth::Int, db::MatrixDatabase=MATRIX_DB)
-    result = AbstractString[]
+    result = Dict{AbstractString, Int}()
     f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
-    for name in (f(x, depth) for x in split.(keys(db.data), '/') if length(x) >= depth)
-        if match(r, name) !== nothing
-            push!(result, name)
+    for name in list(r)
+        li = split(name, '/')
+        if length(li) >= depth
+            key = f(li, depth)
+            result[key] = get!(result, key, 0) + 1
         end
     end
-    sort!(result)
-    unique!(result)
+    sort!([string(k, " - (", v, ")") for (k,v) in result])
 end
 
 function list(p::Symbol, db::MatrixDatabase=MATRIX_DB)
-    if haskey(SUBSETS,p)
+    if haskey(SUBSETS, p)
         sort!(SUBSETS[p](db))
+    elseif haskey(MATRIXCLASS, p)
+        sort!(MATRIXCLASS[p])
+    elseif haskey(usermatrixclass, p)
+        sort!(usermatrixclass[p])
     else
         String[]
     end
 end
 
 function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
-    p in keys(MATRIXCLASS) && ( return sort(MATRIXCLASS[p]) )
-    p in keys(usermatrixclass) && ( return sort(usermatrixclass[p]) )
-   
-    p = replace(p, "//+" => '/')
-    depth = count(x == '/' for x in p)
+    if startswith(p, "//")
+        p = p[3:end]
+        depth = 0
+    else
+        m = match(r"^(([^/]+/)+)(/|$)", p)
+        depth = m !== nothing ? count(x == '/' for x in m.captures[1]) : -1
+    end
+    p = replace(p, r"//+" => '/')
+    endswith(p, '/') && ( p = string(p, "**") )
 
     if occursin(r"[*?.]", p)
         p = replace(p, "**" => "([^/]+/)\x01[^/]\x01")
@@ -288,11 +257,13 @@ function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
         p = replace(p, '.' => "[.]")
         p = replace(p, '\x01' => '*')
     end
-    if endswith(p, '/')
+
+    r = Regex(string('^', p, '$'))
+    if depth >= 0
         length(p) == 1 && ( p = ".*/" )
-        listdir(Regex(string('^', p)), depth, db)
+        listdir(r, depth, db)
     else
-        list(Regex(string('^', p, '$')), db)
+        list(r, db)
     end
 end
 
@@ -306,13 +277,17 @@ end
 function list_unloaded(db::MatrixDatabase)
     collect(d.name for d in values(db.data) if d isa RemoteMatrixData && isempty(d.metadata))
 end
-list_local(db::MatrixDatabase) = collect(keys(MATRIXDICT))
+list_local(db::MatrixDatabase) = union(collect(keys(MATRIXDICT)), keys(USERMATRIXDICT))
+list_builtin(db::MatrixDatabase) = collect(keys(MATRIXDICT))
+list_user(db::MatrixDatabase) = collect(keys(USERMATRIXDICT))
 
 const SUBSETS = Dict(
                      :remote => list_remote,
                      :loaded => list_loaded,
                      :unloaded => list_unloaded,
                      :local => list_local,
+                     :builtin => list_builtin,
+                     :user => list_user,
                      :all => list_all,
 )
 
@@ -320,7 +295,7 @@ flatten(a) = collect(Iterators.flatten(a))
 list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasid(i), '$')), db)
 function list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
-    flatten(listdb.(aliasid.(r) ∩ keys(db.aliases)))
+    sort!(flatten(listdb.(aliasid.(r) ∩ keys(db.aliases))))
 end
 function list(r::AbstractVector, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
@@ -331,7 +306,7 @@ function list(r::Tuple, db::MatrixDatabase=MATRIX_DB)
     sort!(intersect(listdb.(r)...))
 end
 
-const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,AbstractVector}
+const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,Symbol,AbstractVector,Tuple}
 
 "return information about all matrices selected by pattern"
 function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
@@ -341,6 +316,7 @@ function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
         try
             md = info(db.data[name])
             #=
+            TODO add names of meta-files to md
             if data !== nothing && !isempty(data)
                 display(data)
             end
@@ -396,14 +372,14 @@ matrix(p::Pattern, args...) = matrix(mdopen(p), args...)
 """
     rhs(p[, db]
 return right hand side of problem or `nothing`.
-see also @matrix.
+see also [`@matrix`](@ref).
 """
 rhs(p::Pattern, db::MatrixDatabase=MATRIX_DB) = rhs(mdopen(p))
 
 """
     solution(p[, db])
 return solution of problem corresponding to right hand side or `nothing`.
-see also @matrix.
+see also [`@matrix`](@ref).
 """
 solution(p::Pattern, db::MatrixDatabase=MATRIX_DB) = solution(mdopen(p))
 
@@ -432,4 +408,64 @@ function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     length(li) > 1  && error("pattern not unique: $p -> $li")
     db.data[li[1]]
 end    
+
+###
+# vintage API
+###
+"""
+    matrixdepot(pattern, [(:search | :read | :get),])
++ search all matrix names according to `pattern` - see also [`@list`](@ref)
++ read matrix named by `pattern` - see also [`@matrix`](@ref)
++ get all matrices named according to `pattern`- see also [`@load`](@ref)
+"""
+function matrixdepot(p::Pattern, s::Symbol)
+    if symbol in (:s, :search)
+        list(p, MATRIX_DB)
+    elseif s in (:g, :get)
+        load(p, MATRIX_DB)
+    elseif s in (:r, :read)
+        matrix(p, MATRIX_DB)
+    else
+        throw(ArgumentError("unknown symbol $s"))
+    end
+end
+
+"""
+    matrixdpot(pattern)
+return formatted info about all matrices with names matching `pattern`.
+"""
+matrixdepot(p::Pattern) = info(p, MATRIX_DB)
+
+"""
+    matrixdepot(string)
+if `string` is a group name, return list of members of group
+
+otherwise return info about pattern given by `string`
+"""
+function matrixdepot(p::AbstractString)
+# cover the cases, a group name is given as a string and "data"
+    db = MATRIX_DB
+    p == "data" && (return list(:loaded, db))
+    if isempty(list(p, db))
+        list(Symbol(p), db)
+    else
+        info(p, db)
+    end
+end
+
+"""
+    matrixdepot(name, arg, args...)
+
+Generate built-in or user-defined matrix named `name` with (at least one) argument    
+"""
+matrixdepot(p::Pattern, args...) = matrix(p, MATRIX_DB, args...)
+
+"""
+    matrixdepot()
+Overview about matrices.
+"""
+function matrixdepot()
+    #display(overview(MATRIX_DB))
+    println(overview(MATRIX_DB))
+end
 

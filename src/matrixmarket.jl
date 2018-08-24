@@ -9,22 +9,119 @@
 
 #THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-function denseread(filename::AbstractString)
-    file = open(filename, "r")
-    firstline = chomp(readline(file))
-    tokens = split(firstline)
-    if tokens[1] != "%%MatrixMarket"
-        throw(Meta.ParseError(string("Not a valid MatrixMarket header:", ll)))
+function mmread(filename::AbstractString)
+    open(filename, "r") do file
+        line = lowercase(readline(file))
+        #println("tokens: ", line)
+        tokens = split(line)
+        if tokens[1] != "%%matrixmarket"
+            throw(Meta.ParseError(string("Not a valid MatrixMarket header:", line)))
+        end
+        line = readline(file)
+        while length(line) == 0 || line[1] == '%'
+            line = readline(file)
+        end
+        if tokens[2] == "matrix"
+            mmread_matrix(file, line, tokens[3:end]...)
+        else
+            throw(Meta.ParseError(string("Unsupported type: ", line)))
+        end
     end
-    (head1, rep, field, symm) = map(lowercase, tokens[2:5])
-    eltype = field == "real" ? Float64 :
-                  field == "complex" ? ComplexF64 :
-                  field == "pattern" ? Bool :
-                  throw(Meta.ParseError("Unsupported field $field (only real and complex are supported)"))
-    # Skip all comments and empty lines
-    ll   = readline(file)
-    while length(chomp(ll))==0 || (length(ll) > 0 && ll[1] == '%')
-        ll = readline(file)
+end
+
+lt(r::Matrix) = (a, b) -> r[2,a] < r[2,b] || ( r[2,a] == r[2,b] && r[1,a] < r[1,b] )
+
+function mmread_matrix(file::IO, line, rep, field, symm)
+    FMAP = Dict("real" => Float64, "complex" => ComplexF64,
+                "integer" => Int64, "pattern" => Bool)
+
+    T = get(FMAP, field) do
+         throw(Meta.ParseError("Unsupported field $field (only real/complex/pattern)"))
     end
-    return readdlm(file, eltype)
+
+    sparse = rep == "coordinate"
+
+    if sparse
+        m, n, nz = parseint(line)
+        rv = Vector{Int}(undef, nz)
+        cv = Vector{Int}(undef, nz)
+        vv = Vector{T}(undef, nz)
+        for i = 1:nz
+            line = readline(file)
+            parseline!(rv, cv, vv, i, line)
+        end
+        result = mksparse(m, n, rv, cv, vv)
+    else
+        n, m = parseint(line)
+        result = zeros(T, m, n)
+        for c = 1:n
+            for r = 1:m
+                line = readline(file)
+                x = parseline(line, T)
+                result[r,c] = x[1]
+            end
+        end
+    end
+                
+    if symm == "symmetric"
+        Symmetric(result, :L)
+    elseif symm == "skew-symmetric"
+        result - transpose(result)
+    elseif symm == "general"
+        result
+    elseif symm == "hermitian"
+        Hermitian(result, :L)
+    else
+        throw(Meta.ParseError("Unsupported qualifier $symm (only general/symmetric/skew-symmetric/hermitian)"))
+    end
+end
+
+function parseline!(rv::Vector{Int}, cv::Vector{Int}, vv::Vector{T},
+                    i::Int, line::AbstractString) where T
+
+    tokens = split(line)
+    2 <= length(tokens) <= 4 || error("parsing $line for (Int, Int, $T)")
+    #println("parseline($line, $args) tokens=$tokens")
+    rv[i] = parse(Int, tokens[1])
+    cv[i] = parse(Int, tokens[2])
+    vv[i] = parsevalue(tokens, T)
+end
+
+function parseline(line::AbstractString, T::Type)
+    tokens = split(line)
+    parsevalue(tokens, T)
+end
+
+parsevalue(tokens::Vector{<:AbstractString},T::Type{<:Bool}) = true
+parsevalue(tokens::Vector{<:AbstractString},T::Type{<:Real}) = parse(T, tokens[end])
+function parsevalue(tokens::Vector{<:AbstractString},T::Type{<:Complex})
+    R = real(T)
+    parse(R, tokens[end-1]) + parse(R, tokens[end])*im
+end
+
+function parseint(line::AbstractString)
+    tokens = split(line)
+    parse.(Int, tokens)
+end
+
+function mksparse(m::Integer, n::Integer, rv::AbstractVector{Ti}, cv::AbstractVector{Ti},
+                  vv::AbstractVector{Tv}) where {Ti<:Integer,Tv}
+
+    nz = length(rv)
+    p = sortperm(rv)
+    q = sortperm(cv[p])
+    p = q[p]
+    colptr = Vector{Int}(undef, n+1)
+    colp = 0
+    for i = 1:nz
+        while colp < cv[p[i]]
+            colp += 1
+            colptr[colp] = i
+        end
+    end
+    while colp <= n
+        colp += 1
+        colptr[colp] = nz + 1
+    end
+    SparseMatrixCSC{Tv,Ti}(m, n, colptr, rv[p], vv[p])
 end

@@ -21,17 +21,24 @@ abstract type MatrixData end
 
 struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     name::AbstractString
-    alias::String
     id::Int
     metadata::Vector{AbstractString}
-    infocache::WeakRef
-    datacache::WeakRef
-    RemoteMatrixData{T}(name, alias, id) where T =
-        new(name, alias, id, AbstractString[], WeakRef(), WeakRef())
+    infocache::WeakKeyDict{String}
+    datacache::WeakKeyDict{String}
+    RemoteMatrixData{T}(name, id) where T =
+        new(name, id, AbstractString[], WeakKeyDict{String,Any}(), WeakKeyDict{String,Any}())
 end
 
-struct GeneratedMatrixData <:MatrixData
+abstract type GeneratedMatrixData <:MatrixData end
+
+struct GeneratedBuiltinMatrixData <:GeneratedMatrixData
     name::AbstractString
+    id::Int
+    func::Function
+end 
+struct GeneratedUserMatrixData <:GeneratedMatrixData
+    name::AbstractString
+    id::Int
     func::Function
 end 
 
@@ -44,9 +51,7 @@ end
 
 function Base.push!(db::MatrixDatabase, data::MatrixData)
     key = data.name
-    alias = data.alias
     db.data[data.name] = data
-    db.aliases[data.alias] = key
     db.aliases[aliasid(data)] = key
 end
 

@@ -19,26 +19,30 @@ function ufinfo(filename::AbstractString)
     String(take!(io))
 end
 
+function trymmread(path::AbstractString)
+    try
+        sparse(Sparse(path))
+    catch
+        mmread(path)
+    end
+end
+
 """
     mreader(dat::RemoteMatrixData)
 return dictionary with all data (matrices, rhs, other metadata).
 The data may be accessed using the key contained in data.metadata.
 """
 function mreader(data::RemoteMatrixData)
-    mdata = data.datacache.value
-    if mdata === nothing
-        if length(data.metadata) == 0
-            loadmatrix(data)
-        end
-        mdata = Dict{AbstractString,Any}()
-        for name in data.metadata
-            path = joinpath(dirname(matrixfile(data)), name)
-            mdata[name] = endswith(name, ".mtx") ? sparse(Sparse(path)) : read(path, String)
-        end
-        data.datacache.value = mdata
+    if length(data.metadata) == 0
+        loadmatrix(data)
     end
-    mdata
+    result = Dict{String,Any}()
+    for name in data.metadata
+        result[name] = mreader(data, name)
+    end
+    result
 end
+
 mreader(data::MatrixData) = nothing
 
 """
@@ -46,19 +50,29 @@ mreader(data::MatrixData) = nothing
 return specific data files (matrix, rhs, solution, or other metadata.
 The `key` must be contained in data.metadata or `nothing` is returned.
 """
-function mreader(data::RemoteMatrixData, metaname::AbstractString)
-    mdata = reader(data)
-    mdata !== nothing ? get(mdata, metaname, nothing) : nothing
+function mreader(data::RemoteMatrixData, name::AbstractString)
+    if length(data.metadata) == 0
+        loadmatrix(data)
+    end
+    dc = data.datacache
+    if name in data.metadata
+        xname = string(name)
+        get!(dc, xname) do
+            path = joinpath(dirname(matrixfile(data)), name)
+            endswith(name, ".mtx") ? mmread(path) : read(path, String)
+        end
+    else
+        nothing
+    end
 end
 
 #internal helper to select special metadata (matrix, rhs, or solution)
 function readmetaext(data::RemoteMatrixData, exli::AbstractString...)
     base = rsplit(data.name, '/', limit=2)[end]
-    mdata = mreader(data)
     for ext in exli
         f = string(base, ext, ".mtx")
-        if haskey(mdata, f)
-            return mdata[f]
+        if f in data.metadata
+            return mreader(data, f)
         end
     end
     nothing

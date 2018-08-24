@@ -13,7 +13,7 @@ positive definite and totally positive.
 
 + [type,] row_dim, col_dim: the row and column dimensions.
 
-*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "illcond", "symmetric", "posdef"]
 
 *References:*
 
@@ -42,7 +42,7 @@ Inverse of the Hilbert Matrix
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["inverse", "ill-cond", "symmetric","pos-def"]
+*Groups:* ["inverse", "illcond", "symmetric","posdef"]
 
 *References:*
 
@@ -116,7 +116,7 @@ Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is
  + [type,] dim: the dimension of the matrix. `x` and `y` default to
     `[1:dim;]`.
 
-*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "illcond", "symmetric", "posdef"]
 
 *References:*
 
@@ -152,7 +152,7 @@ step forward.
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["symmetric", "pos-def", "eigen"]
+*Groups:* ["symmetric", "posdef", "eigen"]
 
 *References:*
 
@@ -216,7 +216,7 @@ very ill conditioned.
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["ill-cond", "eigen"]
+*Groups:* ["illcond", "eigen"]
 
 *References:*
 
@@ -261,7 +261,7 @@ This generator is adapted from N. J. Higham's Test Matrix Toolbox.
 + [type,] dim: `alpha = sqrt(eps(type))` and `lambda = 0`.
 
 
-*Groups:* ["inverse", "ill-cond", "eigen"]
+*Groups:* ["inverse", "illcond", "eigen"]
 """
 function forsythe(::Type{T}, n::Integer , alpha, lambda) where T
     # Generate the forsythe matrix
@@ -382,7 +382,7 @@ Upper triangular matrices discussed by Wilkinson and others.
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["inverse", "ill-cond"]
+*Groups:* ["inverse", "illcond"]
 
 *References:*
 
@@ -411,7 +411,7 @@ It has one small eigenvalue.
 
 + [type,] dim: `alpha = -1`.
 
-*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "illcond", "symmetric", "posdef"]
 
 *References:*
 
@@ -435,7 +435,7 @@ The Pascal matrix’s anti-diagonals form the Pascal’s triangle.
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def", "eigen"]
+*Groups:* ["inverse", "illcond", "symmetric", "posdef", "eigen"]
 
 *References:*
 
@@ -479,7 +479,7 @@ The Kahan matrix is an upper trapezoidal matrix, i.e., the
 
 + [type,] dim: `θ = 1.2`, `pert = 25`.
 
-*Groups:* ["inverse", "ill-cond"]
+*Groups:* ["inverse", "illcond"]
 
 *References:*
 
@@ -517,7 +517,7 @@ The Pei matrix is a symmetric matrix with known inversion.
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "illcond", "symmetric", "posdef"]
 
 *References:*
 
@@ -543,7 +543,7 @@ The inverse and determinat are known explicity.
 
 + [type,] dim: `vec = [1:dim;]`
 
-*Groups:* ["inverse", "ill-cond"]
+*Groups:* ["inverse", "illcond"]
 
 *References:*
 
@@ -579,7 +579,7 @@ An involutory matrix is a matrix that is its own inverse.
 
 + [type,] dim: `dim` is the dimension of the matrix.
 
-*Groups:* ["inverse", "ill-cond", "eigen"]
+*Groups:* ["inverse", "illcond", "eigen"]
 
 *References:*
 
@@ -655,14 +655,14 @@ chebspec(args...) = chebspec(Float64, args...)
 Lotkin Matrix
 =============
 The Lotkin matrix is the Hilbert matrix with its first row
-        altered to all ones. It is unsymmetric, ill-conditioned and
+        altered to all ones. It is unsymmetric, illcond and
         has many negative eigenvalues of small magnitude.
 
 *Input options:*
 
 + [type,] dim: `dim` is the dimension of the matrix.
 
-*Groups:* ["inverse", "ill-cond", "eigen"]
+*Groups:* ["inverse", "illcond", "eigen"]
 
 *References:*
 
@@ -758,7 +758,7 @@ A matrix with `(i,j)` entry `min(i,j)`. It is a symmetric positive
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["inverse", "symmetric", "pos-def", "eigen"]
+*Groups:* ["inverse", "symmetric", "posdef", "eigen"]
 
 *References:*
 
@@ -811,7 +811,7 @@ Construct a tridigonal matrix of type `Tridiagonal`.
 + [type,] dim: `x = -1, y = 2, z = -1`. This matrix is also
             known as the second difference matrix.
 
-*Groups:* ["inverse", "ill-cond", "pos-def", "eigen"]
+*Groups:* ["inverse", "illcond", "posdef", "eigen"]
 
 *References:*
 
@@ -844,7 +844,7 @@ The Lehmer matrix is a symmetric positive definite matrix.
 
 + [type,] dim: the dimension of the matrix.
 
-*Groups:* ["inverse", "symmetric", "pos-def"]
+*Groups:* ["inverse", "symmetric", "posdef"]
 
 *References:*
 
@@ -1004,7 +1004,7 @@ A block tridiagonal matrix from Poisson’s equation.
 
 + [type,] dim: the dimension of the matirx is `dim^2`.
 
-*Groups:* ["inverse", "symmetric", "pos-def", "eigen", "sparse"]
+*Groups:* ["inverse", "symmetric", "posdef", "eigen", "sparse"]
 
 *References:*
 
@@ -1152,7 +1152,7 @@ The Rosser matrix’s eigenvalues are very close together
 
 + [type,] dim: `a = rand(1:5), b = rand(1:5)`.
 
-*Groups:* ["eigen", "ill-cond", "random"]
+*Groups:* ["eigen", "illcond", "random"]
 
 *References:*
 
@@ -1387,7 +1387,7 @@ Random Matrix with Pre-assigned Singular Values
 
 + [type,] dim: `kappa = sqrt(1/eps())`, `mode = 3`.
 
-*Groups:* ["ill-cond", "random"]
+*Groups:* ["illcond", "random"]
 
 *References:*
 
@@ -1474,7 +1474,7 @@ Kac-Murdock-Szego Toeplitz matrix
 
 + [type,] dim: `rho = 0.5`.
 
-*Groups:* ["inverse", "ill-cond", "symmetric", "pos-def"]
+*Groups:* ["inverse", "illcond", "symmetric", "posdef"]
 
 *References:*
 
@@ -1508,7 +1508,7 @@ the consistent mass matrix for a regular nx-by-ny grid of
 
 + [type,] n: `nx = ny = n`.
 
-*Groups:* ["symmetric", "pos-def", "eigen", "random", "sparse"]
+*Groups:* ["symmetric", "posdef", "eigen", "random", "sparse"]
 
 *References:*
 

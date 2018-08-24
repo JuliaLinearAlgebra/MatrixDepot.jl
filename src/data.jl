@@ -1,4 +1,10 @@
 """
+    user-defined matrix generators
+    to be populated with `include_generator` in user source code
+"""
+const USERMATRIXDICT = Dict{String,Function}()
+
+"""
 Associate names with matrix-generating functions
 """
 const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
@@ -36,46 +42,47 @@ const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
 """
     predefined matrix classes (for the generated functions)
 """
-const MATRIXCLASS = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
-                                   "invhilb", "moler", "pascal", "pei",
-                                   "clement", "fiedler", "minij", "tridiag",
-                                   "lehmer", "randcorr", "poisson", "wilkinson",
-                                   "kms", "wathen", "oscillate", "prolate", 
-                                   "hankel"],
+const MATRIXCLASS = Dict(
+            :symmetric => ["hilb", "cauchy", "circul", "dingdong",
+                             "invhilb", "moler", "pascal", "pei",
+                             "clement", "fiedler", "minij", "tridiag",
+                             "lehmer", "randcorr", "poisson", "wilkinson",
+                             "kms", "wathen", "oscillate", "prolate", 
+                             "hankel"],
 
-             "inverse" => ["hilb", "hadamard", "cauchy", "invhilb",
+            :inverse => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
                            "clement", "fiedler", "minij", "tridiag",
                            "lehmer", "poisson", "kms" ],
 
-             "ill-cond" => ["hilb", "cauchy", "frank", "invhilb",
+            :illcond => ["hilb", "cauchy", "frank", "invhilb",
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms", 
                             "oscillate", "prolate", "golub"],
 
-             "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
+            :posdef => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
 
-             "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
+            :eigen =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
                            "rosser", "sampling", "wilkinson","wathen", 
                            "oscillate"],
 
-             "sparse" => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert", 
+             :sparse => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert", 
                           "smallworld"],
 
-             "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
+             :random => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate", "golub", "erdrey", "gilbert", "smallworld"],
 
-             "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat", 
+             :regprob => ["deriv2", "shaw", "wing", "foxgood", "heat", 
                            "baart", "phillips", "gravity", "blur", 
                            "spikes", "ursell", "parallax"],
-              "graph" => ["erdrey", "gilbert", "smallworld"]
+              :graph => ["erdrey", "gilbert", "smallworld"]
 )
 
 

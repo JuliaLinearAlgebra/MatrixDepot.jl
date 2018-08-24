@@ -70,13 +70,8 @@ function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
                     name = join(list, '/')
                     alias = id === nothing ? string(count) : id
                     db.aliases["#$atyp$alias"] = name
-                    le = list[end]
-                    while haskey(db.aliases, le)
-                        le = string('%', le)
-                    end
-                    db.aliases[le] = name
                     count = id != nothing ? parse(Int, id) : count
-                    data = RemoteMatrixData{typeof(remote)}(name, le, count)
+                    data = RemoteMatrixData{typeof(remote)}(name, count)
                     addmetadata!(data)
                     push!(db, data)
                     id = nothing
@@ -94,14 +89,25 @@ function downloadindex(remote::RemoteType)
     nothing
 end
 
+function insertlocal(T::Type{<:GeneratedMatrixData},
+                     ldb::Dict{<:AbstractString,Function},
+                     db::MatrixDatabase)
+
+    cnt = 0
+    ks = sort!(collect(keys(ldb)))
+    for k in ks
+        cnt += 1
+        db.data[k] = T(k, cnt, ldb[k])
+    end
+end
+
 # download html files and store matrix data in MATRIX_DB
 function downloadindices(db::MatrixDatabase)
     # UF Sparse matrix collection
     global uf_remote
     empty!(db)
-    for (k, v) in MATRIXDICT
-        db.data[k] = GeneratedMatrixData(k, v)
-    end
+    insertlocal(GeneratedBuiltinMatrixData, MATRIXDICT, db)
+    insertlocal(GeneratedUserMatrixData, USERMATRIXDICT, db)
     try
         downloadindex(preferred(TURemoteType))
     catch # fallback if first site does not succeed
@@ -171,23 +177,6 @@ function loadmatrix(data::RemoteMatrixData, db::MatrixDatabase=MATRIX_DB)
         rm(dirfn, force=true)
     end
     addmetadata!(data)
-    nothing
-end
-
-function removeduplicates!(data::RemoteMatrixData, db::MatrixDatabase)
-    name2 = data.name
-    ali = split(name2, '/')[end]
-    if haskey(db.aliases, ali)
-        name1 = db.aliases[ali]
-        if name2 != name1
-            m1 = matrix(data)
-            data1 = db.data[name1]
-            m2 = matrix(data1)
-            if m1 == m2
-                db.data[name2] = data1
-            end
-        end
-    end
     nothing
 end
 
