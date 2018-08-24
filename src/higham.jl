@@ -34,6 +34,7 @@ function hilb(::Type{T}, m::Integer, n::Integer) where T
 end
 hilb(::Type{T}, n::Integer) where T = hilb(T, n, n)
 hilb(args...) = hilb(Float64, args...)
+hilb(::Type, args...) = throw(MethodError(hilb, Tuple(args)))
 
 """
 Inverse of the Hilbert Matrix
@@ -201,6 +202,7 @@ function dingdong(::Type{T}, n::Integer) where T
     return D
 end
 dingdong(args...) = dingdong(Float64, args...)
+dingdong(::Type, args...) = throw(MethodError(dingdong, Tuple(args)))
 
 """
 Frank Matrix
@@ -236,6 +238,7 @@ function frank(::Type{T}, n::Integer, k::Integer) where T
 end
 frank(::Type{T}, n::Integer) where T = frank(T, n, 0)
 frank(args...) = frank(Float64, args...)
+frank(::Type, args...) = throw(MethodError(frank, Tuple(args)))
 
 #
 # Jordan block
@@ -273,6 +276,7 @@ function forsythe(::Type{T}, n::Integer , alpha, lambda) where T
 end
 forsythe(::Type{T}, n::Integer) where T = forsythe(T, n, sqrt(eps(T)), zero(T))
 forsythe(args...) = forsythe(Float64, args...)
+forsythe(::Type, args...) = throw(MethodError(forsythe, Tuple(args)))
 
 function oddmagic(::Type{T}, n::Integer) where T
     # compute the magic square of odd orders
@@ -367,6 +371,7 @@ function grcar(::Type{T}, n::Integer, k::Integer = 3) where T
     return G
 end
 grcar(args...) = grcar(Float64, args...)
+grcar(::Type, args...) = throw(MethodError(grcar, Tuple(args)))
 
 """
 Triw Matrix
@@ -397,6 +402,7 @@ function triw(::Type{T}, m::Integer, n::Integer, alpha, k::Integer) where T
 end
 triw(::Type{T}, n::Integer) where T = triw(T, n, n,  -1, n-1)
 triw(args...) = triw(Float64, args...)
+triw(::Type, args...) = throw(MethodError(triw, Tuple(args)))
 
 """
 Moler Matrix
@@ -425,6 +431,7 @@ function moler(::Type{T}, n::Integer, alpha = -1.) where T
     return M
 end
 moler(args...) = moler(Float64, args...)
+moler(::Type, args...) = throw(MethodError(moler, Tuple(args)))
 
 """
 Pascal Matrix
@@ -502,8 +509,8 @@ function kahan(::Type{T}, m::Integer, n::Integer, theta, pert) where T
 end
 kahan(::Type{T}, n::Integer, theta, pert) where T = kahan(T, n, n, theta, pert)
 kahan(::Type{T}, n::Integer) where T = kahan(T, n, n, 1.2, 25.)
-kahan(::Type, args...) = throw(MethodError(kahan, Tuple(args)))
 kahan(args...) = kahan(Float64, args...)
+kahan(::Type, args...) = throw(MethodError(kahan, Tuple(args)))
 
 """
 Pei Matrix
@@ -529,6 +536,7 @@ function pei(::Type{T}, n::Integer, alpha = 1) where T
     return alpha*Matrix{T}(I, n, n) + ones(T, n, n)
 end
 pei(args...) = pei(Float64, args...)
+pei(::Type, args...) = throw(MethodError(pei, Tuple(args)))
 
 """
 Vandermonde Matrix
@@ -569,6 +577,7 @@ end
 vand(::Type{T}, n::Integer) where T = vand(T, [1:n;], n)
 vand(::Type{T}, p::Vector) where T = vand(T, p, length(p))
 vand(args...) = vand(Float64, args...)
+vand(::Type, args...) = throw(MethodError(vand, Tuple(args)))
 
 """
 Involutory Matrix
@@ -650,6 +659,7 @@ function chebspec(::Type{T}, n::Integer, k::Integer = 0) where T
     return A
 end
 chebspec(args...) = chebspec(Float64, args...)
+chebspec(::Type, args...) = throw(MethodError(chebspec, Tuple(args)))
 
 """
 Lotkin Matrix
@@ -715,6 +725,7 @@ function clement(::Type{T}, n::Integer, k::Integer = 0) where T
     return A
 end
 clement(args...) = clement(Float64, args...)
+clement(::Type, args...) = throw(MethodError(clement, Tuple(args)))
 
 """
 Fiedler Matrix
@@ -746,6 +757,7 @@ function fiedler(::Type{T}, v::Vector) where T
 end
 fiedler(::Type{T}, n::Integer) where T = fiedler(T, [1:n;])
 fiedler(args...) = fiedler(Float64, args...)
+fiedler(::Type, args...) = throw(MethodError(fiedler, Tuple(args)))
 
 """
 MIN[I,J] Matrix
@@ -832,6 +844,7 @@ n == 1 ? y*ones(T,1,1) :
          tridiag(T, x*ones(T, n-1), y*ones(T, n), z*ones(T, n-1))
 tridiag(::Type{T}, n::Integer) where T = tridiag(T, n, -1, 2, -1)
 tridiag(args...) = tridiag(Float64, args...)
+tridiag(::Type, args...) = throw(MethodError(tridiag, Tuple(args)))
 
 """
 Lehmer Matrix
@@ -931,6 +944,7 @@ function chow(::Type{T}, n::Integer, alpha, delta) where T
 end
 chow(::Type{T}, n::Integer) where T = chow(T, n, 1, 0)
 chow(args...) = chow(Float64, args...)
+chow(::Type, args...) = throw(MethodError(chow, Tuple(args)))
 
 #
 # newsign: newsign(0) = 1
@@ -992,6 +1006,7 @@ function randcorr(::Type{T}, n::Integer) where T
 
 end
 randcorr(args...) = randcorr(Float64, args...)
+randcorr(::Type, args...) = throw(MethodError(randcorr, Tuple(args)))
 
 """
 Poisson Matrix
@@ -1045,6 +1060,7 @@ end
 toeplitz(::Type{T}, v::Vector) where T = toeplitz(T, v, v)
 toeplitz(::Type{T}, n::Integer) where T = toeplitz(T, [1:n;])
 toeplitz(args...) = toeplitz(Float64, args...)
+toeplitz(::Type, args...) = throw(MethodError(toeplitz, Tuple(args)))
 
 """
 Hankel Matrix
@@ -1073,6 +1089,7 @@ end
 hankel(::Type{T}, v::Vector) where T = hankel(T, v, v)
 hankel(::Type{T}, n::Integer) where T = hankel(T, [1:n;])
 hankel(args...) = hankel(Float64, args...)
+hankel(::Type, args...) = throw(MethodError(hankel, Tuple(args)))
 
 """
 Prolate Matrix
@@ -1098,6 +1115,7 @@ function prolate(::Type{T}, n::Integer, w::Real) where T
 end
 prolate(::Type{T}, n::Integer) where T = prolate(T, n, 0.25)
 prolate(args...) = prolate(Float64, args...)
+prolate(::Type, args...) = throw(MethodError(prolate, Tuple(args)))
 
 """
 Neumann Matrix
@@ -1229,6 +1247,7 @@ function rosser(::Type{T}, n::Integer, a, b) where T
 end
 rosser(::Type{T}, n::Integer) where T = rosser(T, n, rand(1:5), rand(1:5))
 rosser(args...) = rosser(Float64, args...)
+rosser(::Type, args...) = throw(MethodError(rosser, Tuple(args)))
 
 """
 Matrix with Application in Sampling Theory
@@ -1273,6 +1292,7 @@ function sampling(::Type{T}, n::Integer) where T
     return sampling(T, p)
 end
 sampling(args...) = sampling(Float64, args...)
+sampling(::Type, args...) = throw(MethodError(sampling, Tuple(args)))
 
 """
 Wilkinson Matrix
@@ -1335,6 +1355,7 @@ end
 rando(::Type{T}, n::Integer, k::Integer) where T = rando(T, n, n, k)
 rando(::Type{T}, n::Integer) where T = rando(T, n, n, 1)
 rando(args...) = rando(Float64, args...)
+rando(::Type, args...) = throw(MethodError(rando, Tuple(args)))
 
 #
 # Pre-multiply by random orthogonal matrix
@@ -1432,6 +1453,7 @@ randsvd(::Type{T}, n::Integer, kappa, mode) where T = randsvd(T, n, n, kappa, mo
 randsvd(::Type{T}, n::Integer, kappa)  where T= randsvd(T, n, kappa, 3)
 randsvd(::Type{T}, n::Integer) where T = randsvd(T, n, sqrt(1/eps(T)))
 randsvd(args...) = randsvd(Float64, args...)
+randsvd(::Type, args...) = throw(MethodError(randsvd, Tuple(args)))
 
 """
 Random Orthogonal Upper Hessenberg Matrix
@@ -1492,6 +1514,7 @@ function kms(::Type{T}, n::Integer, rho::Number) where T
 end
 kms(::Type{T}, n::Integer) where T = kms(T, n, convert(T, 0.5))
 kms(args...) = kms(Float64, args...)
+kms(::Type, args...) = throw(MethodError(kms, Tuple(args)))
 
 """
 Wathen Matrix
@@ -1558,6 +1581,7 @@ function wathen(::Type{T}, nx::Integer, ny::Integer) where T
 end
 wathen(::Type{T}, n::Integer) where T = wathen(T, n, n)
 wathen(args...) = wathen(Float64, args...)
+wathen(::Type, args...) = throw(MethodError(wathen, Tuple(args)))
 
 """
 Golub Matrix
@@ -1618,3 +1642,4 @@ function companion(::Type{T}, v::AbstractVector) where T
 end
 companion(::Type{T}, n::Integer) where T = companion(T, [1:n;])
 companion(args...) = companion(Float64, args...)
+companion(::Type, args...) = throw(MethodError(companion, Tuple(args)))

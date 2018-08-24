@@ -1,4 +1,35 @@
 
+## MatrixMarket header
+
+abstract type MMProperty end
+abstract type MMObject <: MMProperty end
+struct MMObjectMatrix <: MMObject end
+
+abstract type MMFormat <: MMProperty end
+struct MMFormatCoordinate <: MMFormat end
+struct MMFormatArray <: MMFormat end
+
+abstract type MMField <:MMProperty end
+struct MMFieldReal <: MMField end
+struct MMFieldComplex <: MMField end
+struct MMFieldInteger <: MMField end
+struct MMFieldPattern <: MMField end
+
+abstract type MMSymmetry <: MMProperty end
+struct MMSymmetryGeneral <: MMSymmetry end
+struct MMSymmetrySymmetric <: MMSymmetry end
+struct MMSymmetrySkewSymmetric <: MMSymmetry end
+struct MMSymmetryHermitian <: MMSymmetry end
+
+struct MMProperties
+    object::MMObject
+    format::MMFormat
+    field::MMField
+    symmetry::MMSymmetry
+end
+
+## Matrix objects
+
 struct RemoteParameters
     dataurl::String
     indexurl::String
@@ -22,11 +53,23 @@ abstract type MatrixData end
 struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     name::AbstractString
     id::Int
+    properties::Ref{Union{<:MMProperties,Nothing}}
     metadata::Vector{AbstractString}
     infocache::WeakKeyDict{String}
     datacache::WeakKeyDict{String}
-    RemoteMatrixData{T}(name, id) where T =
-        new(name, id, AbstractString[], WeakKeyDict{String,Any}(), WeakKeyDict{String,Any}())
+    function RemoteMatrixData{T}(name, id) where T
+        new(name, id, Ref{Union{<:MMProperties,Nothing}}(nothing), AbstractString[],
+            WeakKeyDict{String,Any}(), WeakKeyDict{String,Any}())
+    end
+end
+
+function Base.show(io::IO, data::RemoteMatrixData)
+    print(io, "RemoteMatrixData(")
+          print(io, "$(data.name)($(data.id)) ")
+    show(io, data.properties[])
+    print(io, " [")
+    print(io, join(data.metadata, ", "))
+    print(io,"])")
 end
 
 abstract type GeneratedMatrixData <:MatrixData end
@@ -99,3 +142,46 @@ localfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx.gz"
 matrixfile(data::RemoteMatrixData{TURemoteType}) =
     joinpath(localdir(data), rsplit(data.name, '/', limit=2)[end] * ".mtx")
 matrixfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx"
+
+## MatrixMarket header
+
+mm_property_name(::MMObjectMatrix) = "matrix"
+mm_property_name(::MMFormatCoordinate) = "coordinate"
+mm_property_name(::MMFormatArray) = "array"
+mm_property_name(::MMFieldReal) = "real"
+mm_property_name(::MMFieldComplex) = "complex"
+mm_property_name(::MMFieldInteger) = "integer"
+mm_property_name(::MMFieldPattern) = "pattern"
+mm_property_name(::MMSymmetryGeneral) = "general"
+mm_property_name(::MMSymmetrySymmetric) = "symmetric"
+mm_property_name(::MMSymmetrySkewSymmetric) = "skew-symmetric"
+mm_property_name(::MMSymmetryHermitian) = "hermitian"
+
+mm_property_type(::MMFieldReal) = Float64
+mm_property_type(::MMFieldComplex) = ComplexF64
+mm_property_type(::MMFieldInteger) = Integer
+mm_property_type(::MMFieldPattern) = Bool
+
+MM_NAME_TO_PROP = Dict{String,MMProperty}(mm_property_name(x) => x for x in (
+    MMObjectMatrix(),
+    MMFormatCoordinate(), MMFormatArray(),
+    MMFieldReal(), MMFieldComplex(), MMFieldInteger(), MMFieldPattern(),
+    MMSymmetryGeneral(), MMSymmetrySymmetric(), MMSymmetrySkewSymmetric(),
+    MMSymmetryHermitian())
+)
+
+MMProperties() = MMProperties("matrix", "coordinate", "real", "general")
+function MMProperties(args::AbstractString...)
+    prop(x) = MM_NAME_TO_PROP[lowercase(x)]
+    MMProperties(prop.(args)...)
+end
+Base.show(io::IO, pr::MMProperty) = print(io, mm_property_name(pr))
+function Base.show(io::IO, mp::MMProperties)
+    print(io, "{")
+    show(io, mp.object); print(io, ", ")
+    show(io, mp.format); print(io, ", ")
+    show(io, mp.field); print(io, ", ")
+    show(io, mp.symmetry); print(io, "}")
+end
+
+

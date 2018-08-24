@@ -59,7 +59,7 @@ function mreader(data::RemoteMatrixData, name::AbstractString)
         xname = string(name)
         get!(dc, xname) do
             path = joinpath(dirname(matrixfile(data)), name)
-            endswith(name, ".mtx") ? mmread(path) : read(path, String)
+            endswith(name, ".mtx") ? trymmread(path) : read(path, String)
         end
     else
         nothing

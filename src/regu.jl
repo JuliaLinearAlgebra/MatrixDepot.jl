@@ -49,6 +49,7 @@ function oscillate(::Type{T}, n::Integer, mode::Integer) where T
 end
 oscillate(::Type{T}, n::Integer) where T = oscillate(T, n, 2)
 oscillate(args...) = oscillate(Float64, args...)
+oscillate(::Type, args...) = throw(MethodError(oscillate, Tuple(args)))
 
 struct RegProb{T}
     A::AbstractMatrix{T}  # matrix of interest
@@ -198,6 +199,7 @@ function deriv2(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true
 end
 deriv2(::Type{T}, n::Integer, matrixonly::Bool = true) where T = deriv2(T, n, 1, matrixonly)
 deriv2(args...) = deriv2(Float64, args...)
+deriv2(::Type, args...) = throw(MethodError(deriv2, Tuple(args)))
 
 
 """
@@ -254,6 +256,7 @@ function shaw(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     end
 end
 shaw(args...) = shaw(Float64, args...)
+shaw(::Type, args...) = throw(MethodError(shaw, Tuple(args)))
 
 """
 A Problem with a Discontinuous Solution
@@ -300,6 +303,7 @@ function wing(::Type{T}, n::Integer, t1::Real, t2::Real, matrixonly = true) wher
 end
 wing(::Type{T}, n::Integer, matrixonly = true) where T = wing(T, n, 1/3, 2/3, matrixonly)
 wing(args...) = wing(Float64, args...)
+wing(::Type, args...) = throw(MethodError(wing, Tuple(args)))
 
 """
 Severely Ill-posed Problem Suggested by Fox & Goodwin
@@ -338,6 +342,7 @@ function foxgood(::Type{T}, n::Integer, matrixonly = true) where T
     end
 end
 foxgood(args...) = foxgood(Float64, args...)
+foxgood(::Type, args...) = throw(MethodError(foxgood, Tuple(args)))
 
 """
 Inverse Heat Equation
@@ -395,6 +400,7 @@ function heat(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true) where T
 end
 heat(::Type{T}, n::Integer, matrixonly::Bool = true) where T = heat(T, n, 1, matrixonly)
 heat(args...) = heat(Float64, args...)
+heat(::Type, args...) = throw(MethodError(heat, Tuple(args)))
 
 """
 Fredholm Integral Equation of the First Kind
@@ -456,6 +462,7 @@ function baart(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     end
 end
 baart(args...) = baart(Float64, args...)
+baart(::Type, args...) = throw(MethodError(baart, Tuple(args)))
 
 """
 Phillips's \"Famous\" Problem
@@ -516,6 +523,7 @@ function phillips(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     end
 end
 phillips(args...) = phillips(Float64, args...)
+phillips(::Type, args...) = throw(MethodError(phillips, Tuple(args)))
 
 # replicates the grid vectors xgv and ygv to produce a full grid. 
 function meshgrid(xgv, ygv)
@@ -611,6 +619,7 @@ gravity(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true) where 
 gravity(::Type{T}, n::Integer, matrixonly::Bool = true) where T = 
            gravity(T, n, 1, 0, 1, 0.25, matrixonly) 
 gravity(args...) = gravity(Float64, args...)
+gravity(::Type, args...) = throw(MethodError(gravity, Tuple(args)))
 
 """
 Image Deblurring Test Problem
@@ -699,6 +708,7 @@ function blur(::Type{T}, n::Integer, band::Integer, σ::Number,
 end
 blur(::Type{T}, n::Integer, matrixonly::Bool = true) where T = blur(T, n, 3, 0.7, matrixonly)
 blur(args...) = blur(Float64, args...)
+blur(::Type, args...) = throw(MethodError(blur, Tuple(args)))
 
 
 """
@@ -774,6 +784,7 @@ function parallax(::Type{T}, n::Integer, matrixonly::Bool=true) where T
     end        
 end
 parallax(args...) = parallax(Float64, args...)
+parallax(::Type, args...) = throw(MethodError(parallax, Tuple(args)))
 
 """
 Test Problem with \"Spike\" Solution
@@ -826,6 +837,7 @@ end
 spikes(::Type{T}, n::Integer, matrixonly::Bool = true) where T = 
          spikes(T, n, 5, matrixonly)
 spikes(args...) = spikes(Float64, args...)
+spikes(::Type, args...) = throw(MethodError(spikes, Tuple(args)))
 
 #
 # Two-dimensional tomography problem with sparse matrix
@@ -880,3 +892,4 @@ function ursell(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     end
 end
 ursell(args...) = ursell(Float64, args...)
+ursell(::Type, args...) = throw(MethodError(ursell, Tuple(args)))

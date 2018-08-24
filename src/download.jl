@@ -189,5 +189,12 @@ function addmetadata!(data::RemoteMatrixData)
     name, ext = rsplit(base, '.', limit=2)
     filtop(x) = x == base || startswith(x, string(name, '_'))
     append!(data.metadata, filter(filtop, readdir(dir)))
+    fn = matrixfile(data)
+    if isfile(fn)
+        token = split(lowercase(readline(fn)))
+        if token[1] == "%%matrixmarket"
+            data.properties[] = MMProperties(token[2:end]...)
+        end
+    end
     nothing
 end
