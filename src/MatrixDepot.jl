@@ -3,8 +3,9 @@ using GZip, Printf, DelimitedFiles
 using LinearAlgebra, SparseArrays, SuiteSparse
 import Base: show
 
-export matrixdepot, info, load, mdopen, matrix, rhs, solution, list, mreader, overview
-export @addgroup, @rmgroup, @modifygroup
+export matrixdepot
+export info, load, mdopen, mdclose, matrix, rhs, solution, list, metareader, overview
+export aliasname, @addgroup, @rmgroup, @modifygroup
 
 include("types.jl")         # common data type definitions
 include("higham.jl")          # test matrices

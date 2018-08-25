@@ -292,10 +292,10 @@ const SUBSETS = Dict(
 )
 
 flatten(a) = collect(Iterators.flatten(a))
-list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasid(i), '$')), db)
+list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasname(i), '$')), db)
 function list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
-    sort!(flatten(listdb.(aliasid.(r) ∩ keys(db.aliases))))
+    sort!(flatten(listdb.(aliasname.(r) ∩ keys(db.aliases))))
 end
 function list(r::AbstractVector, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
@@ -400,14 +400,33 @@ end
 """
     mdopen(pattern[ ,db])
 return `MatrixData` object, which can be used with data access functions.
-If the pattern has not a unique resolution, en error is thrown.
+The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
+If the pattern has not a unique resolution, an error is thrown.
 """
 function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB)
     li = list(p)
     length(li) == 0 && error("no matrix according to $p found")
     length(li) > 1  && error("pattern not unique: $p -> $li")
-    db.data[li[1]]
+    data = db.data[li[1]]
+    mdopen(data)
 end    
+"""
+    mdopen(data::MatrixData)
+Enable data caching for `RemoteMatrixData` and return data.
+"""
+mdopen(data::RemoteMatrixData) = (data.status[] = true; data)
+mdopen(data::MatrixData) = data
+
+"""
+    mdclose(data::MatrixData)
+clean cached data and disable caching - return data.
+"""
+function mdclose(data::RemoteMatrixData)
+    data.status[] = false
+    empty!(data.datacache)
+    data
+end
+mdclose(data::MatrixData) = data
 
 ###
 # vintage API

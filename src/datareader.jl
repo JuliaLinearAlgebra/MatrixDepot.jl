@@ -36,35 +36,44 @@ function trymmread(path::AbstractString)
 end
 
 """
-    mreader(dat::RemoteMatrixData)
+    metareader(dat::RemoteMatrixData)
 return dictionary with all data (matrices, rhs, other metadata).
-The data may be accessed using the key contained in data.metadata.
+The data may be accessed using the keys contained in data.metadata.
+The keys are identical to the names of the files keeping the data.
 """
-function mreader(data::RemoteMatrixData)
+function metareader(data::RemoteMatrixData)
     if length(data.metadata) == 0
         loadmatrix(data)
     end
     result = Dict{String,Any}()
     for name in data.metadata
-        result[name] = mreader(data, name)
+        result[name] = metareader(data, name)
     end
     result
 end
 
-mreader(data::MatrixData) = nothing
+metareader(data::MatrixData) = nothing
 
 """
-    mreader(data:RemoteMatrixData, key::AbstractString)
+    metareader(data:RemoteMatrixData, key::AbstractString)
 return specific data files (matrix, rhs, solution, or other metadata.
 The `key` must be contained in data.metadata or `nothing` is returned.
 """
-function mreader(data::RemoteMatrixData, name::AbstractString)
+function metareader(data::RemoteMatrixData, name::AbstractString)
     if length(data.metadata) == 0
         loadmatrix(data)
     end
+    dc = data.datacache
+    if haskey(dc, name)
+        return dc[name]
+    end
     if name in data.metadata
         path = joinpath(dirname(matrixfile(data)), name)
-        endswith(name, ".mtx") ? trymmread(path) : read(path, String)
+        m = endswith(name, ".mtx") ? trymmread(path) : read(path, String)
+        if data.status[]
+            dc[name] = m
+        end
+        m
     else
         nothing
     end
@@ -76,7 +85,7 @@ function readmetaext(data::RemoteMatrixData, exli::AbstractString...)
     for ext in exli
         f = string(base, ext, ".mtx")
         if f in data.metadata
-            return mreader(data, f)
+            return metareader(data, f)
         end
     end
     nothing

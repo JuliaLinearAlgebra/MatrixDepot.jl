@@ -55,8 +55,11 @@ struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     id::Int
     properties::Ref{Union{<:MMProperties,Nothing}}
     metadata::Vector{AbstractString}
+    status::Ref{Bool}
+    datacache::Dict{String}
     function RemoteMatrixData{T}(name, id) where T
-        new(name, id, Ref{Union{<:MMProperties,Nothing}}(nothing), AbstractString[])
+        new(name, id, Ref{Union{<:MMProperties,Nothing}}(nothing), AbstractString[],
+            Ref(false), Dict{String,Any}())
     end
 end
 
@@ -64,8 +67,10 @@ function Base.show(io::IO, data::RemoteMatrixData)
     print(io, "RemoteMatrixData(")
           print(io, "$(data.name)($(data.id)) ")
     show(io, data.properties[])
-    print(io, " [")
-    print(io, join(data.metadata, ", "))
+    addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
+    print(io, data.status[] ? '*' : ' ')
+    print(io, "[")
+    print(io, join(addstar.(data.metadata), ", "))
     print(io,"])")
 end
 
@@ -92,12 +97,18 @@ end
 function Base.push!(db::MatrixDatabase, data::MatrixData)
     key = data.name
     db.data[data.name] = data
-    db.aliases[aliasid(data)] = key
+    db.aliases[aliasname(data)] = key
 end
 
-aliasid(i::Integer) = string('#', i)
-aliasid(data::RemoteMatrixData{TURemoteType}) = aliasid(data.id)
-aliasid(data::RemoteMatrixData{MMRemoteType}) = string('#', 'M', data.id)
+"""
+    aliasname(data::MatrixData)
+return alias name derived from integer id
+"""
+aliasname(i::Integer) = string('#', i)
+aliasname(data::RemoteMatrixData{TURemoteType}) = aliasname(data.id)
+aliasname(data::RemoteMatrixData{MMRemoteType}) = string('#', 'M', data.id)
+aliasname(data::GeneratedBuiltinMatrixData) = string('#', 'B', data.id)
+aliasname(data::GeneratedUserMatrixData) = string('#', 'B', data.id)
 
 import Base: get, empty!
 get(db::MatrixDatabase, key::Tuple, default=nothing) = get(db.data, key, default)
