@@ -366,22 +366,22 @@ return a matrix given a name
 * `db` is optional `MatrixDatabase` defaulting to global `MATRIX_DB`
 * `args` are optional arguments - only used for generated matrices
 """
-matrix(p::Pattern, db::MatrixDatabase=MATRIX_DB, args...) = matrix(mdopen(p, db), args...)
-matrix(p::Pattern, args...) = matrix(mdopen(p), args...)
+matrix(p::Pattern, db::MatrixDatabase=MATRIX_DB, args...) = matrix(mdata(p, db), args...)
+matrix(p::Pattern, args...) = matrix(mdata(p, MATRIX_DB), args...)
 
 """
     rhs(p[, db]
 return right hand side of problem or `nothing`.
 see also [`@matrix`](@ref).
 """
-rhs(p::Pattern, db::MatrixDatabase=MATRIX_DB) = rhs(mdopen(p))
+rhs(p::Pattern, db::MatrixDatabase=MATRIX_DB) = rhs(mdata(p, db))
 
 """
     solution(p[, db])
 return solution of problem corresponding to right hand side or `nothing`.
 see also [`@matrix`](@ref).
 """
-solution(p::Pattern, db::MatrixDatabase=MATRIX_DB) = solution(mdopen(p))
+solution(p::Pattern, db::MatrixDatabase=MATRIX_DB) = solution(mdata(p, db))
 
 """
     load(pattern[, db])
@@ -398,18 +398,26 @@ function load(p::Pattern, db::MatrixDatabase=MATRIX_DB)
 end
 
 """
-    mdopen(pattern[ ,db])
+    mdata(pattern[ ,db])
 return `MatrixData` object, which can be used with data access functions.
 The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
 If the pattern has not a unique resolution, an error is thrown.
 """
 function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB)
+    mdopen(mdata(p, db))
+end
+
+"""
+    mdata(pattern, db)
+return unique `MatrixData` object according to pattern.
+"""
+function mdata(p::Pattern, db::MatrixDatabase)
     li = list(p)
     length(li) == 0 && error("no matrix according to $p found")
     length(li) > 1  && error("pattern not unique: $p -> $li")
-    data = db.data[li[1]]
-    mdopen(data)
-end    
+    db.data[li[1]]
+end
+
 """
     mdopen(data::MatrixData)
 Enable data caching for `RemoteMatrixData` and return data.

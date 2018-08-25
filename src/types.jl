@@ -65,14 +65,17 @@ end
 
 function Base.show(io::IO, data::RemoteMatrixData)
     print(io, "RemoteMatrixData(")
-          print(io, "$(data.name)($(data.id)) ")
+    print(io, "$(data.name)($(aliasname(data))) ")
     show(io, data.properties[])
     addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
-    print(io, data.status[] ? '*' : ' ')
+    print(io, isopen(data) ? '*' : ' ')
     print(io, "[")
     print(io, join(addstar.(data.metadata), ", "))
     print(io,"])")
 end
+
+Base.isopen(data::RemoteMatrixData) = data.status[]
+Base.isopen(data::MatrixData) = false
 
 abstract type GeneratedMatrixData <:MatrixData end
 
