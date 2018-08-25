@@ -20,10 +20,18 @@ function ufinfo(filename::AbstractString)
 end
 
 function trymmread(path::AbstractString)
-    try
-        sparse(Sparse(path))
-    catch
+    finfo = fileinfo(path)
+    if finfo !== nothing &&
+        finfo.field isa MMFieldPattern &&
+        !(finfo.symmetry isa MMSymmetryGeneral)
+
         mmread(path)
+    else
+        try
+            sparse(Sparse(path))
+        catch
+            mmread(path)
+        end
     end
 end
 
