@@ -59,8 +59,14 @@ function mreader(data::RemoteMatrixData, name::AbstractString)
         xname = string(name)
         get!(dc, xname) do
             path = joinpath(dirname(matrixfile(data)), name)
-            endswith(name, ".mtx") ? trymmread(path) : read(path, String)
-        end
+            m = endswith(name, ".mtx") ? trymmread(path) : read(path, String)
+            x = MatrixReference(xname, m)
+            finref(m) = if haskey(dc, xname) && dc[xname][] === nothing
+                delete!(dc, xname)
+            end
+            finalizer(finref, m)
+            WeakRef(x)
+        end[]
     else
         nothing
     end

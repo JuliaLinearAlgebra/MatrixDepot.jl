@@ -48,6 +48,11 @@ struct MMRemoteType <: RemoteType
     params::RemoteParameters
 end
 
+mutable struct MatrixReference
+    name::String
+    data::Any
+end
+
 abstract type MatrixData end
 
 struct RemoteMatrixData{T<:RemoteType} <:MatrixData
@@ -55,11 +60,11 @@ struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     id::Int
     properties::Ref{Union{<:MMProperties,Nothing}}
     metadata::Vector{AbstractString}
-    infocache::WeakKeyDict{String}
-    datacache::WeakKeyDict{String}
+    infocache::Dict{String}
+    datacache::Dict{String}
     function RemoteMatrixData{T}(name, id) where T
         new(name, id, Ref{Union{<:MMProperties,Nothing}}(nothing), AbstractString[],
-            WeakKeyDict{String,Any}(), WeakKeyDict{String,Any}())
+            Dict{String,Any}(), Dict{String,Any}())
     end
 end
 
