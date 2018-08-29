@@ -32,7 +32,8 @@ function init()
         end
         println("created dir $MY_DEPOT_DIR")
     end
-
+    
+    println("populating internal database...")
     for file in readdir(MY_DEPOT_DIR)
         if endswith(file, ".jl") && file != GENERATOR
             include(joinpath(MY_DEPOT_DIR, file))

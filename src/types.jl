@@ -26,6 +26,9 @@ struct MMProperties
     format::MMFormat
     field::MMField
     symmetry::MMSymmetry
+    m::Int
+    n::Int
+    nz::Int
 end
 
 ## Matrix objects
@@ -182,9 +185,9 @@ MM_NAME_TO_PROP = Dict{String,MMProperty}(mm_property_name(x) => x for x in (
 )
 
 MMProperties() = MMProperties("matrix", "coordinate", "real", "general")
-function MMProperties(args::AbstractString...)
+function MMProperties(args::AbstractVector{<:AbstractString}, nargs::Integer...)
     prop(x) = MM_NAME_TO_PROP[lowercase(x)]
-    MMProperties(prop.(args)...)
+    MMProperties(prop.(args)..., nargs...)
 end
 Base.show(io::IO, pr::MMProperty) = print(io, mm_property_name(pr))
 function Base.show(io::IO, mp::MMProperties)
@@ -192,7 +195,8 @@ function Base.show(io::IO, mp::MMProperties)
     show(io, mp.object); print(io, ", ")
     show(io, mp.format); print(io, ", ")
     show(io, mp.field); print(io, ", ")
-    show(io, mp.symmetry); print(io, "}")
+    show(io, mp.symmetry); print(io, ", ")
+    print(io, "$(mp.m)x$(mp.n)($(mp.nz))}")
 end
 
 

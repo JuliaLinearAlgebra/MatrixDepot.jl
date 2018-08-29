@@ -196,13 +196,3 @@ function addmetadata!(data::RemoteMatrixData)
     nothing
 end
 
-function fileinfo(file::AbstractString)
-    if isfile(file)
-        token = split(lowercase(readline(file)))
-        if token[1] == "%%matrixmarket"
-            MMProperties(token[2:end]...)
-        end
-    else
-        nothing
-    end
-end

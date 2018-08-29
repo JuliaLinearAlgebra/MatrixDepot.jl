@@ -2,11 +2,15 @@
 function ufinfo(filename::AbstractString)
     io = IOBuffer()
     open(filename,"r") do mmfile
-        ll = readline(mmfile)
-        while length(ll) > 0 && ll[1] == '%'
-            println(io, ll)
-            ll = readline(mmfile)
+        line = readline(mmfile)
+        while startswith(line, '%')
+            println(io, line)
+            line = readline(mmfile)
         end
+        while isempty(strip(line))
+            line = readline(mmfile)
+        end
+        println(io, line)
     end
     String(take!(io))
 end

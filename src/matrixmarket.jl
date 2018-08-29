@@ -23,18 +23,30 @@ function mmread(filename::AbstractString)
     end
 end
 
+const COORD = "coordinate"
+const ARRAY = "array"
+const MATRIX = "matrix"
+const MATRIXM = "%%matrixmarket"
+const COMPLEX = "complex"
+const REAL = "real"
+const INTEGER = "integer"
+const PATTERN = "pattern"
+const GENERAL = "general"
+const SYMMETRIC = "symmetric"
+const HERMITIAN = "hermitian"
+const SKEW_SYMMETRIC = "skew-symmetric"
+
 function mmread(file::IO)
     line = lowercase(readline(file))
-    #println("tokens: ", line)
     tokens = split(line)
-    if tokens[1] != "%%matrixmarket"
+    if tokens[1] != MATRIXM
         parserr(string("Matrixmarket: invalid header:", line))
     end
     line = readline(file)
     while length(line) == 0 || line[1] == '%'
         line = readline(file)
     end
-    if tokens[2] == "matrix"
+    if tokens[2] == MATRIX
         mmread_matrix(file, line, tokens[3:end]...)
     else
         parserr(string("Matrixmarket: unsupported type: ", line))
@@ -45,25 +57,25 @@ argerr(s::AbstractString) = throw(ArgumentError(s))
 parserr(s::AbstractString) = throw(Meta.ParseError(s))
 
 function mmread_matrix(file::IO, line, form, field, symm)
-    FMAP = Dict("real" => (3, Float64),
-                "complex" => (4, ComplexF64),
-                "integer" => (3, Int64),
-                "pattern" => (2, Bool))
+    FMAP = Dict(REAL => (3, Float64),
+                COMPLEX => (4, ComplexF64),
+                INTEGER => (3, Int64),
+                PATTERN => (2, Bool))
 
     ty, T = get(FMAP, field) do
-            parserr("iMatrixmarkte: unsupported field $field (only real/complex/pattern)")
+            parserr("Matrixmarket: unsupported field $field (only real/complex/pattern)")
     end
 
-    SMAP = Dict("general" => (1, 0, Any),
-                "symmetric" => (0, 1, Symmetric),
-                "skew-symmetric" => (1, 1, Array),
-                "hermitian" => (0, 1, Hermitian))
+    SMAP = Dict(GENERAL => (1, 0, Any),
+                SYMMETRIC => (0, 1, Symmetric),
+                SKEW_SYMMETRIC => (1, 1, Array),
+                HERMITIAN => (0, 1, Hermitian))
 
     p1, pc, wrapper = get(SMAP, symm) do
         parserr("Matrixmarket: unsupported symmetry $symm (general/symmetric/hermitian,skew-symmetric)")
     end
 
-    if form == "coordinate"
+    if form == COORD
         m, n, nz = parseint(line)
         b = UInt8[]
         readbytes!(file, b, typemax(Int))
@@ -72,7 +84,7 @@ function mmread_matrix(file::IO, line, form, field, symm)
         vv = Vector{T}(undef, nz)
         parseloop!(Val(ty), b, rv, cv, vv)
         result = mksparse!(m, n, rv, cv, vv)
-    elseif form == "array"
+    elseif form == ARRAY
         m, n = parseint(line)
         b = UInt8[]
         readbytes!(file, b, typemax(Int))
@@ -224,6 +236,37 @@ mtranspose(A) = transpose(A)
 Materialized adjoint of sparse Matrix
 """
 madjoint(A) = conj!(mtranspose(A))
+
+"""
+    fileinfo(filename)
+Read header information from mtx file.
+"""
+function fileinfo(file::AbstractString)
+    if isfile(file)
+        open(file) do io
+            line = lowercase(readline(io))
+            token = split(line)
+            if token[1] == MATRIXM
+                while startswith(line, '%') || isempty(strip(line))
+                    line = readline(io)
+                end
+                m, n, nz =
+                if token[2] == MATRIX && token[3] == COORD
+                    m, n, nz = parseint(line)
+                elseif token[2] == MATRIX && token[3] == ARRAY
+                    (parseint(line)..., 0)
+                else
+                    (0, 0, 0)
+                end
+                MMProperties(token[2:end], m, n, nz)
+            else
+                nothing
+            end
+        end
+    else
+        nothing
+    end
+end
 
 ### parsing decimal integers and floats
 function _parsenext(v::Vector{UInt8}, p1::Int)
