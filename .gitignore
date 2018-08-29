@@ -3,9 +3,12 @@
 
 # ignore newly added matrices 
 
-data/uf/
+data/uf
 data/*html
-data/mm/
+data/mm
+
+src/*.mem
+src/*.cov
 
 # ignore generated files from Sphinx
 _build
