@@ -296,7 +296,7 @@ function parsenext(T::Type{<:Unsigned}, v::Vector{UInt8}, p1::Int)
 end
 function parsenext(T::Type{<:AbstractFloat}, v::Vector{UInt8}, p1::Int)
     i, iaccu, daccu, eaccu, sig, df = _parsenext(v, p1)
-    f = exp10(eaccu) * (T(daccu) * T(exp10(-df)) + T(iaccu))
+    f = exp10(eaccu) * (T(daccu) / T(exp10(df)) + T(iaccu))
     i, (sig < 0 ? -f : f)
 end
 function parsenext(T::Type{<:Complex}, c, p)
