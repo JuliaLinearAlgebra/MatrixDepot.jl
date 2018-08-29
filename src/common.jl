@@ -446,7 +446,7 @@ mdclose(data::MatrixData) = data
 + get all matrices named according to `pattern`- see also [`@load`](@ref)
 """
 function matrixdepot(p::Pattern, s::Symbol)
-    if symbol in (:s, :search)
+    if s in (:s, :search)
         list(p, MATRIX_DB)
     elseif s in (:g, :get)
         load(p, MATRIX_DB)

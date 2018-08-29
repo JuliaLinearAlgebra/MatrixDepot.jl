@@ -163,22 +163,22 @@ function mksparse!(m::Integer, n::Integer, rv::AbstractVector{Ti}, cv::AbstractV
     # Ti must be able to keep (nz + 1)
     (nz + 1) % Ti != nz + 1 && argerr("Ti($Ti) cannot store nz($nz)")
     # compress row, col into Ti
-    t = UInt64[]
-    push!(t, time_ns())
+    # t = UInt64[]
+    # push!(t, time_ns())
     colptr = zeros(Ti, n+1)
     colptr[1] = 1
-    push!(t, time_ns())
+    # push!(t, time_ns())
     @inbounds for i = 1:nz
         cvi = cv[i]
         cv[i] = cvi << sr | rv[i]
         colptr[cvi+1] += 1
     end
-    push!(t, time_ns())
+    # push!(t, time_ns())
     cumsum!(colptr, colptr)
-    push!(t, time_ns())
+    # push!(t, time_ns())
     p = specialsort(cv, sr)
-    push!(t, time_ns())
-    println("times: $(diff(t) ./ 1e6) ms")
+    # push!(t, time_ns())
+    # println("times: $(diff(t) ./ 1e6) ms")
     SparseMatrixCSC{Tv,Ti}(m, n, colptr, rv[p], vv[p])
 end
 
