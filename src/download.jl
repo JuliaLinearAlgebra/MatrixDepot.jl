@@ -129,7 +129,11 @@ function gunzip(fname)
 
     open(destname, "w") do f
         GZip.open(fname) do g
-            write(f, read(g))
+            buffer = read(g, 10000)
+            while length(buffer) > 0
+                write(f, buffer)
+                buffer = read(g, 1000000)
+            end
         end
     end
     destname
