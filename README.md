@@ -21,6 +21,30 @@ To install the release version, type
 julia> Pkg.add("MatrixDepot")
 ```
 
+## New API
+
+This is a re-factoring of the existing code.
+While the vintage API `matrixdepot(...)` is still supported it adds quite some new features.
+1. `list(pattern)` delivers a list of full names matching the pattern. several variants of pattern are supported:
+1.1 strings with or without shell pattern characters (`'*'`, `'?'`). Double star also matches `'/'`
+1.2 regular expressions
+1.3 integer matrix identifiers (as provided by the UFL collection) and ranges thereof
+1.4 intersections of patterns (represented as a tuple of patterns)
+1.5 unions of patterns (represented by an array of patterns)
+1.6 group names - given as symbols, e.g. `:illcond` instead of `"ill-cond"`.
+2. `info(pattern)` delivers information about all matrices matched by pattern as markdown object
+3. `matrix(pattern, args...)` delivers a generated (with arguments) or loaded problem matrix
+4.  `rhs(pattern)` delivers the b-side of the problem - if provided by the remote matrix.
+5. `solution(pattern)` delivers the x-side of the problem - if provided as metadata.
+6. `mreader(pattern, name)` delivers other metadata.
+7. `load(pattern)` loads all remote matrices matching the pattern from the dedicated servers.
+
+The Matrixmarket-format reader has been completely re-written. It is now more reliable and faster than the previous approach, which used CHOLMOD.Sparse.
+
+All retrieved data and metadata may be cached in memory on demand.
+Information about the matrixmarket-format and the metadata are accessible using `data = mdopen(pattern)` or `data = MatrixDepot.mdata(pattern)`.
+`mdclose(data)` removes all cached data.
+
 ## Basic Usage
 
 To see all the matrices in the collection, type
