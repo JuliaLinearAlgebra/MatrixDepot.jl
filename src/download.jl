@@ -122,6 +122,19 @@ function downloadindices(db::MatrixDatabase)
     nothing
 end
 
+# update database from the websites
+function update()
+    uf_matrices = string(DATA_DIR, "/uf_matrices.html")
+    mm_matrices = string(DATA_DIR, "/mm_matrices.html")
+    if isfile(uf_matrices)
+        rm(uf_matrices)
+    end
+    if isfile(mm_matrices)
+        rm(mm_matrices)
+    end
+    downloadindices(MATRIX_DB)
+end
+
 function gunzip(fname)
     endswith(fname, ".gz") || error("gunzip: $fname: unknown suffix")
 

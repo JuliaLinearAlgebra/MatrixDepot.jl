@@ -4,7 +4,7 @@ if isdir(user_dir)
     mv(user_dir, string(user_dir, ".saved"))
 end
 if isdir(dirdata)
-    mv(user_dir, string(dirdata, ".saved"))
+    mv(dirdata, string(dirdata, ".saved"))
 end
 
 MatrixDepot.init()

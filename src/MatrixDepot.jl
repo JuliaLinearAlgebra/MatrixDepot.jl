@@ -21,6 +21,10 @@ include("matrixmarket.jl")  # read matrix data from local storage
 function init()
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
+    
+    if !isdir(DATA_DIR)
+        mkpath(DATA_DIR)
+    end
 
     if !isdir(MY_DEPOT_DIR)
         mkpath(MY_DEPOT_DIR)

@@ -11,7 +11,7 @@ n = rand(1:55)
 name = matrixdepot(n)
 matrixdepot(name)
 
-list = matrixdepot(1, 3, 4:20)
+nlist = matrixdepot(1, 3, 4:20)
 m = length(matrixdepot("all"))
 @test_throws ArgumentError matrixdepot(m+1)
 

@@ -159,6 +159,7 @@ function include_generator(::Type{FunctionName}, fn::AbstractString, f::Function
 end
 
 function include_generator(::Type{Group}, groupname::AbstractString, f::Function)
+    groupname = Symbol(groupname)
     if groupname in keys(MATRIXCLASS)
         push!(MATRIXCLASS[groupname], fname(f))
     elseif groupname in keys(usermatrixclass)
@@ -445,39 +446,72 @@ mdclose(data::MatrixData) = data
 + read matrix named by `pattern` - see also [`@matrix`](@ref)
 + get all matrices named according to `pattern`- see also [`@load`](@ref)
 """
-function matrixdepot(p::Pattern, s::Symbol)
+function matrixdepot(p::AbstractString, s::Symbol; meta::Bool=false)
     if s in (:s, :search)
-        list(p, MATRIX_DB)
+        list(string("**/", p), MATRIX_DB)
     elseif s in (:g, :get)
         load(p, MATRIX_DB)
     elseif s in (:r, :read)
-        matrix(p, MATRIX_DB)
+        !meta ? matrix(p, MATRIX_DB) : _metadata(p)
     else
         throw(ArgumentError("unknown symbol $s"))
     end
 end
-
 """
-    matrixdpot(pattern)
-return formatted info about all matrices with names matching `pattern`.
+    matrixdepot(name, :read|:r, meta=true)
+return dictionary of file names associated with metadata names.
 """
-matrixdepot(p::Pattern) = info(p, MATRIX_DB)
+function _metadata(p::AbstractString)
+    data = MatrixDepot.mdata(p, MatrixDepot.MATRIX_DB)
+    mlist = data.metadata
+    path(name) = joinpath(dirname(matrixfile(data)), name)
+    abbr(name) = rsplit(name, '.'; limit=2)[1]
+    Dict{String,String}([ abbr(x) => path(x) for x in mlist])
+end
 
 """
     matrixdepot(string)
 if `string` is a group name, return list of members of group
+The string "all" returns all generated (=local) matrices.
+The string "data" returns all loaded remote matrices.
 
-otherwise return info about pattern given by `string`
+otherwise return info about pattern given by `string`.
 """
 function matrixdepot(p::AbstractString)
 # cover the cases, a group name is given as a string and "data"
     db = MATRIX_DB
     p == "data" && (return list(:loaded, db))
+    p == "all" && (return list(:local, db))
     if isempty(list(p, db))
-        list(Symbol(p), db)
+        p = replace(p, '-' => "")
+        res = list(Symbol(p), db)
+        isempty(res) ? throw(ArgumentError("what is '$p'?")) : res
     else
         info(p, db)
     end
+end
+
+"""
+    matrixdepot(n:Integer)
+return name of generated matrix numbered by n.
+hint: the list API returns an array about the remote matric with id n.
+"""
+function matrixdepot(n::Integer)
+    locli = list(:local)
+    1 <= n <= length(locli) || throw(ArgumentError("1 <= $n <= $(length(locli)) required."))
+    locli[n]
+end
+"""
+    matrixdepot(range or tuple of integer or range arguments)
+return array of names corresponding to the local matrices.
+"""
+function matrixdepot(r::AbstractRange{<:Integer})
+    matrixdepot.(r)
+end
+function matrixdepot(n::Union{Integer,AbstractRange{<:Integer}},
+                     n2::Union{Integer,AbstractRange{<:Integer}}...)
+
+    [matrixdepot(n); matrixdepot(n2...)]
 end
 
 """
@@ -486,6 +520,18 @@ end
 Generate built-in or user-defined matrix named `name` with (at least one) argument    
 """
 matrixdepot(p::Pattern, args...) = matrix(p, MATRIX_DB, args...)
+
+"""
+    matrixdepot(group::String...)
+return intersection of output of individual group names.
+"""
+function matrixdepot(g::AbstractString, h::AbstractString...)
+    first = matrixdepot(g)
+    first = first isa Vector{<:AbstractString} ? first : [g]
+    second = matrixdepot(h...)
+    second = second isa Vector{<:AbstractString} ? second : [h...]
+    intersect(first, second)
+end
 
 """
     matrixdepot()
