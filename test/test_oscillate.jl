@@ -10,7 +10,7 @@ n = rand(2:10)
 A = matrixdepot("oscillate", n, mode)
 @test_throws ArgumentError matrixdepot("oscillate", n, 4)
 
-eva, evc = eig(A)
+eva, evc = eigen(A)
 for ei in eva
     @test ei > 0
 end

@@ -636,9 +636,9 @@ function chebspec(::Type{T}, n::Integer, k::Integer = 0) where T
         n = n + 1
     end
     c = ones(T, n)
-    c[1] = 2.
-    c[2:n-1] = one(T)
-    c[n] = 2.
+    c[1] = 2
+    c[2:n-1] .= 1
+    c[n] = 2
     x = ones(T, n)
 
     A = zeros(T, n, n)
@@ -970,7 +970,7 @@ function randcorr(::Type{T}, n::Integer) where T
     x = rand(T,n) # x is the vector of random eigenvalues from a uniform distribution.
     x = n * x / sum(x) # x has nonnegtive elements.
     A = diagm(0 => x)
-    F = qrfact(randn(n,n));
+    F = qr(randn(n,n));
     Q = F.Q*diagm(0 => sign.(diag(F.R))) # form a random orthogonal matrix.
     copyto!(A, Q*A*Q')
 

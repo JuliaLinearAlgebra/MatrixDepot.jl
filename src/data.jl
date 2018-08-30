@@ -59,7 +59,7 @@ const MATRIXCLASS = Dict(
             :illcond => ["hilb", "cauchy", "frank", "invhilb",
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
-                            "tridiag", "rosser", "randsvd", "kms", 
+                            "tridiag", "rosser", "randsvd", "kms",
                             "oscillate", "prolate", "golub"],
 
             :posdef => ["hilb", "cauchy", "circul", "invhilb",
@@ -70,7 +70,7 @@ const MATRIXCLASS = Dict(
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
-                           "rosser", "sampling", "wilkinson","wathen", 
+                           "rosser", "sampling", "wilkinson","wathen",
                            "oscillate"],
 
              :sparse => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert", 
@@ -82,6 +82,7 @@ const MATRIXCLASS = Dict(
              :regprob => ["deriv2", "shaw", "wing", "foxgood", "heat", 
                            "baart", "phillips", "gravity", "blur", 
                            "spikes", "ursell", "parallax"],
+
               :graph => ["erdrey", "gilbert", "smallworld"]
 )
 

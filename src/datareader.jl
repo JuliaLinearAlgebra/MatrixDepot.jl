@@ -1,4 +1,5 @@
 # return info comment strings for UF sparse matrix
+
 function ufinfo(filename::AbstractString)
     io = IOBuffer()
     open(filename,"r") do mmfile

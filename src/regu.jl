@@ -1,19 +1,19 @@
 # Test matrices for regularization methods from Hansen's
 # Regularization toolbox
-       
+
 
 """
 Oscillating Matrix
 ==================
-A matrix `A` is called oscillating if `A` is totally 
-    nonnegative and if there exists an integer `q > 0` such that 
+A matrix `A` is called oscillating if `A` is totally
+    nonnegative and if there exists an integer `q > 0` such that
     `A^q` is totally positive.
 
 *Input options:*
 
 + [type,] Σ: the singular vaule spectrum of the matrix.
 
-+ [type,] dim, mode: `dim` is the dimension of the matrix. 
++ [type,] dim, mode: `dim` is the dimension of the matrix.
         `mode = 1`: geometrically distributed singular values.
         `mode = 2`: arithmetrically distributed singular values.
 
@@ -21,10 +21,10 @@ A matrix `A` is called oscillating if `A` is totally
 
 *Groups:* ['symmetric','posdef', 'random', 'eigen'] 
 
-*References:* 
+*References:*
 
-**Per Christian Hansen**, Test matrices for 
-    regularization methods. SIAM J. SCI. COMPUT Vol 16, 
+**Per Christian Hansen**, Test matrices for
+    regularization methods. SIAM J. SCI. COMPUT Vol 16,
     No2, pp 506-512 (1995).
 """
 function oscillate(Σ::Vector{T}) where T
@@ -81,7 +81,7 @@ function show(io::IO, p::RegProbNoSolution)
 end
 
 # The following test problems are derived from Per Christian Hansen's
-# Regularization tools for MATLAB. 
+# Regularization tools for MATLAB.
 # http://www.imm.dtu.dk/~pcha/Regutools/
 #
 # BSD License
@@ -119,14 +119,14 @@ A classical test problem for regularization algorithms:
     This is a mildly ill-posed problem. It is a discretization
     of a first kind Fredholm integral equation whose kernel K
     is the Green's function for the second derivative.
- 
+
 *Input options:*
 
-+ [type,] dim, example, [matrixonly]: the dimension of the 
++ [type,] dim, example, [matrixonly]: the dimension of the
         matrix is `dim`.  One choose between between the following right-hand
-        g and solution f: 
+        g and solution f:
 
- 
+
         example = 1 gives g(s) = (s^3 - s)/6, f(t) = t.
 
         example = 2 gives g(s) = exp(s) + (1 -e)s - 1, f(t) = exp(t)
@@ -136,21 +136,21 @@ A classical test problem for regularization algorithms:
                            f(t) = | t, t < 0.5
                            f(t) = | 1- t, t >= 0.5.
 
-        If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be 
-        generated (`matrixonly = true` by default).             
+        If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be
+        generated (`matrixonly = true` by default).
 
 + [type,] dim, [matrixonly]: `example = 1`.
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
-**P. C. Hansen**, Regularization tools: A MATLAB pacakge for 
-    analysis and solution of discrete ill-posed problems. 
+**P. C. Hansen**, Regularization tools: A MATLAB pacakge for
+    analysis and solution of discrete ill-posed problems.
     Numerical Algorithms, 6(1994), pp.1-35
 """
 function deriv2(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true) where T
-    h = convert(T, one(T)/n); sqh = sqrt(h) 
+    h = convert(T, one(T)/n); sqh = sqrt(h)
     h32 = h*sqh; h2 = h^2; sqhi = one(T)/sqh
     t = 2/3; A = zeros(T, n, n)
 
@@ -162,7 +162,7 @@ function deriv2(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true
         end
     end
     A = A + tril(A, -1)'
-    
+
     if matrixonly
         return A
     else
@@ -171,7 +171,7 @@ function deriv2(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true
         if example == 1
             # compute b
             [b[i] = h32*(i - 0.5)*((i^2 + (i-1)^2)*h2/2 - 1)/6 for i = 1:n]
-        
+
             # compute x
             [x[i] = h32*(i - 0.5) for i = 1:n]
         elseif example == 2
@@ -186,14 +186,14 @@ function deriv2(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true
             end
             for i = div(n, 2)+1:n
                 s1 = i*h; s12 = s1^2; s2 = (i-1)*h; s22 = s2^2
-                b[i] = sqhi*(-(s12 + s22)*(s12 - s22) + 4*(s1^3 - s2^3) 
+                b[i] = sqhi*(-(s12 + s22)*(s12 - s22) + 4*(s1^3 - s2^3)
                        - 4.5*(s12 - s22) + h)/24
             end
             [x[i] = sqhi*((i*h)^2 - ((i-1)*h)^2)/2 for i = 1:div(n, 2)]
             [x[i] = sqhi*(h - ((i*h)^2 - ((i-1)*h)^2)/2) for i = div(n, 2)+1:n]
         else
             throw(ArgumentError("Illegal value of example."))
-        end       
+        end
         return RegProb(A, b, x)
     end
 end
@@ -211,21 +211,21 @@ This test problem uses a first-kind Fredholm integral equation
 *Input options:*
 
 + [type,] dim, [matrixonly]: the dimesion of the matrix `dim` must be even.
-    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
-**C. B. Shaw, Jr.**, Improvements of the resolution of 
-    an instrument by numerical solution of an integral equation. 
+**C. B. Shaw, Jr.**, Improvements of the resolution of
+    an instrument by numerical solution of an integral equation.
     J. Math. Ana. Appl. 37 (1972), 83-112.
 """
 function shaw(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     mod(n, 2) == 0 || error("The dimension of the matrix must be even.")
     h = π/n; A = zeros(T, n, n)
-    
+
     # compute A
     co = cos.(-π/2 .+ T[.5:n-.5;] .* h)
     psi = π .* sin.(-π/2 .+ T[.5:n-.5;] .* h)
@@ -238,7 +238,7 @@ function shaw(::Type{T}, n::Integer, matrixonly::Bool = true) where T
         A[i, n-i+1] = (2*co[i])^2
     end
     A = A + triu(A, 1)'; A = A*h
-    
+
     if matrixonly
         return A
     else
@@ -264,25 +264,25 @@ A Problem with a Discontinuous Solution
 
 *Input options:*
 
-+ [type,] dim, t1, t2, [matrixonly]: the dimension of matrix is `dim`. 
-    `t1` and `t2` are two real scalars such that `0 < t1 < t2 < 1`. 
-    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
++ [type,] dim, t1, t2, [matrixonly]: the dimension of matrix is `dim`.
+    `t1` and `t2` are two real scalars such that `0 < t1 < t2 < 1`.
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
 + [type,] n, [matrixonly]: `t1 = 1/3` and `t2 = 2/3`.
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
-**G. M. Wing**, A Primer on Integral Equations of the 
+**G. M. Wing**, A Primer on Integral Equations of the
     First Kind, Society for Industrial and Applied Mathematics, 1991, p. 109.
 """
 function wing(::Type{T}, n::Integer, t1::Real, t2::Real, matrixonly = true) where T
     t1 < t2 || error("t1 must be smaller than t2")
     A = zeros(T, n, n)
     h = T(1/n)
-    
+
     # compute A
     sti = (T[1:n;] .- 0.5) * h
     for i in 1:n
@@ -308,18 +308,18 @@ wing(::Type, args...) = throw(MethodError(wing, Tuple(args)))
 """
 Severely Ill-posed Problem Suggested by Fox & Goodwin
 =====================================================
-This is a model problem discretized by simple quadrature, which does 
+This is a model problem discretized by simple quadrature, which does
 not satifiy the discrete Picard condition for the small singular values.
 
 *Input options:*
 
 + [type,] dim, [matrixonly]: `dim` is the dimension of the matrix.
-    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
 **C. T. H. Baker**, The Numerical Treatment of Integral
     Equations, Clarendon Press, Oxford, 1977, p. 665.
@@ -350,20 +350,20 @@ Inverse Heat Equation
 
 *Input options:*
 
-+ [type,] dim, κ, [matrixonly]: `dim` is the dimension of the matrix and 
++ [type,] dim, κ, [matrixonly]: `dim` is the dimension of the matrix and
     `dim` must be even. `κ` controls the ill-conditioning of the matrix.
-    (`κ = 5` gives a well-conditioned problem and `κ = 1` 
-     gives an ill conditoned problem). 
-    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
+    (`κ = 5` gives a well-conditioned problem and `κ = 1`
+     gives an ill conditoned problem).
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
 + [type,] n, [matrixonly]: `κ = 1`.
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
-**A. S. Carasso**, Determining surface temperatures 
+**A. S. Carasso**, Determining surface temperatures
     from interior observations, SIAM J. Appl. Math. 42 (1982), 558-574.
 """
 function heat(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true) where T
@@ -383,7 +383,7 @@ function heat(::Type{T}, n::Integer, κ::Real, matrixonly::Bool = true) where T
     else
         # compute the vectors x and b
         x = zeros(T, n)
-        for i = 1:div(n,2)  
+        for i = 1:div(n,2)
             ti = i*20/n
             if ti < 2
                 x[i] = 0.75*ti^2/4
@@ -409,14 +409,14 @@ Fredholm Integral Equation of the First Kind
 *Input options:*
 
 + [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
-    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
-**M. L. Baart**, The use of auto-correlation for 
+**M. L. Baart**, The use of auto-correlation for
     pesudo-rank determination in noisy ill-conditioned linear-squares
     problems, IMA, J. Numer. Anal. 2 (1982), 241-247.
 """
@@ -430,7 +430,7 @@ function baart(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     n1  = n + 1
     nh  = div(n,2)
     f3  = exp.(ihs[2:n1]) .- exp.(ihs[1:n])
-    
+
     # compute A
     for j = 1:n
         f1  = f3
@@ -444,7 +444,7 @@ function baart(::Type{T}, n::Integer, matrixonly::Bool = true) where T
         end
         A[:,j] .= c.*(f1 .+ 4f2 .+ f3)
     end
-    
+
     if matrixonly
         return A
     else
@@ -471,14 +471,14 @@ Phillips's \"Famous\" Problem
 *Input options:*
 
 + [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
-    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
+    If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
-**D. L. Phillips**, A technique for the numerical 
+**D. L. Phillips**, A technique for the numerical
     solution of certain integral equations of the first kind, J. ACM
     9 (1962), 84-97.
 """
@@ -495,7 +495,7 @@ function phillips(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     end
     r1[n4 + 1] = h / 2 + 9 / (h * π^2) * (cos(4 * π / n) - 1)
     A = toeplitz(T, r1)
-    
+
     if matrixonly
         return A
     else
@@ -505,16 +505,14 @@ function phillips(::Type{T}, n::Integer, matrixonly::Bool = true) where T
         for i = (div(n,2) + 1):n
             t1 = -6 + i*h
             t2 = t1 - h
-            b[i] = t1*(6-abs(t1)/2) + 
-                ((3 - abs(t1)/2)*sin(c*t1) - 2/c*(cos(c*t1) - one(T)))/c -  
+            b[i] = t1*(6-abs(t1)/2) +
+                ((3 - abs(t1)/2)*sin(c*t1) - 2/c*(cos(c*t1) - one(T)))/c -
                 t2*(6 - abs(t2)/2) -
                 ((3 - abs(t2)/2)*sin(c*t2) - 2/c*(cos(c*t2) - one(T)))/c
             b[n - i + 1] = b[i]
         end
-        for i in 1:n
-            b[i] ./= sqrt(h)
-        end
-    
+        b ./= sqrt(h)
+
         # compute x
         x = zeros(T, n)
         x[2n4+1:3n4] = (h .+ diff(sin.(T[0:h:(3 + 10 * eps(T));] * c)) / c) / sqrt(h)
@@ -525,15 +523,15 @@ end
 phillips(args...) = phillips(Float64, args...)
 phillips(::Type, args...) = throw(MethodError(phillips, Tuple(args)))
 
-# replicates the grid vectors xgv and ygv to produce a full grid. 
+# replicates the grid vectors xgv and ygv to produce a full grid.
 function meshgrid(xgv, ygv)
     X = [i for j in ygv, i in xgv]
     Y = [j for j in ygv, i in xgv]
     return X, Y
 end
 
-# MATLAB rounding behavior 
-# This is equivalent to RoundNearestTiesAway 
+# MATLAB rounding behavior
+# This is equivalent to RoundNearestTiesAway
 # and it can be used for both Julia v0.3, v0.4
 function round_matlab(x::AbstractFloat)
     y = trunc(x)
@@ -545,42 +543,42 @@ round_matlab(::Type{T}, x::AbstractFloat) where T<:Integer = trunc(T,round_matla
 """
 One-dimensional Gravity Surverying Problem
 ==========================================
-Discretization of a 1-D model problem in gravity surveying, in 
+Discretization of a 1-D model problem in gravity surveying, in
     which a mass distribution f(t) is located at depth d, while the
     vertical component of the gravity field g(s) is measured at the
-    surface. 
+    surface.
 
 *Input options:*
 
 + [type,] dim, example, a, b, d, [matrixonly]: `dim` is the dimension
         of the matrix. Three examples are implemented.
-        
+
 
        (a) example = 1 gives f(t) = sin(π*t) + 0.5*sin(2*π*t).
 
        (b) example = 2 gives f(t) = piecewise linear function.
 
        (c) example = 3 gives f(t) = piecewise constant function.
- 
-       The t integration interval is fixed to [0, 1], while the s 
+
+       The t integration interval is fixed to [0, 1], while the s
        integration interval [a, b] can be specified by the user.
-       The parameter d is the depth at which the magnetic deposit is 
-       located. The larger the d, the faster the decay of the singular values. 
+       The parameter d is the depth at which the magnetic deposit is
+       located. The larger the d, the faster the decay of the singular values.
 
        If matrixonly = false, the matrix A and vectors b and x in the linear system Ax = b will be generated
        (matrixonly = true by default).
 
 + [type,] dim, example, [matrixonly]: `a = 0, b = 1, d = 0.25`;
 
-+ [type,] dim, [matrixonly]: `example = 1, a = 0, b = 1, d = 0.25`.            
++ [type,] dim, [matrixonly]: `example = 1, a = 0, b = 1, d = 0.25`.
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
-**G. M. Wing and J. D. Zahrt**, A Primer on Integral Equations of 
+**G. M. Wing and J. D. Zahrt**, A Primer on Integral Equations of
 the First Kind, Society for Industrial and Applied Mathematics, Philadelphia, 1991, p. 17.
 """
-function gravity(::Type{T}, n::Integer, example::Integer, 
+function gravity(::Type{T}, n::Integer, example::Integer,
                     a::Number, b::Number, d::Number, matrixonly::Bool = true) where T
     dt = one(T)/n
     a  = T(a)
@@ -609,23 +607,23 @@ function gravity(::Type{T}, n::Integer, example::Integer,
             error("Illegal value of example")
         end
         b = A*x
-        return RegProb(A, b, x) 
+        return RegProb(A, b, x)
     end
 end
 
-gravity(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true) where T = 
+gravity(::Type{T}, n::Integer, example::Integer, matrixonly::Bool = true) where T =
     gravity(T, n, example, 0, 1, 0.25, matrixonly)
 
-gravity(::Type{T}, n::Integer, matrixonly::Bool = true) where T = 
-           gravity(T, n, 1, 0, 1, 0.25, matrixonly) 
+gravity(::Type{T}, n::Integer, matrixonly::Bool = true) where T =
+           gravity(T, n, 1, 0, 1, 0.25, matrixonly)
 gravity(args...) = gravity(Float64, args...)
 gravity(::Type, args...) = throw(MethodError(gravity, Tuple(args)))
 
 """
 Image Deblurring Test Problem
 =============================
-The generated matrix A is an `n*n-by-n*n` sparse, symmetric, 
-           doubly block Toeplitz matrix that models blurring of an n-by-n 
+The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
+           doubly block Toeplitz matrix that models blurring of an n-by-n
            image by a Gaussian point spread function.
 
 *Input options:*
@@ -633,8 +631,8 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
 + [type,] dim, band, σ, [matrixonly]: the dimension of the matrix
           is `dim^2`. `band` is the half-bandwidth, only matrix elements within
           a distance `band-1` from the diagonal are nonzero. `σ` controls the
-          width of the Gaussin point spread function. The larger the `σ`, the 
-          wider the function and the more ill posed the problem. 
+          width of the Gaussin point spread function. The larger the `σ`, the
+          wider the function and the more ill posed the problem.
           If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
               (`matrixonly = true` by default).
 
@@ -642,7 +640,7 @@ The generated matrix A is an `n*n-by-n*n` sparse, symmetric,
 
 *Groups:* ["regprob", "sparse"]
 """
-function blur(::Type{T}, n::Integer, band::Integer, σ::Number, 
+function blur(::Type{T}, n::Integer, band::Integer, σ::Number,
                  matrixonly::Bool = true) where T
     σ = T(σ)
     z = [exp.(-(T[0:band-1;].^2) / (2 * σ^2)); zeros(T, n - band)]
@@ -660,7 +658,7 @@ function blur(::Type{T}, n::Integer, band::Integer, σ::Number,
 
         m = max(n, 2 * n6 + 1 + n2 + n12)
         x = zeros(T, m, m)
-        
+
         # add a large ellipse
         Te = zeros(T, n6, n3)
         for i = 1:n6
@@ -687,8 +685,8 @@ function blur(::Type{T}, n::Integer, band::Integer, σ::Number,
         Te = [reverse(Te, dims=2) Te;]
         Te = [reverse(Te, dims=1); Te]
         x[n6 .+ [1:2n6;], n3 - 1 .+ [1:2n3;]] = x[n6 .+ [1:2n6;], n3 - 1 .+ [1:2n3;]] .+ 2Te
-        x[findall((i) -> i==3, x)] = 2
-        
+        x[findall((i) -> i==3, x)] .= 2
+
         # Add a triangle
         Te = triu(ones(T, n3, n3))
         mT, nT = size(Te)
@@ -702,8 +700,8 @@ function blur(::Type{T}, n::Integer, band::Integer, σ::Number,
         x[n2 + n12 .+ [1:mT;], n2 .+ [1:nT;]] = 4Te
 
         x = reshape(x[1:n, 1:n], n^2)
-        b = A * x 
-        return RegProb(A, b, x) 
+        b = A * x
+        return RegProb(A, b, x)
     end
 end
 blur(::Type{T}, n::Integer, matrixonly::Bool = true) where T = blur(T, n, 3, 0.7, matrixonly)
@@ -728,23 +726,23 @@ kind with kernel
    `K(s,t) = (1/(σ√(2π)))*exp(-0.5*((s-t)/σ)^2)`,
 
 with `σ = 0.014234`, and it is dscretized by means of a Galerkin method
-with `n` orthonormal basis functions. The right-hand side `b` consists of 
+with `n` orthonormal basis functions. The right-hand side `b` consists of
 a measured distribution function of stellar parallaxes, and its length
-is fixed at `26`, i.e, the matrix `A` is `26×n`. The exact solution, 
+is fixed at `26`, i.e, the matrix `A` is `26×n`. The exact solution,
 which represents the true distribution of stellar parallaxes, is unknown.
 
 *Input options:*
 
-+ [type,] dim, [matrixonly]: the generated matrix is `26×dim`. If 
-    `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated 
-    (`matrixonly = true` by default). 
++ [type,] dim, [matrixonly]: the generated matrix is `26×dim`. If
+    `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
+    (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
 *References:*
 
 **W. M. Smart**, Stellar Dynamics, Cambridge University Press, Cambridge,
-(1938), p. 30. 
+(1938), p. 30.
 """
 function parallax(::Type{T}, n::Integer, matrixonly::Bool=true) where T
     # Intialization
@@ -763,17 +761,17 @@ function parallax(::Type{T}, n::Integer, matrixonly::Bool=true) where T
     A = 16exp.(-T(0.5).*((ss .+ hsh .- xx .- hxh)./σ).^2)
 
     A .+= 4(exp.(-T(0.5).*((ss .+ hsh .- xx)./σ).^2) .+
-              exp.(-T(0.5).*((ss .+ hsh .- xx .- hx)./σ).^2) .+ 
-              exp.(-T(0.5).*((ss .- xx .- hxh)./σ).^2) .+ 
+              exp.(-T(0.5).*((ss .+ hsh .- xx .- hx)./σ).^2) .+
+              exp.(-T(0.5).*((ss .- xx .- hxh)./σ).^2) .+
               exp.(-T(0.5).*((ss .+ hs .- xx .- hxh)./σ).^2))
 
-    A .+= (exp.(-T(0.5).*((ss .- xx)./σ).^2) .+ 
-           exp.(-T(0.5).*((ss .+ hs .- xx)./σ).^2) .+ 
-           exp.(-T(0.5).*((ss .- xx .- hx)./σ).^2) .+ 
+    A .+= (exp.(-T(0.5).*((ss .- xx)./σ).^2) .+
+           exp.(-T(0.5).*((ss .+ hs .- xx)./σ).^2) .+
+           exp.(-T(0.5).*((ss .- xx .- hx)./σ).^2) .+
            exp.(-T(0.5).*((ss .+ hs .- xx .- hx)./σ).^2))
-    
+
     A = T(sqrt(hs*hx)/(36*σ*sqrt(2*π)))*A
-    
+
     if matrixonly
         return A
     else
@@ -781,7 +779,7 @@ function parallax(::Type{T}, n::Integer, matrixonly::Bool=true) where T
         b = T[3;7;7;17;27;39;46;51;56;50;43;45;43;32;33;29;
              21;12;17;13;15;12;6;6;5;5]/T(sqrt(hs)*640)
         return RegProbNoSolution(A,b)
-    end        
+    end
 end
 parallax(args...) = parallax(Float64, args...)
 parallax(::Type, args...) = throw(MethodError(parallax, Tuple(args)))
@@ -793,9 +791,9 @@ Artifically generated discrete ill-posed problem.
 
 *Input options:*
 
-+ [type,] dim, t_max, [matrixonly]: `dim` is the dimension of the 
++ [type,] dim, t_max, [matrixonly]: `dim` is the dimension of the
               matrix. `t_max` controls the length of the pulse train.
-              If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be 
+              If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be
               generated (`matrixonly = true` by default). The solution x
               consists a unit step at t = .5 and a pulse train of spike
               of decreasing magnitude at t = .5, 1.5, 2.5, ....
@@ -806,11 +804,11 @@ Artifically generated discrete ill-posed problem.
 """
 function spikes(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = true) where T
     del = convert(T, t_max/n)
-    
+
     # compute A
     t, sigma = meshgrid(T[del:del:t_max;], T[del:del:t_max;])
     A = sigma ./ (2 .* sqrt.(π .* t.^3)) .* exp.(-(sigma.^2) ./ (4 .* t))
-    
+
     if matrixonly
         return A
     else
@@ -819,7 +817,7 @@ function spikes(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = true) 
         heights[2] = 9; heights[3] = 5; heights[4] = 4; heights[5] = 3
         x = zeros(T, n); n_h = one(Integer)
         peak = convert(T, 0.5/t_max); peak_dist = one(T)/ t_max
-        if peak < 1            
+        if peak < 1
             n_peak = round_matlab(Integer, peak*n)
             x[n_peak] = heights[n_h]
             x[n_peak+1:n] = ones(T, n-n_peak)
@@ -831,10 +829,10 @@ function spikes(::Type{T}, n::Integer, t_max::Integer, matrixonly::Bool = true) 
             peak = peak + peak_dist; n_h = n_h + 1
         end
         b = A*x
-        return RegProb(A, b, x) 
+        return RegProb(A, b, x)
     end
 end
-spikes(::Type{T}, n::Integer, matrixonly::Bool = true) where T = 
+spikes(::Type{T}, n::Integer, matrixonly::Bool = true) where T =
          spikes(T, n, 5, matrixonly)
 spikes(args...) = spikes(Float64, args...)
 spikes(::Type, args...) = throw(MethodError(spikes, Tuple(args)))
@@ -847,9 +845,9 @@ function tomo(::Type{T}, n::Integer) where T
 end
 
 """
-Integral Equation with No square Integrable Solution 
+Integral Equation with No square Integrable Solution
 ====================================================
-Discretization of a first kind Fredholm integral equation with 
+Discretization of a first kind Fredholm integral equation with
 kernel `K` and right-hand side `g` given by
                     `K(s,t) = 1/(s+t+1), g(s) = 1`,
 where both integration intervals are `[0, 1]`. The matrix `A`
@@ -857,17 +855,17 @@ is a Hankel matrix.
 
 *Input options:*
 
-+ [type,] dim, [matrixonly]: `dim` is the dimension of the matrix. 
++ [type,] dim, [matrixonly]: `dim` is the dimension of the matrix.
               If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will also
               be generated (`matrixonly = true` by default).
 
 *Groups:* ["regprob"]
 
-*References:* 
+*References:*
 
 **F. Ursell**, Introduction to the theory of linear
               integral equations., Chapter 1 in L. M. Delves & J. Walsh,
-              Numerical Solution of Integral Equations, Clarendon Press, 
+              Numerical Solution of Integral Equations, Clarendon Press,
               1974.
 """
 function ursell(::Type{T}, n::Integer, matrixonly::Bool = true) where T
@@ -888,7 +886,7 @@ function ursell(::Type{T}, n::Integer, matrixonly::Bool = true) where T
     else
         # compute the right-hand side b
         b = ones(T,n)/convert(T, sqrt(n))
-        return RegProbNoSolution(A, b) 
+        return RegProbNoSolution(A, b)
     end
 end
 ursell(args...) = ursell(Float64, args...)

@@ -126,13 +126,13 @@ function gunzip(fname)
     endswith(fname, ".gz") || error("gunzip: $fname: unknown suffix")
 
     destname = rsplit(fname, ".gz", limit=2)[1]
-
+    BUFFSIZE = 1000000
     open(destname, "w") do f
         GZip.open(fname) do g
-            buffer = read(g, 10000)
+            buffer = read(g, BUFFSIZE)
             while length(buffer) > 0
                 write(f, buffer)
-                buffer = read(g, 1000000)
+                buffer = read(g, BUFFSIZE)
             end
         end
     end
