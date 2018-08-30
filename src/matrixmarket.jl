@@ -23,6 +23,8 @@ function mmread(filename::AbstractString)
     end
 end
 
+using Mmap
+
 const COORD = "coordinate"
 const ARRAY = "array"
 const MATRIX = "matrix"
@@ -77,8 +79,7 @@ function mmread_matrix(file::IO, line, form, field, symm)
 
     if form == COORD
         m, n, nz = parseint(line)
-        b = UInt8[]
-        readbytes!(file, b, typemax(Int))
+        b = Mmap.mmap(file, grow=false, shared=false)
         rv = Vector{Int}(undef, nz)
         cv = Vector{Int}(undef, nz)
         vv = Vector{T}(undef, nz)
@@ -86,8 +87,7 @@ function mmread_matrix(file::IO, line, form, field, symm)
         result = mksparse!(m, n, rv, cv, vv)
     elseif form == ARRAY
         m, n = parseint(line)
-        b = UInt8[]
-        readbytes!(file, b, typemax(Int))
+        b = Mmap.mmap(file, grow=false, shared=false)
         p = 1
         result = zeros(T, m, n)
         for c = 1:n
