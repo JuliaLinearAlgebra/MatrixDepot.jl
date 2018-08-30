@@ -306,8 +306,13 @@ function list(r::Tuple, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
     sort!(intersect(listdb.(r)...))
 end
+function list(pred::Function, db::MatrixDatabase=MATRIX_DB)
+    dali = [ data for data in values(db.data) if pred(data) ]
+    sort!(getfield.(dali, :name))
+end
 
-const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,Symbol,AbstractVector,Tuple}
+const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,Symbol,
+                      AbstractVector,Tuple,Function}
 
 "return information about all matrices selected by pattern"
 function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
@@ -542,3 +547,47 @@ function matrixdepot()
     println(overview(MATRIX_DB))
 end
 
+###
+# Predefined predicates for MatrixData
+###
+export isgeneral, issymmetric, isskew, ishermitian
+export iscomplex, isreal, isinteger, ispattern
+export predm, predn, prednz, predmn
+
+import Base: isreal, isinteger
+import LinearAlgebra: issymmetric, ishermitian
+
+function issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})
+    data.properties[] !== nothing && data.properties[].symmetry isa T
+end
+function isfield(data::RemoteMatrixData, T::Type{<:MMField})
+    data.properties[] !== nothing && data.properties[].field isa T
+end
+
+isgeneral(data::RemoteMatrixData) = issymmetry(data, MMSymmetryGeneral)
+issymmetric(data::RemoteMatrixData) = issymmetry(data, MMSymmetrySymmetric)
+isskew(data::RemoteMatrixData) = issymmetry(data, MMSymmetrySkewSymmetric)
+ishermitian(data::RemoteMatrixData) = issymmetry(data, MMSymmetryHermitian)
+isgeneral(data::MatrixData) = !issymmetric(data) && !isskew(data) && !ishermitian(data)
+issymmetric(data::MatrixData) = data.name in list(:symmetric)
+isskew(data::MatrixData) = false
+ishermitian(data::MatrixData) = false
+
+iscomplex(data::RemoteMatrixData) = isfield(data, MMFieldComplex)
+isreal(data::RemoteMatrixData) = isfield(data, MMFieldReal)
+isinteger(data::RemoteMatrixData) = isfield(data, MMFieldInteger)
+ispattern(data::RemoteMatrixData) = isfield(data, MMFieldPattern)
+iscomplex(data::MatrixData) = false
+isreal(data::MatrixData) = false
+isinteger(data::MatrixData) = false
+ispattern(data::MatrixData) = false
+
+remotepred(data::RemoteMatrixData) = data.properties[] !== nothing
+remotepred(data::MatrixData) = false
+
+predm(f::Function) = data::MatrixData -> remotepred(data) && f(data.properties[].m)
+predn(f::Function) = data::MatrixData -> remotepred(data) && f(data.properties[].n)
+prednz(f::Function) = data::MatrixData -> remotepred(data) && f(data.properties[].nz)
+function predmn(f::Function)
+    data::MatrixData -> remotepred(data) && f(data.properties[].m, data.properties[].n)
+end
