@@ -295,11 +295,11 @@ flatten(a) = collect(Iterators.flatten(a))
 list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasname(i), '$')), db)
 function list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
-    sort!(flatten(listdb.(aliasname.(r) ∩ keys(db.aliases))))
+    unique!(sort!(flatten(listdb.(aliasname.(r) ∩ keys(db.aliases)))))
 end
 function list(r::AbstractVector, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
-    sort!(flatten(listdb.(r)))
+    unique!(sort!(flatten(listdb.(r))))
 end
 function list(r::Tuple, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
