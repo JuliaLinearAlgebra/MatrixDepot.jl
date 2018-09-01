@@ -52,7 +52,7 @@ data = mdopen("DRIVCAV/cavity14")
 @test MatrixDepot.fileinfo(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing
 
 # read from a pipeline
-@test open(`printf '%%matrixmarket matrix array real general\n1 1\n2.5\n'`) do io
+@test open(`printf '%%%%matrixmarket matrix array real general\n1 1\n2.5\n'`) do io
     MatrixDepot.mmread(io) == reshape([2.5], 1, 1)
 end
 
