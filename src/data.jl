@@ -119,6 +119,7 @@ preferred(::Type{TURemoteType}) = uf_remote
 preferred(::Type{MMRemoteType}) = MM_REMOTE
 alternate(::Type{TURemoteType}) = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOTE
 alternate(::Type{MMRemoteType}) = MM_REMOTE
+toggle_remote(T=TURemoteType) = begin global uf_remote = alternate(T) end
 """
     The place to store all matrix data in process    
 """

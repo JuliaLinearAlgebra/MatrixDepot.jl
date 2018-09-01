@@ -85,7 +85,10 @@ end
 function downloadindex(remote::RemoteType)
     file = localindex(remote)
     url = indexurl(remote)
-    isfile(file) || download(url, file)
+    if !isfile(file)
+        println("dowloading index file $url")
+        download(url, file)
+    end
     nothing
 end
 

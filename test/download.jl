@@ -7,7 +7,7 @@ if isdir(string(dirdata, '/', "mm"))
 end
 
 #download
-MatrixDepot.update()
+# MatrixDepot.update() # already done when initializing directory
 # uf
 matrixdepot("1138_bus", :get)
 matrixdepot("HB/1138_bus", :get)
@@ -23,8 +23,7 @@ matrixdepot("1138_bus", :s) #search
 #matrixdepot("Harwell-Boeing/psadmit/662_bus")
 r = matrixdepot("Pajek/Journals", :read, meta = true)
 display(r["Journals"])
-MatrixDepot.update()
-
+# MatrixDepot.update() # already done
 
 matrixdepot("Bates/*", :get)
 B = matrixdepot("Bates/Chem97Zt", :r)
@@ -39,9 +38,10 @@ matrixdepot("Harwell-Boeing/lanpro/nos5", :get)
 matrixdepot()
 # rm data
 
-
+#=
 rm(string(dirdata, '/', "uf_matrices.html"))
 rm(string(dirdata, '/', "mm_matrices.html"))
 rm(string(dirdata, '/', "uf"), recursive = true)
 rm(string(dirdata, '/', "mm"), recursive = true)
+=#
 
