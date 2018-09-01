@@ -37,18 +37,136 @@ matrixdepot("epb0", :get)
 matrixdepot("Harwell-Boeing/lanpro/nos5", :get)
 matrixdepot()
 
+@testset "load and read metadata" begin
 # an example with rhs and solution
-data = mdopen("DRIVCAV/cavity01")
-@test MatrixDepot.loadmatrix(data) === nothing
-@test size(matrix(data)) == (317, 317)
-@test size(rhs(data), 1) == 317
-@test size(solution(data), 1) == 317
+data = mdopen("DRIVCAV/cavity14")
+@test size(matrix(data)) == (2597, 2597)
+@test size(rhs(data), 1) == 2597
+@test size(solution(data), 1) == 2597
 
 # an example loading a txt file
 data = mdopen("Pajek/Journals")
 @test length(metareader(data, "Journals_nodename.txt")) > 100
 
+io = IOBuffer("""
+%%Matrixmarket matrix array real general
+2 1
+2.1
+3.14e0
+""")
+@test MatrixDepot.mmread(io) == reshape([2.1; 3.14], 2, 1)
 
+io = IOBuffer("""
+%%Matrixmarket matrix array real symmetric
+2 2
+2.1
+3.14e0
+4
+""")
+@test MatrixDepot.mmread(io) == [2.1 3.14; 3.14 4.0]
+
+io = IOBuffer("""
+%%Matrixmarket matrix array real skew-symmetric
+2 2
+2.1
+3.14e0
+""")
+@test MatrixDepot.mmread(io) == [0 -2.1; 2.1 0]
+
+io = IOBuffer("""
+%%Matrixmarket matrix array complex herMitian
+2 2
+2.1 0
+3.14e0 1.0
+3.0 0
+""")
+@test MatrixDepot.mmread(io) == [2.1 3.14-im; 3.14+im 3]
+
+io = IOBuffer("""
+%%Matrixmarket matrix coordinate pattern general
+2 2 3
+1 2
+2 1
+2 2
+""")
+@test MatrixDepot.mmread(io) == [false true; true true]
+
+io = IOBuffer("""
+%%Matrixmarket matrix coordinate pattern general
+2 2 3
+1 2
+3 1
+2 2
+""")
+@test_throws ArgumentError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matricxmarket matrix array real general
+2 1
+""")
+@test_throws Meta.ParseError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matricx array real general
+2 1
+""")
+@test_throws Meta.ParseError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matrix arroy real general
+2 1
+""")
+@test_throws Meta.ParseError MatrixDepot.mmread(io)
+
+
+io = IOBuffer("""
+%%Matrixmarket matrix array rehal general
+2 1
+""")
+@test_throws Meta.ParseError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matrix array real fluffy
+2 1
+""")
+@test_throws Meta.ParseError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matrix array real general
+2 2
+1 2
+""")
+@test_throws BoundsError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matrix array real symmetric
+2 1
+1 2
+""")
+@test_throws DimensionMismatch MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matrix array real symmetric
+2 2
+1 2
+""")
+@test_throws BoundsError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matrix array complex hermitian
+2 2
+1 2
+2 3
+""")
+@test_throws BoundsError MatrixDepot.mmread(io)
+
+io = IOBuffer("""
+%%Matrixmarket matrix array real skew-symmetric
+2 2
+""")
+@test_throws BoundsError MatrixDepot.mmread(io)
+
+end
 # rm data
 
 #=

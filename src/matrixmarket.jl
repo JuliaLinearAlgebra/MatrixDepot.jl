@@ -1,13 +1,3 @@
-# Part of the code of the function denseread come from 
-#The MatrixMarket.jl package which is licensed under the MIT Expat License:
-
-#Copyright (c) 2013: Viral B. Shah.
-
-#Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-#The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
     mmread(filename|io)
@@ -58,6 +48,16 @@ end
 argerr(s::AbstractString) = throw(ArgumentError(s))
 parserr(s::AbstractString) = throw(Meta.ParseError(s))
 
+function getbytes(io::IOStream)
+    if isfile(io)
+        Mmap.mmap(io, grow=false, shared=false)
+    else
+        read(io)
+    end
+end
+
+getbytes(io::IO) = read(io)
+
 function mmread_matrix(file::IO, line, form, field, symm)
     FMAP = Dict(REAL => (3, Float64),
                 COMPLEX => (4, ComplexF64),
@@ -79,7 +79,7 @@ function mmread_matrix(file::IO, line, form, field, symm)
 
     if form == COORD
         m, n, nz = parseint(line)
-        b = Mmap.mmap(file, grow=false, shared=false)
+        b = getbytes(file)
         rv = Vector{Int}(undef, nz)
         cv = Vector{Int}(undef, nz)
         vv = Vector{T}(undef, nz)
@@ -87,7 +87,7 @@ function mmread_matrix(file::IO, line, form, field, symm)
         result = mksparse!(m, n, rv, cv, vv)
     elseif form == ARRAY
         m, n = parseint(line)
-        b = Mmap.mmap(file, grow=false, shared=false)
+        b = getbytes(file)
         p = 1
         result = zeros(T, m, n)
         for c = 1:n

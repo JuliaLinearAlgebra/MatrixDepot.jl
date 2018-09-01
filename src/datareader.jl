@@ -27,9 +27,6 @@ The data may be accessed using the keys contained in data.metadata.
 The keys are identical to the names of the files keeping the data.
 """
 function metareader(data::RemoteMatrixData)
-    if length(data.metadata) == 0
-        loadmatrix(data)
-    end
     result = Dict{String,Any}()
     for name in data.metadata
         result[name] = metareader(data, name)
@@ -45,9 +42,6 @@ return specific data files (matrix, rhs, solution, or other metadata.
 The `key` must be contained in data.metadata or `nothing` is returned.
 """
 function metareader(data::RemoteMatrixData, name::AbstractString)
-    if length(data.metadata) == 0
-        loadmatrix(data)
-    end
     dc = data.datacache
     if haskey(dc, name)
         return dc[name]

@@ -174,7 +174,7 @@ end
 # MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function loadmatrix(data::RemoteMatrixData, db::MatrixDatabase=MATRIX_DB)   
+function loadmatrix(data::RemoteMatrixData, db::MatrixDatabase)   
     file = matrixfile(data)
     if isfile(file)
         return

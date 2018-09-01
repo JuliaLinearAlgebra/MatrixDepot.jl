@@ -410,7 +410,11 @@ The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
 If the pattern has not a unique resolution, an error is thrown.
 """
 function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB)
-    mdopen(mdata(p, db))
+    data = mdata(p, db)
+    if isempty(data.metadata)
+        loadmatrix(data, db)
+    end
+    mdopen(data) # set status flag
 end
 
 """
