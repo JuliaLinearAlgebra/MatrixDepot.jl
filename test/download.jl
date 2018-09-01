@@ -36,6 +36,19 @@ matrixdepot("epb0", :get)
 # matrix market
 matrixdepot("Harwell-Boeing/lanpro/nos5", :get)
 matrixdepot()
+
+# an example with rhs and solution
+data = mdopen("DRIVCAV/cavity01")
+@test MatrixDepot.loadmatrix(data) === nothing
+@test size(matrix(data)) == (317, 317)
+@test size(rhs(data), 1) == 317
+@test size(solution(data), 1) == 317
+
+# an example loading a txt file
+data = mdopen("Pajek/Journals")
+@test length(metareader(data, "Journals_nodename.txt")) > 100
+
+
 # rm data
 
 #=
