@@ -44,6 +44,14 @@ data = mdopen("DRIVCAV/cavity14")
 @test size(rhs(data), 1) == 2597
 @test size(solution(data), 1) == 2597
 
+# read a format array file
+@test MatrixDepot.fileinfo(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing
+
+# read from a pipeline
+@test open(`echo -e '%%matrixmarket matrix array real general\n1 1\n2.5'`) do io
+    MatrixDepot.mmread(io) == reshape([2.5], 1, 1)
+end
+
 # an example loading a txt file
 data = mdopen("Pajek/Journals")
 @test length(metareader(data, "Journals_nodename.txt")) > 100
@@ -165,6 +173,9 @@ io = IOBuffer("""
 2 2
 """)
 @test_throws BoundsError MatrixDepot.mmread(io)
+
+
+
 
 end
 # rm data
