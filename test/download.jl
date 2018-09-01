@@ -88,7 +88,6 @@ io = IOBuffer("""
 
 io = IOBuffer("""
 %%Matrixmarket matrix array complex herMitian
-  
 2 2
 2.1 0
 .314e+1 1.0
