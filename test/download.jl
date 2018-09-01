@@ -41,14 +41,18 @@ matrixdepot()
 # an example with rhs and solution
 data = mdopen("DRIVCAV/cavity14")
 @test size(matrix(data)) == (2597, 2597)
+@test size(matrix(data)) == (2597, 2597) # cache should be used (coverage)
 @test size(rhs(data), 1) == 2597
 @test size(solution(data), 1) == 2597
+@test metareader(data, "invlid") === nothing
+
+@test rhs(1) === nothing # no rhs data for this example
 
 # read a format array file
 @test MatrixDepot.fileinfo(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing
 
 # read from a pipeline
-@test open(`echo -e '%%matrixmarket matrix array real general\n1 1\n2.5'`) do io
+@test open(`printf '%%matrixmarket matrix array real general\n1 1\n2.5\n'`) do io
     MatrixDepot.mmread(io) == reshape([2.5], 1, 1)
 end
 
@@ -56,6 +60,7 @@ end
 data = mdopen("Pajek/Journals")
 @test length(metareader(data, "Journals_nodename.txt")) > 100
 
+# reading mtx files
 io = IOBuffer("""
 %%Matrixmarket matrix array real general
 2 1
@@ -83,10 +88,11 @@ io = IOBuffer("""
 
 io = IOBuffer("""
 %%Matrixmarket matrix array complex herMitian
+  
 2 2
 2.1 0
-3.14e0 1.0
-3.0 0
+.314e+1 1.0
++3.0 0
 """)
 @test MatrixDepot.mmread(io) == [2.1 3.14-im; 3.14+im 3]
 
