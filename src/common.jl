@@ -107,11 +107,8 @@ function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
         end_char = last(ppos)           # the end of the line
     else
         ppos = findnext(r"\);", s, 1)
-        if ppos !== nothing
-            start_char = end_char = first(ppos) - 1
-        else
-            start_char = end_char = length(s)
-        end
+        start_char = ppos !== nothing ? first(ppos) - 1 : length(s)
+        end_char = start_char
     end
     if mats !== nothing
         mats = sort(mats)
