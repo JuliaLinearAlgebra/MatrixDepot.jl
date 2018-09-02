@@ -1,3 +1,6 @@
+
+const MD_TOGGLE = true
+
 using MatrixDepot
 using Test
 using LinearAlgebra
@@ -14,7 +17,6 @@ data_save = save_target(data_dir)
 user_save = save_target(user_dir)
 
 # that will download the index files and initialize internal data
-MatrixDepot.toggle_remote() # use alternate site first
 MatrixDepot.init()
 
 @testset "MatrixDepot tests" begin

@@ -39,7 +39,6 @@
 @test matrixdepot("Harwell-Boeing/lanpro/nos5", :get) == 1
 @test length(list(:loaded)) == 8
 
-@testset "load and read metadata" begin
 # an example with rhs and solution
 data = mdopen("DRIVCAV/cavity14")
 @test size(matrix(data)) == (2597, 2597)
@@ -176,17 +175,4 @@ io = IOBuffer("""
 2 2
 """)
 @test_throws BoundsError MatrixDepot.mmread(io)
-
-
-
-
-end
-# rm data
-
-#=
-rm(string(dirdata, '/', "uf_matrices.html"))
-rm(string(dirdata, '/', "mm_matrices.html"))
-rm(string(dirdata, '/', "uf"), recursive = true)
-rm(string(dirdata, '/', "mm"), recursive = true)
-=#
 
