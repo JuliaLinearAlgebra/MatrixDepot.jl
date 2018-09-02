@@ -35,7 +35,7 @@ function mmread(file::IO)
         parserr(string("Matrixmarket: invalid header:", line))
     end
     line = readline(file)
-    while length(line) == 0 || line[1] == '%'
+    while length(strip(line)) == 0 || line[1] == '%'
         line = readline(file)
     end
     if tokens[2] == MATRIX
@@ -45,9 +45,7 @@ function mmread(file::IO)
     end
 end
 
-argerr(s::AbstractString) = throw(ArgumentError(s))
-parserr(s::AbstractString) = throw(Meta.ParseError(s))
-
+# mmap for regular files - else read
 function getbytes(io::IOStream)
     if isfile(io)
         Mmap.mmap(io, grow=false, shared=false)
@@ -55,7 +53,6 @@ function getbytes(io::IOStream)
         read(io)
     end
 end
-
 getbytes(io::IO) = read(io)
 
 function mmread_matrix(file::IO, line, form, field, symm)
@@ -163,11 +160,11 @@ function mksparse!(m::Integer, n::Integer, rv::AbstractVector{Ti}, cv::AbstractV
                   vv::AbstractVector{Tv}) where {Ti<:Integer,Tv<:Number}
 
     nz = length(rv)
-    length(cv) == nz == length(vv) || argerr("all vectores need same length")
+    length(cv) == nz == length(vv) || argerr("all vectors need same length")
     micv, mcv = extrema(cv)
     mirv, mrv = extrema(rv)
-    micv > 0 && mcv <= n || argerr("all column indices must be >= 1 and <= $n")
-    mirv > 0 && mrv <= m || argerr("all row indices must be >= 1 and <= $m")
+    micv > 0 && mcv <= n || daterr("all column indices must be >= 1 and <= $n")
+    mirv > 0 && mrv <= m || daterr("all row indices must be >= 1 and <= $m")
     sizeof(Ti) <= 8 || argerr("Index type greater 64 bits not supported")
     sr = count_ones(Ti(nextpow(2, mrv + 1) - 1))
     sh = count_zeros(Ti(nextpow(2, mcv + 1) - 1))

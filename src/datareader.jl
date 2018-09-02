@@ -16,10 +16,6 @@ function ufinfo(filename::AbstractString)
     String(take!(io))
 end
 
-function trymmread(path::AbstractString)
-    mmread(path)
-end
-
 """
     metareader(dat::RemoteMatrixData)
 return dictionary with all data (matrices, rhs, other metadata).
@@ -39,22 +35,22 @@ metareader(data::MatrixData) = nothing
 """
     metareader(data:RemoteMatrixData, key::AbstractString)
 return specific data files (matrix, rhs, solution, or other metadata.
-The `key` must be contained in data.metadata or `nothing` is returned.
+The `key` must be contained in data.metadata or an `DataError` is thrown.
 """
 function metareader(data::RemoteMatrixData, name::AbstractString)
     dc = data.datacache
     if haskey(dc, name)
-        return dc[name]
-    end
-    if name in data.metadata
+        m = dc[name]
+        m isa String ? m : copy(m)
+    elseif name in data.metadata
         path = joinpath(dirname(matrixfile(data)), name)
-        m = endswith(name, ".mtx") ? trymmread(path) : read(path, String)
+        m = endswith(name, ".mtx") ? mmread(path) : read(path, String)
         if data.status[]
-            dc[name] = m
+            dc[name] = m isa String ? m : copy(m)
         end
         m
     else
-        nothing
+        daterr("$(data.name) has no metadata $name")
     end
 end
 
@@ -67,7 +63,7 @@ function readmetaext(data::RemoteMatrixData, exli::AbstractString...)
             return metareader(data, f)
         end
     end
-    nothing
+    daterr("unknown metadata extensions: `$([exli...])` - available $(String.(data.metadata))")
 end
 
 matrix(data::RemoteMatrixData) = readmetaext(data, "")
@@ -75,7 +71,7 @@ rhs(data::RemoteMatrixData) = readmetaext(data, "_b", "_rhs1", "_rhs")
 solution(data::RemoteMatrixData) = readmetaext(data, "_x")
 
 matrix(data::GeneratedMatrixData, args...) = data.func(args...)
-matrix(data::MatrixData, args...) = nothing
-rhs(data::MatrixData, args...) = nothing
-solution(data::MatrixData, args...) = nothing
+matrix(data::MatrixData, args...) = throw(MethodError(matrix, (data, args...)))
+rhs(data::MatrixData, args...) = throw(MethodError(matrix, (data, args...)))
+solution(data::MatrixData, args...) = throw(MethodError(matrix, (data, args...)))
 

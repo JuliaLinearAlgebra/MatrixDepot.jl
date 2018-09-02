@@ -1,6 +1,10 @@
 
 ## MatrixMarket header
 
+struct DataError <:Exception
+    msg::String
+end
+
 abstract type MMProperty end
 abstract type MMObject <: MMProperty end
 struct MMObjectMatrix <: MMObject end
@@ -114,7 +118,7 @@ aliasname(i::Integer) = string('#', i)
 aliasname(data::RemoteMatrixData{TURemoteType}) = aliasname(data.id)
 aliasname(data::RemoteMatrixData{MMRemoteType}) = string('#', 'M', data.id)
 aliasname(data::GeneratedBuiltinMatrixData) = string('#', 'B', data.id)
-aliasname(data::GeneratedUserMatrixData) = string('#', 'B', data.id)
+aliasname(data::GeneratedUserMatrixData) = string('#', 'U', data.id)
 
 import Base: get, empty!
 get(db::MatrixDatabase, key::Tuple, default=nothing) = get(db.data, key, default)

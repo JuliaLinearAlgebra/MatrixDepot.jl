@@ -16,12 +16,13 @@ include_generator(FunctionName, "randsym", randsym)
 include_generator(Group, "random", randsym)
 include_generator(Group, "symmetric", randsym)
 """
-user_dir = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
+user_dir = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
 
-open(string(user_dir, "/generator.jl"), "w") do f
+open(joinpath(user_dir, "generator.jl"), "w") do f
     write(f, matrixdata)
 end
 
+# load the just written user file
 MatrixDepot.init()
 
 n = rand(1:8)
@@ -30,7 +31,3 @@ matrixdepot("randsym")
 @test "randsym" in matrixdepot("random")
 @test "randsym" in matrixdepot("symmetric")
 
-user_dir = joinpath(dirname(@__FILE__), "..", "myMatrixDepot")
-rm(user_dir, recursive = true)
-
-MatrixDepot.init()

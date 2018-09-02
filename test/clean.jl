@@ -1,9 +1,9 @@
 # setup clean and empty directories
 
 user_dir = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
-dirdata = abspath(dirname(@__FILE__),"..","data")
+data_dir = abspath(dirname(@__FILE__),"..","data")
 
-function savetarget(path::AbstractString)
+function save_target(path::AbstractString)
     base = basename(path)
     dir = dirname(path)
     target = abspath(dir, string(base, ".saved"))
@@ -15,9 +15,15 @@ function savetarget(path::AbstractString)
     end
 end
 
-savetarget(user_dir)
-savetarget(dirdata)
-
-# that will lownload the index files and initialize internal data
-MatrixDepot.init()
-
+function revert_target(saved::AbstractString, orig::AbstractString)
+    savetest = abspath(dirname(orig), string(basename(orig), ".test"))
+    if isdir(orig)
+        if isdir(savetest)
+            mv(savetest, joinpath(orig, basename(savetest)))
+        end
+        mv(orig, savetest)
+    end
+    if isdir(saved)
+        mv(saved, orig)
+    end
+end

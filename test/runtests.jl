@@ -3,9 +3,19 @@ using Test
 using LinearAlgebra
 using SparseArrays
 
+import MatrixDepot: DataError
+
 macro inc(a)
     :(@testset $a begin let n, p, i; include($a) end end)
 end
+
+include("clean.jl")
+data_save = save_target(data_dir)
+user_save = save_target(user_dir)
+
+# that will download the index files and initialize internal data
+MatrixDepot.toggle_remote() # use alternate site first
+MatrixDepot.init()
 
 @testset "MatrixDepot tests" begin
 
@@ -57,19 +67,23 @@ end
     @inc("test_smallworld.jl")
 
     tests = [
-            "clean",
-            "common",
             "include_generator",
             "download",
+            "common",
             "number",
             "property",
             "regu",
             ]
 
-    @testset "$t" for t in tests
-        tp = joinpath(@__DIR__(), "$(t).jl")
-        println("running $(tp) ...")
-        include(tp)
+    try
+        @testset "$t" for t in tests
+            tp = joinpath(@__DIR__(), "$(t).jl")
+            println("running $(tp) ...")
+            include(tp)
+        end
+    finally
+        revert_target(user_save, user_dir)
+        revert_target(data_save, data_dir)
     end
 end
 

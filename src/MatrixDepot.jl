@@ -4,7 +4,8 @@ using LinearAlgebra, SparseArrays, SuiteSparse
 import Base: show
 
 export matrixdepot
-export info, load, mdopen, mdclose, matrix, rhs, solution, list, metareader, overview
+export matrix, rhs, solution, metareader
+export list, info, metadata, load, mdopen, mdclose, overview
 export colval, mtranspose, madjoint
 export aliasname, @addgroup, @rmgroup, @modifygroup
 
@@ -44,8 +45,9 @@ function init()
         end
     end
     include(joinpath(MY_DEPOT_DIR, GENERATOR))
-
+    println("verify download of index files...")
     downloadindices(MATRIX_DB)
+    println("used remote site is $(uf_remote.params.indexurl)")
     nothing
 end
 

@@ -5,7 +5,7 @@ for group in groups
     matrixdepot(group)
 end
 
-@test_throws ArgumentError matrixdepot("something")
+@test_throws DataError matrixdepot("something")
 
 n = rand(1:55)
 name = matrixdepot(n)
@@ -13,7 +13,7 @@ matrixdepot(name)
 
 nlist = matrixdepot(1, 3, 4:20)
 m = length(matrixdepot("all"))
-@test_throws ArgumentError matrixdepot(m+1)
+@test_throws DataError matrixdepot(m+1)
 
 @addgroup newlist = matrixdepot(3:6, 20)
 
@@ -25,41 +25,37 @@ println(matrixdepot("newlist"))
 
 # testing the new API
 #
-@testset "load" begin
-    # load all matrices loaded later in "test/download.jl"
-    load([  "Bates/*"                
-            "HB/1138_bus"                   
-            "Harwell-Boeing/lanpro/nos5"    
-            "Harwell-Boeing/smtape/bp___200"
-            "Pajek/Journals"])
-    @test length(list(:loaded)) == 7
-end
+# it is assumed that all matrices generated during "test/dowlnload.jl"
+# and the ibuiltin- and user-defined "randsym" but no others are available
+#
 
 @testset "list" begin
 
-    LOC = length(list(:local))
-@test LOC in [59, 60]   # depends on include_generator has worked 
-    REM = length(list("*/*"))
+REM = length(list("*/*"))
 @test REM in [2757, 2833]   # depends on whether ufl or tamu url has been used
+@test length(list(:builtin)) == 59
+@test length(list(:user)) in [0, 1]
 
 @test list("") == []
+@test list("HB/1138_bus") == ["HB/1138_bus"]
 @test list(1) == ["HB/1138_bus"]
 @test list("#1") == ["HB/1138_bus"]
 @test list("#M1") == ["Harwell-Boeing/psadmit/1138_bus"]
-@test list("HB/1138_bus") == ["HB/1138_bus"]
+@test list("#[123456789]*") == list("*/*")
+@test list("#M*") == list("*/*/*")
+@test list("#B*") == list(:builtin)
+@test list("#U*") == list(:user)
+@test list("*") == list(:local)
 @test length(list("HB/*")) == 292
 @test list("Harwell-Boeing//") == ["Harwell-Boeing/*/* - (292)"]
 @test list("*/hamm/*") == ["misc/hamm/add20", "misc/hamm/add32", "misc/hamm/memplus"]
 @test list("*/hamm/*a*3?") == ["misc/hamm/add32"]
 @test list("*/hamm/*a*3[123]") == ["misc/hamm/add32"]
 @test list("*/hamm/*a*3[123]?") == []
-@test length(list("*")) == LOC
-@test length(list("*/*"))  == REM
 @test length(list("*/*/*")) == 498
-@test length(list("**")) == REM + 498 + LOC
 @test list("*//*/*") == ["Harwell-Boeing/*/* - (292)", "NEP/*/* - (73)",
                            "SPARSKIT/*/* - (107)", "misc/*/* - (26)"]
-@test list("//*") == ["/* - ($LOC)"]
+@test list("//*") == ["/* - ($(length(list(:local))))"]
 @test list("//*/*") == ["/*/* - ($REM)"]
 @test list("//*/*/*") == ["/*/*/* - (498)"]
 @test list("HB/") == ["HB/* - (292)"]
@@ -69,12 +65,12 @@ end
 @test length(list(2757:3000)) == REM - 2756
 @test list(:xxx) == []
 @test length(list(:remote)) == REM + 498
-@test length(list(:local)) == LOC
 @test length(list(:loaded)) + length(list(:unloaded)) == length(list(:remote))
 @test length(list(:builtin)) + length(list(:user)) == length(list(:local))
 @test length(list(:local)) + length(list(:remote)) == length(list(:all))
+@test length(list("**")) == length(list("*")) + length(list("*/*")) + length(list("*/*/*"))
 @test list(:all) == list("**")
-@test length(list(:symmetric)) == 21
+@test length(list(:symmetric)) == 23
 @test length(list(:illcond)) == 20
 @test length(matrixdepot("ill-cond")) == 20
 
@@ -83,13 +79,21 @@ end
 @test length(list([:posdef,:sparse])) + length(list((:posdef,:sparse))) == length(list(:posdef)) + length(list(:sparse))
 
 
-# predicates of remote matrices
-@test length(list(issymmetric)) == 25 + LOC - 59
+# predicates of remote and local matrices
+@test length(list(issymmetric)) == 27
 
-@test length(list(predm(n -> n < 10000))) == 6    # items with m < *
-@test length(list(predn(n -> n < 10000))) == 5    # items with n < *
-@test length(list(prednz(n -> n < 5000))) == 4    # items with nnz < *
-@test length(list(predmn((m,n) -> m > n))) == 1   # items with m > n
+@test length(list(predm(n -> n < 10000))) == 9    # items with m < *
+@test length(list(predn(n -> n < 10000))) == 8    # items with n < *
+@test length(list(prednz(n -> n < 5000))) == 5    # items with nnz < *
+@test length(list(predmn((m,n) -> m > n))) == 0   # items with m > n
+
+# for the boolean syntax
+@test list(!islocal) == list(isremote)
+@test length(list(isloaded & issymmetric)) == 5
+@test length(list(isloaded & !issymmetric)) == 4
+@test length(list(isloaded & !issymmetric | isuser & issymmetric)) == 5
+@test length(list(!islocal & issymmetric | isuser & issymmetric)) == 6
+@test list(islocal & !isbuiltin) == list(isuser)
 
 end
 

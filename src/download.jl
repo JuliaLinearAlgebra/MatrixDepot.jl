@@ -57,7 +57,7 @@ function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
                 remote = remotetype(line)
                 continue
             end
-            atyp, grepex, spquote, ending, parts, regexid = remote.params.scan
+            _, grepex, spquote, ending, parts, regexid = remote.params.scan
             m = regexid === nothing ? nothing : match(regexid, line)
             if m != nothing
                 id = m.captures[1]
@@ -69,7 +69,6 @@ function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
                     count += 1
                     name = join(list, '/')
                     alias = id === nothing ? string(count) : id
-                    db.aliases["#$atyp$alias"] = name
                     count = id != nothing ? parse(Int, id) : count
                     data = RemoteMatrixData{typeof(remote)}(name, count)
                     addmetadata!(data)
@@ -82,6 +81,7 @@ function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
     matrixdata
 end
 
+# read indexfile
 function downloadindex(remote::RemoteType)
     file = localindex(remote)
     url = indexurl(remote)
@@ -92,6 +92,8 @@ function downloadindex(remote::RemoteType)
     nothing
 end
 
+# collect the keys from local database (MATRIXDICT od USERMATRIXDICT)
+# provide a numerical id counting from 1 for either database.
 function insertlocal(T::Type{<:GeneratedMatrixData},
                      ldb::Dict{<:AbstractString,Function},
                      db::MatrixDatabase)
@@ -104,37 +106,41 @@ function insertlocal(T::Type{<:GeneratedMatrixData},
     end
 end
 
-# download html files and store matrix data in MATRIX_DB
+"""
+    MatrixDepot.daownloadindices(db=MATRIX_DB)
+download html files and store matrix data in `db`.
+additionally generate aliases for local and loaded matrices.
+"""
 function downloadindices(db::MatrixDatabase)
     # UF Sparse matrix collection
     global uf_remote
     empty!(db)
     insertlocal(GeneratedBuiltinMatrixData, MATRIXDICT, db)
     insertlocal(GeneratedUserMatrixData, USERMATRIXDICT, db)
+    
     try
         downloadindex(preferred(TURemoteType))
-    catch # fallback if first site does not succeed
-        uf_remote = alternate(TURemoteType)
-        downloadindex(uf_remote)
+        downloadindex(preferred(MMRemoteType))
+
+        extract_names(localindex(preferred(TURemoteType)), db)
+        extract_names(localindex(preferred(MMRemoteType)), db)
+    finally
+        for data in values(db.data)
+            db.aliases[aliasname(data)] = data.name
+        end
     end
-
-    downloadindex(preferred(MMRemoteType))
-
-    extract_names(localindex(preferred(TURemoteType)), db)
-    extract_names(localindex(preferred(MMRemoteType)), db)
     nothing
 end
 
-# update database from the websites
+"""
+    MatrixDepot.update()
+update database index from the websites
+"""
 function update()
-    uf_matrices = string(DATA_DIR, "/uf_matrices.html")
-    mm_matrices = string(DATA_DIR, "/mm_matrices.html")
-    if isfile(uf_matrices)
-        rm(uf_matrices)
-    end
-    if isfile(mm_matrices)
-        rm(mm_matrices)
-    end
+    uf_matrices = localindex(preferred(TURemoteType))
+    isfile(uf_matrices) && rm(uf_matrices)
+    mm_matrices = localindex(preferred(MMRemoteType))
+    isfile(mm_matrices) && rm(mm_matrices)
     downloadindices(MATRIX_DB)
 end
 

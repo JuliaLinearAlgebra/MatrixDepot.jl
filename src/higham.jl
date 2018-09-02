@@ -106,7 +106,7 @@ hadamard(n::Integer) = hadamard(Float64, n)
 Cauchy Matrix
 =============
 Given two vectors `x` and `y`, the `(i,j)` entry of the Cauchy matrix is
-`1/(x[i]-y[j])`.
+`1/(x[i]+y[j])`.
 
 *Input options*:
 
@@ -137,6 +137,7 @@ end
 cauchy(::Type{T}, x::Vector) where T = cauchy(T, x, x)
 cauchy(::Type{T}, k::Integer) where T = cauchy(T, [1:k;])
 cauchy(arg...) = cauchy(Float64, arg...)
+cauchy(::Type, args...) = throw(MethodError(cauchy, Tuple(args)))
 
 """
 Circulant Matrix
