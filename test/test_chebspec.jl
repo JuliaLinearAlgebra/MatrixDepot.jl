@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 # no null vector for 1-by-1 chebspec.
 if n == 1
     n = 2

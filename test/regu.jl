@@ -1,4 +1,4 @@
-n = 6 # rand(1:10)
+n = 7 # rand(1:10)
 
 r = matrixdepot("deriv2", n, false)
 @test r !== nothing

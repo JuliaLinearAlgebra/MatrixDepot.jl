@@ -1,4 +1,4 @@
-n = rand(1: 10)
+n = 10 # rand(1: 10)
 @test matrixdepot("moler", n) == matrixdepot("moler", n, -1)
 
 M = matrixdepot("moler", n)
