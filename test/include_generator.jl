@@ -31,3 +31,6 @@ matrixdepot("randsym")
 @test "randsym" in matrixdepot("random")
 @test "randsym" in matrixdepot("symmetric")
 
+import MatrixDepot: include_generator, Group
+@test_throws ArgumentError include_generator(Group, "lkjasj", sin)
+

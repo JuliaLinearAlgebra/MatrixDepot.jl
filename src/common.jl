@@ -159,16 +159,22 @@ function include_generator(::Type{FunctionName}, fn::AbstractString, f::Function
     (haskey(MATRIXDICT, fn) ? MATRIXDICT : USERMATRIXDICT)[fn] = f
 end
 
+function addtogroup(dir::Dict, groupname::Symbol, f::Function)
+    if groupname in keys(dir)
+        fn = fname(f)
+        gr = dir[groupname]
+        fn in gr || push!(gr, fn)
+        true
+    else
+        false
+    end
+end
 function include_generator(::Type{Group}, groupname::AbstractString, f::Function)
     groupname = Symbol(groupname)
-    if groupname in keys(MATRIXCLASS)
-        push!(MATRIXCLASS[groupname], fname(f))
-    elseif groupname in keys(usermatrixclass)
-        push!(usermatrixclass[groupname], fname(f))
-    else
-        error("$(groupname) is not a group in MatrixDepot, use
+    addtogroup(MATRIXCLASS, groupname, f) ||
+    addtogroup(usermatrixclass, groupname, f) ||
+    argerr("$(groupname) is not a group in MatrixDepot, use
               @addgroup to add this group")
-    end
 end
 
 "return the name of the function `f` as a string."
@@ -254,11 +260,12 @@ function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
     endswith(p, '/') && ( p = string(p, "**") )
 
     if occursin(r"[*?.]", p)
-        p = replace(p, "**" => "([^/]+/)\x01[^/]\x01")
+        p = replace(p, "**" => "\x02\x01")
         p = replace(p, '*' => "[^/]*")
         p = replace(p, '?' => "[^/]")
         p = replace(p, '.' => "[.]")
         p = replace(p, '\x01' => '*')
+        p = replace(p, '\x02' => '.')
     end
 
     r = Regex(string('^', p, '$'))

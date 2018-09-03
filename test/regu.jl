@@ -1,78 +1,110 @@
-n = rand(1:10)
+n = 6 # rand(1:10)
 
 r = matrixdepot("deriv2", n, false)
+@test r !== nothing
 rf32 = matrixdepot("deriv2", Float32, n, false)
+@test rf32 !== nothing
 
 r2 = matrixdepot("deriv2", Float32, n, 2, false)
+@test r2 !== nothing
 if mod(n, 2) == 0
     r3 = matrixdepot("deriv2", Float32, n, 3, false)
+    @test r3 !== nothing
 end
 @test_throws ArgumentError matrixdepot("deriv2", Float64, n, 4, false)
 
 A = matrixdepot("deriv2", n)
+@test A !== nothing
 
 @test r.A*r.x ≈ r.b
 @test issymmetric(r.A)
 
 
 r = matrixdepot("shaw", 2*n, false)
+@test r !== nothing
 A = matrixdepot("shaw", 2*n)
+@test A !== nothing
 
-print(r)
+# print(r)
 
 @test issymmetric(r.A)
 
 rf32 = matrixdepot("shaw", Float32, 2*n, false)
+@test rf32 !== nothing
 
 r = matrixdepot("wing", n, false)
+@test r !== nothing
 A = matrixdepot("wing", n)
+@test A !== nothing
 
 @test r.A == matrixdepot("wing", n, 1/3, 2/3, false).A
 
 r = matrixdepot("foxgood", n, false)
+@test r !== nothing
 rf32 = matrixdepot("foxgood", Float32, n, false)
+@test rf32 !== nothing
 A = matrixdepot("foxgood", n)
+@test A !== nothing
 
 r = matrixdepot("heat", 2*n, false)
+@test r !== nothing
 rf32 = matrixdepot("heat", Float32, 2*n)
+@test rf32 !== nothing
 
 r = matrixdepot("baart", 2*n, false)
+@test r !== nothing
 rf32 = matrixdepot("baart", Float32, 2*n, false)
+@test rf32 !== nothing
 A = matrixdepot("baart", 2*n)
+@test A !== nothing
 
-n = rand(3:10)
+n = 8 # rand(3:10)
 r = matrixdepot("phillips", 4*n, false)
+@test r !== nothing
 rf32 = matrixdepot("phillips", Float32, 4*n)
+@test rf32 !== nothing
 
 A = matrixdepot("gravity", n)
+@test A !== nothing
 
 @test matrixdepot("gravity", n, 1, 0, 1, 0.25) == A
 
 r1 = matrixdepot("gravity", Float32, n, 1, false)
+@test r1 !== nothing
 r2 = matrixdepot("gravity", Float32, n, 2, false)
+@test r2 !== nothing
 r3 = matrixdepot("gravity", Float32, n, 3, false)
+@test r3 !== nothing
 
 A = matrixdepot("blur", n)
+@test A !== nothing
 
 @test matrixdepot("blur", n, 3, 0.7) == A
 
 r1 = matrixdepot("blur", Float32, n, false)
+@test r1 !== nothing
 
 A = matrixdepot("spikes", n)
+@test A !== nothing
 
 @test matrixdepot("spikes", n, 5) == A
 
-n = rand(5:10)
+n = 7 # rand(5:10)
 r1 = matrixdepot("spikes", Float32, n, false)
+@test r1 !== nothing
 
 A = matrixdepot("ursell", n)
+@test A !== nothing
 @test matrixdepot("ursell", Float64, n) == A
 r1 = matrixdepot("ursell", Float32, n, false)
-print(r1)
+@test r1 !== nothing
+# print(r1)
 
 A = matrixdepot("parallax", n)
+@test A !== nothing
 
 m, n = size(A)
 @test m == 26
 @test matrixdepot("parallax", Float64, n) == A
 r1 = matrixdepot("parallax", Float32, n, false) 
+@test r1 !== nothing

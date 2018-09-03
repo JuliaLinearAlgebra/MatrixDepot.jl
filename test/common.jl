@@ -47,12 +47,14 @@ REM = length(list("*/*"))
 @test list("#U*") == list(:user)
 @test list("*") == list(:local)
 @test length(list("HB/*")) == 292
+@test list("HB**") == list("HB/**")
 @test list("Harwell-Boeing//") == ["Harwell-Boeing/*/* - (292)"]
 @test list("*/hamm/*") == ["misc/hamm/add20", "misc/hamm/add32", "misc/hamm/memplus"]
 @test list("*/hamm/*a*3?") == ["misc/hamm/add32"]
 @test list("*/hamm/*a*3[123]") == ["misc/hamm/add32"]
 @test list("*/hamm/*a*3[123]?") == []
 @test length(list("*/*/*")) == 498
+
 @test list("*//*/*") == ["Harwell-Boeing/*/* - (292)", "NEP/*/* - (73)",
                            "SPARSKIT/*/* - (107)", "misc/*/* - (26)"]
 @test list("//*") == ["/* - ($(length(list(:local))))"]
@@ -70,7 +72,7 @@ REM = length(list("*/*"))
 @test length(list(:local)) + length(list(:remote)) == length(list(:all))
 @test length(list("**")) == length(list("*")) + length(list("*/*")) + length(list("*/*/*"))
 @test list(:all) == list("**")
-@test length(list(:symmetric)) == 23
+@test length(list(:symmetric)) == 22
 @test length(list(:illcond)) == 20
 @test length(matrixdepot("ill-cond")) == 20
 
