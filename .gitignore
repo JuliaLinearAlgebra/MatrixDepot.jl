@@ -4,7 +4,7 @@
 # ignore newly added matrices 
 
 data/uf
-data/*html
+# data/*html  # that cound save a lot of test time
 data/mm
 
 src/*.mem

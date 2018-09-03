@@ -13,6 +13,14 @@ function save_target(path::AbstractString)
     if isdir(path)
         mv(path, target)
     end
+    if basename(path) == "data"
+        mkpath(path)
+        ufm = "uf_matrices.html"
+        cp(abspath(target, ufm), abspath(path, ufm))
+        mmm = "mm_matrices.html"
+        cp(abspath(target, mmm), abspath(path, mmm))
+    end
+    target
 end
 
 function revert_target(saved::AbstractString, orig::AbstractString)

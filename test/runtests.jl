@@ -83,6 +83,10 @@ MatrixDepot.init()
             println("running $(tp) ...")
             include(tp)
         end
+        
+#       MatrixDepot.update()
+        MatrixDepot.toggle_remote()
+        MatrixDepot.update()
     finally
         revert_target(user_save, user_dir)
         revert_target(data_save, data_dir)

@@ -51,9 +51,6 @@ function init()
     nothing
 end
 
-if !isfile(abspath(DATA_DIR, "use_tamu"))
-    toggle_remote()
-end
 init()
 
 end # end module
