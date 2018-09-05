@@ -1,9 +1,11 @@
 
-## MatrixMarket header
+# Exception
 
 struct DataError <:Exception
     msg::String
 end
+
+## MatrixMarket header
 
 abstract type MMProperty end
 abstract type MMObject <: MMProperty end
@@ -70,20 +72,6 @@ struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     end
 end
 
-function Base.show(io::IO, data::RemoteMatrixData)
-    print(io, "RemoteMatrixData(")
-    print(io, "$(data.name)($(aliasname(data))) ")
-    show(io, data.properties[])
-    addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
-    print(io, isopen(data) ? '*' : ' ')
-    print(io, "[")
-    print(io, join(addstar.(data.metadata), ", "))
-    print(io,"])")
-end
-
-Base.isopen(data::RemoteMatrixData) = data.status[]
-Base.isopen(data::MatrixData) = false
-
 abstract type GeneratedMatrixData <:MatrixData end
 
 struct GeneratedBuiltinMatrixData <:GeneratedMatrixData
@@ -104,6 +92,41 @@ struct MatrixDatabase
                            Dict{AbstractString,AbstractString}())
 end
 
+# Patterns
+
+const IntOrVec = Union{Integer,AbstractVector{<:Integer},Colon}
+
+struct Alias{T,D<:IntOrVec}
+    data::D
+    Alias{T}(d::D) where {T<:MatrixData,D} = new{T,D}(d)
+end
+
+abstract type AbstractNot end
+
+const Pattern1 = Union{AbstractString,Regex,Alias,Symbol,
+                       AbstractVector,Tuple,AbstractNot}
+const Pattern = Union{Pattern1, Function}
+
+struct Not{T<:Pattern} <:AbstractNot
+    pattern::T
+end
+
+# essential functions of the types
+
+function Base.show(io::IO, data::RemoteMatrixData)
+    print(io, "RemoteMatrixData(")
+    print(io, "$(data.name)($(aliasname(data))) ")
+    show(io, data.properties[])
+    addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
+    print(io, isopen(data) ? '*' : ' ')
+    print(io, "[")
+    print(io, join(addstar.(data.metadata), ", "))
+    print(io,"])")
+end
+
+Base.isopen(data::RemoteMatrixData) = data.status[]
+Base.isopen(data::MatrixData) = false
+
 function Base.push!(db::MatrixDatabase, data::MatrixData)
     key = data.name
     db.data[data.name] = data
@@ -112,13 +135,21 @@ end
 
 """
     aliasname(data::MatrixData)
+    aliasname(Type{<:MatrixData, id::Integer)
 return alias name derived from integer id
 """
-aliasname(i::Integer) = string('#', i)
-aliasname(data::RemoteMatrixData{TURemoteType}) = aliasname(data.id)
-aliasname(data::RemoteMatrixData{MMRemoteType}) = string('#', 'M', data.id)
-aliasname(data::GeneratedBuiltinMatrixData) = string('#', 'B', data.id)
-aliasname(data::GeneratedUserMatrixData) = string('#', 'U', data.id)
+aliasname(::Type{RemoteMatrixData{TURemoteType}}, i::Integer) = string('#', i)
+aliasname(::Type{RemoteMatrixData{MMRemoteType}}, i::Integer) = string('#', 'M', i)
+aliasname(::Type{GeneratedBuiltinMatrixData}, i::Integer) = string('#', 'B', i)
+aliasname(::Type{GeneratedUserMatrixData}, i::Integer) = string('#', 'U', i)
+function aliasname(T::Type{<:MatrixData}, r::AbstractVector{<:Integer})
+    aliasname.(T, filter(x->x>0, r))
+end
+aliasname(T::Type{<:MatrixData}, r::Colon) = aliasname(T, 0)
+aliasname(data::MatrixData) = aliasname(typeof(data), data.id)
+aliasname(ali::Alias{T,D}) where {T,D} = aliasname(T, ali.data)
+
+Base.show(io::IO, a::Alias) = print(io, aliasname(a))
 
 import Base: get, empty!
 get(db::MatrixDatabase, key::Tuple, default=nothing) = get(db.data, key, default)

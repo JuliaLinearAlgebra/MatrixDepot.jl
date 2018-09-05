@@ -223,6 +223,76 @@ function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
     result
 end
 
+function list(p::Symbol, db::MatrixDatabase=MATRIX_DB)
+    if haskey(SUBSETS, p)
+        sort!(SUBSETS[p](db))
+    elseif haskey(MATRIXCLASS, p)
+        sort!(MATRIXCLASS[p])
+    elseif haskey(usermatrixclass, p)
+        sort!(usermatrixclass[p])
+    else
+        EMPTY_PATTERN
+    end
+end
+
+"""
+    shell_to_regex
+
+return a regular expression if shell pattern characters `"*?]"` are contained in 
+string, otherwise return string.
+"""
+function shell_to_regex(p::AbstractString, retain_pure::Bool)
+    regex(p) = Regex(string('^', p, '$'))
+    if occursin(r"[*?.]", p)
+        p = replace(p, "**" => "\x02\x01")
+        p = replace(p, '*' => "[^/]*")
+        p = replace(p, '?' => "[^/]")
+        p = replace(p, '.' => "[.]")
+        p = replace(p, '\x01' => '*')
+        p = replace(p, '\x02' => '.')
+        regex(p)
+    else
+        retain_pure ? p : regex(p)
+    end
+end
+
+function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
+    p = replace(p, r"//+" => '/')
+    r = shell_to_regex(p, true)
+    r isa Regex ? list(r, db) : haskey(db.data, r) ? [r] : EMPTY_PATTERN
+end
+
+"""
+    listdir(p::AbstractString[, db])
+
+experimental: get an overview of the count of names down directories.
+return a list with summary information for directories in matrix name space. E.g.
+
++ `listdir("/*")`     - count names without a `/`. 
++ `listdir("/k*")`    - count names without `/` starting with `k*`.
++ `listdir("*/")`     - count names with one directory part (uf-collection)
++ `listdir("*/*//*")` - count names with two directory parts (mm-collection)
++ `listdir("*//*/*")` - count names with two directory parts (mm-collection)
+"""
+function listdir(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
+    r = findfirst(r"/+", p)
+    if r !== nothing && first(r) == 1
+        p = p[last(r)+1:end]
+        depth = 0
+    else
+        m = match(r"^(([^/]+/)+)(/|$)", p)
+        depth = m !== nothing ? count(x == '/' for x in m.captures[1]) : -1
+    end
+    p = replace(p, r"//+" => '/')
+    endswith(p, '/') && ( p = string(p, "**") )
+    r = shell_to_regex(p, false)
+    if depth >= 0
+        length(p) == 1 && ( p = ".*/" )
+        listdir(r, depth, db)
+    else
+        argerr("pattern '$p' needs '//' in the middle or '/' at start or end")
+    end
+end
 function listdir(r::Regex, depth::Int, db::MatrixDatabase=MATRIX_DB)
     result = Dict{AbstractString, Int}()
     f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
@@ -236,46 +306,10 @@ function listdir(r::Regex, depth::Int, db::MatrixDatabase=MATRIX_DB)
     sort!([string(k, " - (", v, ")") for (k,v) in result])
 end
 
-function list(p::Symbol, db::MatrixDatabase=MATRIX_DB)
-    if haskey(SUBSETS, p)
-        sort!(SUBSETS[p](db))
-    elseif haskey(MATRIXCLASS, p)
-        sort!(MATRIXCLASS[p])
-    elseif haskey(usermatrixclass, p)
-        sort!(usermatrixclass[p])
-    else
-        String[]
-    end
-end
 
-function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
-    if startswith(p, "//")
-        p = p[3:end]
-        depth = 0
-    else
-        m = match(r"^(([^/]+/)+)(/|$)", p)
-        depth = m !== nothing ? count(x == '/' for x in m.captures[1]) : -1
-    end
-    p = replace(p, r"//+" => '/')
-    endswith(p, '/') && ( p = string(p, "**") )
+list(p::Alias, db::MatrixDatabase=MATRIX_DB) = aliasresolve(p, db)
 
-    if occursin(r"[*?.]", p)
-        p = replace(p, "**" => "\x02\x01")
-        p = replace(p, '*' => "[^/]*")
-        p = replace(p, '?' => "[^/]")
-        p = replace(p, '.' => "[.]")
-        p = replace(p, '\x01' => '*')
-        p = replace(p, '\x02' => '.')
-    end
-
-    r = Regex(string('^', p, '$'))
-    if depth >= 0
-        length(p) == 1 && ( p = ".*/" )
-        listdir(r, depth, db)
-    else
-        list(r, db)
-    end
-end
+list(p::Not) = setdiff(list(()), list(p.pattern)) 
 
 list_all(db::MatrixDatabase) = sort!(collect(keys(db.data)))
 function list_remote(db::MatrixDatabase)
@@ -302,26 +336,24 @@ const SUBSETS = Dict(
 )
 
 flatten(a) = collect(Iterators.flatten(a))
-list(i::Integer, db::MatrixDatabase=MATRIX_DB) = list(Regex(string('^', aliasname(i), '$')), db)
-function list(r::OrdinalRange, db::MatrixDatabase=MATRIX_DB)
-    listdb(r) = list(r, db)
-    unique!(sort!(flatten(listdb.(aliasname.(r) ∩ keys(db.aliases)))))
-end
 function list(r::AbstractVector, db::MatrixDatabase=MATRIX_DB)
     listdb(r) = list(r, db)
     unique!(sort!(flatten(listdb.(r))))
 end
+list(::Tuple{}, db::MatrixDatabase=MATRIX_DB) = (list_all(db))
 function list(r::Tuple, db::MatrixDatabase=MATRIX_DB)
-    listdb(r) = list(r, db)
-    sort!(intersect(listdb.(r)...))
+    y, st = iterate(r)
+    res = list(y)
+    while !isempty(res) && (x = iterate(r, st)) !== nothing
+        y, st = x
+        intersect!(res, list(y))
+    end
+    res
 end
 function list(pred::Function, db::MatrixDatabase=MATRIX_DB)
     dali = [ data for data in values(db.data) if pred(data) ]
     sort!(getfield.(dali, :name))
 end
-
-const Pattern = Union{AbstractString,Regex,OrdinalRange,Integer,Symbol,
-                      AbstractVector,Tuple,Function}
 
 "return information about all matrices selected by pattern"
 function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
@@ -458,7 +490,9 @@ end
     metadata(p::Pattern[, db])
 return copy of metadata if pattern is unique
 """
-metadata(p::Pattern, db::MatrixDatabase=MATRIX_DB) = copy(mdata(p, db).metadata)
+metadata(data::RemoteMatrixData) = copy(data.metadata)
+metadata(data::MatrixData) = String[]
+metadata(p::Pattern, db::MatrixDatabase=MATRIX_DB) = metadata(mdata(p, db))
 
 """
     mdopen(data::MatrixData)
@@ -591,69 +625,4 @@ Overview about matrices.
 function matrixdepot()
     #display(overview(MATRIX_DB))
     println(overview(MATRIX_DB))
-end
-
-###
-# Syntactic sugar
-###
-import Base: &, |, !
-(&)(p::Pattern, q::Pattern...) = tuple(p, q...)
-(|)(p::Pattern, q::Pattern...) = vcat(p, q...)
-
-###
-# Predefined predicates for MatrixData
-###
-export isgeneral, issymmetric, isskew, ishermitian
-export iscomplex, isreal, isinteger, ispattern
-export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
-export predm, predn, prednz, predmn
-
-import Base: isreal, isinteger
-import LinearAlgebra: issymmetric, ishermitian
-
-function issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})
-    data.properties[] !== nothing && data.properties[].symmetry isa T
-end
-function isfield(data::RemoteMatrixData, T::Type{<:MMField})
-    data.properties[] !== nothing && data.properties[].field isa T
-end
-
-isgeneral(data::RemoteMatrixData) = issymmetry(data, MMSymmetryGeneral)
-issymmetric(data::RemoteMatrixData) = issymmetry(data, MMSymmetrySymmetric)
-isskew(data::RemoteMatrixData) = issymmetry(data, MMSymmetrySkewSymmetric)
-ishermitian(data::RemoteMatrixData) = issymmetry(data, MMSymmetryHermitian)
-isgeneral(data::MatrixData) = !issymmetric(data) && !isskew(data) && !ishermitian(data)
-issymmetric(data::MatrixData) = data.name in list(:symmetric)
-isskew(data::MatrixData) = false
-ishermitian(data::MatrixData) = false
-
-iscomplex(data::RemoteMatrixData) = isfield(data, MMFieldComplex)
-isreal(data::RemoteMatrixData) = isfield(data, MMFieldReal)
-isinteger(data::RemoteMatrixData) = isfield(data, MMFieldInteger)
-ispattern(data::RemoteMatrixData) = isfield(data, MMFieldPattern)
-iscomplex(data::MatrixData) = false
-isreal(data::MatrixData) = false
-isinteger(data::MatrixData) = false
-ispattern(data::MatrixData) = false
-
-hasproperties(data::RemoteMatrixData) = data.properties[] !== nothing
-hasproperties(data::MatrixData) = false
-isremote(data::RemoteMatrixData) = true
-isremote(data::MatrixData) = false
-isloaded(data::RemoteMatrixData) = !isempty(data.metadata)
-isloaded(data::MatrixData) = false
-isunloaded(data::RemoteMatrixData) = isempty(data.metadata)
-isunloaded(data::MatrixData) = false
-isuser(data::GeneratedUserMatrixData) = true
-isuser(data::MatrixData) = false
-isbuiltin(data::GeneratedBuiltinMatrixData) = true
-isbuiltin(data::MatrixData) = false
-islocal(data::GeneratedMatrixData) = true
-islocal(data::MatrixData) = false
-
-predm(f::Function) = data::MatrixData -> hasproperties(data) && f(data.properties[].m)
-predn(f::Function) = data::MatrixData -> hasproperties(data) && f(data.properties[].n)
-prednz(f::Function) = data::MatrixData -> hasproperties(data) && f(data.properties[].nz)
-function predmn(f::Function)
-    data::MatrixData -> hasproperties(data) && f(data.properties[].m, data.properties[].n)
 end

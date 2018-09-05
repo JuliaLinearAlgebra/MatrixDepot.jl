@@ -38,6 +38,13 @@
 # matrix market
 @test matrixdepot("Harwell-Boeing/lanpro/nos5", :get) == 1
 @test length(list(:loaded)) == 8
+@test mdopen("Bai/dwg961b") !== nothing
+data = mdopen("Bai/dwg961b")
+@test iscomplex(data)
+@test issymmetric(data)
+@test !ishermitian(data)
+@test !ispattern(data)
+@test metadata(data) == ["dwg961b.mtx"]
 
 # an example with rhs and solution
 data = mdopen("DRIVCAV/cavity14")
@@ -45,9 +52,10 @@ data = mdopen("DRIVCAV/cavity14")
 @test size(matrix(data)) == (2597, 2597) # cache should be used (coverage)
 @test size(rhs(data), 1) == 2597
 @test size(solution(data), 1) == 2597
+@test mdclose(data) === data
 @test_throws DataError metareader(data, "invlid")
 
-@test_throws DataError rhs(1) # no rhs data for this example
+@test_throws DataError rhs(uf(1)) # no rhs data for this example
 
 # read a format array file
 @test MatrixDepot.fileinfo(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing

@@ -5,16 +5,17 @@ import Base: show
 
 export matrixdepot
 export matrix, rhs, solution, metareader
-export list, info, metadata, load, mdopen, mdclose, overview
+export list, listdir, info, metadata, load, mdopen, mdclose, overview
 export colval, mtranspose, madjoint
 export aliasname, @addgroup, @rmgroup, @modifygroup
 
 include("types.jl")         # common data type definitions
-include("higham.jl")          # test matrices
-include("regu.jl")               # regularization test problem
-include("graph.jl")             # adjacency matrices for graphs
+include("higham.jl")        # test matrices
+include("regu.jl")          # regularization test problem
+include("graph.jl")         # adjacency matrices for graphs
 include("data.jl")          # global varaibles and matrix data
 include("common.jl")        # main functions
+include("logical.jl")       # operations on patterns and predicates
 include("download.jl")      # download data from the UF and MM sparse matrix collection
 include("datareader.jl")    # read matrix data from local storage
 include("matrixmarket.jl")  # read matrix data from local storage

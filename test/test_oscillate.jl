@@ -11,9 +11,7 @@ A = matrixdepot("oscillate", n, mode)
 @test_throws ArgumentError matrixdepot("oscillate", n, 4)
 
 eva, evc = eigen(A)
-for ei in eva
-    @test ei > 0
-end
+@test all([ei > 0 for ei in eva])
 
 p = sortperm(eva, rev = true)
 evc = evc[:,p]

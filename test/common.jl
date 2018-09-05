@@ -38,38 +38,37 @@ REM = length(list("*/*"))
 
 @test list("") == []
 @test list("HB/1138_bus") == ["HB/1138_bus"]
-@test list(1) == ["HB/1138_bus"]
-@test list("#1") == ["HB/1138_bus"]
-@test list("#M1") == ["Harwell-Boeing/psadmit/1138_bus"]
-@test list("#[123456789]*") == list("*/*")
-@test list("#M*") == list("*/*/*")
-@test list("#B*") == list(:builtin)
-@test list("#U*") == list(:user)
-@test list("*") == list(:local)
+@test list(uf(1)) == ["HB/1138_bus"]
+@test list(mm(1)) == ["Harwell-Boeing/psadmit/1138_bus"]
+@test sort(list(uf(1:3000))) == list("*/*")
+@test sort(list(mm(1:3000))) == list("*/*/*")
+@test list(builtin(:)) == list(isbuiltin)
+@test list(user(:)) == list(isuser)
+@test list("*") == list(islocal)
 @test length(list("HB/*")) == 292
 @test list("HB**") == list("HB/**")
-@test list("Harwell-Boeing//") == ["Harwell-Boeing/*/* - (292)"]
+@test listdir("Harwell-Boeing//") == ["Harwell-Boeing/*/* - (292)"]
 @test list("*/hamm/*") == ["misc/hamm/add20", "misc/hamm/add32", "misc/hamm/memplus"]
 @test list("*/hamm/*a*3?") == ["misc/hamm/add32"]
 @test list("*/hamm/*a*3[123]") == ["misc/hamm/add32"]
 @test list("*/hamm/*a*3[123]?") == []
 @test length(list("*/*/*")) == 498
 
-@test list("*//*/*") == ["Harwell-Boeing/*/* - (292)", "NEP/*/* - (73)",
+@test listdir("*//*/*") == ["Harwell-Boeing/*/* - (292)", "NEP/*/* - (73)",
                            "SPARSKIT/*/* - (107)", "misc/*/* - (26)"]
-@test list("//*") == ["/* - ($(length(list(:local))))"]
-@test list("//*/*") == ["/*/* - ($REM)"]
-@test list("//*/*/*") == ["/*/*/* - (498)"]
-@test list("HB/") == ["HB/* - (292)"]
+@test listdir("//*") == ["/* - ($(length(list(:local))))"]
+@test listdir("//*/*") == ["/*/* - ($REM)"]
+@test listdir("//*/*/*") == ["/*/*/* - (498)"]
+@test listdir("HB/") == ["HB/* - (292)"]
 @test length(list("Harwell-Boeing/*/*")) == 292
 @test list(r".*ng/ma.*") == ["Harwell-Boeing/manteuffel/man_5976"]
-@test list(2001:2002) == ["JGD_Groebner/c8_mat11_I", "JGD_Groebner/f855_mat9"]
-@test length(list(2757:3000)) == REM - 2756
+@test list(tamu(2001:2002)) == ["JGD_Groebner/c8_mat11_I", "JGD_Groebner/f855_mat9"]
+@test length(list(tamu(2757:3000))) == REM - 2756
 @test list(:xxx) == []
-@test length(list(:remote)) == REM + 498
-@test length(list(:loaded)) + length(list(:unloaded)) == length(list(:remote))
-@test length(list(:builtin)) + length(list(:user)) == length(list(:local))
-@test length(list(:local)) + length(list(:remote)) == length(list(:all))
+@test length(list(isremote)) == REM + 498
+@test length(list(isloaded)) + length(list(isunloaded)) == length(list(isremote))
+@test length(list(isbuiltin)) + length(list(isuser)) == length(list(islocal))
+@test length(list(islocal)) + length(list(isremote)) == length(list(:all))
 @test length(list("**")) == length(list("*")) + length(list("*/*")) + length(list("*/*/*"))
 @test list(:all) == list("**")
 @test length(list(:symmetric)) == 22
@@ -82,20 +81,43 @@ REM = length(list("*/*"))
 
 
 # predicates of remote and local matrices
-@test length(list(issymmetric)) == 27
+@test length(list(issymmetric)) == 28
 
-@test length(list(predm(n -> n < 10000))) == 9    # items with m < *
-@test length(list(predn(n -> n < 10000))) == 8    # items with n < *
+@test length(list(predm(n -> n < 10000))) == 10    # items with m < *
+@test length(list(predn(n -> n < 10000))) == 9    # items with n < *
 @test length(list(prednz(n -> n < 5000))) == 5    # items with nnz < *
 @test length(list(predmn((m,n) -> m > n))) == 0   # items with m > n
 
+@test list(:local) == list(islocal)
+@test list(:remote) == list(isremote)
+@test list(:loaded) == list(isloaded)
+@test list(:builtin) == list(isbuiltin)
+@test list(:user) == list(isuser)
+
+@test list(:symmetric) == list(issymmetric & islocal)
+end
+
+@testset "logical" begin
 # for the boolean syntax
-@test list(!islocal) == list(isremote)
-@test length(list(isloaded & issymmetric)) == 5
-@test length(list(isloaded & !issymmetric)) == 4
-@test length(list(isloaded & !issymmetric | isuser & issymmetric)) == 5
-@test length(list(!islocal & issymmetric | isuser & issymmetric)) == 6
-@test list(islocal & !isbuiltin) == list(isuser)
+@test list(¬islocal) == list(isremote)
+@test length(list(isloaded & issymmetric)) == 6
+@test length(list(isloaded & ¬issymmetric)) == 4
+@test length(list(isloaded & ¬issymmetric | isuser & issymmetric)) == 5
+@test length(list(!islocal & issymmetric | isuser & issymmetric)) == 7
+@test list(islocal & ¬isbuiltin) == list(isuser)
+@test list(islocal & ¬isbuiltin) == list(isuser)
+@test "a" & "b" === ("a", "b")
+@test ¬"a" & "b" === (¬"a", "b")
+@test ¬"a" * "b" === ¬"ab"
+@test ¬"ab" === ¬'a' * 'b'
+@test ¬¬islocal === islocal
+@test list(¬"*a*" & ¬ "*e*") == list(¬["*a*", "*e*"])
+@test list(()) == list(:all)
+@test "a" & r"b" == ("a", r"b")
+@test "a" & r"b" & "c" == ("a", r"b", "c")
+@test "a" | r"b" == ["a", r"b"]
+@test "a" | r"b" | "c" == ["a", r"b", "c"]
+@test list(islocal & ¬("*a*" | "*e*")) == list(:local & ¬"*a*" & ¬ "*e*")
 
 end
 
