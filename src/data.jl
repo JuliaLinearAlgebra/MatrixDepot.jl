@@ -98,8 +98,8 @@ const TA_REMOTE = TURemoteType(RemoteParameters(
                    ))
 
 const UF_REMOTE = TURemoteType(RemoteParameters(
-                    "http://www.cise.ufl.edu/research/sparse/MM",
-                    "http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html",
+                    "https://www.cise.ufl.edu/research/sparse/MM",
+                    "https://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html",
                     """<title>UF Sparse Matrix Collection - sorted by id</title>""",
                     ("", """>MM</a>""", 4, ".tar.gz", 2, r"<td>([[:digit:]]*)</td>"),
                     ".tar.gz"
