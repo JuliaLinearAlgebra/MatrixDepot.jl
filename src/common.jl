@@ -307,7 +307,7 @@ function listdir(r::Regex, depth::Int, db::MatrixDatabase=MATRIX_DB)
 end
 
 
-list(p::Alias, db::MatrixDatabase=MATRIX_DB) = aliasresolve(p, db)
+list(p::Alias, db::MatrixDatabase=MATRIX_DB) = list(aliasresolve(p, db))
 
 list(p::Not) = setdiff(list(()), list(p.pattern)) 
 

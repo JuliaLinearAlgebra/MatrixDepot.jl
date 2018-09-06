@@ -154,13 +154,11 @@ function aliasresolve(a::Alias{T,<:AbstractVector{<:Integer}}, db::MatrixDatabas
     aliasr2(x) = aliasresolve(x, db)
     flatten(aliasr2.(aliasname(a)))
 end
-function aliasresolve(a::Alias{T,Colon}, db::MatrixDatabase) where T
-    pre = aliasname(a)[1:2]
-    alis = filter(x->startswith(x, pre), collect(keys(db.aliases)))
-    alis = string.(pre, sort!(parse.(Int, [x[3:end] for x in alis])))
-    aliasr2(x) = aliasresolve(x, db)
-    flatten(aliasr2.(alis))
-end
+aliasresolve(a::Alias{RemoteMatrixData{TURemoteType},Colon}, db::MatrixDatabase) = "*/*"
+aliasresolve(a::Alias{RemoteMatrixData{MMRemoteType},Colon}, db::MatrixDatabase) = "*/*/*"
+aliasresolve(a::Alias{GeneratedBuiltinMatrixData,Colon}, db::MatrixDatabase) = :builtin
+aliasresolve(a::Alias{GeneratedUserMatrixData,Colon}, db::MatrixDatabase) = :user
+
 ###
 # Predefined predicates for MatrixData
 ###
