@@ -47,11 +47,7 @@ end
 
 # mmap for regular files - else read
 function getbytes(io::IOStream)
-    if isfile(io)
-        Mmap.mmap(io, grow=false, shared=false)
-    else
-        read(io)
-    end
+    isfile(io) ? Mmap.mmap(io, grow=false, shared=false) : read(io)
 end
 getbytes(io::IO) = read(io)
 
@@ -257,11 +253,11 @@ function fileinfo(file::AbstractString)
                 end
                 (m, n, nz, token[2:end]...)
             else
-                nothing
+                daterr("file '$file' is not a MatrixMarket file")
             end
         end
     else
-        nothing
+        daterr("file '$file' is not a regular file")
     end
 end
 

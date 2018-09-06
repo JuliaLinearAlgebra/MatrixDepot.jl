@@ -7,10 +7,8 @@ rf32 = matrixdepot("deriv2", Float32, n, false)
 
 r2 = matrixdepot("deriv2", Float32, n, 2, false)
 @test r2 !== nothing
-if mod(n, 2) == 0
-    r3 = matrixdepot("deriv2", Float32, n, 3, false)
-    @test r3 !== nothing
-end
+@test matrixdepot("deriv2", Float32, (n ÷ 2) * 2, 3, false) !== nothing
+
 @test_throws ArgumentError matrixdepot("deriv2", Float64, n, 4, false)
 
 A = matrixdepot("deriv2", n)
@@ -69,12 +67,10 @@ A = matrixdepot("gravity", n)
 
 @test matrixdepot("gravity", n, 1, 0, 1, 0.25) == A
 
-r1 = matrixdepot("gravity", Float32, n, 1, false)
-@test r1 !== nothing
-r2 = matrixdepot("gravity", Float32, n, 2, false)
-@test r2 !== nothing
-r3 = matrixdepot("gravity", Float32, n, 3, false)
-@test r3 !== nothing
+@test matrixdepot("gravity", Float32, n, 1, false) !== nothing
+@test matrixdepot("gravity", Float32, n, 2, false) !== nothing
+@test matrixdepot("gravity", Float32, n, 3, false) !== nothing
+@test_throws ArgumentError matrixdepot("gravity", Float32, n, 4, false)
 
 A = matrixdepot("blur", n)
 @test A !== nothing

@@ -19,7 +19,7 @@ user_save = save_target(user_dir)
 # that will download the index files and initialize internal data
 MatrixDepot.init()
 
-@testset "MatrixDepot tests" begin
+@testset "MatrixDepot generator tests" begin
 
     @inc("test_magic.jl")
     @inc("test_cauchy.jl")
@@ -67,7 +67,9 @@ MatrixDepot.init()
     @inc("test_erdrey.jl")
     @inc("test_gilbert.jl")
     @inc("test_smallworld.jl")
+end
 
+@testset "MatrixDepot remote matrix tests" begin
     tests = [
             "include_generator",
             "download",
@@ -82,12 +84,18 @@ MatrixDepot.init()
             tp = joinpath(@__DIR__(), "$(t).jl")
             println("running $(tp) ...")
             include(tp)
+            println("finished $(tp)")
         end
-        
-#       MatrixDepot.update()
+       
+        xdir = MatrixDepot.DATA_DIR
+        xtmpdir = string(xdir, ".tmp")
+        println("mv $xdir $xtmpdir")
+        mv(xdir, xtmpdir, force=true)
         MatrixDepot.toggle_remote()
+        MatrixDepot.init()
         MatrixDepot.update()
         @test matrix(uf(1)) != nothing
+        mv(xtmpdir, xdir, force=true)
     finally
         revert_target(user_save, user_dir)
         revert_target(data_save, data_dir)
