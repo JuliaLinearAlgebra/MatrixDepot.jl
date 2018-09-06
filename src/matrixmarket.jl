@@ -257,7 +257,7 @@ function fileinfo(file::AbstractString)
             end
         end
     else
-        daterr("file '$file' is not a regular file")
+        nothing
     end
 end
 

@@ -70,7 +70,7 @@ A = matrixdepot("gravity", n)
 @test matrixdepot("gravity", Float32, n, 1, false) !== nothing
 @test matrixdepot("gravity", Float32, n, 2, false) !== nothing
 @test matrixdepot("gravity", Float32, n, 3, false) !== nothing
-@test_throws ArgumentError matrixdepot("gravity", Float32, n, 4, false)
+@test_throws ErrorException matrixdepot("gravity", Float32, n, 4, false)
 
 A = matrixdepot("blur", n)
 @test A !== nothing
