@@ -27,6 +27,7 @@
 # Download data from UF Sparse Matrix Collection
 #####################################################
 
+# check line for remote identification and store in global variable
 function remotetype(line::AbstractString)
     global uf_remote
     TAMUID = TA_REMOTE.params.indexgrep
@@ -45,22 +46,35 @@ function remotetype(line::AbstractString)
     end
 end
 
+function parse_headerinfo(akku::Dict{AbstractString,AbstractString}, count::Integer)
+    toint(id::String) = parse(Int, replace(get(akku, id, "0"), ','=>""))
+    id = toint("id")
+    id == 0 && (id = count)
+    m = toint("num_rows")
+    n = toint("num_cols")
+    nnz = toint("nonzeros")
+    kind = get(akku, "kind", "")
+    date = get(akku, "date", "0000")
+    id, IndexInfo(m, n, nnz, 0, kind, date)
+end
+
 # extract loading url base and matrix names from index file
 function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
     remote = nothing
     matrixdata = RemoteMatrixData[]
     count = 0
     open(matrices) do f
-        id = nothing
+        akku = Dict{AbstractString,AbstractString}()
         for line in readlines(f)
             if remote === nothing
                 remote = remotetype(line)
                 continue
             end
-            _, grepex, spquote, ending, parts, regexid = remote.params.scan
-            m = regexid === nothing ? nothing : match(regexid, line)
+            _, grepex, spquote, ending, parts, regexinf = remote.params.scan
+            m = regexinf === nothing ? nothing : match(regexinf, line)
             if m != nothing
-                id = m.captures[1]
+                pname = length(m.captures) == 2 ? m.captures[1] : "id"
+                akku[pname] = m.captures[end]
             end
             if occursin(grepex, line)
                 murl = split(line, '"')[spquote]
@@ -68,12 +82,11 @@ function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
                     list = rsplit(murl[1:end-length(ending)], '/', limit=parts+1)[2:end]
                     count += 1
                     name = join(list, '/')
-                    alias = id === nothing ? string(count) : id
-                    count = id != nothing ? parse(Int, id) : count
-                    data = RemoteMatrixData{typeof(remote)}(name, count)
+                    id, info = parse_headerinfo(akku, count)
+                    data = RemoteMatrixData{typeof(remote)}(name, id, info)
                     addmetadata!(data)
                     push!(db, data)
-                    id = nothing
+                    count = id
                 end
             end
         end
@@ -206,6 +219,22 @@ function loadmatrix(data::RemoteMatrixData, db::MatrixDatabase)
     nothing
 end
 
+function data_warn(name, dn, i1, i2)
+    @warn "$name: header $dn = $i1 file $dn = $i2"
+    i1
+end
+
+function extremnnz(data::RemoteMatrixData, m, n, k)
+    if issymmetric(data) || ishermitian(data) || isskew(data)
+        if m != n
+            @warn "$(data.name) needs to be quadratic but is ($mx$n)"
+        end
+        isskew(data) ? (2k, 2k) : (2k - max(m, n), 2k) 
+    else
+        (k, k)
+    end
+end
+
 function addmetadata!(data::RemoteMatrixData)
     file = matrixfile(data)
     dir = dirname(file)
@@ -217,7 +246,15 @@ function addmetadata!(data::RemoteMatrixData)
     append!(data.metadata, filter(filtop, readdir(dir)))
 
     if (finfo = fileinfo(file)) !== nothing
-        data.properties[] = finfo
+        data.properties[] = MMProperties(finfo[4:end]...)
+        m, n, k = finfo[1:3]
+        n1, n2 = extremnnz(data, m, n, k)
+        hdr = data.header
+        hdr.m = hdr.m in (0, m) ? m : data_warn(name, "m", hdr.m, m)
+        hdr.n = hdr.n in (0, n) ? n : data_warn(name, "n", hdr.n, n)
+        hdr.nnz = hdr.nnz == 0  ? n2 : n1 <= hdr.nnz <= n2 ? hdr.nnz :
+                                        data_warn(name, "nnz", hdr.nnz, k)
+        hdr.dnz = k
     end
     nothing
 end

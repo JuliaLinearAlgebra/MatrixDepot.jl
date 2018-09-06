@@ -83,10 +83,14 @@ REM = length(list("*/*"))
 # predicates of remote and local matrices
 @test length(list(issymmetric)) == 28
 
-@test length(list(predm(n -> n < 10000))) == 10    # items with m < *
-@test length(list(predn(n -> n < 10000))) == 9    # items with n < *
-@test length(list(prednz(n -> n < 5000))) == 5    # items with nnz < *
-@test length(list(predmn((m,n) -> m > n))) == 0   # items with m > n
+@test length(list(predm(n -> n < 10000))) == 1670   # items with m < *
+@test length(list(predm(n -> n < 10000) & isloaded)) == 10   # items with m < *
+@test length(list(predn(n -> n < 10000))) == 1610   # items with n < *
+@test length(list(predn(n -> n < 10000) &  isloaded)) == 9    # items with n < *
+@test length(list(prednz(n -> n < 5000))) == 599    # items with nnz < *
+@test length(list(prednz(n -> n < 5000) & isloaded)) == 2    # items with nnz < *
+@test length(list(predmn((m,n) -> m > n))) == 178   # items with m > n
+@test length(list(predmn((m,n) -> m > n) & isloaded)) == 0   # items with m > n
 
 @test list(:local) == list(islocal)
 @test list(:remote) == list(isremote)

@@ -32,9 +32,15 @@ struct MMProperties
     format::MMFormat
     field::MMField
     symmetry::MMSymmetry
+end
+
+mutable struct IndexInfo
     m::Int
     n::Int
-    nz::Int
+    nnz::Int
+    dnz::Int
+    kind::String
+    date::String
 end
 
 ## Matrix objects
@@ -62,12 +68,14 @@ abstract type MatrixData end
 struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     name::AbstractString
     id::Int
+    header::IndexInfo
     properties::Ref{Union{<:MMProperties,Nothing}}
     metadata::Vector{AbstractString}
     status::Ref{Bool}
     datacache::Dict{String}
-    function RemoteMatrixData{T}(name, id) where T
-        new(name, id, Ref{Union{<:MMProperties,Nothing}}(nothing), AbstractString[],
+    function RemoteMatrixData{T}(name, id::Integer, hdr::IndexInfo) where T
+        properties = Ref{Union{<:MMProperties,Nothing}}(nothing)
+        new(name, id, hdr, properties, AbstractString[],
             Ref(false), Dict{String,Any}())
     end
 end
@@ -114,9 +122,12 @@ end
 # essential functions of the types
 
 function Base.show(io::IO, data::RemoteMatrixData)
-    print(io, "RemoteMatrixData(")
-    print(io, "$(data.name)($(aliasname(data))) ")
-    show(io, data.properties[])
+    hd = data.header
+    prop = data.properties[]
+    print(io, "(")
+    print(io, "$(data.name)($(aliasname(data)))")
+    print(io, "-$(hd.m)x$(hd.n)($(hd.nnz)) ")
+    print(io, prop === nothing ? "{}" : prop)
     addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
     print(io, isopen(data) ? '*' : ' ')
     print(io, "[")
@@ -219,10 +230,16 @@ MM_NAME_TO_PROP = Dict{String,MMProperty}(mm_property_name(x) => x for x in (
     MMSymmetryHermitian())
 )
 
+row_num(data::RemoteMatrixData) = data.header.m
+col_num(data::RemoteMatrixData) = data.header.n
+nz_num(data::RemoteMatrixData) = data.header.nnz
+dnz_num(data::RemoteMatrixData) = data.header.dnz
+ident(data::RemoteMatrixData) = data.id
+
 MMProperties() = MMProperties("matrix", "coordinate", "real", "general")
-function MMProperties(args::AbstractVector{<:AbstractString}, nargs::Integer...)
+function MMProperties(args::AbstractString...)
     prop(x) = MM_NAME_TO_PROP[lowercase(x)]
-    MMProperties(prop.(args)..., nargs...)
+    MMProperties(prop.(args)...)
 end
 Base.show(io::IO, pr::MMProperty) = print(io, mm_property_name(pr))
 function Base.show(io::IO, mp::MMProperties)
@@ -230,8 +247,7 @@ function Base.show(io::IO, mp::MMProperties)
     show(io, mp.object); print(io, ", ")
     show(io, mp.format); print(io, ", ")
     show(io, mp.field); print(io, ", ")
-    show(io, mp.symmetry); print(io, ", ")
-    print(io, "$(mp.m)x$(mp.n)($(mp.nz))}")
+    show(io, mp.symmetry); print(io, "}")
 end
 
 

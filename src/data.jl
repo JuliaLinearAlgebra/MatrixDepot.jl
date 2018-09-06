@@ -93,7 +93,7 @@ const TA_REMOTE = TURemoteType(RemoteParameters(
                     "https://sparse.tamu.edu/?per_page=All",
                     """<title>SuiteSparse Matrix Collection</title>""",
                     ("", """">Matrix Market""", 4, ".tar.gz", 2,
-                     r"<td class='column-id'>([[:digit:]]*)</td>"),
+                     r"<td class='column-([[:alpha:]_]+)'>([^<]*)</td>"),
                     ".tar.gz"
                    ))
 

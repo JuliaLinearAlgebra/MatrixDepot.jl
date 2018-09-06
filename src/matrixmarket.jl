@@ -255,7 +255,7 @@ function fileinfo(file::AbstractString)
                 else
                     (0, 0, 0)
                 end
-                MMProperties(token[2:end], m, n, nz)
+                (m, n, nz, token[2:end]...)
             else
                 nothing
             end

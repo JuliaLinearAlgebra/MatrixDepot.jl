@@ -194,8 +194,8 @@ isreal(data::MatrixData) = false
 isinteger(data::MatrixData) = false
 ispattern(data::MatrixData) = false
 
-hasproperties(data::RemoteMatrixData) = data.properties[] !== nothing
-hasproperties(data::MatrixData) = false
+hasinfo(data::RemoteMatrixData) = data.header.m > 0 && data.header.n > 0
+hasinfo(data::MatrixData) = false
 isremote(data::RemoteMatrixData) = true
 isremote(data::MatrixData) = false
 isloaded(data::RemoteMatrixData) = !isempty(data.metadata)
@@ -209,12 +209,10 @@ isbuiltin(data::MatrixData) = false
 islocal(data::GeneratedMatrixData) = true
 islocal(data::MatrixData) = false
 
-predm(f::Function) = data::MatrixData -> hasproperties(data) && f(data.properties[].m)
-predn(f::Function) = data::MatrixData -> hasproperties(data) && f(data.properties[].n)
-prednz(f::Function) = data::MatrixData -> hasproperties(data) && f(data.properties[].nz)
+predm(f::Function) = data::MatrixData -> hasinfo(data) && f(row_num(data))
+predn(f::Function) = data::MatrixData -> hasinfo(data) && f(col_num(data))
+prednz(f::Function) = data::MatrixData -> hasinfo(data) && f(nz_num(data))
+preddnz(f::Function) = data::MatrixData -> hasinfo(data) && f(dnz_num(data))
 function predmn(f::Function)
-    data::MatrixData -> hasproperties(data) && f(data.properties[].m, data.properties[].n)
+    data::MatrixData -> hasinfo(data) && f(row_num(data), col_num(data))
 end
-
-prednames(v::AbstractVector) = data::MatrixData -> data.name in v
-
