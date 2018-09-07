@@ -60,7 +60,7 @@ function parse_headerinfo(akku::Dict{AbstractString,AbstractString}, count::Inte
 end
 
 # extract loading url base and matrix names from index file
-function extract_names(matrices::AbstractString, db::MatrixDatabase=MATRIX_DB)
+function extract_names(db::MatrixDatabase, matrices::AbstractString)
     remote = nothing
     matrixdata = RemoteMatrixData[]
     count = 0
@@ -108,9 +108,8 @@ end
 
 # collect the keys from local database (MATRIXDICT od USERMATRIXDICT)
 # provide a numerical id counting from 1 for either database.
-function insertlocal(T::Type{<:GeneratedMatrixData},
-                     ldb::Dict{<:AbstractString,Function},
-                     db::MatrixDatabase)
+function insertlocal(db::MatrixDatabase, T::Type{<:GeneratedMatrixData},
+                     ldb::Dict{<:AbstractString,Function})
 
     cnt = 0
     ks = sort!(collect(keys(ldb)))
@@ -121,7 +120,7 @@ function insertlocal(T::Type{<:GeneratedMatrixData},
 end
 
 """
-    MatrixDepot.daownloadindices(db=MATRIX_DB)
+    MatrixDepot.downloadindices(db)
 download html files and store matrix data in `db`.
 additionally generate aliases for local and loaded matrices.
 """
@@ -129,15 +128,15 @@ function downloadindices(db::MatrixDatabase)
     # UF Sparse matrix collection
     global uf_remote
     empty!(db)
-    insertlocal(GeneratedBuiltinMatrixData, MATRIXDICT, db)
-    insertlocal(GeneratedUserMatrixData, USERMATRIXDICT, db)
+    insertlocal(db, GeneratedBuiltinMatrixData, MATRIXDICT)
+    insertlocal(db, GeneratedUserMatrixData, USERMATRIXDICT)
     
     try
         downloadindex(preferred(TURemoteType))
         downloadindex(preferred(MMRemoteType))
 
-        extract_names(localindex(preferred(TURemoteType)), db)
-        extract_names(localindex(preferred(MMRemoteType)), db)
+        extract_names(db, localindex(preferred(TURemoteType)))
+        extract_names(db, localindex(preferred(MMRemoteType)))
     finally
         for data in values(db.data)
             db.aliases[aliasname(data)] = data.name
@@ -150,12 +149,12 @@ end
     MatrixDepot.update()
 update database index from the websites
 """
-function update()
+function update(db::MatrixDatabase=MATRIX_DB)
     uf_matrices = localindex(preferred(TURemoteType))
     isfile(uf_matrices) && rm(uf_matrices)
     mm_matrices = localindex(preferred(MMRemoteType))
     isfile(mm_matrices) && rm(mm_matrices)
-    downloadindices(MATRIX_DB)
+    downloadindices(db)
 end
 
 function gunzip(fname)
@@ -194,7 +193,7 @@ end
 # MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function loadmatrix(data::RemoteMatrixData, db::MatrixDatabase)   
+function loadmatrix(db::MatrixDatabase, data::RemoteMatrixData)   
     file = matrixfile(data)
     if isfile(file)
         return

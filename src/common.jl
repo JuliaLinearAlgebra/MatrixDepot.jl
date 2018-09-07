@@ -189,6 +189,61 @@ function fname(f::Function)
 end
 
 """
+listdir([db,] p::AbstractString)
+
+list directories and the number of matrices contained in them.
+get an overview of the count of names down directories.
+return a list with summary information for directories in matrix name space.
+The input argument is split into 2 patterns by the first double slash `"//"`.
+The whole string (with multiple slashes reduced to single slashes) determines
+a subset of all matrix names. They are then grouped by the first pattern and
+for each different group value the number of names in the subset is counted.
+A final `/` is replaced by `"//**"`.
+
+E.g.
++ `listdir("/*")`     - count names without a `/`. 
++ `listdir("/k*")`    - count names without `/` starting with `k*`.
++ `listdir("*//*")`   - count names with one directory part (uf-collection)
++ `listdir("*/*//*")` - count names with two directory parts (mm-collection)
++ `listdir("*//*/*")` - count names with two directory parts (mm-collection)
++ `listdir("Har*//*/*")` - restrict to directories starting with "Har"
++ `listdir("Har*/*//*")` - all subdirectoreis of the previous
+"""
+listdir(p::AbstractString) = listdir(MATRIX_DB, p)
+function listdir(db::MatrixDatabase, p::AbstractString)
+    r = findfirst(r"/+", p)
+    if r !== nothing && first(r) == 1
+        p = p[last(r)+1:end]
+        depth = 0
+    else
+        m = match(r"^(([^/]+/)+)(/|$)", p)
+        depth = m !== nothing ? count(x == '/' for x in m.captures[1]) : -1
+    end
+    p = replace(p, r"//+" => '/')
+    endswith(p, '/') && ( p = string(p, "**") )
+    r = shell_to_regex(p, false)
+    if depth >= 0
+        length(p) == 1 && ( p = ".*/" )
+        listdir(db, r, depth)
+    else
+        argerr("pattern '$p' needs '//' in the middle or '/' at start or end")
+    end
+end
+listdir(r::Regex, depth::Int) = listdir(MATRIX_DB, r)
+function listdir(db::MatrixDatabase, r::Regex, depth::Int)
+    result = Dict{AbstractString, Int}()
+    f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
+    for name in list(r)
+        li = split(name, '/')
+        if length(li) >= depth
+            key = f(li, depth)
+            result[key] = get!(result, key, 0) + 1
+        end
+    end
+    sort!([string(k, " - (", v, ")") for (k,v) in result])
+end
+
+"""
     list(p::Pattern[, db]
 return a vector of full matrix names where name or alias match given pattern.
 `p` can be one of the following:
@@ -202,7 +257,8 @@ return a vector of full matrix names where name or alias match given pattern.
 + a vector of patterns meaning the union
 + a tuple of patterns meaning the intersection
 """
-function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
+list(r::Regex) = list(MATRIX_DB, r)
+function list(db::MatrixDatabase, r::Regex)
     result = AbstractString[]
     for name in keys(db.data)
         if match(r, name) !== nothing
@@ -214,7 +270,8 @@ function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
     result
 end
 
-function list(p::Symbol, db::MatrixDatabase=MATRIX_DB)
+list(p::Symbol) = list(MATRIX_DB, p)
+function list(db::MatrixDatabase, p::Symbol)
     if haskey(SUBSETS, p)
         sort!(SUBSETS[p](db))
     elseif haskey(MATRIXCLASS, p)
@@ -247,70 +304,44 @@ function shell_to_regex(p::AbstractString, retain_pure::Bool)
     end
 end
 
-function list(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
+list(p::AbstractString) = list(MATRIX_DB, p)
+function list(db::MatrixDatabase, p::AbstractString)
     p = replace(p, r"//+" => '/')
     r = shell_to_regex(p, true)
-    r isa Regex ? list(r, db) : haskey(db.data, r) ? [r] : EMPTY_PATTERN
-end
-
-"""
-    listdir(p::AbstractString[, db])
-
-list directories and the number of matrices contained in them.
-get an overview of the count of names down directories.
-return a list with summary information for directories in matrix name space.
-The input argument is split into 2 patterns by the first double slash `"//"`.
-The whole string (with multiple slashes reduced to single slashes) determines
-a subset of all matrix names. They are then grouped by the first pattern and
-for each different group value the number of names in the subset is counted.
-A final `/` is replaced by `"//**"`.
-
-E.g.
-+ `listdir("/*")`     - count names without a `/`. 
-+ `listdir("/k*")`    - count names without `/` starting with `k*`.
-+ `listdir("*//*")`   - count names with one directory part (uf-collection)
-+ `listdir("*/*//*")` - count names with two directory parts (mm-collection)
-+ `listdir("*//*/*")` - count names with two directory parts (mm-collection)
-+ `listdir("Har*//*/*")` - restrict to directories starting with "Har"
-+ `listdir("Har*/*//*")` - all subdirectoreis of the previous
-"""
-function listdir(p::AbstractString, db::MatrixDatabase=MATRIX_DB)
-    r = findfirst(r"/+", p)
-    if r !== nothing && first(r) == 1
-        p = p[last(r)+1:end]
-        depth = 0
-    else
-        m = match(r"^(([^/]+/)+)(/|$)", p)
-        depth = m !== nothing ? count(x == '/' for x in m.captures[1]) : -1
-    end
-    p = replace(p, r"//+" => '/')
-    endswith(p, '/') && ( p = string(p, "**") )
-    r = shell_to_regex(p, false)
-    if depth >= 0
-        length(p) == 1 && ( p = ".*/" )
-        listdir(r, depth, db)
-    else
-        argerr("pattern '$p' needs '//' in the middle or '/' at start or end")
-    end
-end
-function listdir(r::Regex, depth::Int, db::MatrixDatabase=MATRIX_DB)
-    result = Dict{AbstractString, Int}()
-    f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
-    for name in list(r)
-        li = split(name, '/')
-        if length(li) >= depth
-            key = f(li, depth)
-            result[key] = get!(result, key, 0) + 1
-        end
-    end
-    sort!([string(k, " - (", v, ")") for (k,v) in result])
+    r isa Regex ? list(db, r) : haskey(db.data, r) ? [r] : EMPTY_PATTERN
 end
 
 
-list(p::Alias, db::MatrixDatabase=MATRIX_DB) = list(aliasresolve(p, db))
+list(p::Alias) = list(MATRIX_DB, p)
+list(db::MatrixDatabase, p::Alias) = list(aliasresolve(db, p))
 
-list(p::Not) = setdiff(list(()), list(p.pattern)) 
+list(p::Not) = list(MATRIX_DB, p)
+list(db::MatrixDatabase, p::Not) = setdiff(list(db,()), list(db, p.pattern)) 
 
+list(r::AbstractVector) = list(MATRIX_DB, r)
+function list(db::MatrixDatabase, r::AbstractVector)
+    listdb(r) = list(db, r)
+    unique!(sort!(flatten(listdb.(r))))
+end
+list(::Tuple{}) = list_all(MATRIX_DB)
+list(db::MatrixDatabase, ::Tuple{}) = list_all(db)
+list(r::Tuple) = list(MATRIX_DB, r)
+function list(db::MatrixDatabase, r::Tuple)
+    y, st = iterate(r)
+    res = list(y)
+    while !isempty(res) && (x = iterate(r, st)) !== nothing
+        y, st = x
+        intersect!(res, list(y))
+    end
+    res
+end
+list(pred::Function) = list(MATRIX_DB, pred)
+function list(db::MatrixDatabase, pred::Function)
+    dali = [ data for data in values(db.data) if pred(data) ]
+    sort!(getfield.(dali, :name))
+end
+
+## internal list special cases
 list_all(db::MatrixDatabase) = sort!(collect(keys(db.data)))
 function list_remote(db::MatrixDatabase)
     collect(d.name for d in values(db.data) if d isa RemoteMatrixData)
@@ -336,27 +367,10 @@ const SUBSETS = Dict(
 )
 
 flatten(a) = collect(Iterators.flatten(a))
-function list(r::AbstractVector, db::MatrixDatabase=MATRIX_DB)
-    listdb(r) = list(r, db)
-    unique!(sort!(flatten(listdb.(r))))
-end
-list(::Tuple{}, db::MatrixDatabase=MATRIX_DB) = (list_all(db))
-function list(r::Tuple, db::MatrixDatabase=MATRIX_DB)
-    y, st = iterate(r)
-    res = list(y)
-    while !isempty(res) && (x = iterate(r, st)) !== nothing
-        y, st = x
-        intersect!(res, list(y))
-    end
-    res
-end
-function list(pred::Function, db::MatrixDatabase=MATRIX_DB)
-    dali = [ data for data in values(db.data) if pred(data) ]
-    sort!(getfield.(dali, :name))
-end
 
 "return information about all matrices selected by pattern"
-function info(p::Pattern, db::MatrixDatabase=MATRIX_DB)
+info(p::Pattern) = info(MATRIX_DB, p)
+function info(db::MatrixDatabase, p::Pattern)
     mdbuffer = Markdown.MD([])
     md = mdbuffer
     for name in list(p)
@@ -406,14 +420,14 @@ function info(data::RemoteMatrixData)
     md
 end
 
-function verify_loaded(data::RemoteMatrixData, db::MatrixDatabase)
+function verify_loaded(db::MatrixDatabase, data::RemoteMatrixData)
     if isempty(data.metadata)
-        loadmatrix(data, db)
+        loadmatrix(db, data)
     end
     data
 end
-verify_loaded(data::MatrixData, db::MatrixDatabase) = data
-mdatav(p::Pattern, db::MatrixDatabase) = verify_loaded(mdata(p, db), db)
+verify_loaded(db::MatrixDatabase, data::MatrixData) = data
+mdatav(db::MatrixDatabase, p::Pattern) = verify_loaded(db, mdata(db, p))
 
 """
     matrix(p, [db,] args...)
@@ -422,29 +436,32 @@ return a matrix given a name
 * `db` is optional `MatrixDatabase` defaulting to global `MATRIX_DB`
 * `args` are optional arguments - only used for generated matrices
 """
-matrix(p::Pattern, db::MatrixDatabase=MATRIX_DB, args...) = matrix(mdatav(p, db), args...)
-matrix(p::Pattern, args...) = matrix(mdatav(p, MATRIX_DB), args...)
+matrix(p::Pattern, args...) = matrix(MATRIX_DB, p, args...)
+matrix(db::MatrixDatabase, p::Pattern, args...) = matrix(mdatav(db, p), args...)
 
 """
     rhs(p[, db]
 return right hand side of problem or `nothing`.
 see also [`@matrix`](@ref).
 """
-rhs(p::Pattern, db::MatrixDatabase=MATRIX_DB) = rhs(mdatav(p, db))
+rhs(p::Pattern) = rhs(MATRIX_DB, p)
+rhs(db::MatrixDatabase, p::Pattern) = rhs(mdatav(db, p))
 
 """
     solution(p[, db])
 return solution of problem corresponding to right hand side or `nothing`.
 see also [`@matrix`](@ref).
 """
-solution(p::Pattern, db::MatrixDatabase=MATRIX_DB) = solution(mdatav(p, db))
+solution(p::Pattern) = solution(MATRIX_DB, p)
+solution(db::MatrixDatabase, p::Pattern) = solution(mdatav(db, p))
 
 """
     metareader(p, metafile::String[, db])
 read metadata identified by name `metafile`.
 """
-function metareader(p::Pattern, metafile::AbstractString, db::MatrixDatabase=MATRIX_DB)
-    metareader(mdatav(p, db), metafile)
+metareader(p::Pattern, metafile::AbstractString) = metareader(MATRIX_DB, p, metafile)
+function metareader(db::MatrixDatabase, p::Pattern, metafile::AbstractString)
+    metareader(mdatav(db, p), metafile)
 end
 
 """
@@ -452,11 +469,12 @@ end
 load data from remote repository for all problems matching pattern"
 return the number of successfully loaded matrices.
 """
-function load(p::Pattern, db::MatrixDatabase=MATRIX_DB)
+load(p::Pattern) = load(MATRIX_DB, p)
+function load(db::MatrixDatabase, p::Pattern)
     n = 0
     for name in list(p)
         try
-            loadmatrix(db.data[name], db)
+            loadmatrix(db, db.data[name])
             n += 1
         catch ex
             @warn "could not load $name: $ex"
@@ -473,15 +491,17 @@ return `MatrixData` object, which can be used with data access functions.
 The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
 If the pattern has not a unique resolution, an error is thrown.
 """
-function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB; cache::Bool=false)
-    mdopen(mdatav(p, db), cache=cache)
+mdopen(p::Pattern; cache::Bool=false) = mdopen(MATRIX_DB, p, cache=cache)
+function mdopen(db::MatrixDatabase, p::Pattern; cache::Bool=false)
+    mdopen(mdatav(db, p), cache=cache)
 end
 
 """
-    mdata(pattern, db)
+    mdata(db, pattern)
 return unique `MatrixData` object according to pattern.
 """
-function mdata(p::Pattern, db::MatrixDatabase)
+mdata(p::Pattern) = mdata(MATRIX_DB, p)
+function mdata(db::MatrixDatabase, p::Pattern)
     li = list(p)
     length(li) == 0 && daterr("no matrix according to $p found")
     length(li) > 1  && daterr("pattern not unique: $p -> $li")
@@ -494,7 +514,8 @@ return copy of metadata if pattern is unique
 """
 metadata(data::RemoteMatrixData) = copy(data.metadata)
 metadata(data::MatrixData) = String[]
-metadata(p::Pattern, db::MatrixDatabase=MATRIX_DB) = metadata(mdata(p, db))
+metadata(p::Pattern) = metadata(MATRIX_DB, p)
+metadata(db::MatrixDatabase, p::Pattern) = metadata(mdata(db, p))
 
 """
     mdopen(data::MatrixData)
@@ -513,9 +534,10 @@ function mdclose(data::RemoteMatrixData)
     data
 end
 mdclose(data::MatrixData) = data
-function mdclose(p::Pattern, db::MatrixDatabase=MATRIX_DB)
-    mdatadb(name) = mdata(name, db)
-    mdclose.(mdatadb.(list(p, db)))
+mdclose(p::Pattern) = mdclose(MATRIX_DB, p)
+function mdclose(db::MatrixDatabase, p::Pattern)
+    mdatadb(name) = mdata(db, name)
+    mdclose.(mdatadb.(list(db, p)))
 end
 
 ###
@@ -524,7 +546,7 @@ end
 
 # convert input string to shell pattern in certain cases
 function convert_pattern(p::AbstractString)
-    list(occursin(r"[]*?/]", p) ? p : ["**/$p", p], MATRIX_DB)
+    occursin(r"[]*?/]", p) ? p : ["**/$p", p]
 end
 
 """
@@ -536,11 +558,11 @@ end
 function matrixdepot(p::AbstractString, s::Symbol; meta::Bool=false)
     p1 = convert_pattern(p)
     if s in (:s, :search)
-        list(p1, MATRIX_DB)
+        list(MATRIX_DB, p1)
     elseif s in (:g, :get)
-        load(p1, MATRIX_DB)
+        load(MATRIX_DB, p1)
     elseif s in (:r, :read)
-        data = mdata(p, MATRIX_DB)
+        data = mdata(MATRIX_DB, p)
         !meta ? matrix(data) : meta_names(data)
     else
         argerr("unknown symbol $s")
@@ -570,15 +592,15 @@ otherwise return info about pattern given by `string`.
 function matrixdepot(p::AbstractString)
 # cover the cases, a group name is given as a string and "data"
     db = MATRIX_DB
-    p == "data" && (return list(:loaded, db))
-    p == "all" && (return list(:local, db))
+    p == "data" && (return list(db, :loaded))
+    p == "all" && (return list(db, :local))
     p1 = convert_pattern(p)
-    if isempty(list(p1, db))
+    if isempty(list(db, p1))
         p1= replace(p, '-' => "")
-        res = list(Symbol(p1), db)
+        res = list(db, Symbol(p1))
         isempty(res) ? daterr("not found '$p'") : res
     else
-        info(p1, db)
+        info(db, p1)
     end
 end
 
@@ -610,7 +632,7 @@ end
 
 Generate built-in or user-defined matrix named `name` with (at least one) argument    
 """
-matrixdepot(p::Pattern, args...) = matrix(p, MATRIX_DB, args...)
+matrixdepot(p::Pattern, args...) = matrix(MATRIX_DB, p, args...)
 
 """
     matrixdepot(group::String...)

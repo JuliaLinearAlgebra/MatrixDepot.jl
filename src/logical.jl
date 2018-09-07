@@ -145,20 +145,20 @@ end
 # Alias resolution
 ###
 
-function aliasresolve(k::AbstractString, db::MatrixDatabase)
+function aliasresolve(db::MatrixDatabase, k::AbstractString)
     haskey(db.aliases, k) ? [db.aliases[k]] : String[]
 end
-function aliasresolve(a::Alias{T,<:Integer}, db::MatrixDatabase) where T
-    aliasresolve(aliasname(a), db)
+function aliasresolve(db::MatrixDatabase, a::Alias{T,<:Integer}) where T
+    aliasresolve(db, aliasname(a))
 end
-function aliasresolve(a::Alias{T,<:AbstractVector{<:Integer}}, db::MatrixDatabase) where T
-    aliasr2(x) = aliasresolve(x, db)
+function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector{<:Integer}}) where T
+    aliasr2(x) = aliasresolve(db, x)
     flatten(aliasr2.(aliasname(a)))
 end
-aliasresolve(a::Alias{RemoteMatrixData{TURemoteType},Colon}, db::MatrixDatabase) = "*/*"
-aliasresolve(a::Alias{RemoteMatrixData{MMRemoteType},Colon}, db::MatrixDatabase) = "*/*/*"
-aliasresolve(a::Alias{GeneratedBuiltinMatrixData,Colon}, db::MatrixDatabase) = :builtin
-aliasresolve(a::Alias{GeneratedUserMatrixData,Colon}, db::MatrixDatabase) = :user
+aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{TURemoteType},Colon}, ) = "*/*"
+aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{MMRemoteType},Colon}) = "*/*/*"
+aliasresolve(db::MatrixDatabase, a::Alias{GeneratedBuiltinMatrixData,Colon}) = :builtin
+aliasresolve(db::MatrixDatabase, a::Alias{GeneratedUserMatrixData,Colon}) = :user
 
 ###
 # Predefined predicates for MatrixData
