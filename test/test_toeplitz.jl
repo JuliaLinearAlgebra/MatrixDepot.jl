@@ -7,7 +7,7 @@ B = matrixdepot("toeplitz", [1,2,3], [1,4,5])
 @test B[1,2] == 4
 println("'toeplitz' passed test...")
 
-n = rand(2:10)
+n = 10 # rand(2:10)
 A = matrixdepot("prolate", n)
 @test issymmetric(A)
 

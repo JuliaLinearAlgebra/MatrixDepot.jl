@@ -1,5 +1,5 @@
-n = rand(1:10)
-m = rand(1:20)
+n = 7  # rand(1:10)
+m = 17 # rand(1:20)
 A = matrixdepot("pei", n, m)
 B = ones(n,n)
 @test issymmetric(A)

@@ -1,6 +1,6 @@
-n = rand(1:10)
-m = rand(1:10)
-k = rand(1:n)
+n = 9 # rand(1:10)
+m = 8 # rand(1:10)
+k = n-2 #rand(1:n)
 alpha = 3.0
 @test matrixdepot("triw", Float64, m, n, alpha, k) == matrixdepot("triw", m, n, alpha, k)
 @test matrixdepot("triw", n) == matrixdepot("triw", Float64, n, n, -1, n-1)

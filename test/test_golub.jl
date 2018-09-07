@@ -1,4 +1,4 @@
-n = rand(6:10)
+n = 10 # rand(6:10)
 
 A = matrixdepot("golub", n)
 @test cond(A) > 1.e8

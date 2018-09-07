@@ -1,5 +1,5 @@
-n = rand(1:10)
-m = rand(1:n)
+n = 10 #rand(1:10)
+m = n ÷ 2 # rand(1:n)
 @test matrixdepot("vand", Int, n) == matrixdepot("vand", [1:n;])
 
 A = matrixdepot("vand", Int, n)

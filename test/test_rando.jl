@@ -1,5 +1,5 @@
 let i, n, A, B, C, θ
-n = rand(1:5)
+n = 5 # rand(1:5)
 
 A = matrixdepot("rando", Int, n, 1)
 B = matrixdepot("rando", Int, n, 2)

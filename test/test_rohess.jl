@@ -1,4 +1,4 @@
-n = rand(2: 10)
+n = 8 # rand(2: 10)
 
 # test Hessenberg
 

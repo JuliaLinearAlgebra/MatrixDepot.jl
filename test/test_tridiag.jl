@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 @test matrixdepot("tridiag", [1,1,1], [1,1,1,1], [1,1,1]) == matrixdepot("tridiag", 4, 1,1,1)
 @test matrixdepot("tridiag", Float64, n) == matrixdepot("tridiag", n)
 

@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 A = ones(Float64, n, n)
 @test matrixdepot("circul", ones(Float64,n)) ≈ A
 

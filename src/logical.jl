@@ -7,7 +7,8 @@ export builtin, user, uf, tamu, mm, ¬, logical
 export isgeneral, issymmetric, isskew, ishermitian
 export iscomplex, isreal, isinteger, ispattern
 export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
-export predm, predn, prednz, predmn
+export predm, predn, prednz, predmn, kindhas, datebefore, dateafter, nodate
+export prednzdev 
 
 import Base: isreal, isinteger
 import LinearAlgebra: issymmetric, ishermitian
@@ -216,3 +217,20 @@ preddnz(f::Function) = data::MatrixData -> hasinfo(data) && f(dnz_num(data))
 function predmn(f::Function)
     data::MatrixData -> hasinfo(data) && f(row_num(data), col_num(data))
 end
+function kindhas(p::Union{AbstractString,Regex,AbstractChar})
+    data -> occursin(p, kind(data))
+end
+datebefore(p::Int) = data -> date(data) > 0 && date(data) <= p
+dateafter(p::Int) = data -> date(data) > 0 && date(data) >= p
+nodate(data) = date(data) == 0
+function prednzdev(dev::AbstractFloat=0.1)
+    function f(data::RemoteMatrixData)
+        n1, n2 = extremnnz(data)
+        n1 -= Int(floor(n1 * dev))
+        n2 += Int(floor(n2 * dev))
+        isloaded(data) && ! ( n1 <= nz_num(data) <= n2 )
+    end
+    f(::MatrixData) = false
+    f
+end
+

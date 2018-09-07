@@ -40,7 +40,7 @@ mutable struct IndexInfo
     nnz::Int
     dnz::Int
     kind::String
-    date::String
+    date::Int # the Julian year number e.g. 2018
 end
 
 ## Matrix objects
@@ -126,7 +126,7 @@ function Base.show(io::IO, data::RemoteMatrixData)
     prop = data.properties[]
     print(io, "(")
     print(io, "$(data.name)($(aliasname(data)))")
-    print(io, "-$(hd.m)x$(hd.n)($(hd.nnz)) ")
+    print(io, "-$(hd.m)x$(hd.n)($(hd.nnz)/$(hd.dnz)) ")
     print(io, prop === nothing ? "{}" : prop)
     addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
     print(io, isopen(data) ? '*' : ' ')
@@ -234,7 +234,15 @@ row_num(data::RemoteMatrixData) = data.header.m
 col_num(data::RemoteMatrixData) = data.header.n
 nz_num(data::RemoteMatrixData) = data.header.nnz
 dnz_num(data::RemoteMatrixData) = data.header.dnz
-ident(data::RemoteMatrixData) = data.id
+kind(data::RemoteMatrixData) = data.header.kind
+date(data::RemoteMatrixData) = data.header.date
+row_num(data::MatrixData) = 0
+col_num(data::MatrixData) = 0
+nz_num(data::MatrixData) = 0
+dnz_num(data::MatrixData) = 0
+kind(data::MatrixData) = ""
+date(data::MatrixData) = 0
+ident(data::MatrixData) = data.id
 
 MMProperties() = MMProperties("matrix", "coordinate", "real", "general")
 function MMProperties(args::AbstractString...)

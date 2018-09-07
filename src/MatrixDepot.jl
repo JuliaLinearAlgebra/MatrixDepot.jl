@@ -6,8 +6,9 @@ import Base: show
 export matrixdepot
 export matrix, rhs, solution, metareader
 export list, listdir, info, metadata, load, mdopen, mdclose, overview
-export colval, mtranspose, madjoint
+export row_num, col_num, nz_num, dnz_num
 export aliasname, @addgroup, @rmgroup, @modifygroup
+export colval, mtranspose, madjoint
 
 include("types.jl")         # common data type definitions
 include("higham.jl")        # test matrices
@@ -52,6 +53,7 @@ function init()
     nothing
 end
 
-init()
+# will be called automatically once after `using`, `import`, `require`.
+__init__() = init()
 
 end # end module

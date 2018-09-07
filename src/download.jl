@@ -54,7 +54,8 @@ function parse_headerinfo(akku::Dict{AbstractString,AbstractString}, count::Inte
     n = toint("num_cols")
     nnz = toint("nonzeros")
     kind = get(akku, "kind", "")
-    date = get(akku, "date", "0000")
+    datestr = get(akku, "date", "0")
+    date = match(r"^\d+$", datestr) != nothing ? parse(Int, datestr) : 0
     id, IndexInfo(m, n, nnz, 0, kind, date)
 end
 
@@ -219,8 +220,8 @@ function loadmatrix(data::RemoteMatrixData, db::MatrixDatabase)
     nothing
 end
 
-function data_warn(name, dn, i1, i2)
-    @warn "$name: header $dn = $i1 file $dn = $i2"
+function data_warn(data::RemoteMatrixData, dn, i1, i2)
+    @warn "$(data.name): header $dn = $i1 file $dn = $i2 $(data.properties[])"
     i1
 end
 
@@ -233,6 +234,9 @@ function extremnnz(data::RemoteMatrixData, m, n, k)
     else
         (k, k)
     end
+end
+function extremnnz(data::RemoteMatrixData)
+    extremnnz(data, row_num(data), col_num(data), dnz_num(data))
 end
 
 function addmetadata!(data::RemoteMatrixData)
@@ -250,10 +254,10 @@ function addmetadata!(data::RemoteMatrixData)
         m, n, k = finfo[1:3]
         n1, n2 = extremnnz(data, m, n, k)
         hdr = data.header
-        hdr.m = hdr.m in (0, m) ? m : data_warn(name, "m", hdr.m, m)
-        hdr.n = hdr.n in (0, n) ? n : data_warn(name, "n", hdr.n, n)
+        hdr.m = hdr.m in (0, m) ? m : data_warn(data, "m", hdr.m, m)
+        hdr.n = hdr.n in (0, n) ? n : data_warn(data, "n", hdr.n, n)
         hdr.nnz = hdr.nnz == 0  ? n2 : n1 <= hdr.nnz <= n2 ? hdr.nnz :
-                                        data_warn(name, "nnz", hdr.nnz, k)
+                                        data_warn(data, "nnz", hdr.nnz, k)
         hdr.dnz = k
     end
     nothing

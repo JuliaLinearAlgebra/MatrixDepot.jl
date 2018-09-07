@@ -91,6 +91,11 @@ REM = length(list("*/*"))
 @test length(list(prednz(n -> n < 5000) & isloaded)) == 2    # items with nnz < *
 @test length(list(predmn((m,n) -> m > n))) == 178   # items with m > n
 @test length(list(predmn((m,n) -> m > n) & isloaded)) == 0   # items with m > n
+@test length(list(kindhas("Power"))) == 70
+@test length(list(datebefore(1971))) == 5
+@test length(list(dateafter(2016) & datebefore(2016))) == 2
+@test length(list(nodate & uf(:))) == 42
+@test list(prednzdev(0.001)) == ["DRIVCAV/cavity14"] 
 
 @test list(:local) == list(islocal)
 @test list(:remote) == list(isremote)

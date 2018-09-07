@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 A = matrixdepot("hilb", n)
 B = matrixdepot("lotkin", n)
 

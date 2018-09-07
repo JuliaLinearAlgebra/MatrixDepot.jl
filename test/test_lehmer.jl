@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 @test matrixdepot("lehmer", Float64, n) == matrixdepot("lehmer", n)
 
 A = ones(n, 1) * [1:n;]'

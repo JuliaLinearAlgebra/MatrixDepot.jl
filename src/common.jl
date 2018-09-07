@@ -204,18 +204,9 @@ return a vector of full matrix names where name or alias match given pattern.
 """
 function list(r::Regex, db::MatrixDatabase=MATRIX_DB)
     result = AbstractString[]
-    
-    if startswith(r.pattern, "^#")
-        for (alias, name) in db.aliases
-            if match(r, alias) !== nothing
-                push!(result, name)
-            end
-        end
-    else
-        for name in keys(db.data)
-            if match(r, name) !== nothing
-                push!(result, name)
-            end
+    for name in keys(db.data)
+        if match(r, name) !== nothing
+            push!(result, name)
         end
     end
     sort!(result)
@@ -476,12 +467,14 @@ end
 
 """
     mdata(pattern[ ,db])
+
+make sure that data files are loaded-
 return `MatrixData` object, which can be used with data access functions.
 The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
 If the pattern has not a unique resolution, an error is thrown.
 """
-function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB)
-    mdopen(mdatav(p, db)) # set status flag
+function mdopen(p::Pattern, db::MatrixDatabase=MATRIX_DB; cache::Bool=false)
+    mdopen(mdatav(p, db), cache=cache)
 end
 
 """
@@ -507,8 +500,8 @@ metadata(p::Pattern, db::MatrixDatabase=MATRIX_DB) = metadata(mdata(p, db))
     mdopen(data::MatrixData)
 Enable data caching for `RemoteMatrixData` and return data.
 """
-mdopen(data::RemoteMatrixData) = (data.status[] = true; data)
-mdopen(data::MatrixData) = data
+mdopen(data::RemoteMatrixData; cache::Bool=false) = (data.status[] = cache; data)
+mdopen(data::MatrixData; cache::Bool=false) = data
 
 """
     mdclose(data::MatrixData)
@@ -520,6 +513,10 @@ function mdclose(data::RemoteMatrixData)
     data
 end
 mdclose(data::MatrixData) = data
+function mdclose(p::Pattern, db::MatrixDatabase=MATRIX_DB)
+    mdatadb(name) = mdata(name, db)
+    mdclose.(mdatadb.(list(p, db)))
+end
 
 ###
 # vintage API

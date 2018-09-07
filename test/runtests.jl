@@ -18,7 +18,6 @@ user_save = save_target(user_dir)
 
 # that will download the index files and initialize internal data
 MatrixDepot.init()
-
 @testset "MatrixDepot generator tests" begin
 
     @inc("test_magic.jl")
@@ -86,7 +85,7 @@ end
             include(tp)
             println("finished $(tp)")
         end
-       
+
         xdir = MatrixDepot.DATA_DIR
         xtmpdir = string(xdir, ".tmp")
         println("mv $xdir $xtmpdir")
@@ -96,6 +95,7 @@ end
         MatrixDepot.update()
         @test matrix(uf(1)) != nothing
         mv(xtmpdir, xdir, force=true)
+
     finally
         revert_target(user_save, user_dir)
         revert_target(data_save, data_dir)

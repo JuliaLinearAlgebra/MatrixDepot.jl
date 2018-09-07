@@ -1,5 +1,4 @@
-
-n = rand(1:10)
+n = 8 # rand(1:10)
 @test matrixdepot("frank", n) == matrixdepot("frank", Float64, n, 0)
 
 A = zeros(Float64, n, n)

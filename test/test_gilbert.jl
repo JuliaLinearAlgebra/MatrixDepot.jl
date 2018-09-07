@@ -1,4 +1,4 @@
-n = rand(40:100)
+n = 79 # rand(40:100)
 A = matrixdepot("gilbert", n)
 @test issymmetric(A)
 

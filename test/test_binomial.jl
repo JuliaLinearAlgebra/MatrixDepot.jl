@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 @test matrixdepot("binomial", n) == matrixdepot("binomial", Float64, n)
 
 A = matrixdepot("binomial", n)
