@@ -47,6 +47,7 @@ REM = length(list("*/*"))
 @test list("*") == list(islocal)
 @test length(list("HB/*")) == 292
 @test list("HB**") == list("HB/**")
+@test_throws ArgumentError  listdir("*/*")
 @test listdir("Harwell-Boeing//") == ["Harwell-Boeing/*/* - (292)"]
 @test list("*/hamm/*") == ["misc/hamm/add20", "misc/hamm/add32", "misc/hamm/memplus"]
 @test list("*/hamm/*a*3?") == ["misc/hamm/add32"]
@@ -128,5 +129,6 @@ end
 @test "a" | r"b" | "c" == ["a", r"b", "c"]
 @test list(islocal & ¬("*a*" | "*e*")) == list(:local & ¬"*a*" & ¬ "*e*")
 
+@test MatrixDepot.fname(sin) == "unknown-function"
 end
 

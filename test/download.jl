@@ -47,7 +47,7 @@ data = mdopen("Bai/dwg961b")
 @test metadata(data) == ["dwg961b.mtx"]
 
 # an example with rhs and solution
-data = mdopen("DRIVCAV/cavity14")
+data = mdopen("DRIVCAV/cavity14"; cache=true)
 @test size(matrix(data)) == (2597, 2597)
 @test size(matrix(data)) == (2597, 2597) # cache should be used (coverage)
 @test size(rhs(data), 1) == 2597
