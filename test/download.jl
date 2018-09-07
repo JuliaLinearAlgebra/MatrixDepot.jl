@@ -60,6 +60,11 @@ data = mdopen("DRIVCAV/cavity14"; cache=true)
 # read a format array file
 @test MatrixDepot.fileinfo(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing
 
+data = mdopen("*/bfly")
+@test metareader(data, "bfly_Gname_01.txt") == "BFLY3\n"
+fn = joinpath(dirname(MatrixDepot.matrixfile(data)), "bfly_Gname_01.txt")
+@test_throws DataError MatrixDepot.fileinfo(fn)
+
 # read from a pipeline
 @test open(`printf '%%%%matrixmarket matrix array real general\n1 1\n2.5\n'`) do io
     MatrixDepot.mmread(io) == reshape([2.5], 1, 1)

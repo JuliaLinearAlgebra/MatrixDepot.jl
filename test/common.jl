@@ -82,7 +82,7 @@ REM = length(list("*/*"))
 
 
 # predicates of remote and local matrices
-@test length(list(issymmetric)) == 28
+@test length(list(issymmetric)) == 29
 
 @test length(list(predm(n -> n < 10000))) == 1670   # items with m < *
 @test length(list(predm(n -> n < 10000) & isloaded)) == 10   # items with m < *
@@ -110,10 +110,10 @@ end
 @testset "logical" begin
 # for the boolean syntax
 @test list(¬islocal) == list(isremote)
-@test length(list(isloaded & issymmetric)) == 6
+@test length(list(isloaded & issymmetric)) == 7
 @test length(list(isloaded & ¬issymmetric)) == 4
 @test length(list(isloaded & ¬issymmetric | isuser & issymmetric)) == 5
-@test length(list(!islocal & issymmetric | isuser & issymmetric)) == 7
+@test length(list(!islocal & issymmetric | isuser & issymmetric)) == 8
 @test list(islocal & ¬isbuiltin) == list(isuser)
 @test list(islocal & ¬isbuiltin) == list(isuser)
 @test "a" & "b" === ("a", "b")
