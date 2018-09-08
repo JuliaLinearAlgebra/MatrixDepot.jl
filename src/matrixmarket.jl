@@ -231,6 +231,23 @@ Materialized adjoint of sparse Matrix
 madjoint(A) = conj!(mtranspose(A))
 
 """
+    ufinfo(filename)
+return info comment strings for MatrixMarket format files
+"""
+function ufinfo(filename::AbstractString)
+    io = IOBuffer()
+    open(filename,"r") do mmfile
+        line = readline(mmfile)
+        while startswith(line, '%') || isempty(strip(line))
+            println(io, line)
+            line = readline(mmfile)
+        end
+        println(io, line)
+    end
+    String(take!(io))
+end
+
+"""
     fileinfo(filename)
 Read header information from mtx file.
 """
@@ -239,19 +256,19 @@ function fileinfo(file::AbstractString)
         open(file) do io
             line = lowercase(readline(io))
             token = split(line)
-            if token[1] == MATRIXM
+            if length(token) >= 4 &&
+                token[1] == MATRIXM &&
+                token[2] == MATRIX &&
+                token[3] in [COORD, ARRAY]
+
                 while startswith(line, '%') || isempty(strip(line))
                     line = readline(io)
                 end
-                m, n, nz =
-                if token[2] == MATRIX && token[3] == COORD
-                    m, n, nz = parseint(line)
-                elseif token[2] == MATRIX && token[3] == ARRAY
-                    (parseint(line)..., 0)
-                else
-                    (0, 0, 0)
+                res = try parseint(line) catch; [] end
+                if length(res) != (token[3] == COORD ? 3 : 2)
+                    daterr("MatrixMarket file '$file' invalid sizes: '$line'")
                 end
-                (m, n, nz, token[2:end]...)
+                (push!(res, 0)[1:3]..., token[2:end]...)
             else
                 daterr("file '$file' is not a MatrixMarket file")
             end

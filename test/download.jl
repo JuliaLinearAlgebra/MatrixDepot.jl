@@ -70,9 +70,47 @@ fn = joinpath(dirname(MatrixDepot.matrixfile(data)), "bfly_Gname_01.txt")
     MatrixDepot.mmread(io) == reshape([2.5], 1, 1)
 end
 
+# read from temporary file
+mktemp() do path, io
+    println(io, "%%MatrixMarket Matrix arRAy real GeneraL")
+    println(io, "% first line")
+    println(io)
+    println(io, "%second line")
+    println(io); println(io, "    ")
+    println(io, "24 2")
+    close(io)
+    @test MatrixDepot.ufinfo(path) ==
+    "%%MatrixMarket Matrix arRAy real GeneraL\n% first line\n\n%second line\n\n    \n24 2\n"
+    @test MatrixDepot.fileinfo(path) == (24, 2, 0, "matrix", "array", "real", "general")
+end
+
+mktemp() do path, io
+    println(io, "%%MatrixMarket Matrix arRAi real GeneraL")
+    println(io, "1 2")
+    close(io)
+    @test_throws DataError MatrixDepot.fileinfo(path)
+end
+
+mktemp() do path, io
+    println(io, "%%MatrixMarket Matrix array real GeneraL")
+    println(io, "1 2 A")
+    close(io)
+    @test_throws DataError MatrixDepot.fileinfo(path)
+end
+
+mktemp() do path, io
+    println(io, "%%MatrixMarket Matrix coordinate real GeneraL")
+    println(io, "1 2")
+    close(io)
+    @test_throws DataError MatrixDepot.fileinfo(path)
+end
+
+@test MatrixDepot.fileinfo("") === nothing
+
 # an example loading a txt file
-data = mdopen("Pajek/Journals")
+data = mdopen("Pajek/Journals"; cache=true)
 @test length(metareader(data, "Journals_nodename.txt")) > 100
+@test length(metareader(data, "Journals_nodename.txt")) > 100 # repeat to use cache
 
 # reading mtx files
 io = IOBuffer("""

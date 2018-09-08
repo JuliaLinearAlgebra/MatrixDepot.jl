@@ -1,4 +1,5 @@
 n = 10 # rand(2:10)
+@test matrixdepot("neumann", 1) == reshape([4.0], 1, 1)
 @test matrixdepot("neumann", n) == matrixdepot("neumann", Float64, n)
 
 n_mesh, n = n, n^2

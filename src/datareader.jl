@@ -1,21 +1,3 @@
-# return info comment strings for UF sparse matrix
-
-function ufinfo(filename::AbstractString)
-    io = IOBuffer()
-    open(filename,"r") do mmfile
-        line = readline(mmfile)
-        while startswith(line, '%')
-            println(io, line)
-            line = readline(mmfile)
-        end
-        while isempty(strip(line))
-            line = readline(mmfile)
-        end
-        println(io, line)
-    end
-    String(take!(io))
-end
-
 """
     metareader(dat::RemoteMatrixData)
 return dictionary with all data (matrices, rhs, other metadata).
