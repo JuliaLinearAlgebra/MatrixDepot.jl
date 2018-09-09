@@ -23,58 +23,10 @@ end
 
 function group_list()
     groups = Symbol[]
-    append!(groups, keys(MATRIXCLASS))
-    append!(groups, keys(usermatrixclass))
-    append!(groups, keys(SUBSETS))
-    sort(groups)
-end
-
-##########################
-# display information
-##########################
-
-# print info about all matrices in the collection
-"""
-    overview([db])
-
-return formatted overview about matrices and groups in the collection.
-"""
-function overview(db::MatrixDatabase=MATRIX_DB)
-    # Print information strings
-    io = IOBuffer()
-    println(io)
-    println(io, "Matrices:")
-
-    matrices = list(:local)
-
-    i = 1
-    for (index, mat) in enumerate(matrices)
-        if i < 4 && length(mat) < 14
-            i += 1
-            @printf io "%4d) %-14s" index mat
-        else
-            i = 1
-            @printf io "%4d) %-14s\n" index mat
-        end
-    end
-    println(io)
-
-    println(io, "Groups:")
-
-    groups = group_list()
-
-    j = 1
-    for name in groups
-        if j < 4 && length(string(name)) < 12
-            j += 1
-            @printf io "  %-12s" name
-        else
-            j = 1
-            @printf io "  %-12s\n" name
-        end
-    end
-    println(io)
-    String(take!(io))
+    append!(groups, sort!(collect(keys(SUBSETS))))
+    append!(groups, sort!(collect(keys(MATRIXCLASS))))
+    append!(groups, sort!(collect(keys(usermatrixclass))))
+    groups
 end
 
 #######################
@@ -199,7 +151,7 @@ for each different group value the number of names in the subset is counted.
 A final `/` is replaced by `"//**"`.
 
 E.g.
-+ `listdir("/*")`     - count names without a `/`. 
++ `listdir("/*")`     - count names without a `/`.
 + `listdir("/k*")`    - count names without `/` starting with `k*`.
 + `listdir("*//*")`   - count names with one directory part (uf-collection)
 + `listdir("*/*//*")` - count names with two directory parts (mm-collection)
@@ -273,18 +225,19 @@ function list(db::MatrixDatabase, p::Symbol)
     if haskey(SUBSETS, p)
         sort!(SUBSETS[p](db))
     elseif haskey(MATRIXCLASS, p)
-        sort!(MATRIXCLASS[p])
+        sort(MATRIXCLASS[p])
     elseif haskey(usermatrixclass, p)
-        sort!(usermatrixclass[p])
+        sort(usermatrixclass[p])
     else
-        EMPTY_PATTERN
+        argerr("unknown group name '$p'")
+        # EMPTY_PATTERN
     end
 end
 
 """
     shell_to_regex
 
-return a regular expression if shell pattern characters `"*?]"` are contained in 
+return a regular expression if shell pattern characters `"*?]"` are contained in
 string, otherwise return string.
 """
 function shell_to_regex(p::AbstractString, retain_pure::Bool)
@@ -309,20 +262,21 @@ function list(db::MatrixDatabase, p::AbstractString)
     r isa Regex ? list(db, r) : haskey(db.data, r) ? [r] : EMPTY_PATTERN
 end
 
-
 list(p::Alias) = list(MATRIX_DB, p)
 list(db::MatrixDatabase, p::Alias) = list(aliasresolve(db, p))
 
 list(p::Not) = list(MATRIX_DB, p)
-list(db::MatrixDatabase, p::Not) = setdiff(list(db,()), list(db, p.pattern)) 
+list(db::MatrixDatabase, p::Not) = setdiff(list(db,()), list(db, p.pattern))
 
 list(r::AbstractVector) = list(MATRIX_DB, r)
 function list(db::MatrixDatabase, r::AbstractVector)
     listdb(r) = list(db, r)
     unique!(sort!(flatten(listdb.(r))))
 end
+
 list(::Tuple{}) = list_all(MATRIX_DB)
 list(db::MatrixDatabase, ::Tuple{}) = list_all(db)
+
 list(r::Tuple) = list(MATRIX_DB, r)
 function list(db::MatrixDatabase, r::Tuple)
     y, st = iterate(r)
@@ -331,8 +285,10 @@ function list(db::MatrixDatabase, r::Tuple)
         y, st = x
         intersect!(res, list(y))
     end
+    @assert all((!isempty).(values(MATRIXCLASS)))
     res
 end
+
 list(pred::Function) = list(MATRIX_DB, pred)
 function list(db::MatrixDatabase, pred::Function)
     dali = [ data for data in values(db.data) if pred(data) ]
@@ -341,23 +297,11 @@ end
 
 ## internal list special cases
 list_all(db::MatrixDatabase) = sort!(collect(keys(db.data)))
-function list_remote(db::MatrixDatabase)
-    collect(d.name for d in values(db.data) if d isa RemoteMatrixData)
-end
-function list_loaded(db::MatrixDatabase)
-    collect(d.name for d in values(db.data) if d isa RemoteMatrixData && !isempty(d.metadata))
-end
-function list_unloaded(db::MatrixDatabase)
-    collect(d.name for d in values(db.data) if d isa RemoteMatrixData && isempty(d.metadata))
-end
 list_local(db::MatrixDatabase) = union(collect(keys(MATRIXDICT)), keys(USERMATRIXDICT))
 list_builtin(db::MatrixDatabase) = collect(keys(MATRIXDICT))
 list_user(db::MatrixDatabase) = collect(keys(USERMATRIXDICT))
 
 const SUBSETS = Dict(
-                     :remote => list_remote,
-                     :loaded => list_loaded,
-                     :unloaded => list_unloaded,
                      :local => list_local,
                      :builtin => list_builtin,
                      :user => list_user,
@@ -511,18 +455,10 @@ end
 """
     matrixdepot(name, arg, args...)
 
-Generate built-in or user-defined matrix named `name` with (at least one) argument    
+Generate built-in or user-defined matrix named `name` with (at least one) argument.
 """
 function matrixdepot(p::Pattern, args...)
     db = MATRIX_DB
     matrix(db, p, args...)
 end
 
-"""
-    mdinfo()
-Overview about matrices.
-"""
-function mdinfo()
-    #display(overview(MATRIX_DB))
-    println(overview(MATRIX_DB))
-end

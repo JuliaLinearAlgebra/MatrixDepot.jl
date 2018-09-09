@@ -25,7 +25,7 @@ include("markdown.jl")      # construct MD objects
 function init()
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
-    
+
     if !isdir(DATA_DIR)
         mkpath(DATA_DIR)
     end
@@ -40,7 +40,7 @@ function init()
         end
         println("created dir $MY_DEPOT_DIR")
     end
-    
+
     println("populating internal database...")
     for file in readdir(MY_DEPOT_DIR)
         if endswith(file, ".jl") && file != GENERATOR

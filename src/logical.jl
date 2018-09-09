@@ -8,7 +8,7 @@ export isgeneral, issymmetric, isskew, ishermitian
 export iscomplex, isreal, isinteger, ispattern
 export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
 export predm, predn, prednz, predmn, kindhas, datebefore, dateafter, nodate
-export prednzdev 
+export prednzdev
 
 import Base: isreal, isinteger
 import LinearAlgebra: issymmetric, ishermitian
@@ -20,7 +20,7 @@ import Base: &, |, *
 
 the logical operators `|`, `&`, and `¬` (`\\neg`)
  may be applied to all kind of `Pattern`s with the usual meaning.
-+ `¬` : unary negation operator - pattern does not match (highest priority) 
++ `¬` : unary negation operator - pattern does not match (highest priority)
 + `&` : binary logical and - both patterns match
 + `|` : binary logical or - any of the pattern match (lowest priority)
 

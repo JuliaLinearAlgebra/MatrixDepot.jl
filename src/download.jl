@@ -130,7 +130,7 @@ function downloadindices(db::MatrixDatabase)
     empty!(db)
     insertlocal(db, GeneratedBuiltinMatrixData, MATRIXDICT)
     insertlocal(db, GeneratedUserMatrixData, USERMATRIXDICT)
-    
+
     try
         downloadindex(preferred(TURemoteType))
         downloadindex(preferred(MMRemoteType))
@@ -193,7 +193,7 @@ end
 # MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function loadmatrix(db::MatrixDatabase, data::RemoteMatrixData)   
+function loadmatrix(db::MatrixDatabase, data::RemoteMatrixData)
     file = matrixfile(data)
     if isfile(file)
         return
@@ -229,7 +229,7 @@ function extremnnz(data::RemoteMatrixData, m, n, k)
         if m != n
             @warn "$(data.name) needs to be quadratic but is ($mx$n)"
         end
-        isskew(data) ? (2k, 2k) : (2k - max(m, n), 2k) 
+        isskew(data) ? (2k, 2k) : (2k - max(m, n), 2k)
     else
         (k, k)
     end

@@ -1,6 +1,6 @@
 # adjacency matrices
 #
-# The code is adapted from CONTEST(Controlable TEST matrices) 
+# The code is adapted from CONTEST(Controlable TEST matrices)
 # by Alan Taylor and Professor Des Higham
 # http://www.mathstat.strath.ac.uk/outreach/contest/
 
@@ -22,7 +22,7 @@ of all symmetric graphs with `n` nodes and `m` edges.
 
 *References:*
 
-**P. Erdos and A. Renyi**, On Random Graphs, Publ. Math. Debrecen, 6, 1959, 
+**P. Erdos and A. Renyi**, On Random Graphs, Publ. Math. Debrecen, 6, 1959,
 pp. 290-297
 """
 function erdrey(::Type{T}, n::Integer, m::Integer) where T
@@ -31,10 +31,10 @@ function erdrey(::Type{T}, n::Integer, m::Integer) where T
     for count in 1:n
         v[count] = count*(count -one(Int))/2
     end
-    
+
     is = zeros(Int, m)
     js = zeros(Int, m)
-    
+
     for count in 1:m
         i = minimum(findall(x -> x >=nzeros[count], v))
         j = nzeros[count] - (i-1)*(i-2)/2
@@ -85,14 +85,14 @@ function gilbert(::Type{T}, n::Integer, p::AbstractFloat) where T
     for k = 1:n
         v[k] = round(Int, k*(k-1)/2)
     end
-    
+
     is = zeros(Int, 0)
     js = zeros(Int, 0)
-    
+
     w = zero(Int)
 
     w += one(Int) + floor(Int, log(1 - rand()) / log(1 - p))
-    
+
     while w < n*(n-1)/2
         i = minimum(findall(x -> x >= w, v))
         j = w - round(Int, (i -1)*(i - 2)/2)
@@ -100,13 +100,13 @@ function gilbert(::Type{T}, n::Integer, p::AbstractFloat) where T
         push!(js, j)
         w += one(Int) + floor(Int, log(1 - rand()) / log(1-p))
     end
-    
+
     s = ones(T, length(is))
     return sparse([is;js], [js;is], [s;s], n, n)
 end
 function gilbert(::Type{T}, n::Integer) where T
     if n == 1
-        return gilbert(T, n, 0.2) 
+        return gilbert(T, n, 0.2)
     else
         return gilbert(T, n, log(n)/n)
     end
@@ -121,7 +121,7 @@ function shortcuts(A::SparseMatrixCSC{T}, p::Real) where T
     Ihat = findall(x -> x <= p, rand(n))
     Jhat = ceil.(Int, n*rand(Float64, size(Ihat)))
     Ehat = ones(T, size(Ihat))
-    
+
     # an edge
     for (i, ele) in enumerate(Ihat)
         if ele == Jhat[i]
@@ -130,7 +130,7 @@ function shortcuts(A::SparseMatrixCSC{T}, p::Real) where T
     end
 
     is, js, es = findnz(A)
-    
+
     return sparse([is; Ihat; Jhat], [js; Jhat; Ihat], [es; Ehat; Ehat], n, n)
 end
 
@@ -138,12 +138,12 @@ end
 Small World Network
 =================
 Generate an adjacency matrix for a small world network. We model
-it by adding shortcuts to a kth nearest neighbour ring network 
-(nodes i and j are connected iff |i -j| <= k or |n - |i -j|| <= k.) with n nodes. 
+it by adding shortcuts to a kth nearest neighbour ring network
+(nodes i and j are connected iff |i -j| <= k or |n - |i -j|| <= k.) with n nodes.
 
-*Input options:* 
+*Input options:*
 
-+ [type,] n, k, p: the dimension of the matrix is `n`. The number of 
++ [type,] n, k, p: the dimension of the matrix is `n`. The number of
     nearest-neighbours to connect is `k`. The probability of adding a shortcut
     in a given row is `p`.
 

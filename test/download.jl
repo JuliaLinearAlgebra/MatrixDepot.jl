@@ -1,6 +1,6 @@
 #download
 # verify that no data are downloaded (empty directory)
-@test list(:loaded) == []
+@test list(isloaded) == []
 
 # uf
 @test load("**/1138_bus") == 2 # loaded both versions (uf and mm)
@@ -9,7 +9,7 @@
 # Matrix Markt
 @test load("Harwell-Boeing/smtape/bp___200") == 1
 
-@test list(:loaded) == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus",
+@test list(isloaded) == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus",
                         "Harwell-Boeing/smtape/bp___200", "Pajek/Journals"]
 
 # read data
@@ -28,14 +28,14 @@
 @test load("Bates/C*") == 2
 @test mdinfo("Bates/Chem97Zt") != nothing
 @test matrixdepot("Bates/Chem97Zt") != nothing
-@test "Bates/Chem97Zt" in list(:loaded)
-@test length(list(:loaded)) == 6
+@test "Bates/Chem97Zt" in list(isloaded)
+@test length(list(isloaded)) == 6
 
 @test load("**/epb0") == 1
 
 # matrix market
 @test load("Harwell-Boeing/lanpro/nos5") == 1
-@test length(list(:loaded)) == 8
+@test length(list(isloaded)) == 8
 @test mdopen("Bai/dwg961b") !== nothing
 data = mdopen("Bai/dwg961b")
 @test iscomplex(data)

@@ -50,8 +50,9 @@ end
 """
 format output list to multi- column table form adapted to display width.
 """
-function buildnametable(name::AbstractVector, maxrow::Integer=0)
-    maxrow = maxrow == 0 ? displaysize(stdout)[2] : maxrow
+function buildnametable(hdr, name::AbstractVector, maxrow::Integer=0)
+    maxrow = maxrow <= 0 ? displaysize(stdout)[2] + maxrow : maxrow
+    maxrow = clamp(maxrow, 20, 1000)
     n = length(name)
     name = string.(name)
     cols = 1
@@ -64,9 +65,9 @@ function buildnametable(name::AbstractVector, maxrow::Integer=0)
         push!(name, "")
         n += 1
     end
-    name = reshape(name, rows, cols) 
+    name = reshape(name, rows, cols)
     name = vecvec(name)
-    insert!(name, 1, tab("", cols))    
+    insert!(name, 1, [string(hdr), tab("", cols-1)...])
     Markdown.Table(name, tab(:l, cols))
 end
 
@@ -86,15 +87,51 @@ end
 vecvec(tab::Matrix) = [ tab[i,:] for i in 1:size(tab,1)]
 tab(a, cols::Integer) = [a for i in 1:cols]
 
-function buildnametable1(db::MatrixDatabase, p::Pattern, maxrow::Integer=0)
+function buildnametable1(db::MatrixDatabase, hdr, p::Pattern, maxrow::Integer=0)
     dali = mdata.(Ref(db), list(db, p))
     lt(a, b) = a.id < b.id
     sort!(dali, lt=lt)
     item(data::MatrixData) = string(data.id, " ", data.name)
-    md(buildnametable(item.(dali), maxrow))
+    md(buildnametable(hdr, item.(dali), maxrow))
 end
 
 md(a...) = Markdown.MD([a...])
 
-const mdlist = md ∘ buildnametable ∘ list
+mdlist(p) = md(buildnametable("list", list(MATRIX_DB, p)))
 
+##########################
+# display information
+##########################
+
+# print info about all matrices in the collection
+"""
+    overview([db])
+
+return formatted overview about matrices and groups in the collection.
+"""
+function overview(db::MatrixDatabase=MATRIX_DB)
+    # Print information strings
+    LMARG = -10
+    hdr_mat = Markdown.Header{3}("Currently loaded Matrices")
+
+    dli(p) = mdata.(Ref(db), list(db, p))
+
+    bmat = buildnametable1(db, "builtin(#)", :builtin, LMARG)
+    umat = buildnametable1(db, "user(#)", :user, LMARG)
+    mmdir = buildnametable("MatrixMarket", listdir("*/*//*", isloaded))
+    ufdir = buildnametable("UF/TAMU", listdir("*//*", isloaded))
+
+    hdr_groups = Markdown.Header{3}("Groups:")
+
+    groups = buildnametable("Groups", group_list(), LMARG)
+
+    md(([hdr_mat, bmat, umat, groups, mmdir, ufdir]))
+end
+
+"""
+    mdinfo()
+Overview about matrices.
+"""
+function mdinfo()
+    overview(MATRIX_DB)
+end

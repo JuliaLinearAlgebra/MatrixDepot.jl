@@ -1,5 +1,5 @@
 mdinfo()
-groups = ["symmetric", "inverse", "ill-cond", "pos-def", "eigen","sparse", "random", "regprob", "all", "data"]
+groups = ["symmetric", "inverse", "illcond", "posdef", "eigen","sparse", "random", "regprob", "all"]
 
 for group in groups 
     mdlist(Symbol(group))
@@ -65,7 +65,7 @@ REM = length(list("*/*"))
 @test list(r".*ng/ma.*") == ["Harwell-Boeing/manteuffel/man_5976"]
 @test list(tamu(2001:2002)) == ["JGD_Groebner/c8_mat11_I", "JGD_Groebner/f855_mat9"]
 @test length(list(tamu(2757:3000))) == REM - 2756
-@test list(:xxx) == []
+@test_throws ArgumentError list(:xxx)
 @test length(list(isremote)) == REM + 498
 @test length(list(isloaded)) + length(list(isunloaded)) == length(list(isremote))
 @test length(list(isbuiltin)) + length(list(isuser)) == length(list(islocal))
@@ -98,8 +98,6 @@ REM = length(list("*/*"))
 @test list(prednzdev(0.001)) == ["DRIVCAV/cavity14"] 
 
 @test list(:local) == list(islocal)
-@test list(:remote) == list(isremote)
-@test list(:loaded) == list(isloaded)
 @test list(:builtin) == list(isbuiltin)
 @test list(:user) == list(isuser)
 

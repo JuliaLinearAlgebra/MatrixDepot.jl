@@ -47,7 +47,7 @@ const MATRIXCLASS = Dict(
                              "invhilb", "moler", "pascal", "pei",
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
-                             "kms", "wathen", "oscillate", "prolate", 
+                             "kms", "wathen", "oscillate", "prolate",
                              "hankel"],
 
             :inverse => ["hilb", "hadamard", "cauchy", "invhilb",
@@ -73,14 +73,14 @@ const MATRIXCLASS = Dict(
                            "rosser", "sampling", "wilkinson","wathen",
                            "oscillate"],
 
-             :sparse => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert", 
+             :sparse => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert",
                           "smallworld"],
 
              :random => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate", "golub", "erdrey", "gilbert", "smallworld"],
 
-             :regprob => ["deriv2", "shaw", "wing", "foxgood", "heat", 
-                           "baart", "phillips", "gravity", "blur", 
+             :regprob => ["deriv2", "shaw", "wing", "foxgood", "heat",
+                           "baart", "phillips", "gravity", "blur",
                            "spikes", "ursell", "parallax"],
 
               :graph => ["erdrey", "gilbert", "smallworld"]
@@ -121,7 +121,7 @@ alternate(::Type{TURemoteType}) = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOT
 alternate(::Type{MMRemoteType}) = MM_REMOTE
 toggle_remote(T=TURemoteType) = begin global uf_remote = alternate(T) end
 """
-    The place to store all matrix data in process    
+    The place to store all matrix data in process
 """
 const MATRIX_DB = MatrixDatabase()
 

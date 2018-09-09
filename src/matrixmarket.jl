@@ -92,7 +92,7 @@ function mmread_matrix(file::IO, line, form, field, symm)
     else
         parserr("Matrixmarket: unsupported format '$form'")
     end
-                
+
     wrap(result, wrapper)
 end
 
@@ -339,12 +339,12 @@ end
 
 function parsenext(T::Type{<:Signed}, v::Vector{UInt8}, p1::Int)
     i, iaccu, daccu, eaccu, sig, df = _parsenext(v, p1)
-    daccu == 0 && eaccu == 0 && df == 0 || error("1")    
+    daccu == 0 && eaccu == 0 && df == 0 || error("1")
     i, T(iaccu) * ifelse(sig < 0, T(-1), T(1))
 end
 function parsenext(T::Type{<:Unsigned}, v::Vector{UInt8}, p1::Int)
     i, iaccu, daccu, eaccu, sig, df = _parsenext(v, p1)
-    daccu == 0 && eaccu == 0 && sig >= 0 && df == 0 || error("2")    
+    daccu == 0 && eaccu == 0 && sig >= 0 && df == 0 || error("2")
     i, T(iaccu)
 end
 function parsenext(T::Type{<:AbstractFloat}, v::Vector{UInt8}, p1::Int)

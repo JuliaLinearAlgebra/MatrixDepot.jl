@@ -86,12 +86,12 @@ struct GeneratedBuiltinMatrixData <:GeneratedMatrixData
     name::AbstractString
     id::Int
     func::Function
-end 
+end
 struct GeneratedUserMatrixData <:GeneratedMatrixData
     name::AbstractString
     id::Int
     func::Function
-end 
+end
 
 struct MatrixDatabase
     data::Dict{AbstractString,MatrixData}
