@@ -248,7 +248,7 @@ function addmetadata!(data::RemoteMatrixData)
     filtop(x) = x == base || startswith(x, string(name, '_'))
     append!(data.metadata, filter(filtop, readdir(dir)))
 
-    if (finfo = fileinfo(file)) !== nothing
+    if (finfo = mmreadheader(file)) !== nothing
         data.properties[] = MMProperties(finfo[4:end]...)
         m, n, k = finfo[1:3]
         n1, n2 = extremnnz(data, m, n, k)

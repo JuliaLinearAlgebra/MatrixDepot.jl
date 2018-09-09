@@ -3,40 +3,38 @@
 @test list(:loaded) == []
 
 # uf
-@test matrixdepot("1138_bus", :get) == 2 # loaded both versions (uf and mm)
-@test matrixdepot("HB/1138_bus", :get) == 1
-@test matrixdepot("Pajek/Journals", :get) == 1
+@test load("**/1138_bus") == 2 # loaded both versions (uf and mm)
+@test load("HB/1138_bus") == 1
+@test load("Pajek/Journals") == 1
 # Matrix Markt
-@test matrixdepot("Harwell-Boeing/smtape/bp___200", :get) == 1
+@test load("Harwell-Boeing/smtape/bp___200") == 1
 
 @test list(:loaded) == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus",
                         "Harwell-Boeing/smtape/bp___200", "Pajek/Journals"]
 
 # read data
-@test matrixdepot("HB/1138_bus", :r) != nothing
 @test matrixdepot("HB/1138_bus") != nothing
-@test matrixdepot("1138_bus", :s) == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus"]
-@test_throws DataError matrixdepot("Harwell-Boeing/psadmit/662_bus", :read)
-@test string(matrixdepot("Harwell-Boeing/psadmit/662_bus")) ==
-                         "# Harwell-Boeing/psadmit/662_bus\n\nno info available\n"
+@test list("**/1138_bus") == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus"]
+@test_throws DataError matrix(MatrixDepot.mdata("Harwell-Boeing/psadmit/662_bus"))
+@test string(mdinfo("Harwell-Boeing/psadmit/662_bus")) ==
+                  "# Harwell-Boeing/psadmit/662_bus\n\nno info available\n"
 
 # metatdata access with old interface
-@test matrixdepot("Pajek/Journals", :read, meta = true)["Journals"] !== nothing
-@test_throws DataError matrixdepot("1138_bus", :read, meta = true)
-@test_throws DataError matrixdepot("that is nothing", :read, meta = true)
+@test metareader(MatrixDepot.mdata("Pajek/Journals"))["Journals.mtx"] !== nothing
+@test metareader(MatrixDepot.mdata("Pajek/Journals"), "Journals.mtx") !== nothing
+@test_throws DataError metareader(MatrixDepot.mdata("*/1138_bus"), "1138_bus_b")
+@test_throws DataError metareader(MatrixDepot.mdata("that is nothing"))
 
-@test matrixdepot("Bates/C*", :get) == 2
+@test load("Bates/C*") == 2
+@test mdinfo("Bates/Chem97Zt") != nothing
 @test matrixdepot("Bates/Chem97Zt") != nothing
-@test matrixdepot("Bates/Chem97Zt", :r) != nothing
 @test "Bates/Chem97Zt" in list(:loaded)
 @test length(list(:loaded)) == 6
 
-@test_throws ArgumentError matrixdepot("HB/662_bus", :k)
-
-@test matrixdepot("epb0", :get) == 1
+@test load("**/epb0") == 1
 
 # matrix market
-@test matrixdepot("Harwell-Boeing/lanpro/nos5", :get) == 1
+@test load("Harwell-Boeing/lanpro/nos5") == 1
 @test length(list(:loaded)) == 8
 @test mdopen("Bai/dwg961b") !== nothing
 data = mdopen("Bai/dwg961b")
@@ -45,6 +43,7 @@ data = mdopen("Bai/dwg961b")
 @test !ishermitian(data)
 @test !ispattern(data)
 @test metadata(data) == ["dwg961b.mtx"]
+@test length(metareader(data)) == 1
 
 # an example with rhs and solution
 data = mdopen("DRIVCAV/cavity14"; cache=true)
@@ -58,12 +57,12 @@ data = mdopen("DRIVCAV/cavity14"; cache=true)
 @test_throws DataError rhs(uf(1)) # no rhs data for this example
 
 # read a format array file
-@test MatrixDepot.fileinfo(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing
+@test MatrixDepot.mmreadheader(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing
 
 data = mdopen("*/bfly")
 @test metareader(data, "bfly_Gname_01.txt") == "BFLY3\n"
 fn = joinpath(dirname(MatrixDepot.matrixfile(data)), "bfly_Gname_01.txt")
-@test_throws DataError MatrixDepot.fileinfo(fn)
+@test_throws DataError MatrixDepot.mmreadheader(fn)
 
 # read from a pipeline
 @test open(`printf '%%%%matrixmarket matrix array real general\n1 1\n2.5\n'`) do io
@@ -79,33 +78,33 @@ mktemp() do path, io
     println(io); println(io, "    ")
     println(io, "24 2")
     close(io)
-    @test MatrixDepot.ufinfo(path) ==
+    @test MatrixDepot.mmreadcomment(path) ==
     "%%MatrixMarket Matrix arRAy real GeneraL\n% first line\n\n%second line\n\n    \n24 2\n"
-    @test MatrixDepot.fileinfo(path) == (24, 2, 0, "matrix", "array", "real", "general")
+    @test MatrixDepot.mmreadheader(path) == (24, 2, 0, "matrix", "array", "real", "general")
 end
 
 mktemp() do path, io
     println(io, "%%MatrixMarket Matrix arRAi real GeneraL")
     println(io, "1 2")
     close(io)
-    @test_throws DataError MatrixDepot.fileinfo(path)
+    @test_throws DataError MatrixDepot.mmreadheader(path)
 end
 
 mktemp() do path, io
     println(io, "%%MatrixMarket Matrix array real GeneraL")
     println(io, "1 2 A")
     close(io)
-    @test_throws DataError MatrixDepot.fileinfo(path)
+    @test_throws DataError MatrixDepot.mmreadheader(path)
 end
 
 mktemp() do path, io
     println(io, "%%MatrixMarket Matrix coordinate real GeneraL")
     println(io, "1 2")
     close(io)
-    @test_throws DataError MatrixDepot.fileinfo(path)
+    @test_throws DataError MatrixDepot.mmreadheader(path)
 end
 
-@test MatrixDepot.fileinfo("") === nothing
+@test MatrixDepot.mmreadheader("") === nothing
 
 # an example loading a txt file
 data = mdopen("Pajek/Journals"; cache=true)

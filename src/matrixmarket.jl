@@ -231,10 +231,10 @@ Materialized adjoint of sparse Matrix
 madjoint(A) = conj!(mtranspose(A))
 
 """
-    ufinfo(filename)
+    mmreadcomment(filename)
 return info comment strings for MatrixMarket format files
 """
-function ufinfo(filename::AbstractString)
+function mmreadcomment(filename::AbstractString)
     io = IOBuffer()
     open(filename,"r") do mmfile
         line = readline(mmfile)
@@ -248,10 +248,10 @@ function ufinfo(filename::AbstractString)
 end
 
 """
-    fileinfo(filename)
+    mmreadheader(filename)
 Read header information from mtx file.
 """
-function fileinfo(file::AbstractString)
+function mmreadheader(file::AbstractString)
     if isfile(file)
         open(file) do io
             line = lowercase(readline(io))

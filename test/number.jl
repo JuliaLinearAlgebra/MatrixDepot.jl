@@ -1,3 +1,3 @@
 n = rand(1:38)
-@test matrixdepot(n) != nothing
-@test matrixdepot(1:n) != nothing
+@test mdinfo(builtin(n)) != nothing
+@test mdinfo(builtin(1:n)) != nothing

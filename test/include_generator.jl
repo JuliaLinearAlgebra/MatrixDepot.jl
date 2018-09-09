@@ -13,8 +13,8 @@ function randsym(::Type{T}, n) where T
 end
 randsym(n) = randsym(Float64, n)
 include_generator(FunctionName, "randsym", randsym)
-include_generator(Group, "random", randsym)
-include_generator(Group, "symmetric", randsym)
+include_generator(Group, :random, randsym)
+include_generator(Group, :symmetric, randsym)
 """
 user_dir = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
 
@@ -26,11 +26,11 @@ end
 MatrixDepot.init()
 
 n = rand(1:8)
-A = matrixdepot("randsym", n)
-matrixdepot("randsym")
-@test "randsym" in matrixdepot("random")
-@test "randsym" in matrixdepot("symmetric")
+@test matrixdepot("randsym", n) !== nothing
+@test mdinfo("randsym") != nothing
+@test "randsym" in MatrixDepot.list(:random)
+@test "randsym" in MatrixDepot.list(:symmetric)
 
 import MatrixDepot: include_generator, Group
-@test_throws ArgumentError include_generator(Group, "lkjasj", sin)
+@test_throws ArgumentError include_generator(Group, :lkjasj, sin)
 

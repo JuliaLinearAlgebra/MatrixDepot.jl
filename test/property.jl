@@ -1,4 +1,4 @@
-@test matrixdepot("symmetric", "pos-def") != nothing
+@test mdinfo(:symmetric | :posdef) != nothing
 
-@test matrixdepot("data") != nothing
+@test mdinfo(isloaded) != nothing
 

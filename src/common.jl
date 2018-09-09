@@ -1,7 +1,6 @@
 ########################
 # helper functions
 ########################
-using Markdown
 
 argerr(s::AbstractString) = throw(ArgumentError(s))
 daterr(s::AbstractString) = throw(DataError(s))
@@ -169,8 +168,7 @@ function addtogroup(dir::Dict, groupname::Symbol, f::Function)
         false
     end
 end
-function include_generator(::Type{Group}, groupname::AbstractString, f::Function)
-    groupname = Symbol(groupname)
+function include_generator(::Type{Group}, groupname::Symbol, f::Function)
     addtogroup(MATRIXCLASS, groupname, f) ||
     addtogroup(usermatrixclass, groupname, f) ||
     argerr("$(groupname) is not a group in MatrixDepot, use
@@ -209,8 +207,8 @@ E.g.
 + `listdir("Har*//*/*")` - restrict to directories starting with "Har"
 + `listdir("Har*/*//*")` - all subdirectoreis of the previous
 """
-listdir(p::AbstractString) = listdir(MATRIX_DB, p)
-function listdir(db::MatrixDatabase, p::AbstractString)
+listdir(p::AbstractString, xp::Pattern=()) = listdir(MATRIX_DB, p, xp)
+function listdir(db::MatrixDatabase, p::AbstractString, xp::Pattern)
     r = findfirst(r"/+", p)
     if r !== nothing && first(r) == 1
         p = p[last(r)+1:end]
@@ -224,13 +222,13 @@ function listdir(db::MatrixDatabase, p::AbstractString)
     r = shell_to_regex(p, false)
     if depth >= 0
         length(p) == 1 && ( p = ".*/" )
-        listdir(db, r, depth)
+        listdir(db, r & xp, depth)
     else
         argerr("pattern '$p' needs '//' in the middle or '/' at start or end")
     end
 end
 listdir(r::Regex, depth::Int) = listdir(MATRIX_DB, r)
-function listdir(db::MatrixDatabase, r::Regex, depth::Int)
+function listdir(db::MatrixDatabase, r::Pattern, depth::Int)
     result = Dict{AbstractString, Int}()
     f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
     for name in list(r)
@@ -368,58 +366,6 @@ const SUBSETS = Dict(
 
 flatten(a) = collect(Iterators.flatten(a))
 
-"return information about all matrices selected by pattern"
-info(p::Pattern) = info(MATRIX_DB, p)
-function info(db::MatrixDatabase, p::Pattern)
-    mdbuffer = Markdown.MD([])
-    md = mdbuffer
-    for name in list(p)
-        try
-            md = info(db.data[name])
-            #=
-            TODO add names of meta-files to md
-            if data !== nothing && !isempty(data)
-                display(data)
-            end
-            =#
-        catch
-            md = Markdown.parse("# $name\nno info available")
-        finally
-            append!(mdbuffer.content, md.content)
-        end
-    end
-    mdbuffer
-end
-
-_mdheader(md::Markdown.MD, p, o) = isempty(md.content) ? (nothing, o) : _mdheader(md.content[1], md, o)
-_mdheader(md::Markdown.Header, p, o) = (md, p)
-_mdheader(md, p, o) = (nothing, o)
-
-function info(data::GeneratedMatrixData)
-    # func = data.fuc
-    # md = @eval :(Docs.@doc $$func)
-    md = eval(Meta.parse("Docs.@doc $(data.func)", raise = false))
-    # As md is cached internally, need to make copies
-    mdh, md = _mdheader(md, nothing, md)
-    if mdh != nothing
-        mdh, md = Markdown.Header(copy(mdh.text)), copy(md)
-        push!(mdh.text, " ($(data.name))")
-        md.content[1] = mdh
-    end
-    md
-end
-
-_repl(a::AbstractString) = a
-_repl(a::AbstractString, p::Pair, q::Pair...) = _repl(replace(a, p), q...)
-
-function info(data::RemoteMatrixData)
-    txt = ufinfo(matrixfile(data))
-    txt = _repl(txt, r"^%-+$"m => "---", r"^%%" => "###### ", r"%+" => "* ")
-    md = Markdown.parse(txt)
-    insert!(md.content, 1, Markdown.Header{1}([data.name]))
-    md
-end
-
 function verify_loaded(db::MatrixDatabase, data::RemoteMatrixData)
     if isempty(data.metadata)
         loadmatrix(db, data)
@@ -541,90 +487,25 @@ function mdclose(db::MatrixDatabase, p::Pattern)
 end
 
 ###
-# vintage API
+# convenience API
 ###
 
 # convert input string to shell pattern in certain cases
-function convert_pattern(p::AbstractString)
-    occursin(r"[]*?/]", p) ? p : ["**/$p", p]
-end
+convert_pattern(p::AbstractString) = occursin('/', p) ? p : "**/$p"
+convert_pattern(p) = p
 
 """
-    matrixdepot(pattern, [(:search | :read | :get),])
-+ search all matrix names according to `pattern` - see also [`@list`](@ref)
-+ read matrix named by `pattern` - see also [`@matrix`](@ref)
-+ get all matrices named according to `pattern`- see also [`@load`](@ref)
-"""
-function matrixdepot(p::AbstractString, s::Symbol; meta::Bool=false)
-    p1 = convert_pattern(p)
-    if s in (:s, :search)
-        list(MATRIX_DB, p1)
-    elseif s in (:g, :get)
-        load(MATRIX_DB, p1)
-    elseif s in (:r, :read)
-        data = mdata(MATRIX_DB, p)
-        !meta ? matrix(data) : meta_names(data)
-    else
-        argerr("unknown symbol $s")
-    end
-end
+    matrixdepot(p::Pattern)
 
+If not loaded, load remote matrix first.
+return remote matrix according to pattern.
 """
-    meta_names(data::MatrixData)
-return dictionary of file names associated with metadata names.
-"""
-function meta_names(data::RemoteMatrixData)
-    mlist = data.metadata
-    path(name) = joinpath(dirname(matrixfile(data)), name)
-    abbr(name) = rsplit(name, '.'; limit=2)[1]
-    Dict{String,String}([ abbr(x) => path(x) for x in mlist])
-end
-meta_names(data::MatrixData) = Dict{String,String}()
-
-"""
-    matrixdepot(string)
-if `string` is a group name, return list of members of group
-The string "all" returns all generated (=local) matrices.
-The string "data" returns all loaded remote matrices.
-
-otherwise return info about pattern given by `string`.
-"""
-function matrixdepot(p::AbstractString)
+function matrixdepot(p::Pattern)
 # cover the cases, a group name is given as a string and "data"
     db = MATRIX_DB
-    p == "data" && (return list(db, :loaded))
-    p == "all" && (return list(db, :local))
     p1 = convert_pattern(p)
-    if isempty(list(db, p1))
-        p1= replace(p, '-' => "")
-        res = list(db, Symbol(p1))
-        isempty(res) ? daterr("not found '$p'") : res
-    else
-        info(db, p1)
-    end
-end
-
-"""
-    matrixdepot(n:Integer)
-return name of generated matrix numbered by n.
-hint: the list API returns an array about the remote matric with id n.
-"""
-function matrixdepot(n::Integer)
-    locli = list(:local)
-    1 <= n <= length(locli) || daterr("1 <= $n <= $(length(locli)) required.")
-    locli[n]
-end
-"""
-    matrixdepot(range or tuple of integer or range arguments)
-return array of names corresponding to the local matrices.
-"""
-function matrixdepot(r::AbstractRange{<:Integer})
-    matrixdepot.(r)
-end
-function matrixdepot(n::Union{Integer,AbstractRange{<:Integer}},
-                     n2::Union{Integer,AbstractRange{<:Integer}}...)
-
-    [matrixdepot(n); matrixdepot(n2...)]
+    data = mdopen(db, p)
+    matrix(data)
 end
 
 """
@@ -632,25 +513,16 @@ end
 
 Generate built-in or user-defined matrix named `name` with (at least one) argument    
 """
-matrixdepot(p::Pattern, args...) = matrix(MATRIX_DB, p, args...)
-
-"""
-    matrixdepot(group::String...)
-return intersection of output of individual group names.
-"""
-function matrixdepot(g::AbstractString, h::AbstractString...)
-    first = matrixdepot(g)
-    first = first isa Vector{<:AbstractString} ? first : [g]
-    second = matrixdepot(h...)
-    second = second isa Vector{<:AbstractString} ? second : [h...]
-    intersect(first, second)
+function matrixdepot(p::Pattern, args...)
+    db = MATRIX_DB
+    matrix(db, p, args...)
 end
 
 """
-    matrixdepot()
+    mdinfo()
 Overview about matrices.
 """
-function matrixdepot()
+function mdinfo()
     #display(overview(MATRIX_DB))
     println(overview(MATRIX_DB))
 end

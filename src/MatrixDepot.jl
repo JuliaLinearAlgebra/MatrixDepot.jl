@@ -5,7 +5,7 @@ import Base: show
 
 export matrixdepot
 export matrix, rhs, solution, metareader
-export list, listdir, info, metadata, load, mdopen, mdclose, overview
+export mdlist, listdir, mdinfo, metadata, mdload, mdopen, mdclose, overview
 export row_num, col_num, nz_num, dnz_num
 export aliasname, @addgroup, @rmgroup, @modifygroup
 export colval, mtranspose, madjoint
@@ -20,6 +20,7 @@ include("logical.jl")       # operations on patterns and predicates
 include("download.jl")      # download data from the UF and MM sparse matrix collection
 include("datareader.jl")    # read matrix data from local storage
 include("matrixmarket.jl")  # read matrix data from local storage
+include("markdown.jl")      # construct MD objects
 
 function init()
     GROUP = "group.jl"
@@ -54,6 +55,9 @@ function init()
 end
 
 # will be called automatically once after `using`, `import`, `require`.
-__init__() = init()
+function __init__()
+    try init() catch ex; @warn "exception during initialization: '$ex'"
+    end
+end
 
 end # end module

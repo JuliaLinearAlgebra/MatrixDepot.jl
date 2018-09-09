@@ -6,7 +6,7 @@ using Test
 using LinearAlgebra
 using SparseArrays
 
-import MatrixDepot: DataError
+import MatrixDepot: DataError, list, load, matrix, rhs, solution
 
 macro inc(a)
     :(@testset $a begin let n, p, i; include($a) end end)

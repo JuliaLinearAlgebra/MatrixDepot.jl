@@ -1,25 +1,25 @@
-matrixdepot()
+mdinfo()
 groups = ["symmetric", "inverse", "ill-cond", "pos-def", "eigen","sparse", "random", "regprob", "all", "data"]
 
 for group in groups 
-    matrixdepot(group)
+    mdlist(Symbol(group))
 end
 
 @test_throws DataError matrixdepot("something")
 
 n = rand(1:55)
-name = matrixdepot(n)
-matrixdepot(name)
+name = list(builtin(n))
+mdinfo(name)
 
-nlist = matrixdepot(1, 3, 4:20)
-m = length(matrixdepot("all"))
-@test_throws DataError matrixdepot(m+1)
+nlist = list(builtin([1, 3]) | builtin(4:20))
+m = length(list("**"))
+@test isempty(mdinfo(builtin(m+1)))
 
-@addgroup newlist = matrixdepot(3:6, 20)
+@addgroup newlist = list(builtin(3:6) | builtin(20))
 
 MatrixDepot.init()
 
-println(matrixdepot("newlist"))
+println(mdlist(:newlist))
 
 @rmgroup newlist
 
@@ -74,7 +74,6 @@ REM = length(list("*/*"))
 @test list(:all) == list("**")
 @test length(list(:symmetric)) == 22
 @test length(list(:illcond)) == 20
-@test length(matrixdepot("ill-cond")) == 20
 
 # intersections and unions
 @test list((:posdef, :sparse)) == ["poisson", "wathen"]
