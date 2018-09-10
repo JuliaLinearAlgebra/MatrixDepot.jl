@@ -30,6 +30,7 @@ the logical operators `|`, `&`, and `¬` (`\\neg`)
 """
 logical() = "¬|?"
 
+(&)(p::Tuple, q::Tuple) = tuple(p..., q...)
 (&)(p::Tuple, q::Pattern...) = tuple(p..., q...)
 (&)(p::Pattern, q::Tuple) = tuple(p, q...)
 (&)(p::Pattern, q::Pattern...) = tuple(p, q...)
@@ -153,19 +154,19 @@ function aliasresolve(db::MatrixDatabase, a::Alias{T,<:Integer}) where T
 end
 function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector{<:Integer}}) where T
     aliasr2(x) = aliasresolve(db, x)
-    flatten(aliasr2.(aliasname(a)))
+    collect(Iterators.flatten(aliasr2.(aliasname(a))))
 end
 aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{TURemoteType},Colon}, ) = "*/*"
 aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{MMRemoteType},Colon}) = "*/*/*"
-aliasresolve(db::MatrixDatabase, a::Alias{GeneratedBuiltinMatrixData,Colon}) = :builtin
-aliasresolve(db::MatrixDatabase, a::Alias{GeneratedUserMatrixData,Colon}) = :user
+aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:B},Colon}) = :builtin
+aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:U},Colon}) = :user
 
 ###
 # Predefined predicates for MatrixData
 ###
 
-builtin(p::IntOrVec) = Alias{GeneratedBuiltinMatrixData}(p)
-user(p::IntOrVec) = Alias{GeneratedUserMatrixData}(p)
+builtin(p::IntOrVec) = Alias{GeneratedMatrixData{:B}}(p)
+user(p::IntOrVec) = Alias{GeneratedMatrixData{:U}}(p)
 uf(p::IntOrVec) = Alias{RemoteMatrixData{TURemoteType}}(p)
 tamu(p::IntOrVec) = Alias{RemoteMatrixData{TURemoteType}}(p)
 mm(p::IntOrVec) = Alias{RemoteMatrixData{MMRemoteType}}(p)
@@ -203,9 +204,9 @@ isloaded(data::RemoteMatrixData) = !isempty(data.metadata)
 isloaded(data::MatrixData) = false
 isunloaded(data::RemoteMatrixData) = isempty(data.metadata)
 isunloaded(data::MatrixData) = false
-isuser(data::GeneratedUserMatrixData) = true
+isuser(data::GeneratedMatrixData{:U}) = true
 isuser(data::MatrixData) = false
-isbuiltin(data::GeneratedBuiltinMatrixData) = true
+isbuiltin(data::GeneratedMatrixData{:B}) = true
 isbuiltin(data::MatrixData) = false
 islocal(data::GeneratedMatrixData) = true
 islocal(data::MatrixData) = false
@@ -233,4 +234,15 @@ function prednzdev(dev::AbstractFloat=0.1)
     f(::MatrixData) = false
     f
 end
+
+"""
+    check_symbols(p::Pattern)
+
+throw `ArgumentError` if pattern uses unknown symbol as a group name.
+"""
+function check_symbols(p::Pattern)
+    s = setdiff(filter(x->x isa Symbol, flatten_pattern(p)), group_list())
+    isempty(s) || argerr("The following symbols are no group names: $s")
+end
+
 

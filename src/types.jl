@@ -80,14 +80,7 @@ struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     end
 end
 
-abstract type GeneratedMatrixData <:MatrixData end
-
-struct GeneratedBuiltinMatrixData <:GeneratedMatrixData
-    name::AbstractString
-    id::Int
-    func::Function
-end
-struct GeneratedUserMatrixData <:GeneratedMatrixData
+struct GeneratedMatrixData{N} <:MatrixData
     name::AbstractString
     id::Int
     func::Function
@@ -111,12 +104,26 @@ end
 
 abstract type AbstractNot end
 
-const Pattern1 = Union{AbstractString,Regex,Alias,Symbol,
+const Pattern = Union{Function,AbstractString,Regex,Symbol,Alias,
                        AbstractVector,Tuple,AbstractNot}
-const Pattern = Union{Pattern1, Function}
 
 struct Not{T<:Pattern} <:AbstractNot
     pattern::T
+end
+
+"""
+    MatrixDescriptor{T<:MatrixData}
+
+Access object which is created by a call to `mdopen(::Pattern)`.
+Several user functions allow to access data according to the unique pattern.
+Keeps data cache for exactly the same calling arguments (in the case of
+generated objects). For remote objects the data cache keeps all available
+metadata.
+"""
+struct MatrixDescriptor{T<:MatrixData}
+    data::T
+    argskey::Any
+    datacache::Dict{String,Any}
 end
 
 # essential functions of the types
@@ -151,8 +158,7 @@ return alias name derived from integer id
 """
 aliasname(::Type{RemoteMatrixData{TURemoteType}}, i::Integer) = string('#', i)
 aliasname(::Type{RemoteMatrixData{MMRemoteType}}, i::Integer) = string('#', 'M', i)
-aliasname(::Type{GeneratedBuiltinMatrixData}, i::Integer) = string('#', 'B', i)
-aliasname(::Type{GeneratedUserMatrixData}, i::Integer) = string('#', 'U', i)
+aliasname(::Type{GeneratedMatrixData{N}}, i::Integer) where N = string('#', N, i)
 function aliasname(T::Type{<:MatrixData}, r::AbstractVector{<:Integer})
     aliasname.(T, filter(x->x>0, r))
 end
@@ -258,4 +264,13 @@ function Base.show(io::IO, mp::MMProperties)
     show(io, mp.symmetry); print(io, "}")
 end
 
+"""
+    flattenPattern(p::Pattern)
+return the vector of all elementary patterns, contained in the pattern.
+"""
+flatten_pattern(p::Pattern) = collect(Set(_flatten_pattern(p)))
+_flatten_pattern(::Tuple{}) = []
+_flatten_pattern(p::Union{AbstractVector,Tuple}) = Iterators.flatten(_flatten_pattern.(p))
+_flatten_pattern(p::Not) = [p.pattern]
+_flatten_pattern(p::Pattern) = [p]
 

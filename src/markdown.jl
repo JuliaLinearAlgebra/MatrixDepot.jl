@@ -4,6 +4,7 @@ using Markdown
 "return information about all matrices selected by pattern"
 mdinfo(p::Pattern) = mdinfo(MATRIX_DB, p)
 function mdinfo(db::MatrixDatabase, p::Pattern)
+    check_symbols(p)
     mdbuffer = Markdown.MD([])
     md = mdbuffer
     for name in list(p)
@@ -23,8 +24,6 @@ _mdheader(md::Markdown.Header, p, o) = (md, p)
 _mdheader(md, p, o) = (nothing, o)
 
 function mdinfo(data::GeneratedMatrixData)
-    # func = data.fuc
-    # md = @eval :(Docs.@doc $$func)
     md = eval(Meta.parse("Docs.@doc $(data.func)", raise = false))
     # As md is cached internally, need to make copies
     mdh, md = _mdheader(md, nothing, md)
@@ -109,7 +108,7 @@ mdlist(p) = md(buildnametable("list", list(MATRIX_DB, p)))
 
 return formatted overview about matrices and groups in the collection.
 """
-function overview(db::MatrixDatabase=MATRIX_DB)
+function overview(db::MatrixDatabase)
     # Print information strings
     LMARG = -10
     hdr_mat = Markdown.Header{3}("Currently loaded Matrices")
@@ -132,6 +131,5 @@ end
     mdinfo()
 Overview about matrices.
 """
-function mdinfo()
-    overview(MATRIX_DB)
-end
+mdinfo(db::MatrixDatabase=MATRIX_DB) = overview(db)
+

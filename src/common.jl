@@ -161,6 +161,7 @@ E.g.
 """
 listdir(p::AbstractString, xp::Pattern=()) = listdir(MATRIX_DB, p, xp)
 function listdir(db::MatrixDatabase, p::AbstractString, xp::Pattern)
+    check_symbols(xp)
     r = findfirst(r"/+", p)
     if r !== nothing && first(r) == 1
         p = p[last(r)+1:end]
@@ -179,7 +180,6 @@ function listdir(db::MatrixDatabase, p::AbstractString, xp::Pattern)
         argerr("pattern '$p' needs '//' in the middle or '/' at start or end")
     end
 end
-listdir(r::Regex, depth::Int) = listdir(MATRIX_DB, r)
 function listdir(db::MatrixDatabase, r::Pattern, depth::Int)
     result = Dict{AbstractString, Int}()
     f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
@@ -207,7 +207,7 @@ return a vector of full matrix names where name or alias match given pattern.
 + a vector of patterns meaning the union
 + a tuple of patterns meaning the intersection
 """
-list(r::Regex) = list(MATRIX_DB, r)
+list(p::Pattern) = list(MATRIX_DB, p)
 function list(db::MatrixDatabase, r::Regex)
     result = AbstractString[]
     for name in keys(db.data)
@@ -220,7 +220,6 @@ function list(db::MatrixDatabase, r::Regex)
     result
 end
 
-list(p::Symbol) = list(MATRIX_DB, p)
 function list(db::MatrixDatabase, p::Symbol)
     if haskey(SUBSETS, p)
         sort!(SUBSETS[p](db))
@@ -239,46 +238,46 @@ end
 
 return a regular expression if shell pattern characters `"*?]"` are contained in
 string, otherwise return string.
+If no `'/'` is contained in p and p is not "*", insert `"(.*/)?"` in regular expression.
 """
 function shell_to_regex(p::AbstractString, retain_pure::Bool)
     regex(p) = Regex(string('^', p, '$'))
+    p = replace(p, r"//+" => '/')
+    # p = p == "*" || '/' in p ? p : string("(**/)\x03", p)
     if occursin(r"[*?.]", p)
-        p = replace(p, "**" => "\x02\x01")
+        p = replace(p, "**" => "\x01\x02")
         p = replace(p, '*' => "[^/]*")
         p = replace(p, '?' => "[^/]")
         p = replace(p, '.' => "[.]")
-        p = replace(p, '\x01' => '*')
-        p = replace(p, '\x02' => '.')
+        p = replace(p, '\x01' => '.')
+        p = replace(p, '\x02' => '*')
+        p = replace(p, '\x03' => '?')
         regex(p)
     else
         retain_pure ? p : regex(p)
     end
 end
 
-list(p::AbstractString) = list(MATRIX_DB, p)
 function list(db::MatrixDatabase, p::AbstractString)
-    p = replace(p, r"//+" => '/')
+    haskey(db.data, p) && return [p]
     r = shell_to_regex(p, true)
     r isa Regex ? list(db, r) : haskey(db.data, r) ? [r] : EMPTY_PATTERN
 end
 
-list(p::Alias) = list(MATRIX_DB, p)
 list(db::MatrixDatabase, p::Alias) = list(aliasresolve(db, p))
 
-list(p::Not) = list(MATRIX_DB, p)
 list(db::MatrixDatabase, p::Not) = setdiff(list(db,()), list(db, p.pattern))
 
-list(r::AbstractVector) = list(MATRIX_DB, r)
 function list(db::MatrixDatabase, r::AbstractVector)
+    check_symbols(r)
     listdb(r) = list(db, r)
-    unique!(sort!(flatten(listdb.(r))))
+    unique!(sort!(collect(Iterators.flatten(listdb.(r)))))
 end
 
-list(::Tuple{}) = list_all(MATRIX_DB)
 list(db::MatrixDatabase, ::Tuple{}) = list_all(db)
 
-list(r::Tuple) = list(MATRIX_DB, r)
 function list(db::MatrixDatabase, r::Tuple)
+    check_symbols(r)
     y, st = iterate(r)
     res = list(y)
     while !isempty(res) && (x = iterate(r, st)) !== nothing
@@ -289,7 +288,6 @@ function list(db::MatrixDatabase, r::Tuple)
     res
 end
 
-list(pred::Function) = list(MATRIX_DB, pred)
 function list(db::MatrixDatabase, pred::Function)
     dali = [ data for data in values(db.data) if pred(data) ]
     sort!(getfield.(dali, :name))
@@ -307,8 +305,6 @@ const SUBSETS = Dict(
                      :user => list_user,
                      :all => list_all,
 )
-
-flatten(a) = collect(Iterators.flatten(a))
 
 function verify_loaded(db::MatrixDatabase, data::RemoteMatrixData)
     if isempty(data.metadata)
@@ -361,6 +357,7 @@ return the number of successfully loaded matrices.
 """
 load(p::Pattern) = load(MATRIX_DB, p)
 function load(db::MatrixDatabase, p::Pattern)
+    check_symbols(p)
     n = 0
     for name in list(p)
         try
@@ -374,9 +371,10 @@ function load(db::MatrixDatabase, p::Pattern)
 end
 
 """
-    mdata(pattern[ ,db])
+    mdopen([db,] pattern; cache=false)
+    mdopen(f, [db,] pattern)
 
-make sure that data files are loaded-
+make sure that data files are loaded.
 return `MatrixData` object, which can be used with data access functions.
 The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
 If the pattern has not a unique resolution, an error is thrown.
@@ -385,6 +383,15 @@ mdopen(p::Pattern; cache::Bool=false) = mdopen(MATRIX_DB, p, cache=cache)
 function mdopen(db::MatrixDatabase, p::Pattern; cache::Bool=false)
     mdopen(mdatav(db, p), cache=cache)
 end
+mdopen(f::Function, p::Pattern) = mdopen(f, MATRIX_DB, p)
+function mdopen(f::Function, db::MatrixDatabase, p::Pattern)
+    data = mdatav(db, p)
+    try
+        f(data)
+    finally
+        mdclose(data)
+    end
+end
 
 """
     mdata(db, pattern)
@@ -392,7 +399,8 @@ return unique `MatrixData` object according to pattern.
 """
 mdata(p::Pattern) = mdata(MATRIX_DB, p)
 function mdata(db::MatrixDatabase, p::Pattern)
-    li = list(p)
+    check_symbols(p)
+    li = list(db, p)
     length(li) == 0 && daterr("no matrix according to $p found")
     length(li) > 1  && daterr("pattern not unique: $p -> $li")
     db.data[li[1]]
@@ -426,6 +434,7 @@ end
 mdclose(data::MatrixData) = data
 mdclose(p::Pattern) = mdclose(MATRIX_DB, p)
 function mdclose(db::MatrixDatabase, p::Pattern)
+    check_pattern(p)
     mdatadb(name) = mdata(db, name)
     mdclose.(mdatadb.(list(db, p)))
 end
@@ -434,7 +443,7 @@ end
 # convenience API
 ###
 
-# convert input string to shell pattern in certain cases
+# convert input string to shell pattern in for remote matrices
 convert_pattern(p::AbstractString) = occursin('/', p) ? p : "**/$p"
 convert_pattern(p) = p
 
@@ -442,12 +451,14 @@ convert_pattern(p) = p
     matrixdepot(p::Pattern)
 
 If not loaded, load remote matrix first.
+p must be a unique pattern (match only one name)
+only remote patterns are used
 return remote matrix according to pattern.
 """
-function matrixdepot(p::Pattern)
+function matrixdepot(db::MatrixDatabase, p::Pattern)
 # cover the cases, a group name is given as a string and "data"
-    db = MATRIX_DB
-    p1 = convert_pattern(p)
+    p = convert_pattern(p)
+    check_symbols(p)
     data = mdopen(db, p)
     matrix(data)
 end
@@ -457,8 +468,12 @@ end
 
 Generate built-in or user-defined matrix named `name` with (at least one) argument.
 """
-function matrixdepot(p::Pattern, args...)
-    db = MATRIX_DB
+matrixdepot(p::Pattern, args...) = matrixdepot(MATRIX_DB, p, args...)
+function matrixdepot(db::MatrixDatabase, p::Pattern, args...)
+    check_symbols(p)
+    # TODO use matrix(data)
+    #data = mdopen(p, args...)
+    #matrix(data)
     matrix(db, p, args...)
 end
 

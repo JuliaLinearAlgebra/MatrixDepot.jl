@@ -125,6 +125,9 @@ end
 @test "a" | r"b" == ["a", r"b"]
 @test "a" | r"b" | "c" == ["a", r"b", "c"]
 @test list(islocal & ¬("*a*" | "*e*")) == list(:local & ¬"*a*" & ¬ "*e*")
+@test "a" & ( "b" & "c" ) == ("a", "b", "c")
+@test "a" | ( "b" | "c" ) == ["a", "b", "c"]
+@test_throws ArgumentError list([] & :invalid_group_name)
 
 @test MatrixDepot.fname(sin) == "unknown-function"
 end

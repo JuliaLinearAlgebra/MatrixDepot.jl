@@ -128,8 +128,8 @@ function downloadindices(db::MatrixDatabase)
     # UF Sparse matrix collection
     global uf_remote
     empty!(db)
-    insertlocal(db, GeneratedBuiltinMatrixData, MATRIXDICT)
-    insertlocal(db, GeneratedUserMatrixData, USERMATRIXDICT)
+    insertlocal(db, GeneratedMatrixData{:B}, MATRIXDICT)
+    insertlocal(db, GeneratedMatrixData{:U}, USERMATRIXDICT)
 
     try
         downloadindex(preferred(TURemoteType))
