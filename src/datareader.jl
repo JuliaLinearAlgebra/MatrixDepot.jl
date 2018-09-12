@@ -4,17 +4,9 @@ return specific data files (matrix, rhs, solution, or other metadata.
 The `key` must be contained in data.metadata or an `DataError` is thrown.
 """
 function metareader(data::RemoteMatrixData, name::AbstractString)
-    dc = data.datacache
-    if haskey(dc, name)
-        m = dc[name]
-        m isa String ? m : copy(m)
-    elseif name in data.metadata
+    if name in data.metadata
         path = joinpath(dirname(matrixfile(data)), name)
-        m = endswith(name, ".mtx") ? mmread(path) : read(path, String)
-        if data.status[]
-            dc[name] = m isa String ? m : copy(m)
-        end
-        m
+        endswith(name, ".mtx") ? mmread(path) : read(path, String)
     else
         daterr("$(data.name) has no metadata $name")
     end

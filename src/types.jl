@@ -71,12 +71,9 @@ struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     header::IndexInfo
     properties::Ref{Union{<:MMProperties,Nothing}}
     metadata::Vector{AbstractString}
-    status::Ref{Bool}
-    datacache::Dict{String}
     function RemoteMatrixData{T}(name, id::Integer, hdr::IndexInfo) where T
         properties = Ref{Union{<:MMProperties,Nothing}}(nothing)
-        new(name, id, hdr, properties, AbstractString[],
-            Ref(false), Dict{String,Any}())
+        new(name, id, hdr, properties, AbstractString[])
     end
 end
 
@@ -92,6 +89,7 @@ struct MatrixDatabase
     MatrixDatabase() = new(Dict{AbstractString,MatrixData}(),
                            Dict{AbstractString,AbstractString}())
 end
+Base.show(io::IO, db::MatrixDatabase) = print(io, "MatrixDatabase(", length(db.data), ")")
 
 # Patterns
 
@@ -127,9 +125,7 @@ struct MatrixDescriptor{T<:MatrixData}
     cache::Union{Ref,Dict}
 end
 function MatrixDescriptor(data::T) where T<:RemoteMatrixData
-    dc = data.datacache
-    dc = dc == nothing ? dc : copy(dc)
-    MatrixDescriptor{T}(data, (), dc)
+    MatrixDescriptor{T}(data, (), Dict())
 end
 
 function MatrixDescriptor(data::T, args...) where T<:GeneratedMatrixData
@@ -147,10 +143,8 @@ function Base.show(io::IO, data::RemoteMatrixData)
     print(io, " $(hd.m)x$(hd.n)($(hd.nnz)/$(hd.dnz)) ")
     print(io, date(data) != 0 ? date(data) : "")
     print(io, " ", kind(data), " ")
-    addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
-    print(io, isopen(data) ? '*' : ' ')
     print(io, "[")
-    print(io, join(addstar.(data.metadata), ", "))
+    print(io, metadata(data), ", ")
     print(io,"])")
 end
 
@@ -158,9 +152,6 @@ function Base.show(io::IO, mdesc::MatrixDescriptor)
     show(io, mdesc.data)
     show(io, mdesc.args)
 end
-
-Base.isopen(data::RemoteMatrixData) = data.status[]
-Base.isopen(data::MatrixData) = false
 
 function Base.push!(db::MatrixDatabase, data::MatrixData)
     key = data.name

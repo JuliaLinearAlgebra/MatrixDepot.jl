@@ -4,8 +4,9 @@
 
 # uf
 @test load("**/1138_bus") == 2 # loaded both versions (uf and mm)
-@test load("HB/1138_bus") == 1
+@test load("HB/1138_bus") == 0 # count actually loaded
 @test load("Pajek/Journals") == 1
+@test load("wing") == 0 # do not try to load local matrix
 # Matrix Markt
 @test load("Harwell-Boeing/smtape/bp___200") == 1
 
@@ -45,9 +46,11 @@ mdesc = mdopen("Bai/dwg961b")
 @test metareader(mdesc, "dwg961b.mtx") == matrixdepot("Bai/dwg961b")
 
 # an example with rhs and solution
-mdesc = mdopen("DRIVCAV/cavity14"; cache=true)
-@test size(mdesc.A) == (2597, 2597)
-@test size(mdesc.A) == (2597, 2597) # cache should be used (coverage)
+mdesc = mdopen("DRIVCAV/cavity14")
+A1 = mdesc.A
+@test size(A1) == (2597, 2597)
+A2 = mdesc.A
+@test A1 === A2 # cache should be used
 @test size(mdesc.b, 1) == 2597
 @test size(mdesc.x, 1) == 2597
 @test_throws DataError metareader(mdesc, "invlid")
@@ -106,7 +109,7 @@ end
 @test MatrixDepot.mmreadheader("") === nothing
 
 # an example loading a txt file
-data = mdopen("Pajek/Journals"; cache=true)
+data = mdopen("Pajek/Journals")
 @test length(metareader(data, "Journals_nodename.txt")) > 100
 @test length(metareader(data, "Journals_nodename.txt")) > 100 # repeat to use cache
 

@@ -35,7 +35,6 @@ end
 
 # write one property association
 function propline(io::IO, propname, matnames)
-    println(matnames)
     write(io, repr(propname))
     write(io, " => [")
     for str in matnames
@@ -361,8 +360,7 @@ function load(db::MatrixDatabase, p::Pattern)
     n = 0
     for name in list(p)
         try
-            loadmatrix(db, db.data[name])
-            n += 1
+            n += loadmatrix(db, db.data[name])
         catch ex
             @warn "could not load $name: $ex"
         end
@@ -371,17 +369,16 @@ function load(db::MatrixDatabase, p::Pattern)
 end
 
 """
-    mdopen([db,] pattern; cache=false)
+    mdopen([db,] pattern)
     mdopen(f, [db,] pattern)
 
 make sure that data files are loaded.
 return `MatrixData` object, which can be used with data access functions.
-The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
 If the pattern has not a unique resolution, an error is thrown.
 """
-mdopen(p::Pattern, args...; cache::Bool=false) = mdopen(MATRIX_DB, p, args..., cache=cache)
-function mdopen(db::MatrixDatabase, p::Pattern, args...; cache::Bool=false)
-    mdopen(mdatav(db, p), args..., cache=cache)
+mdopen(p::Pattern, args...) = mdopen(MATRIX_DB, p, args...)
+function mdopen(db::MatrixDatabase, p::Pattern, args...)
+    mdopen(mdatav(db, p), args...)
 end
 mdopen(f::Function, p::Pattern, args...) = mdopen(f, MATRIX_DB, p, args...)
 function mdopen(f::Function, db::MatrixDatabase, p::Pattern, args...)
@@ -420,11 +417,8 @@ metadata(db::MatrixDatabase, p::Pattern) = metadata(mdata(db, p))
     mdopen(data::MatrixData)
 Enable data caching for `RemoteMatrixData` and return data.
 """
-function mdopen(data::RemoteMatrixData; cache::Bool=false)
-    data.status[] = cache
-    MatrixDescriptor(data)
-end
-function mdopen(data::GeneratedMatrixData, args...; cache::Bool=false)
+mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
+function mdopen(data::GeneratedMatrixData, args...)
     verify_callable(data.func, args...)
     MatrixDescriptor(data, args...)
 end
@@ -441,22 +435,6 @@ verify_types(sig::UnionAll) = verify_types(sig.body)
 function verify_types(sig::DataType)
     types = sig.types
     length(types) == 3 && types[3] == Vararg{Any} && types[2] isa Type
-end
-"""
-    mdclose(data::MatrixData)
-clean cached data and disable caching - return data.
-"""
-function mdclose(data::RemoteMatrixData)
-    data.status[] = false
-    empty!(data.datacache)
-    data
-end
-mdclose(data::MatrixData) = data
-mdclose(p::Pattern) = mdclose(MATRIX_DB, p)
-function mdclose(db::MatrixDatabase, p::Pattern)
-    check_pattern(p)
-    mdatadb(name) = mdata(db, name)
-    mdclose.(mdatadb.(list(db, p)))
 end
 
 ###

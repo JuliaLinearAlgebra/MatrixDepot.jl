@@ -196,7 +196,7 @@ end
 function loadmatrix(db::MatrixDatabase, data::RemoteMatrixData)
     file = matrixfile(data)
     if isfile(file)
-        return
+        return 0
     end
     dirfn = localfile(data)
     dir = dirname(localdir(data))
@@ -216,8 +216,9 @@ function loadmatrix(db::MatrixDatabase, data::RemoteMatrixData)
         rm(dirfn, force=true)
     end
     addmetadata!(data)
-    nothing
+    1
 end
+loadmatrix(db::MatrixDatabase, data::GeneratedMatrixData) = 0
 
 function data_warn(data::RemoteMatrixData, dn, i1, i2)
     @warn "$(data.name): header $dn = $i1 file $dn = $i2 $(data.properties[])"
