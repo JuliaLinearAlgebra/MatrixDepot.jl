@@ -16,7 +16,7 @@ import LinearAlgebra: issymmetric, ishermitian
 import Base: &, |, *
 
 """
-    Syntactic sugar
+    Pattern syntactic sugar
 
 the logical operators `|`, `&`, and `¬` (`\\neg`)
  may be applied to all kind of `Pattern`s with the usual meaning.
@@ -24,11 +24,18 @@ the logical operators `|`, `&`, and `¬` (`\\neg`)
 + `&` : binary logical and - both patterns match
 + `|` : binary logical or - any of the pattern match (lowest priority)
 
-+ The operator `*` for string concatenation is treated special
++ parentheses can be used to overrule operator precedence.
+
++ `[p...]` is the same as `p[1] | p[2] ...`
+
++ `(p...)` is the same as `p[1] & p[2] ...`
+
++ `¬(p...) === ¬((p...))` - that is `¬(p[1] & p[2] ...)`
+
++ Precedence of '*' is higher that `¬` for character and string objects:
  so `¬ "a" * "b"  === ¬("a" * "b") === ¬"ab"`  also `¬'a'^2*"b" === ¬"aab"`
-+ also `¬(p1...) === ¬((p...))` has been implemented.
 """
-logical() = "¬|?"
+function logical end
 
 (&)(p::Tuple, q::Tuple) = tuple(p..., q...)
 (&)(p::Tuple, q::Pattern...) = tuple(p..., q...)
@@ -152,7 +159,7 @@ end
 function aliasresolve(db::MatrixDatabase, a::Alias{T,<:Integer}) where T
     aliasresolve(db, aliasname(a))
 end
-function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector{<:Integer}}) where T
+function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector{<:IntOrVec}}) where T
     aliasr2(x) = aliasresolve(db, x)
     collect(Iterators.flatten(aliasr2.(aliasname(a))))
 end
@@ -165,11 +172,11 @@ aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:U},Colon}) = :use
 # Predefined predicates for MatrixData
 ###
 
-builtin(p::IntOrVec) = Alias{GeneratedMatrixData{:B}}(p)
-user(p::IntOrVec) = Alias{GeneratedMatrixData{:U}}(p)
-uf(p::IntOrVec) = Alias{RemoteMatrixData{TURemoteType}}(p)
-tamu(p::IntOrVec) = Alias{RemoteMatrixData{TURemoteType}}(p)
-mm(p::IntOrVec) = Alias{RemoteMatrixData{MMRemoteType}}(p)
+builtin(p...) = Alias{GeneratedMatrixData{:B}}(p...)
+user(p...) = Alias{GeneratedMatrixData{:U}}(p...)
+uf(p...) = Alias{RemoteMatrixData{TURemoteType}}(p...)
+tamu(p...) = Alias{RemoteMatrixData{TURemoteType}}(p...)
+mm(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
 
 function issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})
     data.properties[] !== nothing && data.properties[].symmetry isa T

@@ -129,6 +129,9 @@ end
 @test "a" | ( "b" | "c" ) == ["a", "b", "c"]
 @test_throws ArgumentError list([] & :invalid_group_name)
 
+@test MatrixDepot.list(builtin(10, 1:7, 3)) == ["baart", "binomial", "blur", "cauchy",
+                                                "chebspec", "chow", "circul", "deriv2"] 
+
 @test MatrixDepot.fname(sin) == "unknown-function"
 end
 

@@ -95,11 +95,12 @@ end
 
 # Patterns
 
-const IntOrVec = Union{Integer,AbstractVector{<:Integer},Colon}
+const IntOrVec = Union{Integer,AbstractVector{<:Integer}}
 
-struct Alias{T,D<:IntOrVec}
+struct Alias{T,D<:Union{IntOrVec,Colon,AbstractVector{<:IntOrVec}}}
     data::D
     Alias{T}(d::D) where {T<:MatrixData,D} = new{T,D}(d)
+    Alias{T}(d...) where {T<:MatrixData} = new{T,Vector{<:IntOrVec}}(Vector{IntOrVec}(collect(d)))
 end
 
 abstract type AbstractNot end
@@ -175,8 +176,8 @@ return alias name derived from integer id
 aliasname(::Type{RemoteMatrixData{TURemoteType}}, i::Integer) = string('#', i)
 aliasname(::Type{RemoteMatrixData{MMRemoteType}}, i::Integer) = string('#', 'M', i)
 aliasname(::Type{GeneratedMatrixData{N}}, i::Integer) where N = string('#', N, i)
-function aliasname(T::Type{<:MatrixData}, r::AbstractVector{<:Integer})
-    aliasname.(T, filter(x->x>0, r))
+function aliasname(T::Type{<:MatrixData}, r::AbstractVector{<:IntOrVec})
+    aliasname.(T, [ x for x in Iterators.flatten(r) if x > 0])
 end
 aliasname(T::Type{<:MatrixData}, r::Colon) = aliasname(T, 0)
 aliasname(data::MatrixData) = aliasname(typeof(data), data.id)
