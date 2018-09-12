@@ -255,7 +255,7 @@ function addmetadata!(data::RemoteMatrixData)
         hdr = data.header
         hdr.m = hdr.m in (0, m) ? m : data_warn(data, "m", hdr.m, m)
         hdr.n = hdr.n in (0, n) ? n : data_warn(data, "n", hdr.n, n)
-        hdr.nnz = hdr.nnz == 0  ? n2 : n1 <= hdr.nnz <= n2 ? hdr.nnz :
+        hdr.nnz = hdr.nnz == 0  ? n2 : hdr.nnz <= n2 ? hdr.nnz :
                                         data_warn(data, "nnz", hdr.nnz, k)
         hdr.dnz = k
     end

@@ -218,6 +218,11 @@ preddnz(f::Function) = data::MatrixData -> hasinfo(data) && f(dnz_num(data))
 function predmn(f::Function)
     data::MatrixData -> hasinfo(data) && f(row_num(data), col_num(data))
 end
+function predmeta(f::Function)
+    fr(data::RemoteMatrixData) = f(data.metadata)
+    fr(data) = false
+    fr
+end
 function kindhas(p::Union{AbstractString,Regex,AbstractChar})
     data -> occursin(p, kind(data))
 end
@@ -234,6 +239,7 @@ function prednzdev(dev::AbstractFloat=0.1)
     f(::MatrixData) = false
     f
 end
+
 
 """
     check_symbols(p::Pattern)

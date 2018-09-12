@@ -96,7 +96,11 @@ end
 
 md(a...) = Markdown.MD([a...])
 
-mdlist(p) = md(buildnametable("list", list(MATRIX_DB, p)))
+mdlist(p::Pattern) = mdlist(MATRIX_DB, p)
+function mdlist(db::MatrixDatabase, p::Pattern)
+    li = list(db, p)
+    md(buildnametable("list($(length(li)))", li))
+end
 
 ##########################
 # display information

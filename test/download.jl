@@ -20,7 +20,6 @@
                   "# Harwell-Boeing/psadmit/662_bus\n\nno info available\n"
 
 # metatdata access with old interface
-@test metareader(MatrixDepot.mdata("Pajek/Journals"))["Journals.mtx"] !== nothing
 @test metareader(MatrixDepot.mdata("Pajek/Journals"), "Journals.mtx") !== nothing
 @test_throws DataError metareader(MatrixDepot.mdata("*/1138_bus"), "1138_bus_b")
 @test_throws DataError metareader(MatrixDepot.mdata("that is nothing"))
@@ -37,31 +36,31 @@
 @test load("Harwell-Boeing/lanpro/nos5") == 1
 @test length(list(isloaded)) == 8
 @test mdopen("Bai/dwg961b") !== nothing
-data = mdopen("Bai/dwg961b")
-@test iscomplex(data)
-@test issymmetric(data)
-@test !ishermitian(data)
-@test !ispattern(data)
-@test metadata(data) == ["dwg961b.mtx"]
-@test length(metareader(data)) == 1
+mdesc = mdopen("Bai/dwg961b")
+@test iscomplex(mdesc.data)
+@test issymmetric(mdesc.data)
+@test !ishermitian(mdesc.data)
+@test !ispattern(mdesc.data)
+@test metadata(mdesc) == ["dwg961b.mtx"]
+@test metareader(mdesc, "dwg961b.mtx") == matrixdepot("Bai/dwg961b")
 
 # an example with rhs and solution
-data = mdopen("DRIVCAV/cavity14"; cache=true)
-@test size(matrix(data)) == (2597, 2597)
-@test size(matrix(data)) == (2597, 2597) # cache should be used (coverage)
-@test size(rhs(data), 1) == 2597
-@test size(solution(data), 1) == 2597
-@test mdclose(data) === data
-@test_throws DataError metareader(data, "invlid")
+mdesc = mdopen("DRIVCAV/cavity14"; cache=true)
+@test size(mdesc.A) == (2597, 2597)
+@test size(mdesc.A) == (2597, 2597) # cache should be used (coverage)
+@test size(mdesc.b, 1) == 2597
+@test size(mdesc.x, 1) == 2597
+@test_throws DataError metareader(mdesc, "invlid")
 
-@test_throws DataError rhs(uf(1)) # no rhs data for this example
+@test_throws DataError mdopen(uf(1)).b # no rhs data for this example
 
 # read a format array file
-@test MatrixDepot.mmreadheader(abspath(MatrixDepot.matrixfile(data), "..", string("cavity14_b.mtx"))) != nothing
+@test MatrixDepot.mmreadheader(abspath(MatrixDepot.matrixfile(mdesc.data),
+                                       "..", string("cavity14_b.mtx"))) != nothing
 
-data = mdopen("*/bfly")
-@test metareader(data, "bfly_Gname_01.txt") == "BFLY3\n"
-fn = joinpath(dirname(MatrixDepot.matrixfile(data)), "bfly_Gname_01.txt")
+mdesc = mdopen("*/bfly")
+@test metareader(mdesc, "bfly_Gname_01.txt") == "BFLY3\n"
+fn = joinpath(dirname(MatrixDepot.matrixfile(mdesc.data)), "bfly_Gname_01.txt")
 @test_throws DataError MatrixDepot.mmreadheader(fn)
 
 # read from a pipeline

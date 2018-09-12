@@ -4,11 +4,12 @@ using LinearAlgebra, SparseArrays, SuiteSparse
 import Base: show
 
 export matrixdepot
-export matrix, rhs, solution, metareader
-export mdlist, listdir, mdinfo, metadata, mdload, mdopen, mdclose, overview
-export row_num, col_num, nz_num, dnz_num
-export aliasname, @addgroup, @rmgroup, @modifygroup
-export colval, mtranspose, madjoint
+export metareader
+export mdlist, listdir, mdinfo, metadata, mdopen
+# export row_num, col_num, nz_num, dnz_num, aliasname
+export @addgroup, @rmgroup, @modifygroup
+#export colval, mtranspose, madjoint
+# further exports (for predicate functions) in `logical.jl`
 
 include("types.jl")         # common data type definitions
 include("higham.jl")        # test matrices

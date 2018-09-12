@@ -122,8 +122,17 @@ metadata.
 """
 struct MatrixDescriptor{T<:MatrixData}
     data::T
-    argskey::Any
-    datacache::Dict{String,Any}
+    args::Tuple
+    cache::Union{Ref,Dict}
+end
+function MatrixDescriptor(data::T) where T<:RemoteMatrixData
+    dc = data.datacache
+    dc = dc == nothing ? dc : copy(dc)
+    MatrixDescriptor{T}(data, (), dc)
+end
+
+function MatrixDescriptor(data::T, args...) where T<:GeneratedMatrixData
+    MatrixDescriptor{T}(data, deepcopy(args), Ref{Any}(nothing))
 end
 
 # essential functions of the types
@@ -132,14 +141,21 @@ function Base.show(io::IO, data::RemoteMatrixData)
     hd = data.header
     prop = data.properties[]
     print(io, "(")
-    print(io, "$(data.name)($(aliasname(data)))")
-    print(io, "-$(hd.m)x$(hd.n)($(hd.nnz)/$(hd.dnz)) ")
-    print(io, prop === nothing ? "{}" : prop)
+    print(io, prop === nothing ? "" : string(prop, " ") )
+    print(io, "$(data.name)($(aliasname(data))) ")
+    print(io, " $(hd.m)x$(hd.n)($(hd.nnz)/$(hd.dnz)) ")
+    print(io, date(data) != 0 ? date(data) : "")
+    print(io, " ", kind(data), " ")
     addstar(x) = haskey(data.datacache, x) ? string('*', x) : x
     print(io, isopen(data) ? '*' : ' ')
     print(io, "[")
     print(io, join(addstar.(data.metadata), ", "))
     print(io,"])")
+end
+
+function Base.show(io::IO, mdesc::MatrixDescriptor)
+    show(io, mdesc.data)
+    show(io, mdesc.args)
 end
 
 Base.isopen(data::RemoteMatrixData) = data.status[]
@@ -257,12 +273,13 @@ function MMProperties(args::AbstractString...)
 end
 Base.show(io::IO, pr::MMProperty) = print(io, mm_property_name(pr))
 function Base.show(io::IO, mp::MMProperties)
-    print(io, "{")
-    show(io, mp.object); print(io, ", ")
-    show(io, mp.format); print(io, ", ")
-    show(io, mp.field); print(io, ", ")
-    show(io, mp.symmetry); print(io, "}")
+    mms(pr::MMProperty) = mm_short_name(pr)
+    print(io, #= mms(mp.object), mms(mp.format),=# mms(mp.field), mms(mp.symmetry))
 end
+mm_short_name(pr::MMSymmetrySkewSymmetric) = "K"
+mm_short_name(pr::MMProperty) = uppercase(first(mm_property_name(pr)))
+
+
 
 """
     flattenPattern(p::Pattern)
@@ -274,3 +291,8 @@ _flatten_pattern(p::Union{AbstractVector,Tuple}) = Iterators.flatten(_flatten_pa
 _flatten_pattern(p::Not) = [p.pattern]
 _flatten_pattern(p::Pattern) = [p]
 
+Base.length(a::Alias) = length(a.data)
+function Base.iterate(a::Alias{T}, args...) where T
+    d = iterate(a.data, args...); d === nothing && return d
+    Alias{T}(d[1]), d[2]
+end

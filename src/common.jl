@@ -259,7 +259,7 @@ function shell_to_regex(p::AbstractString, retain_pure::Bool)
 end
 
 function list(db::MatrixDatabase, p::AbstractString)
-    haskey(db.data, p) && return [p]
+    haskey(db.data, p) && return [p] # shortcut for exact matches
     r = shell_to_regex(p, true)
     r isa Regex ? list(db, r) : haskey(db.data, r) ? [r] : EMPTY_PATTERN
 end
@@ -379,13 +379,13 @@ return `MatrixData` object, which can be used with data access functions.
 The data cache is activated for `RemoteMatrixData`. see [`@mdclose`](@ref).
 If the pattern has not a unique resolution, an error is thrown.
 """
-mdopen(p::Pattern; cache::Bool=false) = mdopen(MATRIX_DB, p, cache=cache)
-function mdopen(db::MatrixDatabase, p::Pattern; cache::Bool=false)
-    mdopen(mdatav(db, p), cache=cache)
+mdopen(p::Pattern, args...; cache::Bool=false) = mdopen(MATRIX_DB, p, args..., cache=cache)
+function mdopen(db::MatrixDatabase, p::Pattern, args...; cache::Bool=false)
+    mdopen(mdatav(db, p), args..., cache=cache)
 end
-mdopen(f::Function, p::Pattern) = mdopen(f, MATRIX_DB, p)
-function mdopen(f::Function, db::MatrixDatabase, p::Pattern)
-    data = mdatav(db, p)
+mdopen(f::Function, p::Pattern, args...) = mdopen(f, MATRIX_DB, p, args...)
+function mdopen(f::Function, db::MatrixDatabase, p::Pattern, args...)
+    data = mdopen(mdatav(db, p), args...)
     try
         f(data)
     finally
@@ -410,6 +410,7 @@ end
     metadata(p::Pattern[, db])
 return copy of metadata if pattern is unique
 """
+metadata(mdesc::MatrixDescriptor) = metadata(mdesc.data)
 metadata(data::RemoteMatrixData) = copy(data.metadata)
 metadata(data::MatrixData) = String[]
 metadata(p::Pattern) = metadata(MATRIX_DB, p)
@@ -419,9 +420,28 @@ metadata(db::MatrixDatabase, p::Pattern) = metadata(mdata(db, p))
     mdopen(data::MatrixData)
 Enable data caching for `RemoteMatrixData` and return data.
 """
-mdopen(data::RemoteMatrixData; cache::Bool=false) = (data.status[] = cache; data)
-mdopen(data::MatrixData; cache::Bool=false) = data
+function mdopen(data::RemoteMatrixData; cache::Bool=false)
+    data.status[] = cache
+    MatrixDescriptor(data)
+end
+function mdopen(data::GeneratedMatrixData, args...; cache::Bool=false)
+    verify_callable(data.func, args...)
+    MatrixDescriptor(data, args...)
+end
 
+verify_callable(f::Function, args...) = verify_callable(f, Float64, args...)
+function verify_callable(f::Function, t::Type, args...)
+    ml = methods(f, typeof.((t, args...)))
+    if isempty(ml) || verify_types(ml.ms[1].sig)
+        throw(MethodError(f, (t, args...)))
+    end
+end
+
+verify_types(sig::UnionAll) = verify_types(sig.body)
+function verify_types(sig::DataType)
+    types = sig.types
+    length(types) == 3 && types[3] == Vararg{Any} && types[2] isa Type
+end
 """
     mdclose(data::MatrixData)
 clean cached data and disable caching - return data.
@@ -443,10 +463,6 @@ end
 # convenience API
 ###
 
-# convert input string to shell pattern in for remote matrices
-convert_pattern(p::AbstractString) = occursin('/', p) ? p : "**/$p"
-convert_pattern(p) = p
-
 """
     matrixdepot(p::Pattern)
 
@@ -457,7 +473,6 @@ return remote matrix according to pattern.
 """
 function matrixdepot(db::MatrixDatabase, p::Pattern)
 # cover the cases, a group name is given as a string and "data"
-    p = convert_pattern(p)
     check_symbols(p)
     data = mdopen(db, p)
     matrix(data)
@@ -476,4 +491,3 @@ function matrixdepot(db::MatrixDatabase, p::Pattern, args...)
     #matrix(data)
     matrix(db, p, args...)
 end
-
