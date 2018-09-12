@@ -63,6 +63,7 @@ A2 = mdesc.A
 
 mdesc = mdopen("*/bfly")
 @test metareader(mdesc, "bfly_Gname_01.txt") == "BFLY3\n"
+@test size(mdesc.G_06) == (2048, 2048)
 fn = joinpath(dirname(MatrixDepot.matrixfile(mdesc.data)), "bfly_Gname_01.txt")
 @test_throws DataError MatrixDepot.mmreadheader(fn)
 
