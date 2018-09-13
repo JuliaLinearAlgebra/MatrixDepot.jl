@@ -133,5 +133,6 @@ end
                                                 "chebspec", "chow", "circul", "deriv2"] 
 
 @test MatrixDepot.fname(sin) == "unknown-function"
+@test_throws MethodError mdopen("baart", 10, 11)
 end
 
