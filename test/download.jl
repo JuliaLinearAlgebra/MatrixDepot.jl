@@ -16,14 +16,13 @@
 # read data
 @test matrixdepot("HB/1138_bus") != nothing
 @test list("**/1138_bus") == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus"]
-@test_throws DataError matrix(MatrixDepot.mdata("Harwell-Boeing/psadmit/662_bus"))
 @test string(mdinfo("Harwell-Boeing/psadmit/662_bus")) ==
                   "# Harwell-Boeing/psadmit/662_bus\n\nno info available\n"
 
 # metatdata access with old interface
-@test metareader(MatrixDepot.mdata("Pajek/Journals"), "Journals.mtx") !== nothing
-@test_throws DataError metareader(MatrixDepot.mdata("*/1138_bus"), "1138_bus_b")
-@test_throws DataError metareader(MatrixDepot.mdata("that is nothing"))
+@test metareader(mdopen("Pajek/Journals"), "Journals.mtx") !== nothing
+@test_throws DataError metareader(mdopen("*/1138_bus"), "1138_bus_b")
+@test_throws DataError metareader(mdopen("that is nothing"))
 
 @test load("Bates/C*") == 2
 @test mdinfo("Bates/Chem97Zt") != nothing
@@ -54,16 +53,27 @@ A2 = mdesc.A
 @test size(mdesc.b, 1) == 2597
 @test size(mdesc.x, 1) == 2597
 @test_throws DataError metareader(mdesc, "invlid")
-
-@test_throws DataError mdopen(uf(1)).b # no rhs data for this example
+@test_throws DataError mdesc.y
 
 # read a format array file
 @test MatrixDepot.mmreadheader(abspath(MatrixDepot.matrixfile(mdesc.data),
                                        "..", string("cavity14_b.mtx"))) != nothing
 
+mdesc = mdopen("blur", 10, false)
+@test mdesc.A isa AbstractMatrix
+@test mdesc.b isa AbstractVector
+@test mdesc.x isa AbstractVector
+@test_throws DataError metareader(mdesc, "invlid")
+@test_throws DataError mdesc.y
+
+@test_throws DataError mdopen(uf(1)).b # no rhs data for this example
+
 mdesc = mdopen("*/bfly")
 @test metareader(mdesc, "bfly_Gname_01.txt") == "BFLY3\n"
+@test metareader(mdesc, "Gname_01.txt") == "BFLY3\n"
 @test size(mdesc.G_06) == (2048, 2048)
+@test mdesc.G_06 === metareader(mdesc, "G_06")
+@test mdesc.G_06 === metareader(mdesc, "bfly_G_06.mtx")
 fn = joinpath(dirname(MatrixDepot.matrixfile(mdesc.data)), "bfly_Gname_01.txt")
 @test_throws DataError MatrixDepot.mmreadheader(fn)
 

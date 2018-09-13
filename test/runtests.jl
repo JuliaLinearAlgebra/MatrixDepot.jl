@@ -6,7 +6,7 @@ using Test
 using LinearAlgebra
 using SparseArrays
 
-import MatrixDepot: DataError, list, load, matrix, rhs, solution
+import MatrixDepot: DataError, list, load
 
 macro inc(a)
     :(@testset $a begin let n, p, i; include($a) end end)
@@ -93,7 +93,7 @@ end
         MatrixDepot.toggle_remote()
         MatrixDepot.init()
         MatrixDepot.update()
-        @test matrix(uf(1)) != nothing
+        @test mdopen(uf(1)) != nothing
         mv(xtmpdir, xdir, force=true)
 
     finally

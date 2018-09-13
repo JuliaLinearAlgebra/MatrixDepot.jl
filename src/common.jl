@@ -315,44 +315,11 @@ verify_loaded(db::MatrixDatabase, data::MatrixData) = data
 mdatav(db::MatrixDatabase, p::Pattern) = verify_loaded(db, mdata(db, p))
 
 """
-    matrix(p, [db,] args...)
-return a matrix given a name
-* `p` is a unique problem identifier (`String`, `Regex`, `Integer`)
-* `db` is optional `MatrixDatabase` defaulting to global `MATRIX_DB`
-* `args` are optional arguments - only used for generated matrices
-"""
-matrix(p::Pattern, args...) = matrix(MATRIX_DB, p, args...)
-matrix(db::MatrixDatabase, p::Pattern, args...) = matrix(mdatav(db, p), args...)
-
-"""
-    rhs(p[, db]
-return right hand side of problem or `nothing`.
-see also [`@matrix`](@ref).
-"""
-rhs(p::Pattern) = rhs(MATRIX_DB, p)
-rhs(db::MatrixDatabase, p::Pattern) = rhs(mdatav(db, p))
-
-"""
-    solution(p[, db])
-return solution of problem corresponding to right hand side or `nothing`.
-see also [`@matrix`](@ref).
-"""
-solution(p::Pattern) = solution(MATRIX_DB, p)
-solution(db::MatrixDatabase, p::Pattern) = solution(mdatav(db, p))
-
-"""
-    metareader(p, metafile::String[, db])
-read metadata identified by name `metafile`.
-"""
-metareader(p::Pattern, metafile::AbstractString) = metareader(MATRIX_DB, p, metafile)
-function metareader(db::MatrixDatabase, p::Pattern, metafile::AbstractString)
-    metareader(mdatav(db, p), metafile)
-end
-
-"""
     load(pattern[, db])
-load data from remote repository for all problems matching pattern"
-return the number of successfully loaded matrices.
+
+Load data from remote repository for all problems matching pattern.
+
+Return the number of successfully loaded matrices. 
 """
 load(p::Pattern) = load(MATRIX_DB, p)
 function load(db::MatrixDatabase, p::Pattern)
@@ -362,6 +329,7 @@ function load(db::MatrixDatabase, p::Pattern)
         try
             n += loadmatrix(db, db.data[name])
         catch ex
+            ex isa InterruptException && rethrow()
             @warn "could not load $name: $ex"
         end
     end
@@ -372,27 +340,27 @@ end
     mdopen([db,] pattern)
     mdopen(f, [db,] pattern)
 
-make sure that data files are loaded.
-return `MatrixData` object, which can be used with data access functions.
+Return `MatrixDescriptor` object, which can be used with data access functions.
+
+Make sure that data files are loaded.
+Keeps a cache of already delivered matrices and metadata.
 If the pattern has not a unique resolution, an error is thrown.
 """
 mdopen(p::Pattern, args...) = mdopen(MATRIX_DB, p, args...)
 function mdopen(db::MatrixDatabase, p::Pattern, args...)
-    mdopen(mdatav(db, p), args...)
+    _mdopen(mdatav(db, p), args...)
 end
+
 mdopen(f::Function, p::Pattern, args...) = mdopen(f, MATRIX_DB, p, args...)
 function mdopen(f::Function, db::MatrixDatabase, p::Pattern, args...)
-    data = mdopen(mdatav(db, p), args...)
-    try
-        f(data)
-    finally
-        mdclose(data)
-    end
+    data = _mdopen(mdatav(db, p), args...)
+    f(data)
 end
 
 """
     mdata(db, pattern)
-return unique `MatrixData` object according to pattern.
+
+Return unique `MatrixData` object according to pattern.
 """
 mdata(p::Pattern) = mdata(MATRIX_DB, p)
 function mdata(db::MatrixDatabase, p::Pattern)
@@ -404,8 +372,9 @@ function mdata(db::MatrixDatabase, p::Pattern)
 end
 
 """
-    metadata(p::Pattern[, db])
-return copy of metadata if pattern is unique
+    metadata([db, ], p::Pattern)
+
+Return copy of list of metadata names. Pattern must be unique.
 """
 metadata(mdesc::MatrixDescriptor) = metadata(mdesc.data)
 metadata(data::RemoteMatrixData) = copy(data.metadata)
@@ -413,12 +382,8 @@ metadata(data::MatrixData) = String[]
 metadata(p::Pattern) = metadata(MATRIX_DB, p)
 metadata(db::MatrixDatabase, p::Pattern) = metadata(mdata(db, p))
 
-"""
-    mdopen(data::MatrixData)
-Enable data caching for `RemoteMatrixData` and return data.
-"""
-mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
-function mdopen(data::GeneratedMatrixData, args...)
+_mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
+function _mdopen(data::GeneratedMatrixData, args...)
     verify_callable(data.func, args...)
     MatrixDescriptor(data, args...)
 end
@@ -442,30 +407,22 @@ end
 ###
 
 """
-    matrixdepot(p::Pattern)
+    matrixdepot(p::Pattern, args...)
+
+Return matrix according to pattern or local matrix according to name and arguments.
 
 If not loaded, load remote matrix first.
-p must be a unique pattern (match only one name)
-only remote patterns are used
-return remote matrix according to pattern.
-"""
-function matrixdepot(db::MatrixDatabase, p::Pattern)
-# cover the cases, a group name is given as a string and "data"
-    check_symbols(p)
-    data = mdopen(db, p)
-    matrix(data)
-end
+`p` must be a unique pattern (match only one name). The presence of arguments makes
+sense only if the pattern matches the name of a generated (=local) matrix.
 
-"""
-    matrixdepot(name, arg, args...)
-
-Generate built-in or user-defined matrix named `name` with (at least one) argument.
+Only the matrix part is delivered, also in the local cases, where the underlying
+function returns a structure containing matrix and vectors.
+Use `md = mdopen; md.A, md.b ...`
+to access those objects.
 """
 matrixdepot(p::Pattern, args...) = matrixdepot(MATRIX_DB, p, args...)
 function matrixdepot(db::MatrixDatabase, p::Pattern, args...)
-    check_symbols(p)
-    # TODO use matrix(data)
-    #data = mdopen(p, args...)
-    #matrix(data)
-    matrix(db, p, args...)
+    mdopen(db, p, args...) do md
+        md.A
+    end
 end
