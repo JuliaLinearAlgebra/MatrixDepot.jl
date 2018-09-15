@@ -48,19 +48,32 @@ end
 # This a the preferred API to access metadata.
 import Base: getproperty, propertynames
 
-function getproperty(mdesc::MatrixDescriptor, s::Symbol)
+function getproperty(mdesc::MatrixDescriptor{T}, s::Symbol) where T
     s in (:data, :args, :cache) && return getfield(mdesc, s)
-    s in (:id, :name) && return getfield(mdesc.data, s)
-    s in fieldnames(MetaInfo) && return getfield(mdesc.data.header, s)
+    s in metasymbols(mdesc) && return metareader(mdesc, string(s))
+    if T <: RemoteMatrixData
+        s in (:m, :n, :nnz, :dnz) && return getfield(mdesc.data.header, s)
+    else
+        s == :m && return size(mdesc.A, 1)
+        s == :n && return size(mdesc.A, 2)
+        s == :nnz && return count(mdesc.A .!= 0)
+        s == :dnz && return 0
+    end
     metareader(mdesc, string(s))
 end
 
-function propertynames(mdesc::MatrixDescriptor; private=false)
+function propertynames(mdesc::MatrixDescriptor{T}; private=false) where T
     props = Symbol[]
     append!(props, metasymbols(mdesc))
-    append!(props, propertynames(mdesc.data))
+    append!(props, [:m, :n, :nnz, :dnz])
     private && append!(props, fieldnames(MatrixDescriptor))
     props
+end
+
+function getproperty(data::RemoteMatrixData, s::Symbol)
+    s in (:name, :id, :header, :properties, :metadata) && return getfield(data, s)
+    s in fieldnames(MetaInfo) && return getfield(data.header, s)
+    getfield(data, s)
 end
 
 function propertynames(data::RemoteMatrixData; private=false)
@@ -75,7 +88,7 @@ function propertynames(data::GeneratedMatrixData; private=false)
     private ? fieldnames(GeneratedMatrixData) : [:name, :id]
 end
 function metasymbols(md::MatrixDescriptor{<:RemoteMatrixData})
-    Symbol.(metastring.(md.data.name, metadata(data)))
+    Symbol.(metastring.(md.data.name, metadata(md.data)))
 end
 function metasymbols(md::MatrixDescriptor{<:GeneratedMatrixData})
     mdc = md.cache[]

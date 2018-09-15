@@ -147,8 +147,8 @@ function Base.show(io::IO, data::RemoteMatrixData)
     print(io, "$(data.name)($(aliasname(data))) ")
     nnz = hd.nnz == hd.dnz ? "$(hd.nnz)" : "$(hd.nnz)/$(hd.dnz)"
     print(io, " $(hd.m)x$(hd.n)($nnz) ")
-    print(io, date(data) != 0 ? date(data) : "")
-    print(io, " ", kind(data), " ")
+    print(io, data.date != 0 ? data.date : "")
+    print(io, " ", data.kind, " ")
     meta = join(metastring.(data.name, metadata(data)), ", ")
     n = length(meta)
     if n > 40
@@ -257,6 +257,7 @@ MM_NAME_TO_PROP = Dict{String,MMProperty}(mm_property_name(x) => x for x in (
     MMSymmetryHermitian())
 )
 
+#=
 row_num(data::RemoteMatrixData) = data.header.m
 col_num(data::RemoteMatrixData) = data.header.n
 nz_num(data::RemoteMatrixData) = data.header.nnz
@@ -270,6 +271,7 @@ dnz_num(data::MatrixData) = 0
 kind(data::MatrixData) = ""
 date(data::MatrixData) = 0
 ident(data::MatrixData) = data.id
+=#
 
 MMProperties() = MMProperties("matrix", "coordinate", "real", "general")
 function MMProperties(args::AbstractString...)

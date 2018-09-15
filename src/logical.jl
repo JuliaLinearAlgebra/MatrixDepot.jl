@@ -7,7 +7,7 @@ export builtin, user, uf, tamu, mm, ¬, logical
 export isgeneral, issymmetric, isskew, ishermitian
 export iscomplex, isreal, isinteger, ispattern
 export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
-export predm, predn, prednz, predmn, kindhas, datebefore, dateafter, nodate
+export pred
 export prednzdev
 
 import Base: isreal, isinteger
@@ -178,26 +178,26 @@ uf(p...) = Alias{RemoteMatrixData{TURemoteType}}(p...)
 tamu(p...) = Alias{RemoteMatrixData{TURemoteType}}(p...)
 mm(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
 
-function issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})
+function _issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})
     data.properties[] !== nothing && data.properties[].symmetry isa T
 end
-function isfield(data::RemoteMatrixData, T::Type{<:MMField})
+function _isfield(data::RemoteMatrixData, T::Type{<:MMField})
     data.properties[] !== nothing && data.properties[].field isa T
 end
 
-isgeneral(data::RemoteMatrixData) = issymmetry(data, MMSymmetryGeneral)
-issymmetric(data::RemoteMatrixData) = issymmetry(data, MMSymmetrySymmetric)
-isskew(data::RemoteMatrixData) = issymmetry(data, MMSymmetrySkewSymmetric)
-ishermitian(data::RemoteMatrixData) = issymmetry(data, MMSymmetryHermitian)
+isgeneral(data::RemoteMatrixData) = _issymmetry(data, MMSymmetryGeneral)
+issymmetric(data::RemoteMatrixData) = _issymmetry(data, MMSymmetrySymmetric)
+isskew(data::RemoteMatrixData) = _issymmetry(data, MMSymmetrySkewSymmetric)
+ishermitian(data::RemoteMatrixData) = _issymmetry(data, MMSymmetryHermitian)
 isgeneral(data::MatrixData) = !issymmetric(data) && !isskew(data) && !ishermitian(data)
 issymmetric(data::MatrixData) = data.name in list(:symmetric)
 isskew(data::MatrixData) = false
 ishermitian(data::MatrixData) = false
 
-iscomplex(data::RemoteMatrixData) = isfield(data, MMFieldComplex)
-isreal(data::RemoteMatrixData) = isfield(data, MMFieldReal)
-isinteger(data::RemoteMatrixData) = isfield(data, MMFieldInteger)
-ispattern(data::RemoteMatrixData) = isfield(data, MMFieldPattern)
+iscomplex(data::RemoteMatrixData) = _isfield(data, MMFieldComplex)
+isreal(data::RemoteMatrixData) = _isfield(data, MMFieldReal)
+isinteger(data::RemoteMatrixData) = _isfield(data, MMFieldInteger)
+ispattern(data::RemoteMatrixData) = _isfield(data, MMFieldPattern)
 iscomplex(data::MatrixData) = false
 isreal(data::MatrixData) = false
 isinteger(data::MatrixData) = false
@@ -218,24 +218,12 @@ isbuiltin(data::MatrixData) = false
 islocal(data::GeneratedMatrixData) = true
 islocal(data::MatrixData) = false
 
-predm(f::Function) = data::MatrixData -> hasinfo(data) && f(row_num(data))
-predn(f::Function) = data::MatrixData -> hasinfo(data) && f(col_num(data))
-prednz(f::Function) = data::MatrixData -> hasinfo(data) && f(nz_num(data))
-preddnz(f::Function) = data::MatrixData -> hasinfo(data) && f(dnz_num(data))
-function predmn(f::Function)
-    data::MatrixData -> hasinfo(data) && f(row_num(data), col_num(data))
+function pred(f::Function, s::Symbol...)
+    data::MatrixData -> hasinfo(data) &&
+    s ⊆ propertynames(data) &&
+    f(getproperty.(Ref(data), s)...)
 end
-function predmeta(f::Function)
-    fr(data::RemoteMatrixData) = f(data.metadata)
-    fr(data) = false
-    fr
-end
-function kindhas(p::Union{AbstractString,Regex,AbstractChar})
-    data -> occursin(p, kind(data))
-end
-datebefore(p::Int) = data -> date(data) > 0 && date(data) <= p
-dateafter(p::Int) = data -> date(data) > 0 && date(data) >= p
-nodate(data) = date(data) == 0
+
 function prednzdev(dev::AbstractFloat=0.1)
     function f(data::RemoteMatrixData)
         n1, n2 = extremnnz(data)
@@ -246,7 +234,6 @@ function prednzdev(dev::AbstractFloat=0.1)
     f(::MatrixData) = false
     f
 end
-
 
 """
     check_symbols(p::Pattern)

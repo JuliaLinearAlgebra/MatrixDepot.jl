@@ -83,19 +83,18 @@ REM = length(list("*/*"))
 # predicates of remote and local matrices
 @test length(list(issymmetric)) == 30
 
-@test length(list(predm(n -> n < 10000))) == 1671   # items with m < *
-@test length(list(predm(n -> n < 10000) & isloaded)) == 10   # items with m < *
-@test length(list(predn(n -> n < 10000))) == 1611   # items with n < *
-@test length(list(predn(n -> n < 10000) &  isloaded)) == 9    # items with n < *
-@test length(list(prednz(n -> n < 5000))) == 600    # items with nnz < *
-@test length(list(prednz(n -> n < 5000) & isloaded)) == 2    # items with nnz < *
-@test length(list(predmn((m,n) -> m > n))) == 178   # items with m > n
-@test length(list(predmn((m,n) -> m > n) & isloaded)) == 0   # items with m > n
-@test length(list(kindhas("Power"))) == 70
-@test length(list(datebefore(1971))) == 5
-@test length(list(dateafter(2016) & datebefore(2016))) == 2
-@test length(list(nodate & uf(:))) == 42
-@test list(prednzdev(0.001)) == ["DRIVCAV/cavity14"] 
+@test length(list(pred(n-> n < 10000, :m))) == 1671   # items with m < *
+@test length(list(pred(n-> n < 10000, :m) & isloaded)) == 10   # items with m < *
+@test length(list(pred(n-> n < 10000, :n))) == 1611   # items with n < *
+@test length(list(pred(n-> n < 10000, :n) &  isloaded)) == 9    # items with n < *
+@test length(list(pred(n-> n < 5000, :nnz))) == 600    # items with nnz < *
+@test length(list(pred(n-> n < 5000, :nnz) & isloaded)) == 2    # items with nnz < *
+@test length(list(pred((m,n)-> m > n, :m, :n))) == 178   # items with m > n
+@test length(list(pred((m,n)-> m > n, :m, :n) & isloaded)) == 0   # items with m > n
+@test length(list(pred(k-> occursin("Power", k), :kind))) == 70
+@test length(list(pred(d-> 0 < d <= 1971, :date))) == 5
+@test length(list(pred(d-> d >= 2016, :date) & pred(d-> 0<d<=2016, :date))) == 2
+@test length(list(pred(d-> d == 0, :date) & uf(:))) == 42
 
 @test list(:local) == list(islocal)
 @test list(:builtin) == list(isbuiltin)
@@ -134,5 +133,35 @@ end
 
 @test MatrixDepot.fname(sin) == "unknown-function"
 @test_throws MethodError mdopen("baart", 10, 11)
+end
+
+@testset "properties" begin
+
+md = mdopen("gravity", 10)
+io = IOBuffer()
+@test show(io, md) === nothing
+@test propertynames(md) == [:A, :m, :n, :nnz, :dnz]
+@test md.A isa AbstractMatrix
+@test md.nnz == count(md.A .!= 0)
+@test md.dnz == 0
+@test_throws DataError md.x
+
+md = mdopen("gravity", 10, false)
+io = IOBuffer()
+@test show(io, md) === nothing
+@test propertynames(md) == [:A, :b, :x, :m, :n, :nnz, :dnz]
+@test md.A isa AbstractMatrix
+@test md.b isa AbstractVector
+@test md.x isa AbstractVector
+
+md = mdopen("HB/well1033")
+io = IOBuffer()
+@test show(io, md) === nothing
+@test propertynames(md) == [:A, :b, :m, :n, :nnz, :dnz]
+@test md.A isa AbstractMatrix
+@test md.b isa AbstractMatrix
+@test_throws DataError md.x
+@test md.dnz == md.data.header.nnz
+
 end
 
