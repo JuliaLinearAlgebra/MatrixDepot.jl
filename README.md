@@ -47,37 +47,50 @@ Information about the matrixmarket-format and the metadata are accessible using 
 
 ## Basic Usage
 
-To see all the matrices in the collection, type
+To see an overview of the matrices in the collection, type
 
 ```julia
 julia> using MatrixDepot
-julia> matrixdepot()
+julia> mdinfo()
+  Currently loaded Matrices
+  –––––––––––––––––––––––––––
 
-Matrices:
-   1) baart            2) binomial         3) blur             4) cauchy        
-   5) chebspec         6) chow             7) circul           8) clement       
-   9) companion       10) deriv2          11) dingdong        12) fiedler       
-  13) forsythe        14) foxgood         15) frank           16) golub         
-  17) gravity         18) grcar           19) hadamard        20) hankel        
-  21) heat            22) hilb            23) invhilb         24) invol         
-  25) kahan           26) kms             27) lehmer          28) lotkin        
-  29) magic           30) minij           31) moler           32) neumann       
-  33) oscillate       34) parter          35) pascal          36) pei           
-  37) phillips        38) poisson         39) prolate         40) randcorr      
-  41) rando           42) randsvd         43) rohess          44) rosser        
-  45) sampling        46) shaw            47) spikes          48) toeplitz      
-  49) tridiag         50) triw            51) ursell          52) vand          
-  53) wathen          54) wilkinson       55) wing          
-Groups:
-  all           data          eigen         ill-cond    
-  inverse       pos-def       random        regprob     
-  sparse        symmetric
+builtin(#)                                                                 
+––––––––––– ––––––––––– ––––––––––– –––––––––––– ––––––––––––– ––––––––––––
+1 baart     11 dingdong 21 hadamard 31 magic     41 poisson    51 spikes   
+2 binomial  12 erdrey   22 hankel   32 minij     42 prolate    52 toeplitz 
+3 blur      13 fiedler  23 heat     33 moler     43 randcorr   53 tridiag  
+4 cauchy    14 forsythe 24 hilb     34 neumann   44 rando      54 triw     
+5 chebspec  15 foxgood  25 invhilb  35 oscillate 45 randsvd    55 ursell   
+6 chow      16 frank    26 invol    36 parallax  46 rohess     56 vand     
+7 circul    17 gilbert  27 kahan    37 parter    47 rosser     57 wathen   
+8 clement   18 golub    28 kms      38 pascal    48 sampling   58 wilkinson
+9 companion 19 gravity  29 lehmer   39 pei       49 shaw       59 wing     
+10 deriv2   20 grcar    30 lotkin   40 phillips  50 smallworld             
+
+user(#)  
+–––––––––
+1 randsym
+
+Groups                                                   
+––––––– ––––– ––––– ––––––– –––––– ––––––– –––––––––     
+all     local eigen illcond posdef regprob symmetric     
+builtin user  graph inverse random sparse                
+
+UFL / TAMU of  
+–––––––––– ––––
+1          2757
+
+MatrixMarket of 
+–––––––––––– –––
+0            498
+
 ```
 
 We can generate a 4-by-4 Hilbert matrix by typing
 
 ```julia
-julia> matrix("hilb", 4)
+julia> matrixdepot("hilb", 4)
 4x4 Array{Float64,2}:
  1.0       0.5       0.333333  0.25    
  0.5       0.333333  0.25      0.2     
@@ -85,10 +98,10 @@ julia> matrix("hilb", 4)
  0.25      0.2       0.166667  0.142857
 ```
 
-We can type the matrix name to get help.
+We can type the matrix name to get documentation about the matrix.
 
 ```julia
-julia> info("hilb")
+julia> mdinfo("hilb")
      Hilbert matrix
     ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -116,7 +129,7 @@ julia> info("hilb")
 We can also specify the data type
 
 ```julia
-julia> matrix("hilb", Float16, 5, 3)
+julia> matrixdepot("hilb", Float16, 5, 3)
 5x3 Array{Float16,2}:
  1.0      0.5      0.33325
  0.5      0.33325  0.25   
@@ -124,7 +137,7 @@ julia> matrix("hilb", Float16, 5, 3)
  0.25     0.19995  0.16663
  0.19995  0.16663  0.14282
 
-julia> matrix("hilb", Rational, 4)
+julia> matrixdepot("hilb", Rational{Int}, 4)
 4x4 Array{Rational{T<:Integer},2}:
  1//1  1//2  1//3  1//4
  1//2  1//3  1//4  1//5
@@ -136,59 +149,49 @@ Matrices can be accessed by a variety of patterns and composed patterns.
 Integer numbers refer to the ident numbers of the TAMU/UFl collection.
 
 ```julia
-julia> list(1)
-1-element Array{AbstractString,1}:
- "HB/1138_bus"
+julia> mdlist(uf(1))    # here uf(1) is the ident number of the UFL collection
+list(1)
+–––––––––––
+HB/1138_bu
 
-julia> list(5:10)
-6-element Array{AbstractString,1}:
- "chow"    
- "circul"  
- "clement"
- "deriv2"  
- "dingdong"
- "fiedler"
+julia> mdlist(builtin(1, 5:10))    # the internal numbering of the builtin-functions
+list(7)
+––––––– –––––––– –––– –––––– ––––––– ––––––––– ––––––
+baart   chebspec chow circul clement companion deriv2
 
-julia> matrixdepot(1:4, 6, 10:15)
-11-element Array{AbstractString,1}:
- "baart"   
+julia> MatrixDepot.list(builtin(1:4, 6, 10:15) | user(1:10) )
+12-element Array{String,1}:
+ "baart"
  "binomial"
- "cauchy"  
- "chebspec"
- "circul"  
+ "blur"
+ "cauchy"
+ "chow"
+ "deriv2"
+ "dingdong"
+ "erdrey"
  "fiedler"
  "forsythe"
  "foxgood"
- "frank"   
- "gravity"
- "grcar"
+ "rand
 ```
 
-We can type a group name to see all the matrices in that group.
+While the `mdlist` command renders the output as markdown table, the internal
+`MatrixDepot.list` produces an array of valid matrix names.
+
+We can type a group name to see all the matrices in that group. Group names are
+always written as symbols to distinguish them form matrix names and pattern, which
+are always strings.
 
 ```julia
-julia> matrixdepot("symmetric")
-21-element Array{ASCIIString,1}:
- "cauchy"   
- "circul"   
- "clement"  
- "dingdong"
- "fiedler"  
- "hankel"   
- "hilb"     
- "invhilb"  
- "kms"      
- "lehmer"   
- ⋮          
- "oscillate"
- "pascal"   
- "pei"      
- "poisson"  
- "prolate"  
- "randcorr"
- "tridiag"  
- "wathen"   
- "wilkinson"
+julia> mdlist(:symmetric)
+list(22)
+–––––––– –––––––– ––––––– –––––– ––––––––– –––––––– ––––––– –––––––––
+cauchy   dingdong hilb    lehmer oscillate poisson  randsym wilkinson
+circul   fiedler  invhilb minij  pascal    prolate  tridiag
+clement  hankel   kms     moler  pei       randcorr wathen
+
+
+
 ```
 
 ## Extend Matrix Depot

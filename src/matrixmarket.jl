@@ -261,14 +261,30 @@ function mmreadheader(file::AbstractString)
                 token[2] == MATRIX &&
                 token[3] in [COORD, ARRAY]
 
+                hdr = Dict{Symbol,Any}()
+                field = :none
                 while startswith(line, '%') || isempty(strip(line))
+                    field = push_hdr!(hdr, line, field) 
                     line = readline(io)
                 end
                 res = try parseint(line) catch; [] end
                 if length(res) != (token[3] == COORD ? 3 : 2)
                     daterr("MatrixMarket file '$file' invalid sizes: '$line'")
                 end
-                (push!(res, 0)[1:3]..., token[2:end]...)
+                hdr[:m] = res[1]
+                hdr[:n] = res[2]
+                length(res) >= 3 && (hdr[:nz] = res[3])
+                hdr[:format] = token[3]
+                hdr[:field] = token[4]
+                hdr[:symmetry] = token[5]
+                if haskey(hdr, :notes)
+                    hdr[:notes] = String(take!(hdr[:notes]))
+                end
+                if haskey(hdr, :date)
+                    val = hdr[:date]
+                    hdr[:date] = isempty(val) ? 0 : parse(Int, hdr[:date])
+                end
+                hdr
             else
                 daterr("file '$file' is not a MatrixMarket file")
             end
@@ -276,6 +292,33 @@ function mmreadheader(file::AbstractString)
     else
         nothing
     end
+end
+
+function push_hdr!(hdr, line::AbstractString, field::Symbol)
+    isempty(strip(line)) && return field
+    if field == :notes
+        if !startswith(line, "%---")
+            println(get!(hdr, field) do; IOBuffer() end, strip(line[2:end]))
+        end
+        return field
+    end
+    reg = r"^% *([^:[]+): *(.*)$"
+    regtitle = r"^% *\[([^]]*)]"
+    if (m = match(reg, line)) != nothing
+        s = Symbol(m[1])
+        if s in (:name, :kind, :ed, :fields, :author, :date)
+            field = s
+            value = strip(m[2])
+            hdr[field] = value
+        elseif s == :notes
+            field = s
+        end
+    elseif (m = match(regtitle, line)) != nothing
+        field = :title
+        value = m[1]
+        hdr[field] = value
+    end
+    field
 end
 
 ### parsing decimal integers and floats

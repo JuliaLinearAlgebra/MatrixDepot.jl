@@ -39,7 +39,8 @@ _repl(a::AbstractString) = a
 _repl(a::AbstractString, p::Pair, q::Pair...) = _repl(replace(a, p), q...)
 
 function mdinfo(data::RemoteMatrixData)
-    txt = mmreadcomment(matrixfile(data))
+    file = verify_loadinfo(data)
+    txt = mmreadcomment(file)
     txt = _repl(txt, r"^%-+$"m => "---", r"^%%" => "###### ", r"%+" => "* ")
     md = Markdown.parse(txt)
     insert!(md.content, 1, Markdown.Header{1}([data.name]))

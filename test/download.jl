@@ -17,7 +17,8 @@
 @test matrixdepot("HB/1138_bus") != nothing
 @test list("**/1138_bus") == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus"]
 @test string(mdinfo("Harwell-Boeing/psadmit/662_bus")) ==
-                  "# Harwell-Boeing/psadmit/662_bus\n\nno info available\n"
+        "# Harwell-Boeing/psadmit/662_bus\n\n" *
+        "###### MatrixMarket matrix coordinate real symmetric\n\n662 662 1568\n"
 
 # metatdata access with old interface
 @test metareader(mdopen("Pajek/Journals"), "Journals.mtx") !== nothing
@@ -85,15 +86,19 @@ end
 # read from temporary file
 mktemp() do path, io
     println(io, "%%MatrixMarket Matrix arRAy real GeneraL")
-    println(io, "% first line")
+    println(io, "% author: willi")
     println(io)
+    println(io, "% notes:")
     println(io, "%second line")
     println(io); println(io, "    ")
     println(io, "24 2")
     close(io)
     @test MatrixDepot.mmreadcomment(path) ==
-    "%%MatrixMarket Matrix arRAy real GeneraL\n% first line\n\n%second line\n\n    \n24 2\n"
-    @test MatrixDepot.mmreadheader(path) == (24, 2, 0, "matrix", "array", "real", "general")
+    "%%MatrixMarket Matrix arRAy real GeneraL\n% author: willi\n\n" *
+    "% notes:\n%second line\n\n    \n24 2\n"
+    @test MatrixDepot.mmreadheader(path) ==
+    Dict{Symbol,Any}(:symmetry=>"general",:m=>24,:n=>2,:field=>"real",:format=>"array",
+                     :author=>"willi",:notes=>"second line\n")
 end
 
 mktemp() do path, io

@@ -306,12 +306,24 @@ const SUBSETS = Dict(
 )
 
 function verify_loaded(db::MatrixDatabase, data::RemoteMatrixData)
-    if isempty(data.metadata)
-        loadmatrix(db, data)
+    if isempty(data.metadata) || !isfile(matrixfile(data))
+        loadmatrix(data)
     end
     data
 end
 verify_loaded(db::MatrixDatabase, data::MatrixData) = data
+
+function verify_loadinfo(data::RemoteMatrixData)
+    file = matrixfile(data)
+    if !isfile(file)
+        file = matrixinfofile(data)
+        if !isfile(file)
+            loadinfo(data)
+        end
+    end
+    file
+end
+
 mdatav(db::MatrixDatabase, p::Pattern) = verify_loaded(db, mdata(db, p))
 
 """
@@ -327,7 +339,7 @@ function load(db::MatrixDatabase, p::Pattern)
     n = 0
     for name in list(p)
         try
-            n += loadmatrix(db, db.data[name])
+            n += loadmatrix(db.data[name])
         catch ex
             ex isa InterruptException && rethrow()
             @warn "could not load $name: $ex"
@@ -384,8 +396,10 @@ metadata(db::MatrixDatabase, p::Pattern) = metadata(mdata(db, p))
 
 _mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
 function _mdopen(data::GeneratedMatrixData, args...)
-    verify_callable(data.func, args...)
-    MatrixDescriptor(data, args...)
+    # verify_callable(data.func, args...)
+    md = MatrixDescriptor(data, args...)
+    md.A
+    md
 end
 
 verify_callable(f::Function, args...) = verify_callable(f, Float64, args...)

@@ -56,7 +56,7 @@ function parse_headerinfo(akku::Dict{AbstractString,AbstractString}, count::Inte
     kind = get(akku, "kind", "")
     datestr = get(akku, "date", "0")
     date = match(r"^\d+$", datestr) != nothing ? parse(Int, datestr) : 0
-    id, IndexInfo(m, n, nnz, 0, kind, date)
+    id, MetaInfo(m, n, nnz, 0, kind, date, "", "", "", "", "")
 end
 
 # extract loading url base and matrix names from index file
@@ -193,7 +193,7 @@ end
 # MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
 # MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
 #
-function loadmatrix(db::MatrixDatabase, data::RemoteMatrixData)
+function loadmatrix(data::RemoteMatrixData)
     file = matrixfile(data)
     if isfile(file)
         return 0
@@ -218,10 +218,54 @@ function loadmatrix(db::MatrixDatabase, data::RemoteMatrixData)
     addmetadata!(data)
     1
 end
-loadmatrix(db::MatrixDatabase, data::GeneratedMatrixData) = 0
+loadmatrix(data::GeneratedMatrixData) = 0
+
+function loadinfo(data::RemoteMatrixData)
+    filemtx = matrixfile(data)
+    file = matrixinfofile(data)
+    if isfile(filemtx) || isfile(file)
+        return 0
+    end
+    url = dataurl(data)
+    urls = rsplit(url, '.', limit=3)
+    cmd = []
+    push!(cmd, `sh -c 'curl "'$url'" -o - 2>/dev/null'`)
+    if urls[end] == "gz"
+        push!(cmd, `gunzip`)
+        resize!(urls, length(urls)-1)
+    end
+    if url[end] == "tar"
+        push!(cmd, `tar -xOf -`)
+    end
+
+    out = IOBuffer()
+    s = try
+        println("downloading head of $url")
+        open(pipeline(cmd...), "r") do io
+            while ( s = readline(io) ) != ""
+                println(out, s)
+                s[1] != '%' && break
+            end;
+            close(io)
+        end
+        String(take!(out))
+    catch ex
+        ex isa InterruptException && rethrow()
+        String(take!(out))
+    finally
+        close(out)
+    end
+    if !isempty(s)
+        mkpath(dirname(file))
+        write(file, s)
+        1
+    else
+        0
+    end
+end
 
 function data_warn(data::RemoteMatrixData, dn, i1, i2)
-    @warn "$(data.name): header $dn = $i1 file $dn = $i2 $(data.properties[])"
+    @warn "$(data.name): header $dn = '$i1' file $dn = '$i2' $(data.properties[])"
     i1
 end
 
@@ -249,9 +293,12 @@ function addmetadata!(data::RemoteMatrixData)
     filtop(x) = x == base || startswith(x, string(name, '_'))
     append!(data.metadata, filter(filtop, readdir(dir)))
 
+    if !isfile(file)
+        file = matrixinfofile(data)
+    end
     if (finfo = mmreadheader(file)) !== nothing
-        data.properties[] = MMProperties(finfo[4:end]...)
-        m, n, k = finfo[1:3]
+        data.properties[] = MMProperties(MATRIX, finfo[:format], finfo[:field], finfo[:symmetry])
+        m, n, k = finfo[:m], finfo[:n], finfo[:nz]
         n1, n2 = extremnnz(data, m, n, k)
         hdr = data.header
         hdr.m = hdr.m in (0, m) ? m : data_warn(data, "m", hdr.m, m)
@@ -259,6 +306,22 @@ function addmetadata!(data::RemoteMatrixData)
         hdr.nnz = hdr.nnz == 0  ? n2 : hdr.nnz <= n2 ? hdr.nnz :
                                         data_warn(data, "nnz", hdr.nnz, k)
         hdr.dnz = k
+        date = get(finfo, :date, 0)
+        hdr.date = hdr.date in (0, date) ? date : data_warn(data, "date", hdr.date, date)
+        kind = get(finfo, :kind, "")
+        if kind != ""
+            if hdr.kind == ""
+                hdr.kind = kind
+            else
+                if lowercase(replace(kind, '-' => ' ')) != lowercase(hdr.kind)
+                    data_warn(data, "kind", hdr.kind, kind)
+                end
+            end
+        end
+        for s in (:title, :author, :ed, :fields, :notes)
+            val = get(finfo, s, "")
+            val != "" && setfield!(hdr, s, val)
+        end
     end
     nothing
 end

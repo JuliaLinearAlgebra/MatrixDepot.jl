@@ -46,11 +46,40 @@ function fillcache!(mdesc::MatrixDescriptor{<:GeneratedMatrixData})
 end
 
 # This a the preferred API to access metadata.
-import Base.getproperty
+import Base: getproperty, propertynames
 
 function getproperty(mdesc::MatrixDescriptor, s::Symbol)
     s in (:data, :args, :cache) && return getfield(mdesc, s)
+    s in (:id, :name) && return getfield(mdesc.data, s)
+    s in fieldnames(MetaInfo) && return getfield(mdesc.data.header, s)
     metareader(mdesc, string(s))
+end
+
+function propertynames(mdesc::MatrixDescriptor; private=false)
+    props = Symbol[]
+    append!(props, metasymbols(mdesc))
+    append!(props, propertynames(mdesc.data))
+    private && append!(props, fieldnames(MatrixDescriptor))
+    props
+end
+
+function propertynames(data::RemoteMatrixData; private=false)
+    props = Symbol[]
+    append!(props, [:name, :title, :id, :date, :author, :ed, :kind, :notes])
+    append!(props, [:m, :n, :nnz, :dnz])
+    private && append!(props, fieldnames(RemoteMatrixData))
+    props
+end
+
+function propertynames(data::GeneratedMatrixData; private=false)
+    private ? fieldnames(GeneratedMatrixData) : [:name, :id]
+end
+function metasymbols(md::MatrixDescriptor{<:RemoteMatrixData})
+    Symbol.(metastring.(md.data.name, metadata(data)))
+end
+function metasymbols(md::MatrixDescriptor{<:GeneratedMatrixData})
+    mdc = md.cache[]
+    mdc isa Array || mdc === nothing ? [:A] : propertynames(mdc)
 end
 
 #internal helper to select special metadata (matrix, rhs, or solution)

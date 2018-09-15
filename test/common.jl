@@ -81,13 +81,13 @@ REM = length(list("*/*"))
 
 
 # predicates of remote and local matrices
-@test length(list(issymmetric)) == 29
+@test length(list(issymmetric)) == 30
 
-@test length(list(predm(n -> n < 10000))) == 1670   # items with m < *
+@test length(list(predm(n -> n < 10000))) == 1671   # items with m < *
 @test length(list(predm(n -> n < 10000) & isloaded)) == 10   # items with m < *
-@test length(list(predn(n -> n < 10000))) == 1610   # items with n < *
+@test length(list(predn(n -> n < 10000))) == 1611   # items with n < *
 @test length(list(predn(n -> n < 10000) &  isloaded)) == 9    # items with n < *
-@test length(list(prednz(n -> n < 5000))) == 599    # items with nnz < *
+@test length(list(prednz(n -> n < 5000))) == 600    # items with nnz < *
 @test length(list(prednz(n -> n < 5000) & isloaded)) == 2    # items with nnz < *
 @test length(list(predmn((m,n) -> m > n))) == 178   # items with m > n
 @test length(list(predmn((m,n) -> m > n) & isloaded)) == 0   # items with m > n
@@ -110,7 +110,7 @@ end
 @test length(list(isloaded & issymmetric)) == 7
 @test length(list(isloaded & ¬issymmetric)) == 4
 @test length(list(isloaded & ¬issymmetric | isuser & issymmetric)) == 5
-@test length(list(!islocal & issymmetric | isuser & issymmetric)) == 8
+@test length(list(!islocal & issymmetric | isuser & issymmetric)) == 9
 @test list(islocal & ¬isbuiltin) == list(isuser)
 @test list(islocal & ¬isbuiltin) == list(isuser)
 @test "a" & "b" === ("a", "b")

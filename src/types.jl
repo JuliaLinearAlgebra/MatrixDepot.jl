@@ -34,13 +34,18 @@ struct MMProperties
     symmetry::MMSymmetry
 end
 
-mutable struct IndexInfo
+mutable struct MetaInfo
     m::Int
     n::Int
     nnz::Int
     dnz::Int
     kind::String
     date::Int # the Julian year number e.g. 2018
+    title::AbstractString
+    author::AbstractString
+    ed::AbstractString
+    fields::AbstractString
+    notes::AbstractString
 end
 
 ## Matrix objects
@@ -68,10 +73,10 @@ abstract type MatrixData end
 struct RemoteMatrixData{T<:RemoteType} <:MatrixData
     name::AbstractString
     id::Int
-    header::IndexInfo
+    header::MetaInfo
     properties::Ref{Union{<:MMProperties,Nothing}}
     metadata::Vector{AbstractString}
-    function RemoteMatrixData{T}(name, id::Integer, hdr::IndexInfo) where T
+    function RemoteMatrixData{T}(name, id::Integer, hdr::MetaInfo) where T
         properties = Ref{Union{<:MMProperties,Nothing}}(nothing)
         new(name, id, hdr, properties, AbstractString[])
     end
@@ -217,9 +222,13 @@ dataurl(data::RemoteMatrixData{T}) where T = join((dataurl(T), data.name), '/') 
 filename(data::RemoteMatrixData) = joinpath(split(data.name, '/')...)
 localfile(data::RemoteMatrixData{TURemoteType}) = localdir(data) * ".tar.gz"
 localfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx.gz"
-matrixfile(data::RemoteMatrixData{TURemoteType}) =
+function matrixfile(data::RemoteMatrixData{TURemoteType})
     joinpath(localdir(data), rsplit(data.name, '/', limit=2)[end] * ".mtx")
+end
 matrixfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx"
+function matrixinfofile(data::RemoteMatrixData)
+    string(rsplit(matrixfile(data), '.', limit=2)[1], ".info")
+end
 
 ## MatrixMarket header
 
