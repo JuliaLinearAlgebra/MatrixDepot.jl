@@ -19,6 +19,8 @@ function mdinfo(db::MatrixDatabase, p::Pattern)
     mdbuffer
 end
 
+mdinfo(md::MatrixDescriptor) = mdinfo(md.data)
+
 _mdheader(md::Markdown.MD, p, o) = isempty(md.content) ? (nothing, o) : _mdheader(md.content[1], md, o)
 _mdheader(md::Markdown.Header, p, o) = (md, p)
 _mdheader(md, p, o) = (nothing, o)

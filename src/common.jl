@@ -193,7 +193,14 @@ function listdir(db::MatrixDatabase, r::Pattern, depth::Int)
 end
 
 """
-    list(p::Pattern[, db]
+    listdata([db,] p::Pattern)
+Return an array of `MatrixData` objects according to matched patterns.
+"""
+listdata(p::Pattern) = listdata(MATRIX_DB, p)
+listdata(db::MatrixDatabase, p::Pattern) = mdata.(MatrixDepot.list(db, p))
+
+"""
+    list([db,] p::Pattern)
 return a vector of full matrix names where name or alias match given pattern.
 `p` can be one of the following:
 + a plain string (without characters `*` and `?`) which must match exactly

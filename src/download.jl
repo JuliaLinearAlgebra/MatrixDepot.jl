@@ -280,7 +280,7 @@ function extremnnz(data::RemoteMatrixData, m, n, k)
     end
 end
 function extremnnz(data::RemoteMatrixData)
-    extremnnz(data, row_num(data), col_num(data), dnz_num(data))
+    extremnnz(data, data.m, data.n, data.dnz)
 end
 
 function addmetadata!(data::RemoteMatrixData)

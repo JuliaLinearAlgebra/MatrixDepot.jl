@@ -89,16 +89,16 @@ mktemp() do path, io
     println(io, "% author: willi")
     println(io)
     println(io, "% notes:")
-    println(io, "%second line")
+    println(io, "%second Line")
     println(io); println(io, "    ")
     println(io, "24 2")
     close(io)
     @test MatrixDepot.mmreadcomment(path) ==
     "%%MatrixMarket Matrix arRAy real GeneraL\n% author: willi\n\n" *
-    "% notes:\n%second line\n\n    \n24 2\n"
+    "% notes:\n%second Line\n\n    \n24 2\n"
     @test MatrixDepot.mmreadheader(path) ==
     Dict{Symbol,Any}(:symmetry=>"general",:m=>24,:n=>2,:field=>"real",:format=>"array",
-                     :author=>"willi",:notes=>"second line\n")
+                     :author=>"willi",:notes=>"second Line")
 end
 
 mktemp() do path, io

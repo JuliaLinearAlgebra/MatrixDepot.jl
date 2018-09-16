@@ -7,7 +7,7 @@ export builtin, user, uf, tamu, mm, ¬, logical
 export isgeneral, issymmetric, isskew, ishermitian
 export iscomplex, isreal, isinteger, ispattern
 export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
-export @pred
+export @pred, keyword
 
 import Base: isreal, isinteger
 import LinearAlgebra: issymmetric, ishermitian
@@ -228,7 +228,16 @@ function prednzdev(dev::AbstractFloat=0.1)
         n1, n2 = extremnnz(data)
         n1 -= Int(floor(n1 * dev))
         n2 += Int(floor(n2 * dev))
-        isloaded(data) && ! ( n1 <= nz_num(data) <= n2 )
+        isloaded(data) && ! ( n1 <= data.dnz <= n2 )
+    end
+    f(::MatrixData) = false
+    f
+end
+
+function keyword(s::AbstractString)
+    function f(data::RemoteMatrixData)
+        text = join([data.notes, data.title, data.author, data.kind], ' ')
+        match(Regex("\\b$s\\b", "i"), text) !== nothing
     end
     f(::MatrixData) = false
     f
@@ -244,8 +253,9 @@ function check_symbols(p::Pattern)
     isempty(s) || argerr("The following symbols are no group names: $s")
 end
 
-# Predicate generating macros
-
+############################
+# Predicate generating macro
+############################
 # extract all symbols from an expression
 function extract_symbols(ex)
     s = Set{Symbol}()

@@ -5,8 +5,7 @@ import Base: show
 
 export matrixdepot
 export metareader
-export mdlist, listdir, mdinfo, metadata, mdopen
-# export row_num, col_num, nz_num, dnz_num, aliasname
+export mdlist, listdir, listdata, mdinfo, metadata, mdopen
 export @addgroup, @rmgroup, @modifygroup
 #export colval, mtranspose, madjoint
 # further exports (for predicate functions) in `logical.jl`

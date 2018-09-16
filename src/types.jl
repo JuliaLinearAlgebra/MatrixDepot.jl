@@ -148,13 +148,14 @@ function Base.show(io::IO, data::RemoteMatrixData)
     nnz = hd.nnz == hd.dnz ? "$(hd.nnz)" : "$(hd.nnz)/$(hd.dnz)"
     print(io, " $(hd.m)x$(hd.n)($nnz) ")
     print(io, data.date != 0 ? data.date : "")
-    print(io, " ", data.kind, " ")
     meta = join(metastring.(data.name, metadata(data)), ", ")
     n = length(meta)
     if n > 40
         meta = string(meta[1:17], " ... ", meta[end-17:end])
     end
-    print(io, "[", meta, "]")
+    print(io, " [", meta, "]")
+    print(io, " '", data.kind, "'")
+    print(io, " [", data.title, "]")
 end
 
 function Base.show(io::IO, mdesc::MatrixDescriptor)

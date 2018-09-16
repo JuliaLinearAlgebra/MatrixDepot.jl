@@ -278,7 +278,7 @@ function mmreadheader(file::AbstractString)
                 hdr[:field] = token[4]
                 hdr[:symmetry] = token[5]
                 if haskey(hdr, :notes)
-                    hdr[:notes] = String(take!(hdr[:notes]))
+                    hdr[:notes] = join(wordlist(String(take!(hdr[:notes]))), ' ')
                 end
                 if haskey(hdr, :date)
                     val = hdr[:date]
@@ -292,6 +292,20 @@ function mmreadheader(file::AbstractString)
     else
         nothing
     end
+end
+
+"""
+    wordlist(string)
+
+Separate words is string by spaces and delimiters.
+Return list of unique words, which can be used as keywords.
+"""
+function wordlist(s::AbstractString)
+    list = unique!(split(s, r"[][\s(){}`\"'*]", keepempty = false))
+    list = replace.(list, Ref(r"[.:,;']$" => ""))
+    # remove all lowercase words with less than ... chars
+    list = filter!(x->!(length(x)<4 && all(islowercase.(collect(x))) || length(x) < 2), list)
+    unique!(list)
 end
 
 function push_hdr!(hdr, line::AbstractString, field::Symbol)
