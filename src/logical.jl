@@ -223,6 +223,9 @@ function pred(f::Function, s::Symbol...)
     f(getproperty.(Ref(data), s)...)
 end
 
+"""
+    prednzdev(
+"""
 function prednzdev(dev::AbstractFloat=0.1)
     function f(data::RemoteMatrixData)
         n1, n2 = extremnnz(data)
@@ -234,6 +237,13 @@ function prednzdev(dev::AbstractFloat=0.1)
     f
 end
 
+"""
+    keyword(keyword::Union{AbstractString,NTuple{N,<:AbstractString})
+
+Predicate function checks, if keyword is contained in on to the textual
+metadata fields `[:notes, :title, :kind, :author]`.
+Multiple keywords in a tuple require all keywords to appear.
+"""
 function keyword(s::AbstractString)
     function f(data::RemoteMatrixData)
         text = join([data.notes, data.title, data.author, data.kind], ' ')
@@ -242,7 +252,12 @@ function keyword(s::AbstractString)
     f(::MatrixData) = false
     f
 end
-
+# this allows to mean `keyword("a" & "b")` the same as `keyword("a") & keyword("b")`
+#keyword(t::NTuple{N,<:AbstractString} where N) = Tuple(keyword.(t))
+function keyword(t::NTuple{N,<:AbstractString} where N)
+    pli = keyword.(t)
+    data -> all([p(data) for p in pli])
+end
 """
     check_symbols(p::Pattern)
 
