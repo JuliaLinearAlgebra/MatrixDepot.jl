@@ -7,8 +7,7 @@ export builtin, user, uf, tamu, mm, ¬, logical
 export isgeneral, issymmetric, isskew, ishermitian
 export iscomplex, isreal, isinteger, ispattern
 export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
-export pred
-export prednzdev
+export @pred
 
 import Base: isreal, isinteger
 import LinearAlgebra: issymmetric, ishermitian
@@ -245,4 +244,44 @@ function check_symbols(p::Pattern)
     isempty(s) || argerr("The following symbols are no group names: $s")
 end
 
+# Predicate generating macros
+
+# extract all symbols from an expression
+function extract_symbols(ex)
+    s = Set{Symbol}()
+    append_symbols!(::Any) = s
+    append_symbols!(ex::Symbol) = push!(s, ex)
+    function append_symbols!(ex::Expr)
+        append_symbols!(ex.head)
+        append_symbols!.(ex.args)
+        s
+    end
+    collect(append_symbols!(ex))
+end
+
+# construct a function definition from a list of symbols and expression
+function make_func(sli::AbstractVector{Symbol}, ex)
+    res = :( () -> $ex )
+    append!(res.args[1].args, sli)
+    res
+end
+
+function make_pred(ex)
+    syms = extract_symbols(ex) ∩ (:m, :n, :nnz, :dnz, :name, :id, :title, :author, :ed, :fields, :notes, :date, :kind, :metadata)
+    :(pred($(make_func(syms, ex)), $(QuoteNode.(syms)...)))
+end
+
+"""
+    @pred(expression)
+
+Generate a predicate function using the expression as function body. Variable names
+within the expression, which are properties of `RemoteMatrixData` (e.g. `title`, `m`, `nnz`)
+are used to access `data.title` etc. Other variable names, are used from the outer scope.
+
+example: `maxnnz = 1_000; mdlist(@pred(n <= maxnnz))` would produce a list of all
+data with less than `maxnnz` structural non-zeros.
+"""
+macro pred(ex)
+    esc(make_pred(ex))
+end
 

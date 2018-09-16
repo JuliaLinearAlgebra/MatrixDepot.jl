@@ -41,10 +41,10 @@ function init()
         end
         println("created dir $MY_DEPOT_DIR")
     end
-
-    println("populating internal database...")
+    
     for file in readdir(MY_DEPOT_DIR)
         if endswith(file, ".jl") && file != GENERATOR
+            println("include $file for user defined matrix generators")
             include(joinpath(MY_DEPOT_DIR, file))
         end
     end
@@ -52,6 +52,7 @@ function init()
     println("verify download of index files...")
     downloadindices(MATRIX_DB)
     println("used remote site is $(uf_remote.params.indexurl)")
+    println("populating internal database...")
     nothing
 end
 

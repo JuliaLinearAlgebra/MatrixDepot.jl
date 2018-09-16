@@ -83,18 +83,18 @@ REM = length(list("*/*"))
 # predicates of remote and local matrices
 @test length(list(issymmetric)) == 30
 
-@test length(list(pred(n-> n < 10000, :m))) == 1671   # items with m < *
-@test length(list(pred(n-> n < 10000, :m) & isloaded)) == 10   # items with m < *
-@test length(list(pred(n-> n < 10000, :n))) == 1611   # items with n < *
-@test length(list(pred(n-> n < 10000, :n) &  isloaded)) == 9    # items with n < *
-@test length(list(pred(n-> n < 5000, :nnz))) == 600    # items with nnz < *
-@test length(list(pred(n-> n < 5000, :nnz) & isloaded)) == 2    # items with nnz < *
-@test length(list(pred((m,n)-> m > n, :m, :n))) == 178   # items with m > n
-@test length(list(pred((m,n)-> m > n, :m, :n) & isloaded)) == 0   # items with m > n
-@test length(list(pred(k-> occursin("Power", k), :kind))) == 70
-@test length(list(pred(d-> 0 < d <= 1971, :date))) == 5
-@test length(list(pred(d-> d >= 2016, :date) & pred(d-> 0<d<=2016, :date))) == 2
-@test length(list(pred(d-> d == 0, :date) & uf(:))) == 42
+@test length(list(@pred(m < 10000))) == 1671   # items with m < *
+@test length(list(@pred(m < 10000) & isloaded)) == 10   # items with m < *
+@test length(list(@pred(n < 10000))) == 1611   # items with n < *
+@test length(list(@pred(n < 10000) &  isloaded)) == 9    # items with n < *
+@test length(list(@pred(nnz < 5000))) == 600    # items with nnz < *
+@test length(list(@pred(nnz < 5000) & isloaded)) == 2    # items with nnz < *
+@test length(list(@pred(m > n))) == 178   # items with m > n
+@test length(list(@pred(m > n) & isloaded)) == 0   # items with m > n
+@test length(list(@pred(occursin("Power", kind)))) == 70
+@test length(list(@pred(0 < date <= 1971))) == 5
+@test length(list(@pred(date >= 2016) & @pred(0< date <=2016))) == 2
+@test length(list(@pred(date == 0) & uf(:))) == 42
 
 @test list(:local) == list(islocal)
 @test list(:builtin) == list(isbuiltin)
