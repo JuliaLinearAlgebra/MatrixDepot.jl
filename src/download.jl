@@ -1,28 +1,3 @@
-# The implementations are inspired by MatrixMarket.jl
-# https://github.com/JuliaSparse/MatrixMarket.jl
-# The MatrixMarket.jl package is licensed under the MIT Expat License:
-# Copyright (c) 2013: Viral B. Shah.
-
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
 #####################################################
 # Download data from UF Sparse Matrix Collection
 #####################################################
@@ -174,25 +149,16 @@ function gunzip(fname)
     destname
 end
 
-function matchnames(p, a)
-    n = length(a)
-    length(p) == n || (return false)
-    for i = 1:n
-        p[i] in ("*", a[i]) || (return false)
-    end
-    true
-end
+"""
+    loadmatrix(data::RemoteMatrixData)
 
-# loadmatrix
-# --------------
-# loadmatrix(NAME) download a matrix from UF or MM sparse matrix collection
-# where NAME is a string of collection name + '/' + matrix name.
-#
-# Example
-# -------
-# MatrixDepot.loadmatrix("HB/1138_bus") # uf sparse matrix
-# MatrixDepot.loadmatrix("Harwell-Boeing/psadmit/1138_bus") # matrix market
-#
+Download the files backing the data from a remote repository. That is currently
+the TAMU site for the UFl collection and the NIST site for the MatrixMarket
+caoolection. The files are uncompressed and un-tar-ed if necessary.
+The data files containing the matrix data have to be in MatrixMarket format in
+both cases. Note, that some of the files of the MM collection are not available 
+in MatrixMarket format. An error message results, if trie to load them.
+"""
 function loadmatrix(data::RemoteMatrixData)
     file = matrixfile(data)
     if isfile(file)
@@ -220,6 +186,14 @@ function loadmatrix(data::RemoteMatrixData)
 end
 loadmatrix(data::GeneratedMatrixData) = 0
 
+"""
+    loadinfo(data::RemoteDate)
+Download the first part of the data file. Stop reading, as soon as the initial
+comment an the size values of the main matrix have been finished. Stor this in
+a file with extension `.info` in the same directory, where the `.mtx` file is.
+If the complete file is already availble, the download is not performed, because
+the head of the `.mtx` file contains the same lines.
+"""
 function loadinfo(data::RemoteMatrixData)
     filemtx = matrixfile(data)
     file = matrixinfofile(data)

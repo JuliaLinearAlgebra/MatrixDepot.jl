@@ -130,7 +130,7 @@ function overview(db::MatrixDatabase)
 
     hdr_groups = Markdown.Header{3}("Groups:")
 
-    groups = buildnametable("Groups", group_list(), LMARG)
+    groups = buildnametable("Groups", listgroups(), LMARG)
 
     MD(([hdr_mat, bmat, umat, groups, ufdir, mmdir]))
 end

@@ -6,22 +6,12 @@ argerr(s::AbstractString) = throw(ArgumentError(s))
 daterr(s::AbstractString) = throw(DataError(s))
 parserr(s::AbstractString) = throw(Meta.ParseError(s))
 
-# return a list of file names without suffix in the directory
-# e.g. filenames(mm) and filenames(uf)
-function filenames(directory::AbstractString)
+"""
+    listgroups()
 
-    namevec = AbstractString[]
-
-    matdatadir = joinpath(dirname(@__FILE__),"..", "data", "$directory")
-    matvec = readdir(matdatadir)
-    for file in matvec
-        filename = rsplit(file, '.', limit=2)[1]
-        push!(namevec, filename)
-    end
-    return namevec
-end
-
-function group_list()
+Return a list of available groups (array of `Symbol`).
+"""
+function listgroups()
     groups = Symbol[]
     append!(groups, sort!(collect(keys(SUBSETS))))
     append!(groups, sort!(collect(keys(MATRIXCLASS))))

@@ -20,6 +20,9 @@
         "# Harwell-Boeing/psadmit/662_bus\n\n" *
         "###### MatrixMarket matrix coordinate real symmetric\n\n662 662 1568\n"
 
+@test MatrixDepot.loadinfo(MatrixDepot.mdata("HB/1138_bus")) == 0
+@test MatrixDepot.loadinfo(MatrixDepot.mdata("Bates/Chem97Zt")) == 1
+
 # metatdata access with old interface
 @test metareader(mdopen("Pajek/Journals"), "Journals.mtx") !== nothing
 @test_throws DataError metareader(mdopen("*/1138_bus"), "1138_bus_b")

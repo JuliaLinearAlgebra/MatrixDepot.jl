@@ -261,7 +261,7 @@ keyword(t::NTuple{N,<:AbstractString} where N) = Tuple(keyword.(t))
 throw `ArgumentError` if pattern uses unknown symbol as a group name.
 """
 function check_symbols(p::Pattern)
-    s = setdiff(filter(x->x isa Symbol, flatten_pattern(p)), group_list())
+    s = setdiff(filter(x->x isa Symbol, flatten_pattern(p)), listgroups())
     isempty(s) || argerr("The following symbols are no group names: $s")
 end
 

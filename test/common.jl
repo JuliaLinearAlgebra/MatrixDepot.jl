@@ -95,6 +95,8 @@ REM = length(list("*/*"))
 @test length(list(@pred(0 < date <= 1971))) == 5
 @test length(list(@pred(date >= 2016) & @pred(0< date <=2016))) == 2
 @test length(list(@pred(date == 0) & uf(:))) == 42
+@test length(list(:symmetric & "kahan")) == 0
+@test length(list(:symmetric & "hankel")) == 1
 
 @test list(:local) == list(islocal)
 @test list(:builtin) == list(isbuiltin)
@@ -161,6 +163,8 @@ io = IOBuffer()
 @test md.A isa AbstractMatrix
 @test md.b isa AbstractMatrix
 @test_throws DataError md.x
+@test_throws DataError md.invalidname
+@test_throws ErrorException md.data.invalidname
 @test md.dnz == md.data.header.nnz
 
 end
