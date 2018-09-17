@@ -252,12 +252,9 @@ function keyword(s::AbstractString)
     f(::MatrixData) = false
     f
 end
-# this allows to mean `keyword("a" & "b")` the same as `keyword("a") & keyword("b")`
-#keyword(t::NTuple{N,<:AbstractString} where N) = Tuple(keyword.(t))
-function keyword(t::NTuple{N,<:AbstractString} where N)
-    pli = keyword.(t)
-    data -> all([p(data) for p in pli])
-end
+# this is to translate `keyword("a" & "b")` to `keyword("a") & keyword("b")`
+keyword(t::NTuple{N,<:AbstractString} where N) = Tuple(keyword.(t))
+
 """
     check_symbols(p::Pattern)
 
@@ -293,7 +290,7 @@ end
 
 function make_pred(ex)
     syms = extract_symbols(ex) ∩ (:m, :n, :nnz, :dnz, :name, :id, :title, :author, :ed, :fields, :notes, :date, :kind, :metadata)
-    :(pred($(make_func(syms, ex)), $(QuoteNode.(syms)...)))
+    :(MatrixDepot.pred($(make_func(syms, ex)), $(QuoteNode.(syms)...)))
 end
 
 """

@@ -214,28 +214,55 @@ return a vector of full matrix names where name or alias match given pattern.
 + a tuple of patterns meaning the intersection
 """
 list(p::Pattern) = list(MATRIX_DB, p)
-function list(db::MatrixDatabase, r::Regex)
-    result = AbstractString[]
-    for name in keys(db.data)
-        if match(r, name) !== nothing
-            push!(result, name)
+is_all(res::Vector) = length(res) == 1 && res[1] == ""
+
+function list(db::MatrixDatabase, p::Pattern)
+    res = list!(db, [""], p)
+    is_all(res) ? list_all(db) : res
+end
+function list!(db::MatrixDatabase, res::Vector{String}, r::Regex)
+    isempty(res) && return res
+    if is_all(res)
+        empty!(res)
+        for name in keys(db.data)
+            if match(r, name) !== nothing
+                push!(res, name)
+            end
+        end
+        sort!(res)
+    else
+        for i = 1:length(res)
+            name = res[i]
+            if match(r, name) === nothing
+                res[i] = ""
+            end
+        end
+        for i = length(res):-1:1
+            if res[i] == ""
+                deleteat!(res, i)
+            end
         end
     end
-    sort!(result)
-    unique!(result)
-    result
+    res
 end
 
-function list(db::MatrixDatabase, p::Symbol)
-    if haskey(SUBSETS, p)
-        sort!(SUBSETS[p](db))
+function list!(db::MatrixDatabase, res::Vector{String}, p::Symbol)
+    isempty(res) && return res
+    x = if haskey(SUBSETS, p)
+        SUBSETS[p](db)
     elseif haskey(MATRIXCLASS, p)
-        sort(MATRIXCLASS[p])
+        MATRIXCLASS[p]
     elseif haskey(usermatrixclass, p)
-        sort(usermatrixclass[p])
+        usermatrixclass[p]
     else
         argerr("unknown group name '$p'")
         # EMPTY_PATTERN
+    end
+    if is_all(res)
+        empty!(res)
+        append!(res, sort(x))
+    else
+        intersect!(res, x)
     end
 end
 
@@ -264,43 +291,99 @@ function shell_to_regex(p::AbstractString, retain_pure::Bool)
     end
 end
 
-function list(db::MatrixDatabase, p::AbstractString)
-    haskey(db.data, p) && return [p] # shortcut for exact matches
-    r = shell_to_regex(p, true)
-    r isa Regex ? list(db, r) : haskey(db.data, r) ? [r] : EMPTY_PATTERN
-end
-
-list(db::MatrixDatabase, p::Alias) = list(aliasresolve(db, p))
-
-list(db::MatrixDatabase, p::Not) = setdiff(list(db,()), list(db, p.pattern))
-
-function list(db::MatrixDatabase, r::AbstractVector)
-    check_symbols(r)
-    listdb(r) = list(db, r)
-    unique!(sort!(collect(Iterators.flatten(listdb.(r)))))
-end
-
-list(db::MatrixDatabase, ::Tuple{}) = list_all(db)
-
-function list(db::MatrixDatabase, r::Tuple)
-    check_symbols(r)
-    y, st = iterate(r)
-    res = list(y)
-    while !isempty(res) && (x = iterate(r, st)) !== nothing
-        y, st = x
-        intersect!(res, list(y))
+function singlist!(db::MatrixDatabase, res::Vector{String}, p::AbstractString)
+    if is_all(res)
+        if haskey(db.data, p)
+            res[1] = p
+            res
+        else
+            empty!(res)
+        end
+    else
+        if p in res
+            empty!(res)
+            push!(res, p)
+        else
+            empty!(res)
+        end
     end
-    @assert all((!isempty).(values(MATRIXCLASS)))
+end
+
+function list!(db::MatrixDatabase, res::Vector{String}, p::AbstractString)
+    isempty(res) && return res
+    r = shell_to_regex(p, true)
+    r isa Regex ? list!(db, res, r) : singlist!(db, res, r)
+end
+
+list!(db::MatrixDatabase, res::Vector{String}, p::Alias) = list!(db, res, aliasresolve(db, p))
+
+# If res is symbolically [""], populate it with the set of all available names
+function resall!(db::MatrixDatabase, res::Vector{String})
+    if is_all(res)
+        x = list_all(db)
+        resize!(res, length(x))
+        copyto!(res, x)
+    end
     res
 end
 
-function list(db::MatrixDatabase, pred::Function)
-    dali = [ data for data in values(db.data) if pred(data) ]
-    sort!(getfield.(dali, :name))
+function list!(db::MatrixDatabase, res::Vector{String}, p::Not)
+    isempty(res) && return res
+    cres = copy(res)
+    resall!(db, res)
+    setdiff!(res, list!(db, cres, p.pattern))
+end
+
+# logical OR
+function list!(db::MatrixDatabase, res::Vector{String}, r::AbstractVector)
+    isempty(r) && return empty!(res)
+    check_symbols(r)
+    isempty(res) && return res
+    length(r) == 1 && return list!(db, res, r[1])
+    cres = copy(res)
+    list!(db, res, r[1])
+    for y in r[2:end]
+        union!(res, list!(db, copy(cres), y))
+    end
+    sort!(res)
+end
+
+list!(db::MatrixDatabase, res::Vector{String}, ::Tuple{}) = res
+
+# logical AND 
+function list!(db::MatrixDatabase, res::Vector{String}, r::Tuple)
+    isempty(res) && return res
+    check_symbols(r)
+    for y in sort_by_type(r)
+        list!(db, res, y)
+        isempty(res) && break
+    end
+    res
+end
+
+function list!(db::MatrixDatabase, res::Vector{String}, pred::Function)
+    isempty(res) && return res
+    resall!(db, res)
+    filter!(k -> pred(db.data[k]), res)
+end
+
+# return a vector with re-arranged the contents of itr
+# the elements of its must be of type Pattern
+function sort_by_type(itr)
+    f(p::AbstractString) = true
+    f(p::Symbol) = true
+    f(p::AbstractVector) = all(f.(p))
+    f(p::Tuple) = all(f.(p))
+    f(p::Pattern) = false
+    vall = collect(itr)
+    vend = filter(!f, vall)
+    filter!(f, vall)
+    append!(vall, vend)
+    vall
 end
 
 ## internal list special cases
-list_all(db::MatrixDatabase) = sort!(collect(keys(db.data)))
+list_all(db::MatrixDatabase) = sort!(String.(collect(keys(db.data))))
 list_local(db::MatrixDatabase) = union(collect(keys(MATRIXDICT)), keys(USERMATRIXDICT))
 list_builtin(db::MatrixDatabase) = collect(keys(MATRIXDICT))
 list_user(db::MatrixDatabase) = collect(keys(USERMATRIXDICT))
