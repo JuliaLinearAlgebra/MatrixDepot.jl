@@ -98,8 +98,29 @@ end
     MatrixDepot.downloadindices(db)
 download html files and store matrix data in `db`.
 additionally generate aliases for local and loaded matrices.
+Serialize db object in file `db.data`.
+If a file `db.data` is present in the data directory, deserialize
+the data instead of downloading and collection data.
 """
-function downloadindices(db::MatrixDatabase)
+function downloadindices(db::MatrixDatabase; ignoredb=false)
+    # UF Sparse matrix collection
+    cachedb = abspath(DATA_DIR, "db.data")
+    if !ignoredb && isfile(cachedb)
+        open(cachedb, "r") do io
+            dbx = deserialize(io)
+            merge!(db.data, dbx.data)
+            merge!(db.aliases, dbx.aliases)
+        end
+    else
+        _downloadindices(db)
+        open(cachedb, "w") do io
+            serialize(io, db)
+        end
+    end
+    nothing
+end
+
+function _downloadindices(db::MatrixDatabase)
     # UF Sparse matrix collection
     global uf_remote
     empty!(db)

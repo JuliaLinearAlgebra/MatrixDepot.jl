@@ -137,6 +137,9 @@ function MatrixDescriptor(data::T, args...) where T<:GeneratedMatrixData
     MatrixDescriptor{T}(data, deepcopy(args), Ref{Any}(nothing))
 end
 
+struct Auxiliar{T<:MatrixDescriptor}
+    md::T
+end
 # essential functions of the types
 
 function Base.show(io::IO, data::RemoteMatrixData)

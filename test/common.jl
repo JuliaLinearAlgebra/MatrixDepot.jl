@@ -17,7 +17,7 @@ m = length(list("**"))
 
 @addgroup newlist = list(builtin(3:6) | builtin(20))
 
-MatrixDepot.init()
+MatrixDepot.init(ignoredb=true)
 
 println(mdlist(:newlist))
 

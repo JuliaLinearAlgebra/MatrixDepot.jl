@@ -464,36 +464,19 @@ function mdata(db::MatrixDatabase, p::Pattern)
 end
 
 """
-    metadata([db, ], p::Pattern)
+    metadata([db, ], Union{MatrixDescriptor,MatrixData})
 
-Return copy of list of metadata names. Pattern must be unique.
+Return copy of list of metadata names.
 """
 metadata(mdesc::MatrixDescriptor) = metadata(mdesc.data)
 metadata(data::RemoteMatrixData) = copy(data.metadata)
 metadata(data::MatrixData) = String[]
-metadata(p::Pattern) = metadata(MATRIX_DB, p)
-metadata(db::MatrixDatabase, p::Pattern) = metadata(mdata(db, p))
 
 _mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
 function _mdopen(data::GeneratedMatrixData, args...)
-    # verify_callable(data.func, args...)
     md = MatrixDescriptor(data, args...)
-    md.A
+    md.A # trigger generation of data and fill cache
     md
-end
-
-verify_callable(f::Function, args...) = verify_callable(f, Float64, args...)
-function verify_callable(f::Function, t::Type, args...)
-    ml = methods(f, typeof.((t, args...)))
-    if isempty(ml) || verify_types(ml.ms[1].sig)
-        throw(MethodError(f, (t, args...)))
-    end
-end
-
-verify_types(sig::UnionAll) = verify_types(sig.body)
-function verify_types(sig::DataType)
-    types = sig.types
-    length(types) == 3 && types[3] == Vararg{Any} && types[2] isa Type
 end
 
 ###

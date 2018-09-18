@@ -23,7 +23,7 @@ open(joinpath(user_dir, "generator.jl"), "w") do f
 end
 
 # load the just written user file
-MatrixDepot.init()
+MatrixDepot.init(ignoredb=true)
 
 n = rand(1:8)
 @test matrixdepot("randsym", n) !== nothing

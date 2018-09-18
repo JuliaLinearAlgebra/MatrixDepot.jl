@@ -24,9 +24,9 @@
 @test MatrixDepot.loadinfo(MatrixDepot.mdata("Bates/Chem97Zt")) == 1
 
 # metatdata access with old interface
-@test metareader(mdopen("Pajek/Journals"), "Journals.mtx") !== nothing
-@test_throws DataError metareader(mdopen("*/1138_bus"), "1138_bus_b")
-@test_throws DataError metareader(mdopen("that is nothing"))
+@test MatrixDepot.metareader(mdopen("Pajek/Journals"), "Journals.mtx") !== nothing
+@test_throws DataError MatrixDepot.metareader(mdopen("*/1138_bus"), "1138_bus_b")
+@test_throws DataError MatrixDepot.metareader(mdopen("that is nothing"))
 
 @test load("Bates/C*") == 2
 @test mdinfo("Bates/Chem97Zt") != nothing
@@ -45,8 +45,8 @@ mdesc = mdopen("Bai/dwg961b")
 @test issymmetric(mdesc.data)
 @test !ishermitian(mdesc.data)
 @test !ispattern(mdesc.data)
-@test metadata(mdesc) == ["dwg961b.mtx"]
-@test metareader(mdesc, "dwg961b.mtx") == matrixdepot("Bai/dwg961b")
+@test metasymbols(mdesc) == [:A]
+@test mdesc.A == matrixdepot("Bai/dwg961b")
 
 # an example with rhs and solution
 mdesc = mdopen("DRIVCAV/cavity14")
@@ -56,7 +56,7 @@ A2 = mdesc.A
 @test A1 === A2 # cache should be used
 @test size(mdesc.b, 1) == 2597
 @test size(mdesc.x, 1) == 2597
-@test_throws DataError metareader(mdesc, "invlid")
+@test_throws DataError mdesc["invlid"]
 @test_throws DataError mdesc.y
 
 # read a format array file
@@ -67,17 +67,17 @@ mdesc = mdopen("blur", 10, false)
 @test mdesc.A isa AbstractMatrix
 @test mdesc.b isa AbstractVector
 @test mdesc.x isa AbstractVector
-@test_throws DataError metareader(mdesc, "invlid")
+@test_throws DataError mdesc["invlid"]
 @test_throws DataError mdesc.y
 
 @test_throws DataError mdopen(uf(1)).b # no rhs data for this example
 
 mdesc = mdopen("*/bfly")
-@test metareader(mdesc, "bfly_Gname_01.txt") == "BFLY3\n"
-@test metareader(mdesc, "Gname_01.txt") == "BFLY3\n"
+@test mdesc["Gname_01.txt"] == "BFLY3\n"
+@test mdesc("Gname_01.txt") == "BFLY3\n"
 @test size(mdesc.G_06) == (2048, 2048)
-@test mdesc.G_06 === metareader(mdesc, "G_06")
-@test mdesc.G_06 === metareader(mdesc, "bfly_G_06.mtx")
+@test mdesc.G_06 === mdesc["G_06"]
+@test mdesc.G_06 === mdesc[Symbol("G_06.mtx")]
 fn = joinpath(dirname(MatrixDepot.matrixfile(mdesc.data)), "bfly_Gname_01.txt")
 @test_throws DataError MatrixDepot.mmreadheader(fn)
 
@@ -129,8 +129,8 @@ end
 
 # an example loading a txt file
 data = mdopen("Pajek/Journals")
-@test length(metareader(data, "Journals_nodename.txt")) > 100
-@test length(metareader(data, "Journals_nodename.txt")) > 100 # repeat to use cache
+@test length(MatrixDepot.metareader(data, "Journals_nodename.txt")) > 100
+@test length(MatrixDepot.metareader(data, "Journals_nodename.txt")) > 100 # repeat to use cache
 
 # reading mtx files
 io = IOBuffer("""

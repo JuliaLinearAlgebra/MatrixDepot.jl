@@ -16,7 +16,7 @@ include("clean.jl")
 data_save = save_target(data_dir)
 user_save = save_target(user_dir)
 
-# that will download the index files and initialize internal data
+# that will download the index files if necessary and initialize internal data
 MatrixDepot.init()
 @testset "MatrixDepot generator tests" begin
 
@@ -91,7 +91,7 @@ end
         println("mv $xdir $xtmpdir")
         mv(xdir, xtmpdir, force=true)
         MatrixDepot.toggle_remote()
-        MatrixDepot.init()
+        MatrixDepot.init(ignoredb=true)
         MatrixDepot.update()
         @test mdopen(uf(1)) != nothing
         mv(xtmpdir, xdir, force=true)

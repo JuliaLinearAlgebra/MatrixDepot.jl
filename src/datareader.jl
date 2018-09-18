@@ -46,7 +46,7 @@ function fillcache!(mdesc::MatrixDescriptor{<:GeneratedMatrixData})
 end
 
 # This a the preferred API to access metadata.
-import Base: getproperty, propertynames
+import Base: getproperty, propertynames, getindex
 
 function getproperty(mdesc::MatrixDescriptor{T}, s::Symbol) where T
     s in (:data, :args, :cache) && return getfield(mdesc, s)
@@ -87,12 +87,32 @@ end
 function propertynames(data::GeneratedMatrixData; private=false)
     private ? fieldnames(GeneratedMatrixData) : [:name, :id]
 end
+
+"""
+    metasymbols(md::MatrixDescriptor)
+
+Return a vector of symbols, which point to metadata of the problem.
+These symbols `s` may be used to access the objects by `getproperty(md, s)`
+or by `getindex(md, s)`. The syntax `md.S` is preferred, if `S` is a constant
+`Julia` word. In any case `md[s]` is possible.
+
+Example:
+`md = mdopen("*/bfly"); A = md.A; co = md.coord; txt10 = md["Gname_10.txt"]`
+"""
 function metasymbols(md::MatrixDescriptor{<:RemoteMatrixData})
     Symbol.(metastring.(md.data.name, metadata(md.data)))
 end
 function metasymbols(md::MatrixDescriptor{<:GeneratedMatrixData})
     mdc = md.cache[]
     mdc isa Array || mdc === nothing ? [:A] : propertynames(mdc)
+end
+
+function Base.getindex(mdesc::MatrixDescriptor, name::Union{Symbol,AbstractString})
+    metareader(mdesc, string(name))
+end
+
+function (mdesc::MatrixDescriptor)(name::Union{Symbol,AbstractString})
+    metareader(mdesc, string(name))
 end
 
 #internal helper to select special metadata (matrix, rhs, or solution)

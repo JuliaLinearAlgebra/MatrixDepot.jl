@@ -22,14 +22,43 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+"""
+    MatrixDepot
+
+Give access to a wealth of sample and test matrices and accompanying data.
+A set of matrices is generated locally (with arguments controlling the special case).
+Another set is loaded from one of the publicly accessible matrix collections
+`SuiteSparse Matrix Collection` (formerly `University of Florida Matrix Collection`)
+and the `Matrix Market Collection`.
+
+Access is like
+
+    using MatrixDepot
+
+    A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
+    
+    A = ("HB/1138_bus")     # named matrix of the SuiteSpares Collection
+
+   or
+
+    md = mdopen("*/bfly")   # named matrix with some extra data
+    A = md.A
+    co = md.coord
+    tx = md("Gname_10.txt")
+
+   or also
+
+    md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
+    A = md.A
+    b = md.b
+    x = md.x
+"""
 module MatrixDepot
-using GZip, Printf, DelimitedFiles
-using LinearAlgebra, SparseArrays, SuiteSparse
+using LinearAlgebra, SparseArrays, SuiteSparse, GZip, Serialization
 import Base: show
 
 export matrixdepot
-export metareader
-export mdlist, listdir, listdata, mdinfo, metadata, mdopen
+export mdlist, listdir, listdata, listgroups, mdinfo, metasymbols, mdopen
 export @addgroup, @rmgroup, @modifygroup
 #export colval, mtranspose, madjoint
 # further exports (for predicate functions) in `logical.jl`
@@ -38,7 +67,7 @@ include("types.jl")         # common data type definitions
 include("higham.jl")        # test matrices
 include("regu.jl")          # regularization test problem
 include("graph.jl")         # adjacency matrices for graphs
-include("data.jl")          # global varaibles and matrix data
+include("data.jl")          # global variables and matrix data
 include("common.jl")        # main functions
 include("logical.jl")       # operations on patterns and predicates
 include("download.jl")      # download data from the UF and MM sparse matrix collection
@@ -46,7 +75,7 @@ include("datareader.jl")    # read matrix data from local storage
 include("matrixmarket.jl")  # read matrix data from local storage
 include("markdown.jl")      # construct MD objects
 
-function init()
+function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
 
@@ -73,7 +102,7 @@ function init()
     end
     include(joinpath(MY_DEPOT_DIR, GENERATOR))
     println("verify download of index files...")
-    downloadindices(MATRIX_DB)
+    downloadindices(MATRIX_DB, ignoredb=ignoredb)
     println("used remote site is $(uf_remote.params.indexurl)")
     println("populating internal database...")
     nothing
