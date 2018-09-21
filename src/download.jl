@@ -229,7 +229,7 @@ function loadinfo(data::RemoteMatrixData)
         push!(cmd, `gunzip`)
         resize!(urls, length(urls)-1)
     end
-    if url[end] == "tar"
+    if urls[end] == "tar"
         push!(cmd, `tar -xOf -`)
     end
 

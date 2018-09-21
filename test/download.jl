@@ -22,8 +22,9 @@ import MatrixDepot: load, loadinfo
         "# Harwell-Boeing/psadmit/662_bus\n\n" *
         "###### MatrixMarket matrix coordinate real symmetric\n\n662 662 1568\n"
 
-@test MatrixDepot.loadinfo(MatrixDepot.mdata("HB/1138_bus")) == 0
-@test MatrixDepot.loadinfo(MatrixDepot.mdata("Bates/Chem97Zt")) == 1
+@test loadinfo(MatrixDepot.mdata("HB/1138_bus")) == 0
+@test loadinfo(MatrixDepot.mdata("Bates/Chem97Zt")) == 1
+@test length(string(mdinfo("Bates/Chem97Zt"))) == 447
 
 # metatdata access with old interface
 @test MatrixDepot.metareader(mdopen("Pajek/Journals"), "Journals.mtx") !== nothing
