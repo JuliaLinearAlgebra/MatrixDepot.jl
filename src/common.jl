@@ -172,7 +172,7 @@ end
 function listdir(db::MatrixDatabase, r::Pattern, depth::Int)
     result = Dict{AbstractString, Int}()
     f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
-    for name in list(r)
+    for name in mdlist(r)
         li = split(name, '/')
         if length(li) >= depth
             key = f(li, depth)
@@ -187,10 +187,10 @@ end
 Return an array of `MatrixData` objects according to matched patterns.
 """
 listdata(p::Pattern) = listdata(MATRIX_DB, p)
-listdata(db::MatrixDatabase, p::Pattern) = mdata.(MatrixDepot.list(db, p))
+listdata(db::MatrixDatabase, p::Pattern) = mdata.(mdlist(db, p))
 
 """
-    list([db,] p::Pattern)
+    mdlist([db,] p::Pattern)
 return a vector of full matrix names where name or alias match given pattern.
 `p` can be one of the following:
 + a plain string (without characters `*` and `?`) which must match exactly
@@ -203,10 +203,10 @@ return a vector of full matrix names where name or alias match given pattern.
 + a vector of patterns meaning the union
 + a tuple of patterns meaning the intersection
 """
-list(p::Pattern) = list(MATRIX_DB, p)
+mdlist(p::Pattern) = mdlist(MATRIX_DB, p)
 is_all(res::Vector) = length(res) == 1 && res[1] == ""
 
-function list(db::MatrixDatabase, p::Pattern)
+function mdlist(db::MatrixDatabase, p::Pattern)
     res = list!(db, [""], p)
     is_all(res) ? list_all(db) : res
 end
@@ -407,19 +407,27 @@ end
 mdatav(db::MatrixDatabase, p::Pattern) = verify_loaded(db, mdata(db, p))
 
 """
-    load(pattern[, db])
+    load([db,] pattern)
 
 Load data from remote repository for all problems matching pattern.
 
 Return the number of successfully loaded matrices. 
 """
 load(p::Pattern) = load(MATRIX_DB, p)
-function load(db::MatrixDatabase, p::Pattern)
+load(db::MatrixDatabase, p::Pattern) = _load(db, loadmatrix, p)
+
+"""
+    loadinfo([db,] pattern)
+"""
+loadinfo(p::Pattern) = loadinfo(MATRIX_DB, p)
+loadinfo(db::MatrixDatabase, p::Pattern) = _load(db, loadinfo, p)
+
+function _load(db::MatrixDatabase, loadfunc::Function, p::Pattern)
     check_symbols(p)
     n = 0
-    for name in list(p)
+    for name in mdlist(p)
         try
-            n += loadmatrix(db.data[name])
+            n += loadfunc(db.data[name])
         catch ex
             ex isa InterruptException && rethrow()
             @warn "could not load $name: $ex"
@@ -457,7 +465,7 @@ Return unique `MatrixData` object according to pattern.
 mdata(p::Pattern) = mdata(MATRIX_DB, p)
 function mdata(db::MatrixDatabase, p::Pattern)
     check_symbols(p)
-    li = list(db, p)
+    li = mdlist(db, p)
     length(li) == 0 && daterr("no matrix according to $p found")
     length(li) > 1  && daterr("pattern not unique: $p -> $li")
     db.data[li[1]]

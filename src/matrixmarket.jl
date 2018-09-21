@@ -198,8 +198,6 @@ function specialsort(cv::Vector{Int}, sr::Int)
     end
 end
 
-
-
 """
     colval(A)
 reconstruct colum-indices from colptr of `SparseMatrixCSC`.

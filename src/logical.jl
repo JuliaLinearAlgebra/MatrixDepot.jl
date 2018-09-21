@@ -141,7 +141,7 @@ end
 simplify(p::Pattern) = p
 
 #=
-function list(p::Tuple)
+function mdlist(p::Tuple)
     p = simplify(p)
     k = findfirst(is_pure_vector, p)
     all = k === nothing ? keys(db.data) : p[k]
@@ -189,7 +189,7 @@ issymmetric(data::RemoteMatrixData) = _issymmetry(data, MMSymmetrySymmetric)
 isskew(data::RemoteMatrixData) = _issymmetry(data, MMSymmetrySkewSymmetric)
 ishermitian(data::RemoteMatrixData) = _issymmetry(data, MMSymmetryHermitian)
 isgeneral(data::MatrixData) = !issymmetric(data) && !isskew(data) && !ishermitian(data)
-issymmetric(data::MatrixData) = data.name in list(:symmetric)
+issymmetric(data::MatrixData) = data.name in mdlist(:symmetric)
 isskew(data::MatrixData) = false
 ishermitian(data::MatrixData) = false
 
@@ -300,7 +300,7 @@ Generate a predicate function using the expression as function body. Variable na
 within the expression, which are properties of `RemoteMatrixData` (e.g. `title`, `m`, `nnz`)
 are used to access `data.title` etc. Other variable names, are used from the outer scope.
 
-example: `maxnnz = 1_000; mdlist(@pred(n <= maxnnz))` would produce a list of all
+example: `maxnnz = 1_000; listnames(@pred(n <= maxnnz))` would produce a list of all
 data with less than `maxnnz` structural non-zeros.
 """
 macro pred(ex)

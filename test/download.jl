@@ -1,8 +1,10 @@
 #download
 # verify that no data are downloaded (empty directory)
-@test list(isloaded) == []
+@test mdlist(isloaded) == []
+import MatrixDepot: load, loadinfo
 
 # uf
+@test loadinfo("*/1138_bus") == 1 # load only header
 @test load("**/1138_bus") == 2 # loaded both versions (uf and mm)
 @test load("HB/1138_bus") == 0 # count actually loaded
 @test load("Pajek/Journals") == 1
@@ -10,12 +12,12 @@
 # Matrix Markt
 @test load("Harwell-Boeing/smtape/bp___200") == 1
 
-@test list(isloaded) == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus",
+@test mdlist(isloaded) == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus",
                         "Harwell-Boeing/smtape/bp___200", "Pajek/Journals"]
 
 # read data
 @test matrixdepot("HB/1138_bus") != nothing
-@test list("**/1138_bus") == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus"]
+@test mdlist("**/1138_bus") == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus"]
 @test string(mdinfo("Harwell-Boeing/psadmit/662_bus")) ==
         "# Harwell-Boeing/psadmit/662_bus\n\n" *
         "###### MatrixMarket matrix coordinate real symmetric\n\n662 662 1568\n"
@@ -31,14 +33,14 @@
 @test load("Bates/C*") == 2
 @test mdinfo("Bates/Chem97Zt") != nothing
 @test matrixdepot("Bates/Chem97Zt") != nothing
-@test "Bates/Chem97Zt" in list(isloaded)
-@test length(list(isloaded)) == 6
+@test "Bates/Chem97Zt" in mdlist(isloaded)
+@test length(mdlist(isloaded)) == 6
 
 @test load("**/epb0") == 1
 
 # matrix market
 @test load("Harwell-Boeing/lanpro/nos5") == 1
-@test length(list(isloaded)) == 8
+@test length(mdlist(isloaded)) == 8
 @test mdopen("Bai/dwg961b") !== nothing
 mdesc = mdopen("Bai/dwg961b")
 @test iscomplex(mdesc.data)

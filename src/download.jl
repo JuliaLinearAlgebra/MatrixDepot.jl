@@ -258,6 +258,7 @@ function loadinfo(data::RemoteMatrixData)
         0
     end
 end
+loadinfo(data::MatrixData) = 0
 
 function data_warn(data::RemoteMatrixData, dn, i1, i2)
     @warn "$(data.name): header $dn = '$i1' file $dn = '$i2' $(data.properties[])"

@@ -22,14 +22,14 @@ open(joinpath(user_dir, "generator.jl"), "w") do f
     write(f, matrixdata)
 end
 
-# load the just written user file
+# incluse the just written user file
 MatrixDepot.init(ignoredb=true)
 
 n = rand(1:8)
 @test matrixdepot("randsym", n) !== nothing
 @test mdinfo("randsym") != nothing
-@test "randsym" in MatrixDepot.list(:random)
-@test "randsym" in MatrixDepot.list(:symmetric)
+@test "randsym" in MatrixDepot.mdlist(:random)
+@test "randsym" in MatrixDepot.mdlist(:symmetric)
 
 import MatrixDepot: include_generator, Group
 @test_throws ArgumentError include_generator(Group, :lkjasj, sin)

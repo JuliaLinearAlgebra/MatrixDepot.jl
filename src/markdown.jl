@@ -7,7 +7,7 @@ function mdinfo(db::MatrixDatabase, p::Pattern)
     check_symbols(p)
     mdbuffer = Markdown.MD([])
     md = mdbuffer
-    for name in list(p)
+    for name in mdlist(p)
         try
             md = mdinfo(db.data[name])
         catch
@@ -91,7 +91,7 @@ vecvec(tab::Matrix) = [ tab[i,:] for i in 1:size(tab,1)]
 tab(a, cols::Integer) = [a for i in 1:cols]
 
 function buildnametable1(db::MatrixDatabase, hdr, p::Pattern, maxrow::Integer=0)
-    dali = mdata.(Ref(db), list(db, p))
+    dali = mdata.(Ref(db), mdlist(db, p))
     lt(a, b) = a.id < b.id
     sort!(dali, lt=lt)
     item(data::MatrixData) = string(data.id, " ", data.name)
@@ -100,9 +100,9 @@ end
 
 MD(a...) = Markdown.MD([a...])
 
-mdlist(p::Pattern) = mdlist(MATRIX_DB, p)
-function mdlist(db::MatrixDatabase, p::Pattern)
-    li = list(db, p)
+listnames(p::Pattern) = listnames(MATRIX_DB, p)
+function listnames(db::MatrixDatabase, p::Pattern)
+    li = mdlist(db, p)
     MD(buildnametable("list($(length(li)))", li))
 end
 
@@ -120,8 +120,8 @@ function overview(db::MatrixDatabase)
     LMARG = -10
     hdr_mat = Markdown.Header{3}("Currently loaded Matrices")
 
-    dli(p) = mdata.(Ref(db), list(db, p))
-    ldall(p) = [length(list(p & isloaded)), length(list(p))]
+    dli(p) = mdata.(Ref(db), mdlist(db, p))
+    ldall(p) = [length(mdlist(p & isloaded)), length(mdlist(p))]
 
     bmat = buildnametable1(db, "builtin(#)", :builtin, LMARG)
     umat = buildnametable1(db, "user(#)", :user, LMARG)

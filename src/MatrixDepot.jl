@@ -58,7 +58,7 @@ using LinearAlgebra, SparseArrays, SuiteSparse, GZip, Serialization
 import Base: show
 
 export matrixdepot
-export mdlist, listdir, listdata, listgroups, mdinfo, metasymbols, mdopen
+export listnames, listdir, listdata, listgroups, mdlist, mdinfo, metasymbols, mdopen
 export @addgroup, @rmgroup, @modifygroup
 #export colval, mtranspose, madjoint
 # further exports (for predicate functions) in `logical.jl`

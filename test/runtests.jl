@@ -6,7 +6,7 @@ using Test
 using LinearAlgebra
 using SparseArrays
 
-import MatrixDepot: DataError, list, load
+import MatrixDepot: DataError
 
 macro inc(a)
     :(@testset $a begin let n, p, i; include($a) end end)
@@ -70,12 +70,12 @@ end
 
 @testset "MatrixDepot remote matrix tests" begin
     tests = [
+            "regu",
             "include_generator",
             "download",
             "common",
             "number",
             "property",
-            "regu",
             ]
 
     try
@@ -95,7 +95,6 @@ end
         MatrixDepot.update()
         @test mdopen(uf(1)) != nothing
         mv(xtmpdir, xdir, force=true)
-
     finally
         revert_target(user_save, user_dir)
         revert_target(data_save, data_dir)
