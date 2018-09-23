@@ -125,7 +125,7 @@ function overview(db::MatrixDatabase)
 
     bmat = buildnametable1(db, "builtin(#)", :builtin, LMARG)
     umat = buildnametable1(db, "user(#)", :user, LMARG)
-    spdir = buildnametable(["UFL  /  TAMU", "of"], ldall(sp(:)))
+    spdir = buildnametable(["Suite Sparse", "of"], ldall(sp(:)))
     mmdir = buildnametable(["MatrixMarket", "of"], ldall(mm(:)))
 
     hdr_groups = Markdown.Header{3}("Groups:")
