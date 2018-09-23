@@ -32,15 +32,15 @@ MatrixDepot.init(ignoredb=true)
 @testset "mdlist" begin
 
 REM = length(mdlist("*/*"))
-@test REM in [2757, 2833]   # depends on whether ufl or tamu url has been used
+@test REM in [2757, 2833]   # depends on whether UFL or TAMU url has been used
 @test length(mdlist(:builtin)) == 59
 @test length(mdlist(:user)) in [0, 1]
 
 @test mdlist("") == []
 @test mdlist("HB/1138_bus") == ["HB/1138_bus"]
-@test mdlist(uf(1)) == ["HB/1138_bus"]
+@test mdlist(sp(1)) == ["HB/1138_bus"]
 @test mdlist(mm(1)) == ["Harwell-Boeing/psadmit/1138_bus"]
-@test sort(mdlist(uf(1:3000))) == mdlist("*/*")
+@test sort(mdlist(sp(1:3000))) == mdlist("*/*")
 @test sort(mdlist(mm(1:3000))) == mdlist("*/*/*")
 @test mdlist(builtin(:)) == mdlist(isbuiltin)
 @test mdlist(user(:)) == mdlist(isuser)
@@ -63,8 +63,8 @@ REM = length(mdlist("*/*"))
 @test listdir("HB/") == ["HB/* - (292)"]
 @test length(mdlist("Harwell-Boeing/*/*")) == 292
 @test mdlist(r".*ng/ma.*") == ["Harwell-Boeing/manteuffel/man_5976"]
-@test mdlist(tamu(2001:2002)) == ["JGD_Groebner/c8_mat11_I", "JGD_Groebner/f855_mat9"]
-@test length(mdlist(tamu(2757:3000))) == REM - 2756
+@test mdlist(sp(2001:2002)) == ["JGD_Groebner/c8_mat11_I", "JGD_Groebner/f855_mat9"]
+@test length(mdlist(sp(2757:3000))) == REM - 2756
 @test_throws ArgumentError mdlist(:xxx)
 @test length(mdlist(isremote)) == REM + 498
 @test length(mdlist(isloaded)) + length(mdlist(isunloaded)) == length(mdlist(isremote))
@@ -94,7 +94,7 @@ REM = length(mdlist("*/*"))
 @test length(mdlist(@pred(occursin("Power", kind)))) == 70
 @test length(mdlist(@pred(0 < date <= 1971))) == 5
 @test length(mdlist(@pred(date >= 2016) & @pred(0< date <=2016))) == 2
-@test length(mdlist(@pred(date == 0) & uf(:))) == 42
+@test length(mdlist(@pred(date == 0) & sp(:))) == 42
 @test length(mdlist(:symmetric & "kahan")) == 0
 @test length(mdlist(:symmetric & "hankel")) == 1
 
@@ -107,25 +107,25 @@ end
 
 @testset "logical" begin
 # for the boolean syntax
-@test mdlist(¬islocal) == mdlist(isremote)
+@test mdlist(~islocal) == mdlist(isremote)
 @test length(mdlist(isloaded & issymmetric)) == 7
-@test length(mdlist(isloaded & ¬issymmetric)) == 4
-@test length(mdlist(isloaded & ¬issymmetric | isuser & issymmetric)) == 5
+@test length(mdlist(isloaded & ~issymmetric)) == 4
+@test length(mdlist(isloaded & ~issymmetric | isuser & issymmetric)) == 5
 @test length(mdlist(!islocal & issymmetric | isuser & issymmetric)) == 9
-@test mdlist(islocal & ¬isbuiltin) == mdlist(isuser)
-@test mdlist(islocal & ¬isbuiltin) == mdlist(isuser)
+@test mdlist(islocal & ~isbuiltin) == mdlist(isuser)
+@test mdlist(islocal & ~isbuiltin) == mdlist(isuser)
 @test "a" & "b" === ("a", "b")
-@test ¬"a" & "b" === (¬"a", "b")
-@test ¬"a" * "b" === ¬"ab"
-@test ¬"ab" === ¬'a' * 'b'
-@test ¬¬islocal === islocal
-@test mdlist(¬"*a*" & ¬ "*e*") == mdlist(¬["*a*", "*e*"])
+@test ~"a" & "b" === (~"a", "b")
+@test ~"a" * "b" === ~"ab"
+@test ~"ab" === ~'a' * 'b'
+@test ~~islocal === islocal
+@test mdlist(~"*a*" & ~ "*e*") == mdlist(~["*a*", "*e*"])
 @test mdlist(()) == mdlist(:all)
 @test "a" & r"b" == ("a", r"b")
 @test "a" & r"b" & "c" == ("a", r"b", "c")
 @test "a" | r"b" == ["a", r"b"]
 @test "a" | r"b" | "c" == ["a", r"b", "c"]
-@test mdlist(islocal & ¬("*a*" | "*e*")) == mdlist(:local & ¬"*a*" & ¬ "*e*")
+@test mdlist(islocal & ~("*a*" | "*e*")) == mdlist(:local & ~"*a*" & ~ "*e*")
 @test "a" & ( "b" & "c" ) == ("a", "b", "c")
 @test "a" | ( "b" | "c" ) == ["a", "b", "c"]
 @test_throws ArgumentError mdlist([] & :invalid_group_name)
@@ -166,6 +166,9 @@ io = IOBuffer()
 @test_throws DataError md.invalidname
 @test_throws ErrorException md.data.invalidname
 @test md.dnz == md.data.header.nnz
+
+@test length(mdlist(keyword("graph" & ("butterfly" | "network")) & isloaded)) == 2
+@test length(mdlist(hasdata(:A & (:b | :x)))) == 2
 
 end
 

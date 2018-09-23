@@ -93,7 +93,7 @@ end
         MatrixDepot.toggle_remote()
         MatrixDepot.init(ignoredb=true)
         MatrixDepot.update()
-        @test mdopen(uf(1)) != nothing
+        @test mdopen(sp(1)) != nothing
         mv(xtmpdir, xdir, force=true)
     finally
         revert_target(user_save, user_dir)

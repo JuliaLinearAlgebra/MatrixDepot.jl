@@ -3,9 +3,9 @@
 @test mdlist(isloaded) == []
 import MatrixDepot: load, loadinfo
 
-# uf
+# sp
 @test loadinfo("*/1138_bus") == 1 # load only header
-@test load("**/1138_bus") == 2 # loaded both versions (uf and mm)
+@test load("**/1138_bus") == 2 # loaded both versions (sp and mm)
 @test load("HB/1138_bus") == 0 # count actually loaded
 @test load("Pajek/Journals") == 1
 @test load("wing") == 0 # do not try to load local matrix
@@ -47,7 +47,7 @@ mdesc = mdopen("Bai/dwg961b")
 @test iscomplex(mdesc.data)
 @test issymmetric(mdesc.data)
 @test !ishermitian(mdesc.data)
-@test !ispattern(mdesc.data)
+@test !isboolean(mdesc.data)
 @test metasymbols(mdesc) == [:A]
 @test mdesc.A == matrixdepot("Bai/dwg961b")
 
@@ -73,7 +73,7 @@ mdesc = mdopen("blur", 10, false)
 @test_throws DataError mdesc["invlid"]
 @test_throws DataError mdesc.y
 
-@test_throws DataError mdopen(uf(1)).b # no rhs data for this example
+@test_throws DataError mdopen(sp(1)).b # no rhs data for this example
 
 mdesc = mdopen("*/bfly")
 @test mdesc["Gname_01.txt"] == "BFLY3\n"

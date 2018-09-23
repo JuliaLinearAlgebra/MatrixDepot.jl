@@ -142,7 +142,7 @@ A final `/` is replaced by `"//**"`.
 E.g.
 + `listdir("/*")`     - count names without a `/`.
 + `listdir("/k*")`    - count names without `/` starting with `k*`.
-+ `listdir("*//*")`   - count names with one directory part (uf-collection)
++ `listdir("*//*")`   - count names with one directory part (sp-collection)
 + `listdir("*/*//*")` - count names with two directory parts (mm-collection)
 + `listdir("*//*/*")` - count names with two directory parts (mm-collection)
 + `listdir("Har*//*/*")` - restrict to directories starting with "Har"

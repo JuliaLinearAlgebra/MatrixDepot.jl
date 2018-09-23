@@ -99,13 +99,15 @@ or by `getindex(md, s)`. The syntax `md.S` is preferred, if `S` is a constant
 Example:
 `md = mdopen("*/bfly"); A = md.A; co = md.coord; txt10 = md["Gname_10.txt"]`
 """
-function metasymbols(md::MatrixDescriptor{<:RemoteMatrixData})
-    Symbol.(metastring.(md.data.name, metadata(md.data)))
+metasymbols(md::MatrixDescriptor{<:RemoteMatrixData}) = metasymbols(md.data)
+function metasymbols(data::RemoteMatrixData)
+    Symbol.(metastring.(data.name, metadata(data)))
 end
 function metasymbols(md::MatrixDescriptor{<:GeneratedMatrixData})
     mdc = md.cache[]
     mdc isa Array || mdc === nothing ? [:A] : propertynames(mdc)
 end
+metasymbols(data::MatrixData) = [:A]
 
 function Base.getindex(mdesc::MatrixDescriptor, name::Union{Symbol,AbstractString})
     metareader(mdesc, string(name))

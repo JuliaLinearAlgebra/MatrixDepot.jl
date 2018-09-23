@@ -22,7 +22,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""
+"""julia
     MatrixDepot
 
 Give access to a wealth of sample and test matrices and accompanying data.
@@ -60,8 +60,21 @@ import Base: show
 export matrixdepot
 export listnames, listdir, listdata, listgroups, mdlist, mdinfo, metasymbols, mdopen
 export @addgroup, @rmgroup, @modifygroup
+
+# exports for predicate functions in `logical.jl`
+export builtin, user, sp, mm, logical
+export isgeneral, issymmetric, isskew, ishermitian
+export iscomplex, isreal, isinteger, isboolean
+export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
+export @pred, keyword, hasdata
+
+# The following functions are re-used as predicate functions / logical operators
+import Base: isreal, isinteger
+import LinearAlgebra: issymmetric, ishermitian
+import SparseArrays: issparse
+import Base: &, |, *, ~
+
 #export colval, mtranspose, madjoint
-# further exports (for predicate functions) in `logical.jl`
 
 include("types.jl")         # common data type definitions
 include("higham.jl")        # test matrices
