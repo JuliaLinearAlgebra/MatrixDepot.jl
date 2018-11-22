@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 A = matrixdepot("minij", n)
 @test issymmetric(A)
 @test isposdef(A)

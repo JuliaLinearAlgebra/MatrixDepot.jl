@@ -1,4 +1,4 @@
-n = rand(1:5)
+n = 5 # rand(1:5)
 A = matrixdepot("wathen", n)
 
 @test typeof(A) <: SparseMatrixCSC

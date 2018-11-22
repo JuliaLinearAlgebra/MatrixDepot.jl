@@ -1,0 +1,4 @@
+#! /bin/sh
+# filter relevant lines from index page https://sparse/tamu/edu/?per_page=All
+
+grep -e '<title>' -e "^<td class='column-.*</td>$" -e "Matrix Market$"

@@ -10,10 +10,39 @@ An extensible test matrix collection for Julia.
 
 * [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
 
+    MatrixDepot
+
+Give access to a wealth of sample and test matrices and accompanying data.
+A set of matrices is generated locally (with arguments controlling the special case).
+Another set is loaded from one of the publicly accessible matrix collections
+`SuiteSparse Matrix Collection` (formerly `University of Florida Matrix Collection`)
+and the `Matrix Market Collection`.
+
+Access is like
+
+    using MatrixDepot
+
+    A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
+    
+    A = ("HB/1138_bus")     # named matrix of the SuiteSpares Collection
+
+   or
+
+    md = mdopen("*/bfly")   # named matrix with some extra data
+    A = md.A
+    co = md.coord
+    tx = md("Gname_10.txt")
+
+   or also
+
+    md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
+    A = md.A
+    b = md.b
+    x = md.x
+## Install
+
 **NOTE:** If you use Windows, you need to install MinGW/MSYS or
   Cygwin in order to use the UF sparse matrix collection interface.
-
-## Install
 
 To install the release version, type
 
@@ -21,33 +50,238 @@ To install the release version, type
 julia> Pkg.add("MatrixDepot")
 ```
 
-## Basic Usage
+## Usage
 
-To see all the matrices in the collection, type
+### Naming
+
+#### Matrix Names
+
+Every Matrix type has a unique name, which is a string of one of the forms:
+
+  1. `"name"` - used for matrices, which are generated locally.
+  2. `"dir/name"` - for all matrices of the `SuiteSparse` collection.
+  3. `"dir/subdir/name"` - for all matrices of the `MatrixMarket` collection.
+
+The names are similar to relative path names, separated by a slash character.
+ The components of the name must not contain any of the characters `"/*[]"`.
+
+#### Groups
+
+a set of matrices may be assigned to predefined or user-defined groups.
+The group names are represented as `Julia` symbols in the form `:symmetric`.
+The group names are therefore restricted to valid `Julia` identifiers, that means
+start with a letter and contain only letters, digits, and `'_'`.
+
+#### Numeric Identifiers
+
+Every matrix has a numeric identifier, which is unique for its area:
+
+  * `builtin(id)` - one of the built-in matrix generators - currently `id ∈ 1:59`.
+  
+  * `user(id)` - a user-defined matrix generator - starting with `1`.
+
+  *  `sp(id)` - one of the `SuiteSparse` collection. The integer ids are the∈
+  'official' ident numbers assigned by the collection. Currently `id ∈ 1:3000`.
+
+  * `mm(id)` - one of the `MatrixMarket` collection. Here id follows the ordering
+  of the index file of the collection. These numbers are probably not stable over time.
+
+### Sets of Matrix Names - Pattern
+
+For some functions it makes sense to have lists of matrix names to operate on, for
+example to select a set matrices with certain properties. These sets are descibed
+by 'Patterns', which are applied to matrix names and also to other matrix properties. The following pattern types are supported:
+
+  1. `"name"` - a string matching exactly a matrix name
+  2. `"shell-pattern"` - a string with shell wildcards `'?', '*', "[...]"` included.
+
+  3. `r"egular expression"` - a regular expression to match the matrix name. 
+
+  4. `:group` - one of the defined group names; match all matrices in the group
+
+  5. `numeric identifiers` - examples `builtin(10)`, `sp(1:5, 7)`, `mm(1)`
+
+  6. `predicate_function` - the name of a predefined or user-defined boolean function of the internal data type `MatrixData`. Example: `issymmetric`.
+
+  7. `abstract vector of sub-patterns` - `OR` - any of the sub-pattern matches
+
+  8. `tuple of sub-patterns` - `AND` - all of the sub-patterns match
+
+  9. `~pattern` - negation of a pattern the \neg - operator ~ may be applied to all patterns
+
+To express `OR` and `AND`, the bitwise operators `|` and `&` can be used.
+
+Examples:
+```
+    "gravity" | "HB/*" & ishermitian & ~sp(20:30)
+```
+
+The set of all known matrices can be expressed as empty tuple `()`. In a shell-
+pattern the double `**` matches also slash characters, in contrast to the single `*`.
+
+A convenient form of a predicate-generator is
+```
+    @pred(expression)
+```
+where expression is a valid `Julia` boolean expression, which may access all 
+properties of `MatrixData` as literal variable names.
+
+Examples:
+
+`@pred(author == "J. Brown")` is essentially the same as `d -> d.author == "J. Brown"`
+
+`@pred(500_000 <= n * m < 1_000_000)` restricts the size of matched matrices.
+
+There is s set of predefined predicate functions including:`(issymmetric, ishermitian, isgeneral, isskew, isreal, iscomplex, isboolean, islocal, isremote,
+isloaded, isunloaded, isbuiltin, isuser, issparse)`
+
+Special predicate generators `keyword(word...)` and `hasdata(symbol...)` allow to
+support keyword-search and check for the existence of meta-data.
+
+## Accessing Data
+
+### Listing matrices with certain properties
+
+    mdlist(pattern) # array of matrix names according to pattern
+    listdata(pattern) # array of `MatrixData`objects according to pattern
+    listnames(pattern) # MD-formatted listing of all names according to pattern
+    listdir("*//*") # MD-group over part before `//` - count all matching pattern
+    listgroups(:groupname) # alist all matrices in group of that name
+
+### Information about matrices
+
+    mdinfo() # overview over database
+    mdinfo(pattern) # individual documentation about matrix(es) matching pattern
+
+### Generating a matrix
+
+`A = matrixdepot("kahan", 10)` generates a matrix using one of the buit-in generators
+
+`md = mdopen("kahan", 10)` returns a handle `md`; matrix can be obtained by
+`A = md.A`
+
+### Accessing Meta-Data
+
+In general the first form is preferrable, if only the pure matrix is required.
+For remote collections no arguments are used.
+ 
+The second form allows to access all types of 'meta-data', which may be available for some local or remote matrices.
+
+Examples:
+
+`md = mdopen("spikes", 5, false); A = md.A; b = md.b; x = md.x`  
+
+`md = mdopen("Rommes/bips07_1998"); A = md.A; v = md.iv; title = md.data.title;
+ nodenames = md("nodename.txt")`
+
+The last example shows, how to access textual meta-data, when the name contains
+`Julia` non-word characters. Also if the metadata-name is stored in a varaible, 
+the last form has to be used.
+
+`meta = metasymbols(md)[2]; sec_matrix = md(meta)`
+
+The function `metasymbols` returns a list of all symbols denoting metadata
+provided by `md`. Wether expressed as symbols or strings does not matter.
+
+The system function `propertynames(md)` returns all data of `md`. That includes 
+size information and metadata.
+
+`propertynames(md.data)` gives an overview about all attributes of the
+`data::MatrixData`, which can for example be used in the `@pred` definitions.
+
+`metasymbols(md)` show all the metadata files accessible using md.
+
+### Backoffice Jobs
+
+The remote data are originally store at the remote web-site of one of the 
+matrix collections. Before they are presented to the user, they are downloaded
+to local disk storage, which serves as a permanent cache.
+
+The occasional user needs not bother about downloads, because that is done in
+the background, if matrix files are missing on the local disk.
+
+The same is true for the data required by `mdinfo(pattern)`. Actually these are
+stored separately only if the full matrix files (which may be huge) are not yet loaded.
+
+#### Bulk Downloads
+
+##### Header Data
+
+A download job to transmit a subset of remote matrix files may be started to
+load header data for all files. Header data include always the matrix type
+according to the matrix-market-format and the size values `m` row-number,
+`n` = columns-number, and `dnz` number of stored data of the main sparse matrix.
+
+`MatrixDepot.loadinfo(pattern)` where `pattern` defines the subset.
+
+That is possible for the `SuiteSparse` collection and the `MatrixMarket` collection. The patterns can always refer to matrix names and id numbers.
+In the case of `SuiteSparse` also metadata `"date"`, `"kind"`, `"m"`, `"n"`, `"nnz"` are available and can be used, before individual matrix data
+have been loaded. They are contained in the index file (at [TAMU](https://sparse.tamu.edu).
+For `MatrixMarket`collection, patterns must restrict to names and id numbers.
+
+In general it would be possible to `loadinfo("**")` to load all header data. That
+would last maybe an hour and generate some traffic for the remote sites.
+Nevertheless it is not necessary to do so, if you don't need the header data
+for the following task.
+
+##### Complete Data Files
+
+**`MatrixDepot.load(pattern)`** loads all data files for the patterns.
+In the patterns can only refer to attributes, which are already available.
+In the case of `SuiteSparse` that includes the size info `"date"`, `"kind"`,
+`"m"`, `"n"`, and `"nnz"` and all additional attributes loaded in the previous step,
+which include `"author"`, `"title"`, `"notes"`, and keywords.
+In the case of `MatrixMarket` you can only refer to `"m"`, `"n"`, and `"dnz"`, only
+if previously loaded with the header data.
+
+Please do not:
+`MatrixDepot.load("**")`. That would require some day(s) to finish and include
+some really big data files (~100GB), which could be more than your disks can hold.
+
+Make a reasonable selection, before you start a bulk download.
+Local and already loaded matrices are skipped automatically.
+
+Example:
+
+`MatrixDepot(sp(:), @pred(nnz < 100_000))` to download only problems with given
+number of stored entries in the main matrix.
+
+
+## Sample Session
+
+To see an overview of the matrices in the collection, type
 
 ```julia
 julia> using MatrixDepot
-julia> matrixdepot()
+julia> mdinfo()
+  Currently loaded Matrices
+  –––––––––––––––––––––––––––
 
-Matrices:
-   1) baart            2) binomial         3) blur             4) cauchy        
-   5) chebspec         6) chow             7) circul           8) clement       
-   9) companion       10) deriv2          11) dingdong        12) fiedler       
-  13) forsythe        14) foxgood         15) frank           16) golub         
-  17) gravity         18) grcar           19) hadamard        20) hankel        
-  21) heat            22) hilb            23) invhilb         24) invol         
-  25) kahan           26) kms             27) lehmer          28) lotkin        
-  29) magic           30) minij           31) moler           32) neumann       
-  33) oscillate       34) parter          35) pascal          36) pei           
-  37) phillips        38) poisson         39) prolate         40) randcorr      
-  41) rando           42) randsvd         43) rohess          44) rosser        
-  45) sampling        46) shaw            47) spikes          48) toeplitz      
-  49) tridiag         50) triw            51) ursell          52) vand          
-  53) wathen          54) wilkinson       55) wing          
-Groups:
-  all           data          eigen         ill-cond    
-  inverse       pos-def       random        regprob     
-  sparse        symmetric
+builtin(#)                                                                                                                
+–––––––––– ––––––––––– ––––––––––– ––––––––––– –––––––––– –––––––––––– ––––––––––– ––––––––––– ––––––––––––– ––––––––––––
+1 baart    7 circul    13 fiedler  19 gravity  25 invhilb 31 magic     37 parter   43 randcorr 49 shaw       55 ursell
+2 binomial 8 clement   14 forsythe 20 grcar    26 invol   32 minij     38 pascal   44 rando    50 smallworld 56 vand
+3 blur     9 companion 15 foxgood  21 hadamard 27 kahan   33 moler     39 pei      45 randsvd  51 spikes     57 wathen
+4 cauchy   10 deriv2   16 frank    22 hankel   28 kms     34 neumann   40 phillips 46 rohess   52 toeplitz   58 wilkinson
+5 chebspec 11 dingdong 17 gilbert  23 heat     29 lehmer  35 oscillate 41 poisson  47 rosser   53 tridiag    59 wing
+6 chow     12 erdrey   18 golub    24 hilb     30 lotkin  36 parallax  42 prolate  48 sampling 54 triw
+
+user(#)
+–––––––––
+1 randsym
+
+Groups                                                                                      
+–––––– ––––––– ––––– –––– ––––– ––––– ––––––– ––––––– –––––– –––––– ––––––– –––––– –––––––––
+all    builtin local user eigen graph illcond inverse posdef random regprob sparse symmetric
+
+Suite Sparse of
+–––––––––––– ––––
+2770         2833
+
+MatrixMarket of 
+–––––––––––– –––
+488          498
+
 ```
 
 We can generate a 4-by-4 Hilbert matrix by typing
@@ -61,10 +295,10 @@ julia> matrixdepot("hilb", 4)
  0.25      0.2       0.166667  0.142857
 ```
 
-We can type the matrix name to get help.
+We can type the matrix name to get documentation about the matrix.
 
 ```julia
-julia> matrixdepot("hilb")
+julia> mdinfo("hilb")
      Hilbert matrix
     ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -100,7 +334,7 @@ julia> matrixdepot("hilb", Float16, 5, 3)
  0.25     0.19995  0.16663
  0.19995  0.16663  0.14282
 
-julia> matrixdepot("hilb", Rational, 4)
+julia> matrixdepot("hilb", Rational{Int}, 4)
 4x4 Array{Rational{T<:Integer},2}:
  1//1  1//2  1//3  1//4
  1//2  1//3  1//4  1//5
@@ -108,169 +342,57 @@ julia> matrixdepot("hilb", Rational, 4)
  1//4  1//5  1//6  1//7
 ```
 
-Matrices can be accessed by number, range or a mixture of numbers and
-ranges.
+Matrices can be accessed by a variety of patterns and composed patterns.
+Integer numbers refer to the ident numbers of the SuiteSparse collection.
 
 ```julia
-julia> matrixdepot(5)
-"chow"
+julia> mdlist(sp(1))    # here sp(1) is the ident number of the SuiteSparse collection
+list(1)
+–––––––––––
+HB/1138_bus
 
-julia> matrixdepot(5:10)
-6-element Array{AbstractString,1}:
- "chow"    
- "circul"  
- "clement"
- "deriv2"  
- "dingdong"
- "fiedler"
+julia> listnames(builtin(1, 5:10))    # the internal numbering of the builtin-functions
+list(7)
+––––––– –––––––– –––– –––––– ––––––– ––––––––– ––––––
+baart   chebspec chow circul clement companion deriv2
 
-julia> matrixdepot(1:4, 6, 10:15)
-11-element Array{AbstractString,1}:
- "baart"   
+julia> mdlist(builtin(1:4, 6, 10:15) | user(1:10) )
+12-element Array{String,1}:
+ "baart"
  "binomial"
- "cauchy"  
- "chebspec"
- "circul"  
+ "blur"
+ "cauchy"
+ "chow"
+ "deriv2"
+ "dingdong"
+ "erdrey"
  "fiedler"
  "forsythe"
  "foxgood"
- "frank"   
- "gravity"
- "grcar"
+ "rand
 ```
 
-We can type a group name to see all the matrices in that group.
+While the `listnames` command renders the output as markdown table, the internal
+`mdlist` produces an array of valid matrix names.
+
+We can type a group name to see all the matrices in that group. Group names are
+always written as symbols to distinguish them form matrix names and pattern, which
+are always strings.
 
 ```julia
-julia> matrixdepot("symmetric")
-21-element Array{ASCIIString,1}:
- "cauchy"   
- "circul"   
- "clement"  
- "dingdong"
- "fiedler"  
- "hankel"   
- "hilb"     
- "invhilb"  
- "kms"      
- "lehmer"   
- ⋮          
- "oscillate"
- "pascal"   
- "pei"      
- "poisson"  
- "prolate"  
- "randcorr"
- "tridiag"  
- "wathen"   
- "wilkinson"
+julia> listnames(:symmetric)
+list(22)
+–––––––– –––––––– ––––––– –––––– ––––––––– –––––––– ––––––– –––––––––
+cauchy   dingdong hilb    lehmer oscillate poisson  randsym wilkinson
+circul   fiedler  invhilb minij  pascal    prolate  tridiag
+clement  hankel   kms     moler  pei       randcorr wathen
+
 ```
 
 ## Extend Matrix Depot
 
-We can add more matrices to Matrix Depot by downloading them from UF
-sparse matrix collection and Matrix Market. See
-[here](http://matrixdepotjl.readthedocs.org/en/latest/interface.html)
-for more details.
-In addition,
-we can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
+We can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
 and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/latest/properties.html).
-
-
-## Interface to the UF Sparse Matrix Collection
-
-Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection_name + '/' + matrix_name``, to download a test matrix from the University of
-Florida Sparse Matrix Collection:
-http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html.  For
-example:
-
-```julia
-julia> matrixdepot("HB/1138_bus", :get)
-```
-
-Use ``matrixdepot(collection_name/*, :get )`` to download a group of all the matrices in ``collection_name`` from UF sparse matrix collection. For example:
-
-```julia
-julia> matrixdepot("MathWorks/*", :get)
-```
-
-When download is complete, we can check matrix information using
-
-```julia
-julia> matrixdepot("HB/1138_bus")
-%%MatrixMarket matrix coordinate real symmetric
-%----------------------------------------------------------------------
-% UF Sparse Matrix Collection, Tim Davis
-% http://www.cise.ufl.edu/research/sparse/matrices/HB/1138_bus
-% name: HB/1138_bus
-% [S ADMITTANCE MATRIX 1138 BUS POWER SYSTEM, D.J.TYLAVSKY, JULY 1985.]
-% id: 1
-% date: 1985
-% author: D. Tylavsky
-% ed: I. Duff, R. Grimes, J. Lewis
-% fields: title A name id date author ed kind
-% kind: power network problem
-%---------------------------------------------------------------------
-```
-and generate it with the Symbol ``:r`` or ``:read``.
-
-```julia
-julia> matrixdepot("HB/1138_bus", :r)
-1138x1138 Symmetric{Float64,SparseMatrixCSC{Float64,Int64}}:
- 1474.78      0.0       0.0     …   0.0       0.0         0.0    0.0  
-    0.0       9.13665   0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0      69.6147      0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-   -9.01713   0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0     …   0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0      -3.40599   0.0         0.0       0.0         0.0    0.0  
-    ⋮                           ⋱             ⋮                       
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0     …   0.0     -24.3902      0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0    0.0  
-    0.0       0.0       0.0        26.5639    0.0         0.0    0.0  
-    0.0       0.0       0.0     …   0.0      46.1767      0.0    0.0  
-    0.0       0.0       0.0         0.0       0.0     10000.0    0.0  
-    0.0       0.0       0.0         0.0       0.0         0.0  117.647
-```
-
-Note ``matrixdepot()`` displays all the matrices in the collection,
-including the newly downloaded matrices.
-
-```julia
-julia> matrixdepot()
-
-Matrices:
-   1) baart            2) binomial         3) blur             4) cauchy        
-   5) chebspec         6) chow             7) circul           8) clement       
-   9) companion       10) deriv2          11) dingdong        12) fiedler       
-  13) forsythe        14) foxgood         15) frank           16) golub         
-  17) gravity         18) grcar           19) hadamard        20) hankel        
-  21) heat            22) hilb            23) invhilb         24) invol         
-  25) kahan           26) kms             27) lehmer          28) lotkin        
-  29) magic           30) minij           31) moler           32) neumann       
-  33) oscillate       34) parter          35) pascal          36) pei           
-  37) phillips        38) poisson         39) prolate         40) randcorr      
-  41) rando           42) randsvd         43) rohess          44) rosser        
-  45) sampling        46) shaw            47) spikes          48) toeplitz      
-  49) tridiag         50) triw            51) ursell          52) vand          
-  53) wathen          54) wilkinson       55) wing            56) HB/1138_bus   
-
-Groups:
-  all           data          eigen         ill-cond    
-  inverse       pos-def       random        regprob     
-  sparse        symmetric  
-```
-
-The NIST Matrix Market interface is similar. See
-[documentation](http://matrixdepotjl.readthedocs.org/en/latest/interface.html#interface-to-nist-matrix-market)
-for more details.
-
 
 ## References
 

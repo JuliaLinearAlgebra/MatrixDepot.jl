@@ -2,308 +2,88 @@
 # helper functions
 ########################
 
-# return a list of file names without suffix in the directory
-# e.g. filenames(mm) and filenames(uf)
-function filenames(directory::AbstractString)
-
-    namevec = AbstractString[]
-
-    matdatadir = joinpath(dirname(@__FILE__),"..", "data", "$directory")
-    matvec = readdir(matdatadir)
-    for file in matvec
-        filename = split(file, '.')[1]
-        push!(namevec, filename)
-    end
-    return namevec
-end
-
-# return the path to a folder inside the data directory
-data_dir(name::AbstractString) = joinpath(dirname(@__FILE__), "..", "data", name)
-user_file(name::AbstractString) = string(MY_DEPOT_DIR, "/$(name)")
-
-# return a list of matrix data name in the collection
-function matrix_data_name_list()
-    matrices = AbstractString[]
-    if isdir(data_dir("uf"))
-        for col in filenames("uf")
-            for mat in filenames("uf/$(col)")
-                push!(matrices, string(col, '/', mat))
-            end
-        end
-    end
-
-    if isdir(data_dir("mm"))
-        for col in filenames("mm")
-            for d in filenames("mm/$(col)")
-                for mat in filenames("mm/$(col)/$(d)")
-                    push!(matrices, string(col, '/', d, '/', mat))
-                end
-            end
-        end
-    end
-    matrices
-end
-
-
-# return a list of matrix name in the collection
-function matrix_name_list()
-    matrices = sort(collect(keys(matrixdict)))
-    append!(matrices, matrix_data_name_list())
-    matrices
-end
-
-# return a list of groups in the collection
-_matrix_class() = collect(keys(matrixclass))
-_user_matrix_class() = collect(keys(usermatrixclass))
-
-function group_list()
-    groups = _matrix_class()
-    try
-        append!(groups, _user_matrix_class())
-    catch
-        nothing
-    end
-    push!(groups, "data")
-    push!(groups, "all")
-    sort(groups)
-end
-
-##########################
-# display information
-##########################
-
-# print info about all matrices in the collection
-"""
-`matrixdepot()`
-
-Print all the matrices and groups in the collection.
-"""
-function matrixdepot()
-    # Print information strings
-    println()
-    println("Matrices:")
-
-    matrices = matrix_name_list()
-
-    i = 1
-    for (index, mat) in enumerate(matrices)
-        if i < 4 && length(mat) < 14
-            i += 1
-            @printf "%4d) %-14s" index mat
-        else
-            i = 1
-            @printf "%4d) %-14s\n" index mat
-        end
-    end
-    println()
-
-    println("Groups:")
-
-    groups = group_list()
-
-    j = 1
-    for name in groups
-        if j < 4 && length(name) < 12
-            j += 1
-            @printf "  %-12s" name
-        else
-            j = 1
-            @printf "  %-12s\n" name
-        end
-    end
-    println()
-end
-
-# Return information strings if name is a matrix name
-# and return a list of matrix names if name is a group.
-"""
-`matrixdepot(name)`
-
-Return the documentation if `name` is a matrix name;
-return a list of matrix names if `name` is a group name.
-"""
-function matrixdepot(name::AbstractString)
-    # name is the matrix name or matrix properties
-    if name in keys(matrixdict)
-        eval(Meta.parse("Docs.@doc $(matrixdict[name])", raise = false))
-    elseif name in _matrix_class()
-        matrices = matrixclass[name]
-        return sort(matrices)
-    elseif '/' in name  # print matrix data info
-
-        namelist = split(name, '/')
-        if length(namelist) == 2
-            ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2])
-        else
-            mmreader(data_dir("mm"), name)
-        end
-
-    elseif name == "data" # deal with the group "data"
-        return matrix_data_name_list()
-    elseif name == "all" # all the matrix names in the collection
-        return matrix_name_list()
-    elseif name in _user_matrix_class()
-        matrices = usermatrixclass[name]
-        return sort(matrices)
-    else
-        throw(ArgumentError("No information is available for \"$(name)\"."))
-    end
-end
-
-
-#############################
-# matrix generators
-#############################
+argerr(s::AbstractString) = throw(ArgumentError(s))
+daterr(s::AbstractString) = throw(DataError(s))
+parserr(s::AbstractString) = throw(Meta.ParseError(s))
 
 """
-`matrixdepot(matrix name, p1, p2...)`
+    listgroups()
 
-Return a matrix specified by the query string `matrix name`.
-`p1, p2...` are input parameters depending on `matrix name`.
+Return a list of available groups (array of `Symbol`).
 """
-matrixdepot(name::AbstractString, args...) = matrixdict[name](args...)
-
-# generate the required matrix
-# method = :read   (or :r) read matrix data
-#          :get    (or :g) download matrix data
-#          :search (or :s) search collection information
-"""
-`matrixdepot(data, symbol)`
-
-Generate the data if `symbol = :r (or :read)`; download the data if `symbol = :g (or :get)`.
-"""
-function matrixdepot(name::AbstractString, method::Symbol; meta::Bool = false)
-    if method == :r || method == :read
-        namelist = split(name, '/')
-        if  length(namelist) == 2
-            ufreader(string(data_dir("uf"), '/', namelist[1]), namelist[2], info = false, meta = meta)
-        else
-            mmreader(data_dir("mm"), name, info = false)
-        end
-
-    elseif method == :g || method == :get
-        MatrixDepot.get(name)
-    elseif method == :s || method == :search
-        MatrixDepot.search(name)
-    else
-        throw(ArgumentError("unknown symbol $method.
-              use :read (or :r) to read matrix data;
-              use :get  (or :g) to download matrix data;
-              use :search (or :s) to search for collection information."))
-    end
+function listgroups()
+    groups = Symbol[]
+    append!(groups, sort!(collect(keys(SUBSETS))))
+    append!(groups, sort!(collect(keys(MATRIXCLASS))))
+    append!(groups, sort!(collect(keys(usermatrixclass))))
+    groups
 end
-
-
-#########################
-# access matrices
-#########################
-
-
-"""
-`matrixdepot(number, range...)`
-
-Access matrices by number, range or a mixture of numbers and ranges.
-"""
-function matrixdepot(num::Integer)
-    matrixstrings = matrix_name_list()
-    n = length(matrixstrings)
-    if num > n
-        throw(ArgumentError("There are $(n) parameterized matrices, but you asked for the $(num)-th."))
-    end
-    return matrixstrings[num]
-end
-
-function matrixdepot(ur::UnitRange)
-    matrixnamelist = AbstractString[]
-    for i in ur
-        push!(matrixnamelist, matrixdepot(i))
-    end
-    return matrixnamelist
-end
-
-IntOrUnitRange = Union{Integer, UnitRange}
-
-function matrixdepot(vs::IntOrUnitRange...)
-    matrixnames = AbstractString[]
-    for i in vs
-        if typeof(i) <: Integer
-            push!(matrixnames, matrixdepot(i))
-        else
-            append!(matrixnames, matrixdepot(i))
-        end
-    end
-    return matrixnames
-end
-
-# Return a list of matrix names with common properties
-# when multiple properties are given.
-function matrixdepot(props::AbstractString...)
-    common = matrixdepot(props[1])
-    for prop in props[2:end]
-        common = intersect(common, matrixdepot(prop))
-    end
-    return common
-end
-
 
 #######################
 # matrix group
 #######################
 
-#add new group
-function addgroup(ex)
-    isdir(MY_DEPOT_DIR) || error("can not find directory '$MY_DEPOT_DIR'")
-    propname = string(ex.args[1])
-    !(propname in group_list()) || throw(ArgumentError("$propname is an existing group."))
+# write one property association
+function propline(io::IO, propname, matnames)
+    write(io, repr(propname))
+    write(io, " => [")
+    for str in matnames
+        write(io, repr(str))
+        write(io, ", ")
+    end
+    write(io, "],\n")
+end
 
-    for matname in eval(ex.args[2])
-        matname in matrix_name_list() || throw(ArgumentError("$matname is not in the collection."))
-    end
+# add, remove, or replace complete user group
+function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
+    prop in keys(MATRIXCLASS) && daterr("$prop can not be modified.")
 
-    user = joinpath(user_file("group.jl"))
-    s = read(user, String)
-    iofile = open(user, "w")
-    newprop = s[1:end-4] * "\""  * propname * "\" => ["
-    for str in eval(ex.args[2])
-        newprop *= "\"" * str * "\", "
+    user = abspath(MY_DEPOT_DIR, "group.jl")
+    s = read(user, String)          # read complete file into s
+    rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
+    ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
+    if ppos !== nothing
+        start_char = first(ppos) - 1    # the start of the line
+        end_char = last(ppos)           # the end of the line
+    else
+        ppos = findnext(r"\);", s, 1)
+        start_char = ppos !== nothing ? first(ppos) - 1 : length(s)
+        end_char = start_char
     end
-    newprop = newprop * "],\n" * s[end-3:end]
-    try
-        write(iofile, newprop);
-    finally
-        close(iofile)
+    if mats !== nothing
+        mats = sort(mats)
     end
+    open(user, "w") do io
+        write(io, s[1:start_char])
+        if mats !== nothing
+            propline(io, prop, mats)
+        end
+        write(io, s[end_char+1:end])
+    end
+    if mats !== nothing
+        usermatrixclass[prop] = mats
+    else
+        delete!(usermatrixclass, prop)
+    end
+    return nothing
 end
 
 "add a group to Matrix Depot"
 macro addgroup(ex)
-    esc(addgroup(ex))
+    name = Symbol(ex.args[1])
+    esc(modgroup(name, eval(ex.args[2])))
 end
 
-# remove an added group
-function rmgroup(ex)
-    propname = string(ex)
-    !(propname in keys(matrixclass)) || throw(ArgumentError("$propname can not be removed."))
-    propname in keys(usermatrixclass) || throw(ArgumentError("Can not find group $propname."))
-
-    user = joinpath(user_file("group.jl"))
-    s = read(user, String)
-    iofile = open(user, "w")
-    rg = Regex("""\"""" * eval(propname) * ".+")
-    key = coalesce(findfirst(rg, s), 0:-1) # locate the propname in user.jl to remove.
-    start_char = key[1] # the start of the line
-    end_char = key[end] # the end of the line
-    s = s[1:start_char - 2] * s[end_char+1:end]
-    try
-        write(iofile, s);
-    finally
-        close(iofile)
-    end
+"add or replace group in Matrix Depot"
+macro modifygroup(ex)
+    name = Symbol(ex.args[1])
+    esc(modgroup(name, eval(ex.args[2])))
 end
 
 "remove an added group from Matrix Depot"
 macro rmgroup(ex)
-    esc(rmgroup(ex))
+    name = Symbol(ex)
+    esc(modgroup(name, nothing))
 end
 
 ################################
@@ -315,24 +95,419 @@ abstract type FunctionName <: MatrixGenerator end
 abstract type Group <: MatrixGenerator end
 
 
-include_generator(::Type{FunctionName}, fn::AbstractString, f::Function) = (matrixdict[fn] = f)
+function include_generator(::Type{FunctionName}, fn::AbstractString, f::Function)
+    (haskey(MATRIXDICT, fn) ? MATRIXDICT : USERMATRIXDICT)[fn] = f
+end
 
-function include_generator(::Type{Group}, groupname::AbstractString, f::Function)
-    if groupname in keys(matrixclass)
-        push!(matrixclass[groupname], fname(f))
-    elseif groupname in keys(usermatrixclass)
-        push!(usermatrixclass[groupname], fname(f))
+function addtogroup(dir::Dict, groupname::Symbol, f::Function)
+    if groupname in keys(dir)
+        fn = fname(f)
+        gr = dir[groupname]
+        fn in gr || push!(gr, fn)
+        true
     else
-        error("$(groupname) is not a group in MatrixDepot, use
-              @addgroup to add this group")
+        false
     end
+end
+function include_generator(::Type{Group}, groupname::Symbol, f::Function)
+    addtogroup(MATRIXCLASS, groupname, f) ||
+    addtogroup(usermatrixclass, groupname, f) ||
+    argerr("$(groupname) is not a group in MatrixDepot, use
+              @addgroup to add this group")
 end
 
 "return the name of the function `f` as a string."
 function fname(f::Function)
-    for (key, value) in matrixdict
-        if value == f
-            return key
+    for (key, value) in MATRIXDICT
+        value == f && return key
+    end
+    for (key, value) in USERMATRIXDICT
+        value == f && return key
+    end
+    "unknown-function"
+end
+
+"""
+listdir([db,] p::AbstractString)
+
+list directories and the number of matrices contained in them.
+get an overview of the count of names down directories.
+return a list with summary information for directories in matrix name space.
+The input argument is split into 2 patterns by the first double slash `"//"`.
+The whole string (with multiple slashes reduced to single slashes) determines
+a subset of all matrix names. They are then grouped by the first pattern and
+for each different group value the number of names in the subset is counted.
+A final `/` is replaced by `"//**"`.
+
+E.g.
++ `listdir("/*")`     - count names without a `/`.
++ `listdir("/k*")`    - count names without `/` starting with `k*`.
++ `listdir("*//*")`   - count names with one directory part (sp-collection)
++ `listdir("*/*//*")` - count names with two directory parts (mm-collection)
++ `listdir("*//*/*")` - count names with two directory parts (mm-collection)
++ `listdir("Har*//*/*")` - restrict to directories starting with "Har"
++ `listdir("Har*/*//*")` - all subdirectoreis of the previous
+"""
+listdir(p::AbstractString, xp::Pattern=()) = listdir(MATRIX_DB, p, xp)
+function listdir(db::MatrixDatabase, p::AbstractString, xp::Pattern)
+    check_symbols(xp)
+    r = findfirst(r"/+", p)
+    if r !== nothing && first(r) == 1
+        p = p[last(r)+1:end]
+        depth = 0
+    else
+        m = match(r"^(([^/]+/)+)(/|$)", p)
+        depth = m !== nothing ? count(x == '/' for x in m.captures[1]) : -1
+    end
+    p = replace(p, r"//+" => '/')
+    endswith(p, '/') && ( p = string(p, "**") )
+    r = shell_to_regex(p, false)
+    if depth >= 0
+        length(p) == 1 && ( p = ".*/" )
+        listdir(db, r & xp, depth)
+    else
+        argerr("pattern '$p' needs '//' in the middle or '/' at start or end")
+    end
+end
+function listdir(db::MatrixDatabase, r::Pattern, depth::Int)
+    result = Dict{AbstractString, Int}()
+    f(x, n) = string(join(x[1:n], '/'), "/*" ^ max(length(x) - n, 0))
+    for name in mdlist(r)
+        li = split(name, '/')
+        if length(li) >= depth
+            key = f(li, depth)
+            result[key] = get!(result, key, 0) + 1
         end
+    end
+    sort!([string(k, " - (", v, ")") for (k,v) in result])
+end
+
+"""
+    listdata([db,] p::Pattern)
+Return an array of `MatrixData` objects according to matched patterns.
+"""
+listdata(p::Pattern) = listdata(MATRIX_DB, p)
+listdata(db::MatrixDatabase, p::Pattern) = mdata.(mdlist(db, p))
+
+"""
+    mdlist([db,] p::Pattern)
+return a vector of full matrix names where name or alias match given pattern.
+`p` can be one of the following:
++ a plain string (without characters `*` and `?`) which must match exactly
++ a string containing `*` and `?` acting like a shell path pattern
++ a regular expression
++ an integer matching equivalent to the alias string `"#\$p"`
++ a range of integers
++ a group name expressed as a symbol e.g. `:local`, `:all`, `:illcond`, `posdef`
++ the name of a predicate function `f(::MatrixData)::Bool`, e.g. `symmetric`, ...
++ a vector of patterns meaning the union
++ a tuple of patterns meaning the intersection
+"""
+mdlist(p::Pattern) = mdlist(MATRIX_DB, p)
+is_all(res::Vector) = length(res) == 1 && res[1] == ""
+
+function mdlist(db::MatrixDatabase, p::Pattern)
+    res = list!(db, [""], p)
+    is_all(res) ? list_all(db) : res
+end
+function list!(db::MatrixDatabase, res::Vector{String}, r::Regex)
+    isempty(res) && return res
+    if is_all(res)
+        empty!(res)
+        for name in keys(db.data)
+            if match(r, name) !== nothing
+                push!(res, name)
+            end
+        end
+        sort!(res)
+    else
+        for i = 1:length(res)
+            name = res[i]
+            if match(r, name) === nothing
+                res[i] = ""
+            end
+        end
+        for i = length(res):-1:1
+            if res[i] == ""
+                deleteat!(res, i)
+            end
+        end
+    end
+    res
+end
+
+function list!(db::MatrixDatabase, res::Vector{String}, p::Symbol)
+    isempty(res) && return res
+    x = if haskey(SUBSETS, p)
+        SUBSETS[p](db)
+    elseif haskey(MATRIXCLASS, p)
+        MATRIXCLASS[p]
+    elseif haskey(usermatrixclass, p)
+        usermatrixclass[p]
+    else
+        argerr("unknown group name '$p'")
+        # EMPTY_PATTERN
+    end
+    if is_all(res)
+        empty!(res)
+        append!(res, sort(x))
+    else
+        intersect!(res, x)
+    end
+end
+
+"""
+    shell_to_regex
+
+return a regular expression if shell pattern characters `"*?]"` are contained in
+string, otherwise return string.
+If no `'/'` is contained in p and p is not "*", insert `"(.*/)?"` in regular expression.
+"""
+function shell_to_regex(p::AbstractString, retain_pure::Bool)
+    regex(p) = Regex(string('^', p, '$'))
+    p = replace(p, r"//+" => '/')
+    # p = p == "*" || '/' in p ? p : string("(**/)\x03", p)
+    if occursin(r"[*?.]", p)
+        p = replace(p, "**" => "\x01\x02")
+        p = replace(p, '*' => "[^/]*")
+        p = replace(p, '?' => "[^/]")
+        p = replace(p, '.' => "[.]")
+        p = replace(p, '\x01' => '.')
+        p = replace(p, '\x02' => '*')
+        p = replace(p, '\x03' => '?')
+        regex(p)
+    else
+        retain_pure ? p : regex(p)
+    end
+end
+
+function singlist!(db::MatrixDatabase, res::Vector{String}, p::AbstractString)
+    if is_all(res)
+        if haskey(db.data, p)
+            res[1] = p
+            res
+        else
+            empty!(res)
+        end
+    else
+        if p in res
+            empty!(res)
+            push!(res, p)
+        else
+            empty!(res)
+        end
+    end
+end
+
+function list!(db::MatrixDatabase, res::Vector{String}, p::AbstractString)
+    isempty(res) && return res
+    r = shell_to_regex(p, true)
+    r isa Regex ? list!(db, res, r) : singlist!(db, res, r)
+end
+
+list!(db::MatrixDatabase, res::Vector{String}, p::Alias) = list!(db, res, aliasresolve(db, p))
+
+# If res is symbolically [""], populate it with the set of all available names
+function resall!(db::MatrixDatabase, res::Vector{String})
+    if is_all(res)
+        x = list_all(db)
+        resize!(res, length(x))
+        copyto!(res, x)
+    end
+    res
+end
+
+function list!(db::MatrixDatabase, res::Vector{String}, p::Not)
+    isempty(res) && return res
+    cres = copy(res)
+    resall!(db, res)
+    setdiff!(res, list!(db, cres, p.pattern))
+end
+
+# logical OR
+function list!(db::MatrixDatabase, res::Vector{String}, r::AbstractVector)
+    isempty(r) && return empty!(res)
+    check_symbols(r)
+    isempty(res) && return res
+    length(r) == 1 && return list!(db, res, r[1])
+    cres = copy(res)
+    list!(db, res, r[1])
+    for y in r[2:end]
+        union!(res, list!(db, copy(cres), y))
+    end
+    sort!(res)
+end
+
+list!(db::MatrixDatabase, res::Vector{String}, ::Tuple{}) = res
+
+# logical AND 
+function list!(db::MatrixDatabase, res::Vector{String}, r::Tuple)
+    isempty(res) && return res
+    check_symbols(r)
+    for y in sort_by_type(r)
+        list!(db, res, y)
+        isempty(res) && break
+    end
+    res
+end
+
+function list!(db::MatrixDatabase, res::Vector{String}, pred::Function)
+    isempty(res) && return res
+    resall!(db, res)
+    filter!(k -> pred(db.data[k]), res)
+end
+
+# return a vector with re-arranged the contents of itr
+# the elements of its must be of type Pattern
+function sort_by_type(itr)
+    f(p::AbstractString) = true
+    f(p::Symbol) = true
+    f(p::AbstractVector) = all(f.(p))
+    f(p::Tuple) = all(f.(p))
+    f(p::Pattern) = false
+    vall = collect(itr)
+    vend = filter(!f, vall)
+    filter!(f, vall)
+    append!(vall, vend)
+    vall
+end
+
+## internal list special cases
+list_all(db::MatrixDatabase) = sort!(String.(collect(keys(db.data))))
+list_local(db::MatrixDatabase) = union(collect(keys(MATRIXDICT)), keys(USERMATRIXDICT))
+list_builtin(db::MatrixDatabase) = collect(keys(MATRIXDICT))
+list_user(db::MatrixDatabase) = collect(keys(USERMATRIXDICT))
+
+const SUBSETS = Dict(
+                     :local => list_local,
+                     :builtin => list_builtin,
+                     :user => list_user,
+                     :all => list_all,
+)
+
+function verify_loaded(db::MatrixDatabase, data::RemoteMatrixData)
+    if isempty(data.metadata) || !isfile(matrixfile(data))
+        loadmatrix(data)
+    end
+    data
+end
+verify_loaded(db::MatrixDatabase, data::MatrixData) = data
+
+function verify_loadinfo(data::RemoteMatrixData)
+    file = matrixfile(data)
+    if !isfile(file)
+        file = matrixinfofile(data)
+        if !isfile(file)
+            loadinfo(data)
+        end
+    end
+    file
+end
+
+mdatav(db::MatrixDatabase, p::Pattern) = verify_loaded(db, mdata(db, p))
+
+"""
+    load([db,] pattern)
+
+Load data from remote repository for all problems matching pattern.
+
+Return the number of successfully loaded matrices. 
+"""
+load(p::Pattern) = load(MATRIX_DB, p)
+load(db::MatrixDatabase, p::Pattern) = _load(db, loadmatrix, p)
+
+"""
+    loadinfo([db,] pattern)
+"""
+loadinfo(p::Pattern) = loadinfo(MATRIX_DB, p)
+loadinfo(db::MatrixDatabase, p::Pattern) = _load(db, loadinfo, p)
+
+function _load(db::MatrixDatabase, loadfunc::Function, p::Pattern)
+    check_symbols(p)
+    n = 0
+    for name in mdlist(p)
+        try
+            n += loadfunc(db.data[name])
+        catch ex
+            ex isa InterruptException && rethrow()
+            @warn "could not load $name: $ex"
+        end
+    end
+    n
+end
+
+"""
+    mdopen([db,] pattern)
+    mdopen(f, [db,] pattern)
+
+Return `MatrixDescriptor` object, which can be used with data access functions.
+
+Make sure that data files are loaded.
+Keeps a cache of already delivered matrices and metadata.
+If the pattern has not a unique resolution, an error is thrown.
+"""
+mdopen(p::Pattern, args...) = mdopen(MATRIX_DB, p, args...)
+function mdopen(db::MatrixDatabase, p::Pattern, args...)
+    _mdopen(mdatav(db, p), args...)
+end
+
+mdopen(f::Function, p::Pattern, args...) = mdopen(f, MATRIX_DB, p, args...)
+function mdopen(f::Function, db::MatrixDatabase, p::Pattern, args...)
+    data = _mdopen(mdatav(db, p), args...)
+    f(data)
+end
+
+"""
+    mdata(db, pattern)
+
+Return unique `MatrixData` object according to pattern.
+"""
+mdata(p::Pattern) = mdata(MATRIX_DB, p)
+function mdata(db::MatrixDatabase, p::Pattern)
+    check_symbols(p)
+    li = mdlist(db, p)
+    length(li) == 0 && daterr("no matrix according to $p found")
+    length(li) > 1  && daterr("pattern not unique: $p -> $li")
+    db.data[li[1]]
+end
+
+"""
+    metadata([db, ], Union{MatrixDescriptor,MatrixData})
+
+Return copy of list of metadata names.
+"""
+metadata(mdesc::MatrixDescriptor) = metadata(mdesc.data)
+metadata(data::RemoteMatrixData) = copy(data.metadata)
+metadata(data::MatrixData) = String[]
+
+_mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
+function _mdopen(data::GeneratedMatrixData, args...)
+    md = MatrixDescriptor(data, args...)
+    md.A # trigger generation of data and fill cache
+    md
+end
+
+###
+# convenience API
+###
+
+"""
+    matrixdepot(p::Pattern, args...)
+
+Return matrix according to pattern or local matrix according to name and arguments.
+
+If not loaded, load remote matrix first.
+`p` must be a unique pattern (match only one name). The presence of arguments makes
+sense only if the pattern matches the name of a generated (=local) matrix.
+
+Only the matrix part is delivered, also in the local cases, where the underlying
+function returns a structure containing matrix and vectors.
+Use `md = mdopen; md.A, md.b ...`
+to access those objects.
+"""
+matrixdepot(p::Pattern, args...) = matrixdepot(MATRIX_DB, p, args...)
+function matrixdepot(db::MatrixDatabase, p::Pattern, args...)
+    mdopen(db, p, args...) do md
+        md.A
     end
 end

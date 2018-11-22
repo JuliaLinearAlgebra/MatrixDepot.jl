@@ -1,4 +1,13 @@
-matrixdict = Dict("hilb" => hilb, "hadamard" => hadamard,
+"""
+    user-defined matrix generators
+    to be populated with `include_generator` in user source code
+"""
+const USERMATRIXDICT = Dict{String,Function}()
+
+"""
+Associate names with matrix-generating functions
+"""
+const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
                   "cauchy" => cauchy, "circul" => circul,
                   "dingdong" => dingdong, "frank" => frank,
                   "invhilb" => invhilb, "forsythe" => forsythe,
@@ -28,46 +37,95 @@ matrixdict = Dict("hilb" => hilb, "hadamard" => hadamard,
                   "spikes" => spikes, "ursell" => ursell,
                   "parallax" => parallax, "erdrey" => erdrey,
                   "gilbert" => gilbert, "smallworld" => smallworld
-                  );
+ )
 
-matrixclass = Dict("symmetric" => ["hilb", "cauchy", "circul", "dingdong",
-                                   "invhilb", "moler", "pascal", "pei",
-                                   "clement", "fiedler", "minij", "tridiag",
-                                   "lehmer", "randcorr", "poisson", "wilkinson",
-                                   "kms", "wathen", "oscillate", "prolate",
-                                   "hankel"],
+"""
+    predefined matrix classes (for the generated functions)
+"""
+const MATRIXCLASS = Dict(
+            :symmetric => ["hilb", "cauchy", "circul", "dingdong",
+                             "invhilb", "moler", "pascal", "pei",
+                             "clement", "fiedler", "minij", "tridiag",
+                             "lehmer", "randcorr", "poisson", "wilkinson",
+                             "kms", "wathen", "oscillate", "prolate",
+                             "hankel"],
 
-             "inverse" => ["hilb", "hadamard", "cauchy", "invhilb",
+            :inverse => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
                            "kahan", "pei", "vand", "invol", "lotkin",
                            "clement", "fiedler", "minij", "tridiag",
                            "lehmer", "poisson", "kms" ],
 
-             "ill-cond" => ["hilb", "cauchy", "frank", "invhilb",
+            :illcond => ["hilb", "cauchy", "frank", "invhilb",
                             "forsythe", "triw", "moler", "pascal",
                             "kahan","pei", "vand", "invol", "lotkin",
                             "tridiag", "rosser", "randsvd", "kms",
                             "oscillate", "prolate", "golub"],
 
-             "pos-def" => ["hilb", "cauchy", "circul", "invhilb",
+            :posdef => ["hilb", "cauchy", "circul", "invhilb",
                            "moler", "pascal", "pei", "minij", "tridiag",
                            "lehmer", "poisson", "kms", "wathen", "oscillate"],
 
-             "eigen" =>   ["hadamard", "circul", "dingdong", "frank",
+            :eigen =>   ["hadamard", "circul", "dingdong", "frank",
                            "forsythe", "grcar", "pascal", "invol","chebspec",
                            "lotkin", "clement", "fiedler", "minij",
                            "tridiag", "parter", "chow", "poisson", "neumann",
                            "rosser", "sampling", "wilkinson","wathen",
                            "oscillate"],
 
-             "sparse" => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert",
+             :sparse => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert",
                           "smallworld"],
 
-             "random" => ["rosser", "rando", "randcorr", "randsvd", "rohess",
+             :random => ["rosser", "rando", "randcorr", "randsvd", "rohess",
                           "wathen", "oscillate", "golub", "erdrey", "gilbert", "smallworld"],
 
-             "regprob" => ["deriv2", "shaw", "wing", "foxgood", "heat",
+             :regprob => ["deriv2", "shaw", "wing", "foxgood", "heat",
                            "baart", "phillips", "gravity", "blur",
                            "spikes", "ursell", "parallax"],
-              "graph" => ["erdrey", "gilbert", "smallworld"]
-               );
+
+              :graph => ["erdrey", "gilbert", "smallworld"]
+)
+
+
+# remote parameters for several data sources
+const TA_REMOTE = TURemoteType(RemoteParameters(
+                    "https://sparse.tamu.edu/MM",
+                    "https://sparse.tamu.edu/?per_page=All",
+                    """<title>SuiteSparse Matrix Collection</title>""",
+                    ("", """">Matrix Market""", 4, ".tar.gz", 2,
+                     r"<td class='column-([[:alpha:]_]+)'>([^<]*)</td>"),
+                    ".tar.gz"
+                   ))
+
+const UF_REMOTE = TURemoteType(RemoteParameters(
+                    "https://www.cise.ufl.edu/research/sparse/MM",
+                    "https://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html",
+                    """<title>UF Sparse Matrix Collection - sorted by id</title>""",
+                    ("", """>MM</a>""", 4, ".tar.gz", 2, r"<td>([[:digit:]]*)</td>"),
+                    ".tar.gz"
+                   ))
+
+const MM_REMOTE = MMRemoteType(RemoteParameters(
+                    "ftp://math.nist.gov/pub/MatrixMarket2",
+                    "http://math.nist.gov/MatrixMarket/matrices.html",
+                    """<TITLE>The Matrix Market Matrices by Name</TITLE>""",
+                    ("M", """<A HREF="/MatrixMarket/data/""", 2, ".html", 3, nothing),
+                    ".mtx.gz"
+                   ))
+
+# preferred remote source for UF matrix collection (TAMU vs. UFl)
+uf_remote = TA_REMOTE # may be altered
+preferred(::Type{TURemoteType}) = uf_remote
+preferred(::Type{MMRemoteType}) = MM_REMOTE
+alternate(::Type{TURemoteType}) = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOTE
+alternate(::Type{MMRemoteType}) = MM_REMOTE
+toggle_remote(T=TURemoteType) = begin global uf_remote = alternate(T) end
+"""
+    The place to store all matrix data in process
+"""
+const MATRIX_DB = MatrixDatabase()
+
+# local storage directory
+DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
+MY_DEPOT_DIR = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
+

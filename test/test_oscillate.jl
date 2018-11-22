@@ -5,15 +5,13 @@ let mode, n, A, p, k, A
 # 2. The ith eigenvector, corresponding to λ_i in the above ordering has 
 #    exactly i-1 sign changes. 
 
-mode = rand(1:2) # 2 different modes
-n = rand(2:10)
-A = matrixdepot("oscillate", n, mode)
+n = 8 # rand(2:10)
 @test_throws ArgumentError matrixdepot("oscillate", n, 4)
+for mode = 1:2
+A = matrixdepot("oscillate", n, mode)
 
 eva, evc = eigen(A)
-for ei in eva
-    @test ei > 0
-end
+@test all([ei > 0 for ei in eva])
 
 p = sortperm(eva, rev = true)
 evc = evc[:,p]
@@ -34,7 +32,8 @@ end
 
 k = rand(1:n)
 @test num_sign_change(evc[:,k]) == k - 1
+end
 
-A = matrixdepot("oscillate", n)
+@test matrixdepot("oscillate", n) !== nothing
 end
 println("'oscillate' passed test...")

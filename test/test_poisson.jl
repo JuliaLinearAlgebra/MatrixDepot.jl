@@ -1,4 +1,4 @@
-n = rand(1:n)
+n = 10 # rand(1:10)
 
 @test matrixdepot("poisson", Float64, n) == matrixdepot("poisson", n)
 

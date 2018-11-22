@@ -1,75 +1,178 @@
-# return info comment strings for UF sparse matrix
-Sparse = SuiteSparse.CHOLMOD.Sparse
+"""
+    metareader(md::MatrixDescriptor, key::AbstractString)
 
-function ufinfo(filename::AbstractString)
-    mmfile = open(filename,"r")
-    info = "\n"
-    ll = readline(mmfile)
-    while length(ll) > 0 && ll[1] == '%'
-        info = string(info, ll)
-        ll = readline(mmfile)
+Return specific data files (matrix, rhs, solution, or other metadata).
+The `key` must be contained in data.metadata or an `DataError` is thrown.
+Hint: `md.A, md.b, md.x` also deliver the matrix, rhs, and solution.
+So this is needed specifically for other metadata.
+"""
+function metareader(mdesc::MatrixDescriptor{<:RemoteMatrixData}, name::AbstractString)
+    name = metastring_reverse(mdesc.data, name)
+    get!(mdesc.cache, name) do
+        _metareader(mdesc.data, name)
     end
-    return info
 end
 
-# read Matrix Market data
-"""
-`mmreader(dir, name, info)`
-
-dir: directory of the file
-name: file name
-info: whether to return infomation
-"""
-function mmreader(dir::AbstractString, name::AbstractString; info::Bool = true)
-    pathfilename = string(dir, '/', name, ".mtx")
-    if info
-        println(ufinfo(pathfilename))
-        println("use matrixdepot(\"$name\", :read) to read the data")
+function metareader(mdesc::MatrixDescriptor{<:GeneratedMatrixData}, name::AbstractString)
+    fillcache!(mdesc)
+    dao = mdesc.cache[]
+    if name == "A" && dao isa AbstractArray
+        dao
     else
-        sparse(Sparse(pathfilename))
-    end
-end
-
-# read UF sparse matrix data
-"""
-`ufreader(dir, name, info, meta)`
-
-dir: directory of the file
-name: file name
-info: whether to return information
-meta: wehterh to return metadata
-"""
-function ufreader(dir::AbstractString, name::AbstractString;
-                  info::Bool = true, meta::Bool = false)
-    dirname = string(dir, '/', name)
-    files = filenames(dirname)
-    if info
-        println(ufinfo(string(dirname, '/', name, ".mtx")))
-        if length(files) > 1
-            println("metadata:")
-            display(files)
+        try
+            getproperty(dao, Symbol(name))
+        catch
+            daterr("this instance of '$(typeof(dao))' has no property '$name'")
         end
-        #println("use matrixdepot(\"$name\", :read) to read the data")
-    else
-        A = sparse(Sparse(string(dirname, '/', name, ".mtx")))
-        if meta
-            metadict = Dict{AbstractString, Any}()
-            datafiles = readdir(dirname)
-            for data in datafiles
-                dataname = split(data, '.')[1]
-                if endswith(data, "mtx")
-                    try
-                        metadict[dataname] =  sparse(Sparse(string(dirname, '/', data)))
-                    catch
-                        metadict[dataname] = denseread(string(dirname,'/', data))
-                    end
-                else
-                    metadict[dataname] = read(string(dirname,'/', data), String)
-                end
-            end
-            metadict
-        else
-            A
-        end        
     end
 end
+
+function _metareader(data::RemoteMatrixData, name::AbstractString)
+    if name in data.metadata
+        path = joinpath(dirname(matrixfile(data)), name)
+        endswith(name, ".mtx") ? mmread(path) : read(path, String)
+    else
+        daterr("$(data.name) has no metadata $name")
+    end
+end
+
+function fillcache!(mdesc::MatrixDescriptor{<:GeneratedMatrixData})
+    dao = mdesc.cache[]
+    if dao === nothing
+        dao = mdesc.cache[] = mdesc.data.func(mdesc.args...)
+        dao !== nothing || daterr("function $(mdesc.data.func) returned `nothing`")
+    end
+    dao
+end
+
+# This a the preferred API to access metadata.
+import Base: getproperty, propertynames, getindex
+
+function getproperty(mdesc::MatrixDescriptor{T}, s::Symbol) where T
+    s in (:data, :args, :cache) && return getfield(mdesc, s)
+    s in metasymbols(mdesc) && return metareader(mdesc, string(s))
+    if T <: RemoteMatrixData
+        s in (:m, :n, :nnz, :dnz) && return getfield(mdesc.data.header, s)
+    else
+        s == :m && return size(mdesc.A, 1)
+        s == :n && return size(mdesc.A, 2)
+        s == :nnz && return count(mdesc.A .!= 0)
+        s == :dnz && return 0
+    end
+    metareader(mdesc, string(s))
+end
+
+function propertynames(mdesc::MatrixDescriptor{T}; private=false) where T
+    props = Symbol[]
+    append!(props, metasymbols(mdesc))
+    append!(props, [:m, :n, :nnz, :dnz])
+    private && append!(props, fieldnames(MatrixDescriptor))
+    props
+end
+
+function getproperty(data::RemoteMatrixData, s::Symbol)
+    s in (:name, :id, :header, :properties, :metadata) && return getfield(data, s)
+    s in fieldnames(MetaInfo) && return getfield(data.header, s)
+    getfield(data, s)
+end
+
+function propertynames(data::RemoteMatrixData; private=false)
+    props = Symbol[]
+    append!(props, [:name, :title, :id, :date, :author, :ed, :kind, :notes])
+    append!(props, [:m, :n, :nnz, :dnz])
+    private && append!(props, fieldnames(RemoteMatrixData))
+    props
+end
+
+function propertynames(data::GeneratedMatrixData; private=false)
+    private ? fieldnames(GeneratedMatrixData) : [:name, :id]
+end
+
+"""
+    metasymbols(md::MatrixDescriptor)
+
+Return a vector of symbols, which point to metadata of the problem.
+These symbols `s` may be used to access the objects by `getproperty(md, s)`
+or by `getindex(md, s)`. The syntax `md.S` is preferred, if `S` is a constant
+`Julia` word. In any case `md[s]` is possible.
+
+Example:
+`md = mdopen("*/bfly"); A = md.A; co = md.coord; txt10 = md["Gname_10.txt"]`
+"""
+metasymbols(md::MatrixDescriptor{<:RemoteMatrixData}) = metasymbols(md.data)
+function metasymbols(data::RemoteMatrixData)
+    Symbol.(metastring.(data.name, metadata(data)))
+end
+function metasymbols(md::MatrixDescriptor{<:GeneratedMatrixData})
+    mdc = md.cache[]
+    mdc isa Array || mdc === nothing ? [:A] : propertynames(mdc)
+end
+metasymbols(data::MatrixData) = [:A]
+
+function Base.getindex(mdesc::MatrixDescriptor, name::Union{Symbol,AbstractString})
+    metareader(mdesc, string(name))
+end
+
+function (mdesc::MatrixDescriptor)(name::Union{Symbol,AbstractString})
+    metareader(mdesc, string(name))
+end
+
+#internal helper to select special metadata (matrix, rhs, or solution)
+function metaname(data::RemoteMatrixData, exli::AbstractString...)
+    base = rsplit(data.name, '/', limit=2)[end]
+    meda = metadata(data)
+    for ext in exli
+        f = metastring_reverse(data, ext)
+        if f in meda
+            return f
+        end
+    end
+    daterr("unknown metadata extensions: $exli - available $(String.(data.metadata))")
+end
+
+"""
+    metastring(name, metaname)
+
+In the standard cases convert full meta name to abbreviated form.
+
++ given `name = "abc"`, then
++ `"abc.mtx" => "A"`
++ `"abc_def.mtx" => "def"`
++ `"abc_def.txt" => "def.txt"`
++ `"abc-def.mtx" => "abc-def.mtx"`
+"""
+function metastring(name::AbstractString, metaname::AbstractString)
+    MTX = ".mtx"
+    base = split(name, '/')[end]
+    meta = metaname
+    if meta == string(base, MTX)
+        meta = "A"
+    elseif startswith(meta, string(base, '_'))
+        meta = meta[sizeof(base)+2:end]
+    end
+    es = rsplit(meta, '.', limit=2)
+    if endswith(meta, MTX) && meta != metaname
+        meta = meta[1:end-sizeof(MTX)]
+    end
+    meta
+end
+
+"""
+    metastring_reverse(data::MatrixData, abbreviation::String)
+
+Given a `MatrixData` object and an abbreviation, return a matchingfull metadata name
+for the abbreviation. If no full name is found, return the abbreviation unchanged.
+"""
+function metastring_reverse(data::RemoteMatrixData, metaabbr::AbstractString)
+    MTX = ".mtx"
+    base = split(data.name, '/')[end]
+    metaabbr == "A" && return string(base, MTX)
+    mdata = metadata(data)
+    meta = string(base, '_', metaabbr)
+    meta in mdata && return meta
+    meta = string(meta, MTX)
+    meta in mdata && return meta
+    metaabbr
+end
+metastring_reverse(::MatrixData, metaabbr::AbstractString) = metaabbr
+

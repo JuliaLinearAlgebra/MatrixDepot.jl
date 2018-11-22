@@ -3,9 +3,15 @@
 
 # ignore newly added matrices 
 
-data/uf/
-data/*html
-data/mm/
+data/uf
+# data/*html  # that cound save a lot of test time
+data/mm
+data*/
+myMatrixDepot*
+
+
+src/*.mem
+src/*.cov
 
 # ignore generated files from Sphinx
 _build

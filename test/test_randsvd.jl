@@ -1,7 +1,7 @@
-n = rand(2:10)
+n = 6 # rand(2:10)
 
-kappa = rand(2:6)
-mode = rand(1:5)
+kappa = 5 # rand(2:6)
+mode =  2 # rand(1:5)
 
 
 A = matrixdepot("randsvd", n, kappa, mode)

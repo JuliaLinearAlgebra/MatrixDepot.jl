@@ -1,4 +1,4 @@
-n = rand(1:10)
+n = 10 # rand(1:10)
 @test matrixdepot("forsythe", n) == 
                 matrixdepot("forsythe", n, sqrt(eps(Float64)), zero(Float64))
 @test matrixdepot("forsythe", n , 1, 2) == matrixdepot("forsythe", Float64, n, 1, 2)
