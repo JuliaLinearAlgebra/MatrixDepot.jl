@@ -8,7 +8,7 @@ An extensible test matrix collection for Julia.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
-* [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
+* [Release Notes](https://github.com/JuliaMatrices/MatrixDepot.jl/blob/master/NEWS.md)
 
     MatrixDepot
 
@@ -24,7 +24,7 @@ Access is like
 
     A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
     
-    A = ("HB/1138_bus")     # named matrix of the SuiteSpares Collection
+    A = ("HB/1138_bus")     # named matrix of the SuiteSparse Collection
 
    or
 
@@ -205,33 +205,36 @@ stored separately only if the full matrix files (which may be huge) are not yet 
 
 #### Bulk Downloads
 
-##### Header Data
+##### Load Header Data
 
 A download job to transmit a subset of remote matrix files may be started to
-load header data for all files. Header data include always the matrix type
+load header data for all files. Header data always include the matrix type
 according to the matrix-market-format and the size values `m` row-number,
 `n` = columns-number, and `dnz` number of stored data of the main sparse matrix.
 
 `MatrixDepot.loadinfo(pattern)` where `pattern` defines the subset.
 
-That is possible for the `SuiteSparse` collection and the `MatrixMarket` collection. The patterns can always refer to matrix names and id numbers.
-In the case of `SuiteSparse` also metadata `"date"`, `"kind"`, `"m"`, `"n"`, `"nnz"` are available and can be used, before individual matrix data
+That is possible for the `SuiteSparse` collection and the `MatrixMarket` collection.
+The patterns can always refer to matrix names and id numbers.
+In the case of `SuiteSparse` collection, also the metadata
+`"date"`, `"kind"`, `"m"`, `"n"`, `"nnz"`
+are available and can be used, before individual matrix data
 have been loaded. They are contained in the index file (at [TAMU](https://sparse.tamu.edu).
-For `MatrixMarket`collection, patterns must restrict to names and id numbers.
+For `MatrixMarket` collection, patterns are restricted to names and id numbers.
 
 In general it would be possible to `loadinfo("**")` to load all header data. That
 would last maybe an hour and generate some traffic for the remote sites.
 Nevertheless it is not necessary to do so, if you don't need the header data
 for the following task.
 
-##### Complete Data Files
+##### Load Complete Data Files
 
 **`MatrixDepot.load(pattern)`** loads all data files for the patterns.
-In the patterns can only refer to attributes, which are already available.
+Patterns can only refer to attributes, which are already available.
 In the case of `SuiteSparse` that includes the size info `"date"`, `"kind"`,
 `"m"`, `"n"`, and `"nnz"` and all additional attributes loaded in the previous step,
 which include `"author"`, `"title"`, `"notes"`, and keywords.
-In the case of `MatrixMarket` you can only refer to `"m"`, `"n"`, and `"dnz"`, only
+In the case of `MatrixMarket` you can only refer to `"m"`, `"n"`, and `"dnz"`,
 if previously loaded with the header data.
 
 Please do not:
@@ -243,7 +246,7 @@ Local and already loaded matrices are skipped automatically.
 
 Example:
 
-`MatrixDepot(sp(:), @pred(nnz < 100_000))` to download only problems with given
+`MatrixDepot.load(sp(:) & @pred(nnz < 100_000))` to download only problems with given
 number of stored entries in the main matrix.
 
 
@@ -323,7 +326,7 @@ julia> mdinfo("hilb")
   USA, 2002; sec. 28.1.
 ```
 
-We can also specify the data type
+We can also specify the data type for locally generated matrices.
 
 ```julia
 julia> matrixdepot("hilb", Float16, 5, 3)
@@ -343,7 +346,9 @@ julia> matrixdepot("hilb", Rational{Int}, 4)
 ```
 
 Matrices can be accessed by a variety of patterns and composed patterns.
-Integer numbers refer to the ident numbers of the SuiteSparse collection.
+Integer numbers `i` refer to the ident numbers in `sp(i)`, `mm(i)`, `builtin(i)`, `user(i)`.
+Here `sp` ... denote the supported matrix collections SuiteSparse (formerly UFL),
+Matrix Market, built-in, user-defined.
 
 ```julia
 julia> mdlist(sp(1))    # here sp(1) is the ident number of the SuiteSparse collection
@@ -369,7 +374,7 @@ julia> mdlist(builtin(1:4, 6, 10:15) | user(1:10) )
  "fiedler"
  "forsythe"
  "foxgood"
- "rand
+ "randsym"
 ```
 
 While the `listnames` command renders the output as markdown table, the internal

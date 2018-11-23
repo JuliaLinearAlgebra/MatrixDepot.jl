@@ -37,21 +37,33 @@ Access is like
 
     A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
     
-    A = ("HB/1138_bus")     # named matrix of the SuiteSpares Collection
-
-   or
+    A = matrixdepot("HB/1138_bus")     # named matrix of the SuiteSparse Collection
+    A = matrixdepot(sp(1))             # same matrix using numerical id
+    A = matrixdepot("Harwell*/*/1138_bus") # matrix from the Matrix Market Collection 
 
     md = mdopen("*/bfly")   # named matrix with some extra data
     A = md.A
     co = md.coord
     tx = md("Gname_10.txt")
 
-   or also
-
     md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
     A = md.A
     b = md.b
     x = md.x
+
+###### commands:
+    mdinfo, listdir, listgroups, matrixdepot, mdopen, listdata, mdlist,
+    metasymbols, @addgroup, @modifygroup, @rmgroup.
+###### selector patterns:
+    strings, string-patterns (using "*", "?", "/", "**"), regular expressions: for names
+    builtin(42), user(3,5), sp(10:11,6,2833), mm(1): to access by integer id
+###### predicate patterns:
+    isboolean, isinteger, isreal, iscomplex
+    isgeneral, issymmetric, ishermitian, isskew
+    isbuiltin, isuser, islocal, isremote, isloaded, isunloaded
+    keyword(string expression), logical, hasdata(symbol), @pred(expression)
+
+    see also: "logical" for logical combinations of all kinds of patterns.
 """
 module MatrixDepot
 using LinearAlgebra, SparseArrays, SuiteSparse, GZip, Serialization
@@ -73,8 +85,6 @@ import Base: isreal, isinteger
 import LinearAlgebra: issymmetric, ishermitian
 import SparseArrays: issparse
 import Base: &, |, *, ~
-
-#export colval, mtranspose, madjoint
 
 include("types.jl")         # common data type definitions
 include("higham.jl")        # test matrices
