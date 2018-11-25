@@ -3,48 +3,39 @@
 Interface to Test Collections
 =============================
 
-Before downloading test matrices, it is recommended to first update
-the database::
+The internal database is loaded automatically when using the module:
 
-  julia> MatrixDepot.update()
+.. code::
 
+    julia> using MatrixDepot
+    include group.jl for user defined matrix generators
+    verify download of index files...
+    used remote site is https://sparse.tamu.edu/?per_page=All
+    populating internal database...
 
 Interface to the UF Sparse Matrix Collection
 ---------------------------------------------
 
-Use ``matrixdepot(NAME, :get)``, where ``NAME`` is ``collection_name
-+'/' + matrix_name``,  to download a test matrix from the
-`UF Sparse Matrix Collection <http://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html>`_.
+Use ``M = matrixdepot(NAME)`` or ``md = mdopen(NAME); M = md.A``, where ``NAME``
+is ``collection_name +'/' + matrix_name``, to download a test matrix from the
+`SuiteSparse Sparse Matrix Collection.
 For example::
 
-  julia> matrixdepot("SNAP/web-Google", :get)
+  julia> md = mdopen("SNAP/web-Google")
+    PG SNAP/web-Google(#2301)  916428x916428(5105039) 2002 [A] 'Directed Graph' [Web graph from Google]()
 
 .. note:: 
-   ``matrixdepot()`` displays all the matrices in the
+   ``listnames("*/*")`` displays all the matrix names in the
    collection, including the newly downloaded matrices. All the matrix 
-   data can be found by ``matrixdepot("data")``. 
+   data can be found by ``listnames("**")``. 
 	  
 If the matrix name is unique in the collections, we could use
-``matrixdepot(matrix_name, :get)`` to download the data. If more than
-one matrix has the same name, a list of options will be returned. For
-example::
-  
-  julia> matrixdepot("epb0", :get)
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  100 83244  100 83244    0     0   109k      0 --:--:-- --:--:-- --:--:--  133k
-  download:/home/weijian/.julia/v0.4/MatrixDepot/data/uf/Averous/epb0.tar.gz
-  epb0/epb0.mtx
-
-  julia> matrixdepot("1138_bus", :get)
-  Try MatrixDepot.get(`name`), where `name` is one of the elements in the following Array:
-  2-element Array{AbstractString,1}:
-  "HB/1138_bus"                    
-  "Harwell-Boeing/psadmit/1138_bus"
+``matrixdepot(matrix_name)`` to download the data. If more than
+one matrix has the same name, an error is thrown.
 
 When download is complete, we can check matrix information using::
 
-  julia> matrixdepot("SNAP/web-Google")
+  julia> mdinfo("SNAP/web-Google")
 
   %%MatrixMarket matrix coordinate pattern general
   %-------------------------------------------------------------------------------
@@ -61,129 +52,76 @@ When download is complete, we can check matrix information using::
   %-------------------------------------------------------------------------------
   ...
 
-and generate it with the Symbol ``:r`` or  ``:read`` ::
+and generate it by accesing the field `A`.
 
-  julia> matrixdepot("SNAP/web-Google", :r)
-  916428x916428 sparse matrix with 5105039 Float64 entries:
-	[11343 ,      1]  =  1.0
-	[11928 ,      1]  =  1.0
-	[15902 ,      1]  =  1.0
-	[29547 ,      1]  =  1.0
-	[30282 ,      1]  =  1.0
-	[31301 ,      1]  =  1.0
-	[38717 ,      1]  =  1.0
-	[43930 ,      1]  =  1.0
-	[46275 ,      1]  =  1.0
-	[48193 ,      1]  =  1.0
-	[50823 ,      1]  =  1.0
-	[56911 ,      1]  =  1.0
-	[62930 ,      1]  =  1.0
-	[68315 ,      1]  =  1.0
-	[71879 ,      1]  =  1.0
-	[72433 ,      1]  =  1.0
-	[73632 ,      1]  =  1.0
-	⋮
-	[532967, 916427]  =  1.0
-	[547586, 916427]  =  1.0
-	[557890, 916427]  =  1.0
-	[571471, 916427]  =  1.0
-	[580544, 916427]  =  1.0
-	[608625, 916427]  =  1.0
-	[618730, 916427]  =  1.0
-	[622998, 916427]  =  1.0
-	[673046, 916427]  =  1.0
-	[716616, 916427]  =  1.0
-	[720325, 916427]  =  1.0
-	[772226, 916427]  =  1.0
-	[785097, 916427]  =  1.0
-	[788476, 916427]  =  1.0
-	[822938, 916427]  =  1.0
-	[833616, 916427]  =  1.0
-	[417498, 916428]  =  1.0
-	[843845, 916428]  =  1.0
+    julia> M = md.A
+    916428×916428 SparseMatrixCSC{Bool,Int64} with 5105039 stored entries:
+      [11343 ,      1]  =  true
+      [11928 ,      1]  =  true
+      [15902 ,      1]  =  true
+      [29547 ,      1]  =  true
+      [30282 ,      1]  =  true
+      ⋮
+      [788476, 916427]  =  true
+      [822938, 916427]  =  true
+      [833616, 916427]  =  true
+      [417498, 916428]  =  true
+      [843845, 916428]  =  true
 
-The metadata of a given matrix can be obtained by 
-``matrixdepot(collection_name/matrix_name, :read, meta = true)``. For example::
+You can convert the boolean pattern matrix to integer by `M * 1`.
 
-  julia> matrixdepot("TKK/t520", :get)
-  julia> matrixdepot("TKK/t520", :read, meta = true)
-  Dict{AbstractString,Any} with 3 entries:
-    "t520"       => 5563x5563 Symmetric{Float64,SparseMatrixCSC{Float64,Int64}}:…
-    "t520_b"     => "%%MatrixMarket matrix array real general\n%-----------------…
-    "t520_coord" => "%%MatrixMarket matrix array real general\n%-----------------…
+The metadata of a given matrix can be obtained by accessing properties of `md`.
 
-We can use ``matrixdepot(collection_name/*)`` to download all the matrices
-in a given ``collection_name``. For example, we can get all the 
-matrices contributed by The Mathworks, Inc. by ``matrixdepot("MathWorks/*", :get)``::
 
-   julia> matrixdepot()
+Which properties are available is shown in the `md::MatrixDescriptor`:
+  
+    julia> md = mdopen("TKK/t520")
+    (IS TKK/t520(#1908)  5563x5563(286341/145952) 2008 [A, b, coord] 'Structural Problem' [T-beam, L = 520 mm, Quadratic four node DK type elements.  R Kouhia]()
 
-   Matrices:
-    1) baart            2) binomial         3) blur             4) cauchy        
-    5) chebspec         6) chow             7) circul           8) clement       
-    9) companion       10) deriv2          11) dingdong        12) fiedler       
-    13) forsythe        14) foxgood         15) frank           16) golub         
-    17) gravity         18) grcar           19) hadamard        20) hankel        
-    21) heat            22) hilb            23) invhilb         24) invol         
-    25) kahan           26) kms             27) lehmer          28) lotkin        
-    29) magic           30) minij           31) moler           32) neumann       
-    33) oscillate       34) parter          35) pascal          36) pei           
-    37) phillips        38) poisson         39) prolate         40) randcorr      
-    41) rando           42) randsvd         43) rohess          44) rosser        
-    45) sampling        46) shaw            47) spikes          48) toeplitz      
-    49) tridiag         50) triw            51) ursell          52) vand          
-    53) wathen          54) wilkinson       55) wing            56) MathWorks/Harvard500
-    57) MathWorks/Kaufhold
-    58) MathWorks/Kuu   59) MathWorks/Muu   60) MathWorks/Pd    61) MathWorks/Pd_rhs
-    62) MathWorks/pivtol
-    63) MathWorks/QRpivot
-    64) MathWorks/Sieber
-    65) MathWorks/tomography
-    66) MathWorks/TS  
-   Groups:
-    all           data          eigen         ill-cond    
-    inverse       pos-def       random        regprob     
-    sparse        symmetric  
+and also by the special function `metasymbols`:
+    julia> metasymbols(md)
+    3-element Array{Symbol,1}:
+     :A    
+     :b    
+     :coord
 
-   julia> matrixdepot("data")
-   11-element Array{AbstractString,1}:
-   "MathWorks/Harvard500"
-   "MathWorks/Kaufhold"  
-   "MathWorks/Kuu"       
-   "MathWorks/Muu"       
-   "MathWorks/Pd"        
-   "MathWorks/Pd_rhs"    
-   "MathWorks/pivtol"    
-   "MathWorks/QRpivot"   
-   "MathWorks/Sieber"    
-   "MathWorks/tomography"
-   "MathWorks/TS" 
+When you acces a single matrix with `matrixdepot(pattern)` or `mdopen(pattern)` the full
+matrix data are dowloaded implicitly in the background, if not yet available on the local disk
+cache. 
 
+When you access matrix information with `mdinfo(pattern)` for one of more matrices, the header
+data of the matrix are downloaded implicitly, if not yet available on the local disk cache.
+
+
+t is also possible to dowload a bulk of matrix data by `MatrixDepot.loadinfo(pattern)` and
+`MatrixDepot.load(pattern)` to populate the disk cache in advance of usage.
 
 
 Interface to NIST Matrix Market
 -------------------------------
 
-Use ``matrixdepot(NAME, :get)``, where ``NAME`` is
-``collection name + '/' + set name + '/' + matrix name`` to download a
+Use ``M = matrixdepot(NAME)`` or ``md = mdopen(NAME); M = md.A``, where ``NAME``
+is ``collection name + '/' + set name + '/' + matrix name`` to download a
 test matrix from NIST Matrix Market:
 http://math.nist.gov/MatrixMarket/. For example::
 
-  julia> matrixdepot("Harwell-Boeing/lanpro/nos5", :get)
+  julia> md = mdopen("Harwell-Boeing/lanpro/nos5")
+  The collection-name and set-name may as always be replaced by wildcard patterns "*",
+  as long as there exists only on name matching the pattern.
 
-If the matrix name is unique, we could also use ``matrixdepot(matrix name, :get)``::
-
-  julia> matrixdepot("bp__1400", :get)
+  julia> md = mdopen("*/*/bp__1400")
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   100 28192  100 28192    0     0   4665      0  0:00:06  0:00:06 --:--:-- 10004
-  download:/home/weijian/.julia/v0.4/MatrixDepot/data/mm/Harwell-Boeing/smtape/bp__1400.mtx.gz
+  download:/home/.../MatrixDepot/data/mm/Harwell-Boeing/smtape/bp__1400.mtx.gz
+
+  (RG Harwell-Boeing/smtape/bp__1400(#M93)  822x822(4790)  [A] '' []()
 
  
 Checking matrix information and generating matrix data are similar to 
 the above case::
 
-  julia> matrixdepot("Harwell-Boeing/smtape/bp__1400")
+  julia> mdinfo(md) or mdinfo("*/*/bp__1400")
 
   %%MatrixMarket matrix coordinate real general
 
@@ -207,3 +145,5 @@ the above case::
 	[202, 821]  =  -1.0
 	[796, 821]  =  1.0
 	[2  , 822]  =  1.0
+
+There is no header information in this collection besides m, n, and dnz.

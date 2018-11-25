@@ -5,9 +5,9 @@ Every matrix in the collection is represented by a string
 ``"matrix_name"``, for example, the Cauchy matrix is represented by
 ``"cauchy"`` and the Hilbert matrix is represented by ``"hilb"``.
 
-The matrix groups are also symbolized by strings. 
+The matrix groups are noted as symbols. 
 For example, the class of the symmetric
-matrices is symbolized by ``"symmetric"``.
+matrices is symbolized by ``:symmetric``.
 
 .. function:: matrixdepot()
 
@@ -31,8 +31,8 @@ matrices is symbolized by ``"symmetric"``.
      49) tridiag         50) triw            51) ursell          52) vand          
      53) wathen          54) wilkinson       55) wing          
     Groups:
-     all           data          eigen         ill-cond    
-     inverse       pos-def       random        regprob     
+     all           data          eigen        illcond    
+     inverse       posdef       random        regprob     
      sparse        symmetric 
 
 .. function:: matrixdepot(matrix_name, p1, p2, ...)
@@ -77,12 +77,12 @@ matrices is symbolized by ``"symmetric"``.
    (Appendix 1).
 
 
-.. function:: matrixdepot(group_name)
+.. function:: listnames(group_name)
 
   Return a list of matrices which belong to group ``group_name``. For
   example::
 
-    julia> matrixdepot("pos-def")
+    julia> matrixdepot(:posdef)
     11-element Array{ASCIIString,1}:
     "hilb"   
     "cauchy" 
@@ -96,12 +96,12 @@ matrices is symbolized by ``"symmetric"``.
     "lehmer" 
     "poisson"
 
-.. function:: matrixdepot(group1, group2, ...)
+.. function:: listnames(group1 & group2 & ...)
 
   Return a list of matrices which belong to ``group1`` and ``group2``, etc. 
   For example::
 
-    julia> matrixdepot("symmetric", "inverse", "ill-cond", "pos-def")
+    julia> mdlist(:symmetric & :inverse, :illcond & :posdef)
     7-element Array{ASCIIString,1}:
     "hilb"   
     "cauchy" 
@@ -111,68 +111,35 @@ matrices is symbolized by ``"symmetric"``.
     "pei"    
     "tridiag"
 
-.. function:: matrixdepot(num)
+.. function:: mdlist({builtin\user\sp\mm}(num))
 
    Access matrix by number. For example::
      
-     julia> matrixdepot(3)
+     julia> matrixdepot(builtin(3))
      "chebspec"
 
-.. function:: matrixdepot(num1:num2)
+.. function:: mdlist(builtin(num1:num2, ...))
 
-   Access matrix by range. For example::
-
-     julia> matrixdepot(3:12)
-     10-element Array{ASCIIString,1}:
-     "chebspec"
-     "chow"    
-     "circul"  
-     "clement" 
-     "dingdong"
-     "fiedler" 
-     "forsythe"
-     "frank"   
-     "grcar"   
-     "hadamard"
-
-.. function:: matrixdepot(num, num1:num2...)
-
-   Access matrix by a mixture of numbers and ranges. For example::
-
-     julia> matrixdepot(1:4, 6, 10:15)
-     11-element Array{AbstractString,1}:
+   Access matrix by rangei and combinations. For example::
+    julia> mdlist(builtin(1:4, 6, 10:15))
+    11-element Array{String,1}:
      "baart"   
      "binomial"
+     "blur"    
      "cauchy"  
-     "chebspec"
-     "circul"  
+     "chow"    
+     "deriv2"  
+     "dingdong"
+     "erdrey"  
      "fiedler" 
      "forsythe"
-     "foxgood" 
-     "frank"   
-     "gravity" 
-     "grcar"  	      
+     "foxgood"
 
+.. function:: mdinfo(name)
 
-.. function:: matrixdepot(name, :get)
+    Output matrix information, where ``name`` is a matrix data name or pattern.
 
-    Download a matrix from test matrix collections, where
-    ``name`` is a string of collection name + ``/`` + matrix name. 
-    For example::
-      
-      julia> matrixdepot("HB/1138_bus", :get)
-
-
-.. function:: MatrixDepot.update()
-
-    Update matrix collection database from the web server.
-
-
-.. function:: matrixdepot(name)
-
-    Output matrix information, where ``name`` is a matrix data.
-
-.. function:: matrixdepot(name, :read)
+.. function:: matrixdepot(name, arg...)
 
     Generate the matrix data given by ``name``.
 

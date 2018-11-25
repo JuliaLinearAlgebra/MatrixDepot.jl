@@ -1,12 +1,24 @@
 ## Matrix Depot Release Notes
 
+v0.7.1
+--------
+
+* Documentation adapted to v0.7.0 features
+
 v0.7.0
+--------
 
 * Improved API (see: README.md and `?MatrixDepot`)
-* Keywrod search
+* Keyword search
 * Logical expressions of predicates
 * Access current remote repositories (2018.8)
 * Drop support for Julia v0.6
+* some bugs fixed - see git log
+
+v0.6.0
+--------
+
+* Adapt to Juliav0.7 - deprecations and minor bugs
 
 v0.5.6
 --------

@@ -48,8 +48,8 @@ matrix generator ``randsym`` and ``randorth``::
       A = zeros(n, n)
       for j = 1:n
         for i = j:n
-           A[i,j] = randn()
-	   if i != j; A[j,i] = A[i,j] end
+          A[i,j] = randn()
+          if i != j; A[j,i] = A[i,j] end
         end
       end
       return A
@@ -62,50 +62,73 @@ matrix generator ``randsym`` and ``randorth``::
   *Input options:*
 
   + n: the dimension of the matrix
-  """	
-  randorth(n) = qr(randn(n,n))[1]
+  """
+  randorth(n) = qr(randn(n,n)).Q
 
 We first need to find out where Matrix Depot is installed. This 
 can be done by::
 
-  julia> Pkg.dir("MatrixDepot")
-  "/home/weijian/.julia/v0.4/MatrixDepot"
+    julia> @which matrixdepot("")
+    matrixdepot(p::Union{Regex,...}, args...) in MatrixDepot at
+    /home/.../.julia/dev/MatrixDepot/src/common.jl:508
 
-For me, the package is installed at
-``/home/weijian/.julia/v0.4/MatrixDepot``. We can copy ``myrand.jl``
-to ``/home/weijian/.julia/v0.4/MatrixDepot/myMatrixDepot``. 
+For me, the package user data are installed at
+``/home/.../.julia/dev/MatrixDepot/myMatrixDepot``. We can copy ``myrand.jl`` to this directory.
 Now we open the file
 ``myMatrixDepot/generator.jl`` and write::
 
   include_generator(FunctionName, "randsym", randsym)
   include_generator(FunctionName, "randorth", randorth)
 
+
+Due to a bug we have to remove file db.data and restart julia:
+`rm MatrixDepot/data/db.data`
+
+
 This is it. We can now use them from Matrix Depot::
 
- julia> matrixdepot()
+    julia> using MatrixDepot
+    include group.jl for user defined matrix generators
+    include myrand.jl for user defined matrix generators
+    verify download of index files...
+    used remote site is https://sparse.tamu.edu/?per_page=All
+    populating internal database...
 
- Matrices:
-   1) baart            2) binomial         3) blur             4) cauchy        
-   5) chebspec         6) chow             7) circul           8) clement       
-   9) companion       10) deriv2          11) dingdong        12) fiedler       
-  13) forsythe        14) foxgood         15) frank           16) golub         
-  17) gravity         18) grcar           19) hadamard        20) hankel        
-  21) heat            22) hilb            23) invhilb         24) invol         
-  25) kahan           26) kms             27) lehmer          28) lotkin        
-  29) magic           30) minij           31) moler           32) neumann       
-  33) oscillate       34) parter          35) pascal          36) pei           
-  37) phillips        38) poisson         39) prolate         40) randcorr      
-  41) rando           42) randorth        43) randsvd         44) randsym       
-  45) rohess          46) rosser          47) sampling        48) shaw          
-  49) spikes          50) toeplitz        51) tridiag         52) triw          
-  53) ursell          54) vand            55) wathen          56) wilkinson     
-  57) wing          
- Groups:
-  all           data          eigen         ill-cond    
-  inverse       pos-def       random        regprob     
-  sparse        symmetric  
+    julia> mdinfo()
+      Currently loaded Matrices
+      –––––––––––––––––––––––––––
 
-  julia> matrixdepot("randsym")
+    builtin(#)                                                                             
+    ––––––––––– ––––––––––– ––––––––––– –––––––––––– ––––––––––– ––––––––––––– ––––––––––––
+    1 baart     10 deriv2   19 gravity  28 kms       37 parter   46 rohess     55 ursell   
+    2 binomial  11 dingdong 20 grcar    29 lehmer    38 pascal   47 rosser     56 vand     
+    3 blur      12 erdrey   21 hadamard 30 lotkin    39 pei      48 sampling   57 wathen   
+    4 cauchy    13 fiedler  22 hankel   31 magic     40 phillips 49 shaw       58 wilkinson
+    5 chebspec  14 forsythe 23 heat     32 minij     41 poisson  50 smallworld 59 wing     
+    6 chow      15 foxgood  24 hilb     33 moler     42 prolate  51 spikes                 
+    7 circul    16 frank    25 invhilb  34 neumann   43 randcorr 52 toeplitz               
+    8 clement   17 gilbert  26 invol    35 oscillate 44 rando    53 tridiag                
+    9 companion 18 golub    27 kahan    36 parallax  45 randsvd  54 triw                   
+
+    user(#)             
+    –––––––––– –––––––––
+    1 randorth 2 randsym
+
+    Groups                                                          
+    ––––––– ––––– ––––– ––––––– –––––– ––––––– –––––––––––––––      
+    all     local eigen illcond posdef regprob symmetric            
+    builtin user  graph inverse random sparse  test_for_paper2      
+
+    Suite Sparse of  
+    –––––––––––– ––––
+    2773         2833
+
+    MatrixMarket of 
+    –––––––––––– –––
+    488          498
+
+
+  julia> mdinfo("randsym")
      random symmetric matrix
     ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -137,14 +160,27 @@ This is it. We can now use them from Matrix Depot::
   5.55112e-17  -2.77556e-17   1.94289e-16   1.0           1.38778e-16
  -6.93889e-17  -5.55112e-17  -1.66533e-16   1.38778e-16   1.0 
 
-We can also add group information::
+We can also add group information in generator.jl:
 
-  include_generator(Group, "random", randsym)
-  include_generator(Group, "symmetric", randsym)
+  include_generator(Group, :random, randsym)
+  include_generator(Group, :symmetric, randsym)
 
-Now if we type::
+After re-starting julia, if we type:
 
-  julia> matrixdepot("random")
+    julia> using MatrixDepot
+    include group.jl for user defined matrix generators
+    include myrand.jl for user defined matrix generators
+    verify download of index files...
+    used remote site is https://sparse.tamu.edu/?per_page=All
+    populating internal database...
+
+    julia> listnames(:symmetric)
+    list(22)                                                                                           
+    –––––––– –––––––– ––––––– ––––––– –––––– ––––– ––––––––– ––––––– –––––––– ––––––– –––––––––        
+    cauchy   clement  fiedler hilb    kms    minij oscillate pei     prolate  randsym wathen           
+    circul   dingdong hankel  invhilb lehmer moler pascal    poisson randcorr tridiag wilkinson        
+
+  julia> mdlist(:random)
   9-element Array{ASCIIString,1}:
   "golub"    
   "oscillate"
@@ -156,31 +192,8 @@ Now if we type::
   "rosser"   
   "wathen" 
 
-  julia> matrixdepot("symmetric")
-  22-element Array{ASCIIString,1}:
-  "cauchy"   
-  "circul"   
-  "clement"  
-  "dingdong" 
-  "fiedler"  
-  "hankel"   
-  "hilb"     
-  "invhilb"  
-  "kms"      
-  "lehmer"   
-  ⋮          
-  "pascal"   
-  "pei"      
-  "poisson"  
-  "prolate"  
-  "randcorr" 
-  "randsym"  
-  "tridiag"  
-  "wathen"   
-  "wilkinson"
-
-the function ``randsym`` will be part of the group ``symmetric`` and
-``random``.
+the function ``randsym`` will be part of the groups ``:symmetric`` and
+``:random``.
 
 
 It is a good idea to back up your changes. For example, we 
@@ -193,7 +206,4 @@ Then we go to the directory ``path/to/MatrixDepot/myMatrixDepot`` and type::
   git commit -m "first commit"
   git remote add origin https://github.com/your-user-name/myMatrixDepot.git
   git push -u origin master
-
-  
-
 
