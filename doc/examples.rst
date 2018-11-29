@@ -8,7 +8,7 @@ Demo
 
 `IJulia Notebook`_
 
-.. _IJulia Notebook: https://github.com/weijianzhang/MatrixDepot.jl/blob/master/doc/MatrixDepot_Demo.ipynb
+.. _IJulia Notebook: https://github.com/JuliaMatrices/MatrixDepot.jl/blob/master/doc/MatrixDepot_Demo.ipynb
 
 Getting Started
 ---------------
@@ -17,26 +17,37 @@ To see all the matrices in the collection, type
 
 .. code:: 
    
-   julia> matrixdepot()
+    julia> mdinfo()
+      Currently loaded Matrices
+      –––––––––––––––––––––––––––
 
-   Matrices:
-     1) baart            2) binomial         3) cauchy           4) chebspec      
-     5) chow             6) circul           7) clement          8) deriv2        
-     9) dingdong        10) fiedler         11) forsythe        12) foxgood       
-    13) frank           14) grcar           15) hadamard        16) heat          
-    17) hilb            18) invhilb         19) invol           20) kahan         
-    21) kms             22) lehmer          23) lotkin          24) magic         
-    25) minij           26) moler           27) neumann         28) oscillate     
-    29) parter          30) pascal          31) pei             32) phillips      
-    33) poisson         34) prolate         35) randcorr        36) rando         
-    37) randsvd         38) rohess          39) rosser          40) sampling      
-    41) shaw            42) toeplitz        43) tridiag         44) triw          
-    45) vand            46) wathen          47) wilkinson       48) wing          
+    builtin(#)                                                                             
+    ––––––––––– ––––––––––– ––––––––––– –––––––––––– ––––––––––– ––––––––––––– ––––––––––––
+    1 baart     10 deriv2   19 gravity  28 kms       37 parter   46 rohess     55 ursell   
+    2 binomial  11 dingdong 20 grcar    29 lehmer    38 pascal   47 rosser     56 vand     
+    3 blur      12 erdrey   21 hadamard 30 lotkin    39 pei      48 sampling   57 wathen   
+    4 cauchy    13 fiedler  22 hankel   31 magic     40 phillips 49 shaw       58 wilkinson
+    5 chebspec  14 forsythe 23 heat     32 minij     41 poisson  50 smallworld 59 wing     
+    6 chow      15 foxgood  24 hilb     33 moler     42 prolate  51 spikes                 
+    7 circul    16 frank    25 invhilb  34 neumann   43 randcorr 52 toeplitz               
+    8 clement   17 gilbert  26 invol    35 oscillate 44 rando    53 tridiag                
+    9 companion 18 golub    27 kahan    36 parallax  45 randsvd  54 triw                   
 
-   Groups:
-          data       eigen    ill-cond     inverse
-       pos-def      random     regprob      sparse
-     symmetric
+    user(#)
+    –––––––
+
+    Groups                                                   
+    ––––––– ––––– ––––– ––––––– –––––– ––––––– –––––––––     
+    all     local eigen illcond posdef regprob symmetric     
+    builtin user  graph inverse random sparse                
+
+    Suite Sparse of  
+    –––––––––––– ––––
+    2772         2833
+
+    MatrixMarket of 
+    –––––––––––– –––
+    488          498
 
 We can generate a Hilbert matrix of size 4 by typing
 
@@ -71,7 +82,7 @@ We can type the matrix name to get help.
 
 .. code:: 
 
-    matrixdepot("hilb")
+    mdinfo("hilb")
      Hilbert matrix
     ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -94,7 +105,7 @@ We can type the matrix name to get help.
 
 .. code::
 
-   matrixdepot("hadamard")
+   mdinfo("hadamard")
      Hadamard matrix
     ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -145,7 +156,7 @@ Matrices can be accessed by groups.
 
 .. code:: 
 
-    matrixdepot("symmetric")
+    mdlist(:symmetric)
 
    19-element Array{ASCIIString,1}:
     "hilb"     
@@ -170,7 +181,7 @@ Matrices can be accessed by groups.
 
 .. code:: 
 
-    matrixdepot("symmetric", "ill-cond")
+    mdlist(:symmetric & :illcond)
 
     7-element Array{ASCIIString,1}:
      "hilb"   
@@ -185,7 +196,7 @@ Matrices can be accessed by groups.
 
 .. code:: 
 
-    matrixdepot("inverse", "ill-cond", "symmetric")
+    mdlist(:inverse & :illcond & :symmetric)
 
     7-element Array{ASCIIString,1}:
      "hilb"   
@@ -206,7 +217,7 @@ Depot is a list of strings, you can simply do, for example,
 
 .. code:: 
 
-    spd = matrixdepot("symmetric", "pos-def")
+    spd = mdlist(:symmetric & :posdef)
 
 
     10-element Array{ASCIIString,1}:
@@ -256,45 +267,50 @@ To add a group of matrices permanently for future use, we put the macro
 .. code:: 
 
     @addgroup myfav = ["lehmer", "cauchy", "hilb"]
-    87
 
     @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]
-    138
 
-We need to reload Julia to see the changes. Type
+You can see the changes immediately:
 
 .. code:: 
 
-    workspace()
-   
-    using MatrixDepot
-    matrixdepot()
+    mdinfo()
+      Currently loaded Matrices
+      –––––––––––––––––––––––––––
 
-    Matrices:
-     1) baart            2) binomial         3) cauchy           4) chebspec      
-     5) chow             6) circul           7) clement          8) deriv2        
-     9) dingdong        10) fiedler         11) forsythe        12) foxgood       
-    13) frank           14) grcar           15) hadamard        16) heat          
-    17) hilb            18) invhilb         19) invol           20) kahan         
-    21) kms             22) lehmer          23) lotkin          24) magic         
-    25) minij           26) moler           27) neumann         28) oscillate     
-    29) parter          30) pascal          31) pei             32) phillips      
-    33) poisson         34) prolate         35) randcorr        36) rando         
-    37) randsvd         38) rohess          39) rosser          40) sampling      
-    41) shaw            42) toeplitz        43) tridiag         44) triw          
-    45) vand            46) wathen          47) wilkinson       48) wing          
+    builtin(#)                                                                             
+    ––––––––––– ––––––––––– ––––––––––– –––––––––––– ––––––––––– ––––––––––––– ––––––––––––
+    1 baart     10 deriv2   19 gravity  28 kms       37 parter   46 rohess     55 ursell   
+    2 binomial  11 dingdong 20 grcar    29 lehmer    38 pascal   47 rosser     56 vand     
+    3 blur      12 erdrey   21 hadamard 30 lotkin    39 pei      48 sampling   57 wathen   
+    4 cauchy    13 fiedler  22 hankel   31 magic     40 phillips 49 shaw       58 wilkinson
+    5 chebspec  14 forsythe 23 heat     32 minij     41 poisson  50 smallworld 59 wing     
+    6 chow      15 foxgood  24 hilb     33 moler     42 prolate  51 spikes                 
+    7 circul    16 frank    25 invhilb  34 neumann   43 randcorr 52 toeplitz               
+    8 clement   17 gilbert  26 invol    35 oscillate 44 rando    53 tridiag                
+    9 companion 18 golub    27 kahan    36 parallax  45 randsvd  54 triw                   
 
-   Groups:
-    data          eigen         ill-cond      inverse     
-    pos-def       random        regprob       sparse      
-    symmetric     myfav         test_for_paper2
+    user(#)
+    –––––––
 
+    Groups                                                                    
+    ––––––– ––––– ––––– ––––––– –––––– ––––––– ––––––––– –––––––––––––––      
+    all     local eigen illcond posdef regprob symmetric test_for_paper2      
+    builtin user  graph inverse random sparse  myfav                          
+
+    Suite Sparse of  
+    –––––––––––– ––––
+    2772         2833
+
+    MatrixMarket of 
+    –––––––––––– –––
+    488          498
     
 Notice new defined groups have been included. We can use them as
 
 .. code:: 
 
-    matrixdepot("myfav")
+    mdlist(:myfav)
     3-element Array{ASCIIString,1}:
      "lehmer"
      "cauchy"
@@ -306,34 +322,25 @@ need to reload Julia to see the changes.
 
 .. code:: 
 
-    @rmproperty myfav
-
-    153
+    @rmgroup myfav
 
 .. code:: 
 
-   > matrixdepot()
-
-   Matrices:
-      1) baart            2) binomial         3) cauchy           4) chebspec      
-      5) chow             6) circul           7) clement          8) deriv2        
-      9) dingdong        10) fiedler         11) forsythe        12) foxgood       
-     13) frank           14) grcar           15) hadamard        16) heat          
-     17) hilb            18) invhilb         19) invol           20) kahan         
-     21) kms             22) lehmer          23) lotkin          24) magic         
-     25) minij           26) moler           27) neumann         28) oscillate     
-     29) parter          30) pascal          31) pei             32) phillips      
-     33) poisson         34) prolate         35) randcorr        36) rando         
-     37) randsvd         38) rohess          39) rosser          40) sampling      
-     41) shaw            42) toeplitz        43) tridiag         44) triw          
-     45) vand            46) wathen          47) wilkinson       48) wing          
-
-  Groups:
-    data          eigen         ill-cond      inverse     
-    pos-def       random        regprob       sparse      
-    symmetric     test_for_paper2
-
-
+   listgroups()
+    14-element Array{Symbol,1}:
+     :all            
+     :builtin        
+     :local          
+     :user           
+     :eigen          
+     :graph          
+     :illcond        
+     :inverse        
+     :posdef         
+     :random         
+     :regprob        
+     :sparse         
+     :symmetric      
 
 More Examples
 -------------
@@ -342,7 +349,7 @@ An interesting test matrix is magic square. It can be generated as
 
 .. code:: 
 
-    M = matrixdepot("magic", 5)
+    M = matrixdepot("magic", Int, 5)
 
     5x5 Array{Int64,2}:
      17  24   1   8  15
@@ -355,7 +362,7 @@ An interesting test matrix is magic square. It can be generated as
 
 .. code:: 
 
-    sum(M,1)
+    sum(M, dims=1)
 
     1x5 Array{Int64,2}:
      65  65  65  65  65
@@ -364,7 +371,7 @@ An interesting test matrix is magic square. It can be generated as
 
 .. code:: 
 
-    sum(M,2)
+    sum(M, dims=2)
 
     5x1 Array{Int64,2}:
      65
@@ -396,7 +403,7 @@ Pascal Matrix can be generated as
 
 .. code:: 
 
-    P = matrixdepot("pascal", 6)
+    P = matrixdepot("pascal", Int, 6)
 
     6x6 Array{Int64,2}:
      1  1   1   1    1    1
@@ -413,14 +420,13 @@ rows.
 
 .. code:: 
 
-    chol(P)
+    cholesky(P)
 
-    6x6 Array{Float64,2}:
+    6x6 UpperTriangular{Float64,Array{Float64,2}}:
      1.0  1.0  1.0  1.0  1.0   1.0
      0.0  1.0  2.0  3.0  4.0   5.0
      0.0  0.0  1.0  3.0  6.0  10.0
      0.0  0.0  0.0  1.0  4.0  10.0
      0.0  0.0  0.0  0.0  1.0   5.0
      0.0  0.0  0.0  0.0  0.0   1.0
-
 

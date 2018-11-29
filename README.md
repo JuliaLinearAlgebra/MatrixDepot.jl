@@ -8,7 +8,7 @@ An extensible test matrix collection for Julia.
 
 * [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
 
-* [Release Notes](https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md)
+* [Release Notes](https://github.com/JuliaMatrices/MatrixDepot.jl/blob/master/NEWS.md)
 
     MatrixDepot
 
@@ -24,7 +24,7 @@ Access is like
 
     A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
     
-    A = ("HB/1138_bus")     # named matrix of the SuiteSpares Collection
+    A = ("HB/1138_bus")     # named matrix of the SuiteSparse Collection
 
    or
 
@@ -41,8 +41,8 @@ Access is like
     x = md.x
 ## Install
 
-**NOTE:** If you use Windows, you need to install MinGW/MSYS or
-  Cygwin in order to use the UF sparse matrix collection interface.
+**NOTE:** If you use Windows, you need to install MinGW/MSYS or Cygwin
+in order to use the SuiteSparse sparse and MatrixMarket matrix collection interface.
 
 To install the release version, type
 
@@ -80,17 +80,19 @@ Every matrix has a numeric identifier, which is unique for its area:
   
   * `user(id)` - a user-defined matrix generator - starting with `1`.
 
-  *  `sp(id)` - one of the `SuiteSparse` collection. The integer ids are the∈
+  *  `sp(id)` - one of the `SuiteSparse` collection. The integer ids are the
   'official' ident numbers assigned by the collection. Currently `id ∈ 1:3000`.
 
   * `mm(id)` - one of the `MatrixMarket` collection. Here id follows the ordering
-  of the index file of the collection. These numbers are probably not stable over time.
+  of the index file of the collection.
 
 ### Sets of Matrix Names - Pattern
 
 For some functions it makes sense to have lists of matrix names to operate on, for
 example to select a set matrices with certain properties. These sets are descibed
-by 'Patterns', which are applied to matrix names and also to other matrix properties. The following pattern types are supported:
+by 'Patterns', which are applied to matrix names and also to other matrix properties.
+
+The following pattern types are supported:
 
   1. `"name"` - a string matching exactly a matrix name
   2. `"shell-pattern"` - a string with shell wildcards `'?', '*', "[...]"` included.
@@ -99,7 +101,7 @@ by 'Patterns', which are applied to matrix names and also to other matrix proper
 
   4. `:group` - one of the defined group names; match all matrices in the group
 
-  5. `numeric identifiers` - examples `builtin(10)`, `sp(1:5, 7)`, `mm(1)`
+  5. `qualified numeric identifiers` - examples `builtin(10)`, `sp(1:5, 7)`, `mm(1), sp(:)`
 
   6. `predicate_function` - the name of a predefined or user-defined boolean function of the internal data type `MatrixData`. Example: `issymmetric`.
 
@@ -109,11 +111,11 @@ by 'Patterns', which are applied to matrix names and also to other matrix proper
 
   9. `~pattern` - negation of a pattern the \neg - operator ~ may be applied to all patterns
 
-To express `OR` and `AND`, the bitwise operators `|` and `&` can be used.
+To express `OR` and `AND`, the binary operators `|` and `&` and `(` / `)` are preferred.
 
 Examples:
 ```
-    "gravity" | "HB/*" & ishermitian & ~sp(20:30)
+    "gravity" | "HB/*" & ~(ishermitian & iscomplex) & ~sp(20:30)
 ```
 
 The set of all known matrices can be expressed as empty tuple `()`. In a shell-
@@ -128,15 +130,20 @@ properties of `MatrixData` as literal variable names.
 
 Examples:
 
-`@pred(author == "J. Brown")` is essentially the same as `d -> d.author == "J. Brown"`
+`@pred(author == "J. Brown")` is translated to:
+`d -> :author in propertynames(d) && d.author == "J. Brown"`
 
 `@pred(500_000 <= n * m < 1_000_000)` restricts the size of matched matrices.
 
-There is s set of predefined predicate functions including:`(issymmetric, ishermitian, isgeneral, isskew, isreal, iscomplex, isboolean, islocal, isremote,
-isloaded, isunloaded, isbuiltin, isuser, issparse)`
+`@pred(10^4 <= n <= 2*10^4 & issymmetric & nnz / n >= 10 )` in average more than 10 entries per row 
+
+There is s set of predefined predicate functions including:
+`(issymmetric, ishermitian, isgeneral, isskew, isreal, iscomplex, isboolean,
+islocal, isremote, isloaded, isunloaded, isbuiltin, isuser, issparse)`
 
 Special predicate generators `keyword(word...)` and `hasdata(symbol...)` allow to
 support keyword-search and check for the existence of meta-data.
+For example: `hasdata(:x) & ~keyword("fluid"` provides solution (x) and does not mention "fluid". 
 
 ## Accessing Data
 
@@ -145,8 +152,8 @@ support keyword-search and check for the existence of meta-data.
     mdlist(pattern) # array of matrix names according to pattern
     listdata(pattern) # array of `MatrixData`objects according to pattern
     listnames(pattern) # MD-formatted listing of all names according to pattern
-    listdir("*//*") # MD-group over part before `//` - count all matching pattern
-    listgroups(:groupname) # alist all matrices in group of that name
+    listdir("*//*") # MD-formatted -  group over part before `//` - count matching
+    listgroups(:groupname) # list all matrices in group of that name
 
 ### Information about matrices
 
@@ -172,13 +179,13 @@ Examples:
 `md = mdopen("spikes", 5, false); A = md.A; b = md.b; x = md.x`  
 
 `md = mdopen("Rommes/bips07_1998"); A = md.A; v = md.iv; title = md.data.title;
- nodenames = md("nodename.txt")`
+ nodenames = md.("nodename.txt")`
 
 The last example shows, how to access textual meta-data, when the name contains
 `Julia` non-word characters. Also if the metadata-name is stored in a varaible, 
 the last form has to be used.
 
-`meta = metasymbols(md)[2]; sec_matrix = md(meta)`
+`meta = metasymbols(md)[2]; sec_matrix = md.(meta)`
 
 The function `metasymbols` returns a list of all symbols denoting metadata
 provided by `md`. Wether expressed as symbols or strings does not matter.
@@ -189,49 +196,51 @@ size information and metadata.
 `propertynames(md.data)` gives an overview about all attributes of the
 `data::MatrixData`, which can for example be used in the `@pred` definitions.
 
-`metasymbols(md)` show all the metadata files accessible using md.
-
 ### Backoffice Jobs
 
-The remote data are originally store at the remote web-site of one of the 
+The remote data are originally stored at the remote web-site of one of the 
 matrix collections. Before they are presented to the user, they are downloaded
 to local disk storage, which serves as a permanent cache.
 
 The occasional user needs not bother about downloads, because that is done in
-the background, if matrix files are missing on the local disk.
+the background if matrix files are missing on the local disk.
 
 The same is true for the data required by `mdinfo(pattern)`. Actually these are
-stored separately only if the full matrix files (which may be huge) are not yet loaded.
+stored in separate files if the full matrix files (which may be huge) are not yet loaded.
 
 #### Bulk Downloads
 
-##### Header Data
+##### Load Header Data
 
 A download job to transmit a subset of remote matrix files may be started to
-load header data for all files. Header data include always the matrix type
+load header data for all files. Header data always include the matrix type
 according to the matrix-market-format and the size values `m` row-number,
 `n` = columns-number, and `dnz` number of stored data of the main sparse matrix.
 
 `MatrixDepot.loadinfo(pattern)` where `pattern` defines the subset.
 
-That is possible for the `SuiteSparse` collection and the `MatrixMarket` collection. The patterns can always refer to matrix names and id numbers.
-In the case of `SuiteSparse` also metadata `"date"`, `"kind"`, `"m"`, `"n"`, `"nnz"` are available and can be used, before individual matrix data
-have been loaded. They are contained in the index file (at [TAMU](https://sparse.tamu.edu).
-For `MatrixMarket`collection, patterns must restrict to names and id numbers.
+That is possible for the [SuiteSparse collection](https://sparse.tamu.edu) and the
+[NIST MatrixMarket collection](http://math.nist.gov/MatrixMarket).
+The patterns can always refer to matrix names and id numbers.
+In the case of `SuiteSparse` collection, also the metadata
+`"date"`, `"kind"`, `"m"`, `"n"`, `"nnz"`
+are available and can be used, before individual matrix data
+have been loaded. They are contained in the [index file](https://sparse.tamu.edu).
+For `MatrixMarket` collection, patterns are restricted to names and id numbers.
 
 In general it would be possible to `loadinfo("**")` to load all header data. That
 would last maybe an hour and generate some traffic for the remote sites.
 Nevertheless it is not necessary to do so, if you don't need the header data
 for the following task.
 
-##### Complete Data Files
+##### Load Complete Data Files
 
 **`MatrixDepot.load(pattern)`** loads all data files for the patterns.
-In the patterns can only refer to attributes, which are already available.
+Patterns can only refer to attributes, which are already available.
 In the case of `SuiteSparse` that includes the size info `"date"`, `"kind"`,
 `"m"`, `"n"`, and `"nnz"` and all additional attributes loaded in the previous step,
 which include `"author"`, `"title"`, `"notes"`, and keywords.
-In the case of `MatrixMarket` you can only refer to `"m"`, `"n"`, and `"dnz"`, only
+In the case of `MatrixMarket` you can only refer to `"m"`, `"n"`, and `"dnz"`,
 if previously loaded with the header data.
 
 Please do not:
@@ -243,7 +252,7 @@ Local and already loaded matrices are skipped automatically.
 
 Example:
 
-`MatrixDepot(sp(:), @pred(nnz < 100_000))` to download only problems with given
+`MatrixDepot.load(sp(:) & @pred(nnz < 100_000))` to download only problems with given
 number of stored entries in the main matrix.
 
 
@@ -323,7 +332,7 @@ julia> mdinfo("hilb")
   USA, 2002; sec. 28.1.
 ```
 
-We can also specify the data type
+We can also specify the data type for locally generated matrices.
 
 ```julia
 julia> matrixdepot("hilb", Float16, 5, 3)
@@ -343,7 +352,9 @@ julia> matrixdepot("hilb", Rational{Int}, 4)
 ```
 
 Matrices can be accessed by a variety of patterns and composed patterns.
-Integer numbers refer to the ident numbers of the SuiteSparse collection.
+Integer numbers `i` refer to the ident numbers in `sp(i)`, `mm(i)`, `builtin(i)`, `user(i)`.
+Here `sp` ... denote the supported matrix collections SuiteSparse (formerly UFL),
+Matrix Market, built-in, user-defined.
 
 ```julia
 julia> mdlist(sp(1))    # here sp(1) is the ident number of the SuiteSparse collection
@@ -369,7 +380,7 @@ julia> mdlist(builtin(1:4, 6, 10:15) | user(1:10) )
  "fiedler"
  "forsythe"
  "foxgood"
- "rand
+ "randsym"
 ```
 
 While the `listnames` command renders the output as markdown table, the internal
@@ -391,6 +402,7 @@ clement  hankel   kms     moler  pei       randcorr wathen
 
 ## Extend Matrix Depot
 
+It is possible to extend the builtin local problems with user defined generators and groups.
 We can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
 and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/latest/properties.html).
 

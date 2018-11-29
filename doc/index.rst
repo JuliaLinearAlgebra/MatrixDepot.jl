@@ -12,8 +12,8 @@ provides a diverse collection of test matrices, including parametrized
 matrices and real-life matrices.
 
 
-* `Source at Github <https://github.com/weijianzhang/MatrixDepot.jl>`_
-* `Release Notes <https://github.com/weijianzhang/MatrixDepot.jl/blob/master/NEWS.md>`_
+* `Source at Github <https://github.com/JuliaMatrices/MatrixDepot.jl>`_
+* `Release Notes <https://github.com/JuliaMatrices/MatrixDepot.jl/blob/master/NEWS.md>`_
 
 .. _install:
 
@@ -22,8 +22,8 @@ Installation
 
 To install the release version, type::
 
-  julia> Pkg.add("MatrixDepot")
-
+  julia> ]
+  pkg> add MatrixDepot
 
 .. toctree:: 
 
