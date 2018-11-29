@@ -35,7 +35,7 @@ defined as::
 
 Here is an example::
 
-  julia> matrixdepot("deriv2")
+  julia> mdinfo("deriv2")
   Computation of the Second Derivative:
              
   A classical test problem for regularization algorithms.
@@ -57,31 +57,30 @@ Here is an example::
   -0.0117188   -0.0351563  -0.0481771  -0.0195313 
   -0.00390625  -0.0117188  -0.0195313  -0.0169271 
 
-  julia> A = matrixdepot("deriv2", Float32, 4)
-  4x4 Array{Float32,2}:
-  -0.0169271   -0.0195313  -0.0117188  -0.00390625
-  -0.0195313   -0.0481771  -0.0351563  -0.0117188 
-  -0.0117188   -0.0351563  -0.0481771  -0.0195313 
-  -0.00390625  -0.0117188  -0.0195313  -0.0169271 
+	julia> r = mdopen("deriv2", 3, false) # generate all data
+	MatrixDepot.GeneratedMatrixData{:B}("deriv2", 10, MatrixDepot.deriv2)(3, false)
 
-  
-  julia> r = matrixdepot("deriv2", 3, false) # generate the test problem
-  Test problems for Regularization Method
-  A:
-  3x3 Array{Float64,2}:
-  -0.0277778   -0.0277778  -0.00925926
-  -0.0277778   -0.0648148  -0.0277778 
-  -0.00925926  -0.0277778  -0.0277778 
-  b:
-  [-0.01514653483985129,-0.03474793286789414,-0.022274315940957783]
-  x:
-  [0.09622504486493762,0.28867513459481287,0.48112522432468807]
+  julia> metasymbols(r) # which darta are available?
+  (:A, :b, :x)
 
-  julia> r.A  # generate the matrix A
+  julia> r.A # matrix A
   3x3 Array{Float64,2}:
-  -0.0277778   -0.0277778  -0.00925926
-  -0.0277778   -0.0648148  -0.0277778 
-  -0.00925926  -0.0277778  -0.0277778 
+   -0.0277778   -0.0277778  -0.00925926
+   -0.0277778   -0.0648148  -0.0277778 
+   -0.00925926  -0.0277778  -0.0277778 
+
+  julia> r.b # right hand side   
+  3-element Array{Float64,1}:
+   -0.01514653483985129 
+   -0.03474793286789414 
+   -0.022274315940957783
+
+  julia> r.x # solution
+  3-element Array{Float64,1}:
+   0.09622504486493762
+   0.28867513459481287
+   0.48112522432468807
+
 
 Here is a list of test problems in the collection:
 
