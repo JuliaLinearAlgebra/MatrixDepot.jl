@@ -13,46 +13,66 @@ The internal database is loaded automatically when using the module:
     used remote site is https://sparse.tamu.edu/?per_page=All
     populating internal database...
 
-Interface to the UF Sparse Matrix Collection
----------------------------------------------
+Interface to the SuiteSparse Matrix Collection (formerly UFL collection)
+------------------------------------------------------------------------
 
 Use ``M = matrixdepot(NAME)`` or ``md = mdopen(NAME); M = md.A``, where ``NAME``
-is ``collection_name +'/' + matrix_name``, to download a test matrix from the
-`SuiteSparse Sparse Matrix Collection.
+is ``collection_name + '/' + matrix_name``, to download a test matrix from the
+`SuiteSparse Matrix Collection. https://sparse.tamu.edu/
 For example::
 
   julia> md = mdopen("SNAP/web-Google")
-    PG SNAP/web-Google(#2301)  916428x916428(5105039) 2002 [A] 'Directed Graph' [Web graph from Google]()
+  PG SNAP/web-Google(#2301)  916428x916428(5105039) 2002 [A] 'Directed Graph' [Web graph from Google]()
 
 .. note:: 
    ``listnames("*/*")`` displays all the matrix names in the
    collection, including the newly downloaded matrices. All the matrix 
-   data can be found by ``listnames("**")``. 
-	  
-If the matrix name is unique in the collections, we could use
+   data can be found by ``listnames("**")``.
+
+
+If the matrix name is unique in the collections, we could also use
 ``matrixdepot(matrix_name)`` to download the data. If more than
 one matrix has the same name, an error is thrown.
 
-When download is complete, we can check matrix information using::
+When download is complete, we can check matrix information using:
+
+.. code::
 
   julia> mdinfo("SNAP/web-Google")
+  SNAP/web-Google
+  ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  %%MatrixMarket matrix coordinate pattern general
-  %-------------------------------------------------------------------------------
-  % UF Sparse Matrix Collection, Tim Davis
-  % http://www.cise.ufl.edu/research/sparse/matrices/SNAP/web-Google
-  % name: SNAP/web-Google
-  % [Web graph from Google]
-  % id: 2301
-  % date: 2002
-  % author: Google
-  % ed: J. Leskovec
-  % fields: name title A id date author ed kind notes
-  % kind: directed graph
-  %-------------------------------------------------------------------------------
+  MatrixMarket matrix coordinate pattern general
+
+  ──────────────────────────────────────────────────────────────────────
+
+    •    UF Sparse Matrix Collection, Tim Davis
+
+    •    http://www.cise.ufl.edu/research/sparse/matrices/SNAP/web-Google
+
+    •    name: SNAP/web-Google
+
+    •    [Web graph from Google]
+
+    •    id: 2301
+
+    •    date: 2002
+
+    •    author: Google
+
+    •    ed: J. Leskovec
+
+    •    fields: name title A id date author ed kind notes
+
+    •    kind: directed graph
+
+  ───────────────────────────────────────────────────────────────────────
   ...
 
-and generate it by accesing the field `A`.
+
+and generate it by accessing the field `A`.
+
+.. code::
 
     julia> M = md.A
     916428×916428 SparseMatrixCSC{Bool,Int64} with 5105039 stored entries:
@@ -68,33 +88,35 @@ and generate it by accesing the field `A`.
       [417498, 916428]  =  true
       [843845, 916428]  =  true
 
-You can convert the boolean pattern matrix to integer by `M * 1`.
+
+You can convert the boolean pattern matrix to integer by ``M * 1``.
 
 The metadata of a given matrix can be obtained by accessing properties of `md`.
 
 
 Which properties are available is shown in the `md::MatrixDescriptor`:
+
+.. code::
+
+  julia> md = mdopen("TKK/t520")
+  (IS TKK/t520(#1908)  5563x5563(286341/145952) 2008 [A, b, coord] 'Structural Problem' [T-beam, L = 520 mm, Quadratic four node DK type elements.  R Kouhia]()
+
+and also by the special function ``metasymbols``:
   
-    julia> md = mdopen("TKK/t520")
-    (IS TKK/t520(#1908)  5563x5563(286341/145952) 2008 [A, b, coord] 'Structural Problem' [T-beam, L = 520 mm, Quadratic four node DK type elements.  R Kouhia]()
+.. code::
 
-and also by the special function `metasymbols`:
-    julia> metasymbols(md)
-    3-element Array{Symbol,1}:
-     :A    
-     :b    
-     :coord
+  julia> metasymbols(md)
+  (:A, :b, :coord)
 
-When you acces a single matrix with `matrixdepot(pattern)` or `mdopen(pattern)` the full
+When you access a single matrix with ``matrixdepot(pattern)`` or ``mdopen(pattern)`` the full
 matrix data are dowloaded implicitly in the background, if not yet available on the local disk
 cache. 
 
-When you access matrix information with `mdinfo(pattern)` for one of more matrices, the header
+When you access matrix information with ``mdinfo(pattern)`` for one or more matrices, the header
 data of the matrix are downloaded implicitly, if not yet available on the local disk cache.
 
-
-t is also possible to dowload a bulk of matrix data by `MatrixDepot.loadinfo(pattern)` and
-`MatrixDepot.load(pattern)` to populate the disk cache in advance of usage.
+It is also possible to dowload a bulk of matrix data by ``MatrixDepot.loadinfo(pattern)`` and
+``MatrixDepot.load(pattern)`` to populate the disk cache in advance of usage.
 
 
 Interface to NIST Matrix Market
@@ -121,13 +143,19 @@ http://math.nist.gov/MatrixMarket/. For example::
 Checking matrix information and generating matrix data are similar to 
 the above case::
 
-  julia> mdinfo(md) or mdinfo("*/*/bp__1400")
+  julia> mdinfo(md) # or mdinfo("*/*/bp__1400")
+    Harwell-Boeing/smtape/bp__1400
+    ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-  %%MatrixMarket matrix coordinate real general
+    MatrixMarket matrix coordinate real general
 
-  use matrixdepot("Harwell-Boeing/smtape/bp__1400", :read) to read the data
+    822 822 4790
 
-  julia> matrixdepot("Harwell-Boeing/smtape/bp__1400", :read)
+There is no header information in this collection besides m, n, and dnz.
+
+.. code::
+
+  julia> md.A # or matrixdepot("Harwell-Boeing/smtape/bp__1400") 
   822x822 sparse matrix with 4790 Float64 entries:
 	[1  ,   1]  =  1.0
 	[1  ,   2]  =  0.001
@@ -146,4 +174,3 @@ the above case::
 	[796, 821]  =  1.0
 	[2  , 822]  =  1.0
 
-There is no header information in this collection besides m, n, and dnz.
