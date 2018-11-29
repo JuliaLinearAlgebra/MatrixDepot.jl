@@ -135,7 +135,7 @@ Examples:
 
 `@pred(500_000 <= n * m < 1_000_000)` restricts the size of matched matrices.
 
-`@pred(10^4 <= n <= 2*10^4 & issymmetric & nnz / n >= 10 )` in average more than 10 entries per row 
+`@pred(10^4 <= n <= 2*10^4 && n == m && nnz / n > 10 )` in average more than 10 entries per row 
 
 There is s set of predefined predicate functions including:
 `(issymmetric, ishermitian, isgeneral, isskew, isreal, iscomplex, isboolean,
