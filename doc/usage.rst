@@ -9,7 +9,7 @@ The matrix groups are noted as symbols.
 For example, the class of the symmetric
 matrices is symbolized by ``:symmetric``.
 
-.. function:: matrixdepot()
+.. function:: mdinfo()
 
   Return a list of all the matrices in the collection::
 
@@ -37,9 +37,9 @@ matrices is symbolized by ``:symmetric``.
 
 .. function:: matrixdepot(matrix_name, p1, p2, ...)
 
-  Return a matrix specified by the query string ``matrix_name``. ``p1,
-  p2, ...`` are input parameters depending on ``matrix_name``. For
-  example::
+  Return a matrix specified by the query string ``matrix_name``.
+  ``p1, p2, ...`` are input parameters depending on ``matrix_name``.
+  For example::
 
     julia> matrixdepot("hilb", 5, 4)
     5x4 Array{Float64,2}:
@@ -49,12 +49,12 @@ matrices is symbolized by ``:symmetric``.
     0.25      0.2       0.166667  0.142857
     0.2       0.166667  0.142857  0.125  
 
-.. function:: matrixdepot(matrix_name)
+.. function:: mdinfo(matrix_name)
 
-  Return the documentation of ``matrix_name``, including input
-  options, groups and reference. For example::
+  Return the documentation of ``matrix_name``, including input options,
+  groups and reference. For example::
 
-   julia> matrixdepot("moler")
+   julia> mdinfo("moler")
       Moler Matrix
      ≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -79,8 +79,8 @@ matrices is symbolized by ``:symmetric``.
 
 .. function:: listnames(group_name)
 
-  Return a list of matrices which belong to group ``group_name``. For
-  example::
+  Return a list of matrices which belong to group ``group_name``.
+  For example::
 
     julia> matrixdepot(:posdef)
     11-element Array{ASCIIString,1}:
@@ -115,12 +115,12 @@ matrices is symbolized by ``:symmetric``.
 
    Access matrix by number. For example::
      
-     julia> matrixdepot(builtin(3))
+     julia> mdlist(builtin(3))
      "chebspec"
 
 .. function:: mdlist(builtin(num1:num2, ...))
 
-   Access matrix by rangei and combinations. For example::
+   Access matrix by range and combinations. For example::
     julia> mdlist(builtin(1:4, 6, 10:15))
     11-element Array{String,1}:
      "baart"   
