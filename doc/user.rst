@@ -81,8 +81,8 @@ Now we open the file
   include_generator(FunctionName, "randorth", randorth)
 
 
-Due to a bug we have to remove file db.data and restart julia:
-`rm MatrixDepot/data/db.data`
+Due to a bug we have to remove file ``db.data`` and restart julia:
+``rm MatrixDepot/data/db.data``
 
 
 This is it. We can now use them from Matrix Depot::
@@ -167,6 +167,8 @@ We can also add group information in generator.jl:
 
 After re-starting julia, if we type:
 
+.. code::
+
     julia> using MatrixDepot
     include group.jl for user defined matrix generators
     include myrand.jl for user defined matrix generators
@@ -192,8 +194,7 @@ After re-starting julia, if we type:
   "rosser"   
   "wathen" 
 
-the function ``randsym`` will be part of the groups ``:symmetric`` and
-``:random``.
+the function ``randsym`` will be part of the groups ``:symmetric`` and ``:random``.
 
 
 It is a good idea to back up your changes. For example, we 
