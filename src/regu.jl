@@ -442,7 +442,7 @@ function baart(::Type{T}, n::Integer, matrixonly::Bool = true) where T
         else
             f3 = (exp.(ihs[2:n1].*co3) .- exp.(ihs[1:n].*co3))./co3
         end
-        A[:,j] .= c.*(f1 .+ 4f2 .+ f3)
+        A[:,j] .= c.*(f1 .+ 4 .*f2 .+ f3)
     end
 
     if matrixonly
