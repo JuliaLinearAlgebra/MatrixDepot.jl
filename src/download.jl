@@ -94,6 +94,23 @@ function insertlocal(db::MatrixDatabase, T::Type{<:GeneratedMatrixData},
     end
 end
 
+dbpath(db::MatrixDatabase) = abspath(DATA_DIR, "db.data")
+function readdb(db::MatrixDatabase)
+    cachedb = dbpath(db)
+    open(cachedb, "r") do io
+        dbx = deserialize(io)
+        merge!(db.data, dbx.data)
+        merge!(db.aliases, dbx.aliases)
+    end
+end
+
+function writedb(db::MatrixDatabase)
+    cachedb = dbpath(db)
+    open(cachedb, "w") do io
+        serialize(io, db)
+    end
+end
+
 """
     MatrixDepot.downloadindices(db)
 download html files and store matrix data in `db`.
@@ -103,26 +120,22 @@ If a file `db.data` is present in the data directory, deserialize
 the data instead of downloading and collection data.
 """
 function downloadindices(db::MatrixDatabase; ignoredb=false)
-    # UF Sparse matrix collection
-    cachedb = abspath(DATA_DIR, "db.data")
-    if !ignoredb && isfile(cachedb)
-        open(cachedb, "r") do io
-            dbx = deserialize(io)
-            merge!(db.data, dbx.data)
-            merge!(db.aliases, dbx.aliases)
-        end
+    added = 0
+    if !ignoredb && isfile(dbpath(db))
+        readdb(db)
     else
         _downloadindices(db)
-        open(cachedb, "w") do io
-            serialize(io, db)
-        end
+        added = 1
+    end
+    # println("populating internal database...")
+    added += addmetadata!(db)
+    if added > 0
+        writedb(db)
     end
     nothing
 end
 
 function _downloadindices(db::MatrixDatabase)
-    # UF Sparse matrix collection
-    global uf_remote
     empty!(db)
     insertlocal(db, GeneratedMatrixData{:B}, MATRIXDICT)
     insertlocal(db, GeneratedMatrixData{:U}, USERMATRIXDICT)
@@ -146,11 +159,13 @@ end
 update database index from the websites
 """
 function update(db::MatrixDatabase=MATRIX_DB)
+    cachedb = abspath(DATA_DIR, "db.data")
+    isfile(cachedb) && rm(cachedb)
     uf_matrices = localindex(preferred(TURemoteType))
     isfile(uf_matrices) && rm(uf_matrices)
     mm_matrices = localindex(preferred(MMRemoteType))
     isfile(mm_matrices) && rm(mm_matrices)
-    downloadindices(db)
+    downloadindices(db, ignoredb=true)
 end
 
 function gunzip(fname)
@@ -175,14 +190,15 @@ end
 
 Download the files backing the data from a remote repository. That is currently
 the TAMU site for the UFl collection and the NIST site for the MatrixMarket
-caoolection. The files are uncompressed and un-tar-ed if necessary.
+collection. The files are uncompressed and un-tar-ed if necessary.
 The data files containing the matrix data have to be in MatrixMarket format in
-both cases. Note, that some of the files of the MM collection are not available 
-in MatrixMarket format. An error message results, if trie to load them.
+both cases. Note, that some of the files of the MM collection are not available
+in MatrixMarket format. An error message results, if tried to load them.
 """
 function loadmatrix(data::RemoteMatrixData)
     file = matrixfile(data)
     if isfile(file)
+        addmetadata!(data)
         return 0
     end
     dirfn = localfile(data)
@@ -279,11 +295,23 @@ function extremnnz(data::RemoteMatrixData)
     extremnnz(data, data.m, data.n, data.dnz)
 end
 
+function addmetadata!(db::MatrixDatabase)
+    added = 0
+    for data in values(db.data)
+        if isunloaded(data)
+            addmetadata!(data)
+            added += isloaded(data)
+        end
+    end
+    added
+end
+
+addmetadata!(::MatrixData) = 0
 function addmetadata!(data::RemoteMatrixData)
     file = matrixfile(data)
     dir = dirname(file)
     empty!(data.metadata)
-    isdir(dir) || return
+    isdir(dir) || return 0
     base = basename(file)
     name, ext = rsplit(base, '.', limit=2)
     filtop(x) = x == base || startswith(x, string(name, '_'))
@@ -319,6 +347,6 @@ function addmetadata!(data::RemoteMatrixData)
             val != "" && setfield!(hdr, s, val)
         end
     end
-    nothing
+    return 1
 end
 

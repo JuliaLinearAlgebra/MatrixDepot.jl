@@ -127,7 +127,6 @@ function init(;ignoredb::Bool=false)
     println("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
     println("used remote site is $(uf_remote.params.indexurl)")
-    println("populating internal database...")
     nothing
 end
 
