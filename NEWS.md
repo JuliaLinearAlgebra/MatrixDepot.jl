@@ -1,5 +1,12 @@
 ## Matrix Depot Release Notes
 
+v0.8.1
+--------
+
+* fix problem with serialization of database
+* adapt data recognition for SuiteSparse index file
+* fix typo in sample problem "baart"
+
 v0.8.0
 --------
 
@@ -11,6 +18,7 @@ v0.8.0
 * Documentation adapted
 
 V0.7.0
+--------
 
 * Drop support for Julia v0.6
 

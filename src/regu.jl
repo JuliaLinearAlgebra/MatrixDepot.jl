@@ -442,22 +442,22 @@ function baart(::Type{T}, n::Integer, matrixonly::Bool = true) where T
         else
             f3 = (exp.(ihs[2:n1].*co3) .- exp.(ihs[1:n].*co3))./co3
         end
-        A[:,j] .= c.*(f1 .+ 4 .*f2 .+ f3)
+        A[:,j] .= c.*(f1 .+ 4 .* f2 .+ f3)
     end
 
     if matrixonly
         return A
     else
         # compute vector b
-        si      = T[.5:.5:n;]*hs
-        si      = sinh.(si)./si
+        si      = T[.5:.5:n;] .* hs
+        si      = sinh.(si) ./ si
         b       = zeros(T, n)
-        b[1]    = 1 + 4*si[1] + si[2]
-        b[2:n] .= si[2:2:2*n-2] .+ 4*si[3:2:2*n-1] .+ si[4:2:2*n]
-        b      .= b.*sqrt(hs)./3
+        b[1]    = 1 + 4 * si[1] + si[2]
+        b[2:n] .= si[2:2:2*n-2] .+ 4 .* si[3:2:2*n-1] .+ si[4:2:2*n]
+        b      .= b .* sqrt(hs) ./ 3
 
         # compute vector x
-        x = -diff(cos.(T[0:n;] * ht))/sqrt(ht)
+        x = -diff(cos.(T[0:n;] .* ht)) ./ sqrt(ht)
         return RegProb(A, b, x)
     end
 end
