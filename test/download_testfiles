@@ -1,0 +1,40 @@
+#! /usr/bin/bash
+
+function url_list {
+cat << ***
+ftp://math.nist.gov/pub/MatrixMarket2/Harwell-Boeing/lanpro/nos5.mtx.gz
+ftp://math.nist.gov/pub/MatrixMarket2/Harwell-Boeing/psadmit/1138_bus.mtx.gz
+ftp://math.nist.gov/pub/MatrixMarket2/Harwell-Boeing/psadmit/662_bus.mtx.gz
+ftp://math.nist.gov/pub/MatrixMarket2/Harwell-Boeing/smtape/bp___200.mtx.gz
+http://math.nist.gov/MatrixMarket/matrices.html
+https://sparse.tamu.edu/?per_page=All
+https://sparse.tamu.edu/MM/AG-Monien/bfly.tar.gz
+https://sparse.tamu.edu/MM/Averous/epb0.tar.gz
+https://sparse.tamu.edu/MM/Bai/dwg961b.tar.gz
+https://sparse.tamu.edu/MM/Bates/Chem97Zt.tar.gz
+https://sparse.tamu.edu/MM/Bates/Chem97Zt.tar.gz
+https://sparse.tamu.edu/MM/Bates/Chem97ZtZ.tar.gz
+https://sparse.tamu.edu/MM/DRIVCAV/cavity14.tar.gz
+https://sparse.tamu.edu/MM/HB/1138_bus.tar.gz
+https://sparse.tamu.edu/MM/HB/1138_bus.tar.gz
+https://sparse.tamu.edu/MM/HB/well1033.tar.gz
+https://sparse.tamu.edu/MM/Pajek/Journals.tar.gz
+https://www.cise.ufl.edu/research/sparse/MM/HB/1138_bus.tar.gz
+https://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html
+***
+}
+
+function url2file {
+    F="${1#*://}"
+    F="${F%%[?]*}"
+    [ "$F" != "${F%/}" ] && F="${F}index.html"
+    echo "$F"
+}
+
+mkdir -p data
+cd data
+url_list | while read URL
+do
+    curl --create-dirs -o "$(url2file "$URL")" "$URL"
+done
+

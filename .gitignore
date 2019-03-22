@@ -3,11 +3,11 @@
 
 # ignore newly added matrices 
 
-data/uf
+/data/uf
 # data/*html  # that cound save a lot of test time
-data/mm
-data*/
-myMatrixDepot*
+/data/mm
+/data*/
+/myMatrixDepot*
 
 
 src/*.mem
