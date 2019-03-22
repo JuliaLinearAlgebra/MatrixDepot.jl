@@ -1,8 +1,9 @@
 #download
 # verify that no data are downloaded (empty directory)
 @test mdlist(isloaded) == []
-import MatrixDepot: load, loadinfo
+import MatrixDepot: load, loadinfo, download_test_status!
 
+download_test_status!(true)
 # sp
 @test loadinfo("*/1138_bus") == 1 # load only header
 @test load("**/1138_bus") == 2 # loaded both versions (sp and mm)

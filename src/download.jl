@@ -2,6 +2,11 @@
 # Download data from UF Sparse Matrix Collection
 #####################################################
 
+# global variable to keep the download test status
+const DOWNLOAD_TEST = Ref(false)
+download_test_status!(x::Bool) = DOWNLOAD_TEST[] = x
+download_test_status() = DOWNLOAD_TEST[]
+
 # check line for remote identification and store in global variable
 function remotetype(line::AbstractString)
     global uf_remote
@@ -75,8 +80,8 @@ function downloadindex(remote::RemoteType)
     file = localindex(remote)
     url = indexurl(remote)
     if !isfile(file)
-        println("dowloading index file $url")
-        download(url, file)
+        println("downloading index file $url")
+        downloadfile(url, file)
     end
     nothing
 end
@@ -209,7 +214,7 @@ function loadmatrix(data::RemoteMatrixData)
 
     try
         println("downloading: ", url)
-        download(url, dirfn)
+        downloadfile(url, dirfn)
         tarfile = gunzip(dirfn)
         if endswith(tarfile, ".tar")
             run(`tar -vxf $tarfile -C $dir`)
@@ -238,9 +243,41 @@ function loadinfo(data::RemoteMatrixData)
         return 0
     end
     url = dataurl(data)
+    return downloadfilehead(url, file)
+end
+
+function url_to_file(url::AbstractString)
+    m = match(r"^.+://([^?]+)", url)
+    file = m[1]
+    if file[end] == '/'
+        file *= "index.html"
+    end
+    file
+end
+
+joinurl(list::AbstractString...) = join([list...;], '/')
+
+function local_url(url::AbstractString)
+    if download_test_status()
+        string("file://", joinurl(DATA_DIR, "..", "test", "data", url_to_file(url)))
+    else
+        url
+    end
+end
+
+function downloadfile(url::AbstractString, file::AbstractString)
+    download(local_url(url), file)
+    isfile(file) ? file : nothing
+end
+
+function curlcommand(url::AbstractString)
+    `sh -c 'curl "'$(local_url(url))'" -o - 2>/dev/null'`
+end
+
+function downloadfilehead(url::AbstractString, file::AbstractString) 
     urls = rsplit(url, '.', limit=3)
     cmd = []
-    push!(cmd, `sh -c 'curl "'$url'" -o - 2>/dev/null'`)
+    push!(cmd, curlcommand(url))
     if urls[end] == "gz"
         push!(cmd, `gunzip`)
         resize!(urls, length(urls)-1)
