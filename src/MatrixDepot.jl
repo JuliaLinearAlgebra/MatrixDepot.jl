@@ -66,7 +66,8 @@ Access is like
     see also: "logical" for logical combinations of all kinds of patterns.
 """
 module MatrixDepot
-using LinearAlgebra, SparseArrays, SuiteSparse, GZip, Serialization
+using LinearAlgebra, SparseArrays, SuiteSparse, Serialization
+using CodecZlib
 import Base: show
 
 export matrixdepot
