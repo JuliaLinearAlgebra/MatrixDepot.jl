@@ -122,7 +122,12 @@ the data instead of downloading and collection data.
 function downloadindices(db::MatrixDatabase; ignoredb=false)
     added = 0
     if !ignoredb && isfile(dbpath(db))
-        readdb(db)
+        try
+            readdb(db)
+        catch
+            _downloadindices(db)
+            added = 1
+        end
     else
         _downloadindices(db)
         added = 1
