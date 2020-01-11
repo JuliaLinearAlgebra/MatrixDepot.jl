@@ -179,7 +179,7 @@ function gunzip(fname)
     destname = rsplit(fname, ".gz", limit=2)[1]
     BUFFSIZE = 1000000
     open(destname, "w") do f
-        GZip.open(fname) do g
+        open(GzipDecompressorStream, fname) do g
             buffer = read(g, BUFFSIZE)
             while length(buffer) > 0
                 write(f, buffer)

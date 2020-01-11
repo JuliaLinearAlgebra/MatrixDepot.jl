@@ -1,22 +1,16 @@
+# Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
-
-sudo: false
-
 os:
   - linux
   - osx
-
 julia:
-  - 0.7
   - 1.0
+  - 1.2
   - nightly
-
 matrix:
   allow_failures:
-        - julia: nightly
-
+    - julia: nightly
 notifications:
   email: false
-
 after_success:
-  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
