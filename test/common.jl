@@ -32,7 +32,7 @@ MatrixDepot.init(ignoredb=true)
 @testset "mdlist" begin
 
 REM = length(mdlist("*/*"))
-@test REM in [2757, 2856]   # depends on whether UFL or TAMU url has been used
+@test REM in [2757, 2833]   # depends on whether UFL or TAMU url has been used
 @test length(mdlist(:builtin)) == 59
 @test length(mdlist(:user)) in [0, 1]
 
@@ -83,9 +83,9 @@ REM = length(mdlist("*/*"))
 # predicates of remote and local matrices
 @test length(mdlist(issymmetric)) == 30
 
-@test length(mdlist(@pred(m < 10000))) == 1672   # items with m < *
+@test length(mdlist(@pred(m < 10000))) == 1671   # items with m < *
 @test length(mdlist(@pred(m < 10000) & isloaded)) == 10   # items with m < *
-@test length(mdlist(@pred(n < 10000))) == 1612   # items with n < *
+@test length(mdlist(@pred(n < 10000))) == 1611   # items with n < *
 @test length(mdlist(@pred(n < 10000) &  isloaded)) == 9    # items with n < *
 @test length(mdlist(@pred(nnz < 5000))) == 600    # items with nnz < *
 @test length(mdlist(@pred(nnz < 5000) & isloaded)) == 2    # items with nnz < *
