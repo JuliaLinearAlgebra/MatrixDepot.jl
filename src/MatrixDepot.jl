@@ -97,7 +97,6 @@ include("download.jl")      # download data from the UF and MM sparse matrix col
 include("datareader.jl")    # read matrix data from local storage
 include("matrixmarket.jl")  # read matrix data from local storage
 include("markdown.jl")      # construct MD objects
-include("downloadsp.jl")    # read metatdata from suitesparse database
 
 function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
