@@ -2,16 +2,16 @@
 *.org
 
 # ignore newly added matrices 
+Manifest.toml
 
-data/uf
+/data/uf
 # data/*html  # that cound save a lot of test time
-data/mm
-data*/
+/data/mm
+/data*
 myMatrixDepot*
 
-
-src/*.mem
-src/*.cov
+*.mem
+*.cov
 
 # ignore generated files from Sphinx
 _build

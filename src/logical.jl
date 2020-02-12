@@ -210,8 +210,10 @@ function make_func(sli::AbstractVector{Symbol}, ex)
     res
 end
 
+const PROPS = (:name, :id, :metadata, fieldnames(MetaInfo)...)
+
 function make_pred(ex)
-    syms = extract_symbols(ex) ∩ (:m, :n, :nnz, :dnz, :name, :id, :title, :author, :ed, :fields, :notes, :date, :kind, :metadata)
+    syms = extract_symbols(ex) ∩ PROPS 
     :(MatrixDepot.pred($(make_func(syms, ex)), $(QuoteNode.(syms)...)))
 end
 

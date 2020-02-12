@@ -66,7 +66,8 @@ Access is like
     see also: "logical" for logical combinations of all kinds of patterns.
 """
 module MatrixDepot
-using LinearAlgebra, SparseArrays, SuiteSparse, GZip, Serialization
+using LinearAlgebra, SparseArrays, SuiteSparse, Serialization
+using CodecZlib
 import Base: show
 
 export matrixdepot
@@ -97,36 +98,40 @@ include("download.jl")      # download data from the UF and MM sparse matrix col
 include("datareader.jl")    # read matrix data from local storage
 include("matrixmarket.jl")  # read matrix data from local storage
 include("markdown.jl")      # construct MD objects
+include("downloadmm.jl")    # read metatdata from MM database
+include("downloadsp.jl")    # read metatdata from SS database
 
 function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
+    MYDEP = my_depot_dir()
 
-    if !isdir(DATA_DIR)
-        mkpath(DATA_DIR)
+    if !isdir(data_dir())
+        mkpath(data_dir())
     end
 
-    if !isdir(MY_DEPOT_DIR)
-        mkpath(MY_DEPOT_DIR)
-        open(joinpath(MY_DEPOT_DIR, GROUP), "w") do f
+    if !isdir(MYDEP)
+        mkpath(MYDEP)
+        open(joinpath(MYDEP, GROUP), "w") do f
             write(f, "usermatrixclass = Dict(\n);")
         end
-        open(joinpath(MY_DEPOT_DIR, GENERATOR), "w") do f
+        open(joinpath(MYDEP, GENERATOR), "w") do f
             write(f, "# include your matrix generators below \n")
         end
-        println("created dir $MY_DEPOT_DIR")
+        println("created dir $(MYDEP)")
     end
     
-    for file in readdir(MY_DEPOT_DIR)
+    for file in readdir(MYDEP)
         if endswith(file, ".jl") && file != GENERATOR
             println("include $file for user defined matrix generators")
-            include(joinpath(MY_DEPOT_DIR, file))
+            include(joinpath(MYDEP, file))
         end
     end
-    include(joinpath(MY_DEPOT_DIR, GENERATOR))
+    include(joinpath(MYDEP, GENERATOR))
     println("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
-    println("used remote site is $(uf_remote.params.indexurl)")
+    println("used remote sites are ", remote_name(preferred(TURemoteType)),
+            " and ", remote_name(preferred(MMRemoteType)))
     nothing
 end
 

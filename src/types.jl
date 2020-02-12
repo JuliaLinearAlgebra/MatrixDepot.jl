@@ -35,30 +35,76 @@ struct MMProperties
 end
 
 mutable struct MetaInfo
-    m::Int
-    n::Int
-    nnz::Int
-    dnz::Int
-    kind::String
+    m::Int          # number of rows
+    n::Int          # number of columns
+    nnz::Int        # number of nonzeros in sparse matrix
+    dnz::Int        # number of nonzero data items in file (half of nnz for symmetric)
+    kind::String    # category of problem
     date::Int # the Julian year number e.g. 2018
-    title::AbstractString
-    author::AbstractString
-    ed::AbstractString
-    fields::AbstractString
-    notes::AbstractString
+    title::AbstractString   #
+    author::AbstractString  #
+    ed::AbstractString      # editor
+    fields::AbstractString  # names of metadata and files like :A, :b, :x
+    notes::AbstractString   # list of relevant words in notes
+    # the following data are obtained from suite sparse index file ss_index.mat
+    nnzdiag::Int    # number of zeros in diagonal
+    pattern_symmetry::Float64   # [0..1] symmetry of non-zero element patterns
+    numerical_symmetry::Float64 # [0..1] symmetry regarding A[i,j] == A[j,i]
+    posdef::Bool    # Matrix is positive definite 1 (and symmetric/hermitian)
+    isND::Bool      # problem comes form 2D/3D discretization
+    isGraph::Bool   # problem is best considered as a graph than a system of equations
+    cholcand::Bool  # matrix is symmetric (Hermitian if complex) and diagonal is positive
+    amd_lnz::Int    # -2 if not square, -1 if not computed, else estimation for factorization
+    amd_vnz::Int    # upper bound on the number of entries in L of LU factorization
+    amd_rnz::Int    # upper bound on the number of entries in U in LU factorization
+    amd_flops::Int  # floating operation count for Cholesky factorization of symm. pattern
+    ncc::Int        # number of strongly connected components of graph/bipartite graph of A
+    nblocks::Int    # number of blocks in dmperm (MATLAB)
+    sprank::Int     # structural rank of A, max number of nonzero entries which can be
+                    # permuted to diagonal (dmperm)
+    # the following block of data is not well documented but delivered by suite sparse
+    lowerbandwidth::Int
+    upperbandwidth::Int
+    rcm_lowerbandwidth::Int
+    rcm_upperbandwidth::Int
+    xmin::ComplexF64
+    xmax::ComplexF64
+    # the following data are derived from the singular value decomposition of A
+    svdok::Bool      # singular value decomposition was successfull - data available
+    norm::Float64   # maximal SV
+    minsv::Float64  # minimal positive SV
+    cond::Float64   # condition number in 2-norm (norm/minsv)
+    rank::Int       # numerical rank (num. of SV > tol = max(m,n) * eps(norm)
+    nullspace::Int  # dimension of null space of A = min(m,n) - rank
+    svgap::Float64  # SV[rank]/SV[rank+1] if length(sv), else Inf
+    svdstatus::String # "" if no SV data available, "OK" if converged, or a warning text
+    svdhow::String  # "text describing how svd values was calculated"
+    sv::Vector{Float64} # singular values > 0
 end
 
 ## Matrix objects
 
 struct RemoteParameters
+    site::String
     dataurl::String
     indexurl::String
     indexgrep::String
     scan::Tuple
     extension::String
 end
+struct RemoteParametersNew
+    site::String
+    dataurl::String
+    indexurl::String
+    statsdb::String
+    extension::String
+end
 
 abstract type RemoteType end
+
+struct SSRemoteType <: RemoteType
+    params::RemoteParametersNew
+end
 
 struct TURemoteType <: RemoteType
     params::RemoteParameters
@@ -159,6 +205,7 @@ function Base.show(io::IO, data::RemoteMatrixData)
     print(io, " [", meta, "]")
     print(io, " '", data.kind, "'")
     print(io, " [", data.title, "]")
+    print(io, ")")
 end
 
 function Base.show(io::IO, mdesc::MatrixDescriptor)
@@ -178,6 +225,7 @@ end
 return alias name derived from integer id
 """
 aliasname(::Type{RemoteMatrixData{TURemoteType}}, i::Integer) = string('#', i)
+aliasname(::Type{RemoteMatrixData{SSRemoteType}}, i::Integer) = string('#', i)
 aliasname(::Type{RemoteMatrixData{MMRemoteType}}, i::Integer) = string('#', 'M', i)
 aliasname(::Type{GeneratedMatrixData{N}}, i::Integer) where N = string('#', N, i)
 function aliasname(T::Type{<:MatrixData}, r::AbstractVector{<:IntOrVec})
@@ -208,11 +256,21 @@ function keyfor(db::MatrixDatabase, name::AbstractString)
     end
 end
 
-localindex(::TURemoteType) = abspath(DATA_DIR, "uf_matrices.html")
-localindex(::MMRemoteType) = abspath(DATA_DIR, "mm_matrices.html")
+localindex(::TURemoteType) = abspath(data_dir(), "uf_matrices.html")
+localindex(::MMRemoteType) = abspath(data_dir(), "mm_matrices.html")
 
-localbase(::Type{TURemoteType}) = abspath(DATA_DIR, "uf")
-localbase(::Type{MMRemoteType}) = abspath(DATA_DIR, "mm")
+function sitename(s::AbstractString, t::AbstractString)
+    p = split(s, '/')
+    string((length(p) >= 3 ? p[3] : s), " with ", t, " index")
+end
+
+remote_name(s::SSRemoteType) = sitename(s.params.site, "MAT")
+remote_name(s::TURemoteType) = sitename(s.params.site, "HTML")
+remote_name(s::MMRemoteType) = sitename(s.params.site, "HTML")
+
+localbase(::Type{TURemoteType}) = abspath(data_dir(), "uf")
+localbase(::Type{SSRemoteType}) = abspath(data_dir(), "uf")
+localbase(::Type{MMRemoteType}) = abspath(data_dir(), "mm")
 
 localdir(data::RemoteMatrixData{T}) where T = abspath(localbase(T), filename(data))
 localdir(data::MatrixData) = nothing
@@ -223,10 +281,11 @@ dataurl(::Type{T}) where T<:RemoteType = dataurl(preferred(T))
 extension(::Type{T}) where T<:RemoteType = extension(preferred(T))
 extension(remote::RemoteType) = remote.params.extension
 dataurl(data::RemoteMatrixData{T}) where T = join((dataurl(T), data.name), '/') * extension(T)
+siteurl(data::RemoteMatrixData{T}) where T = preferred(T).params.site
 filename(data::RemoteMatrixData) = joinpath(split(data.name, '/')...)
-localfile(data::RemoteMatrixData{TURemoteType}) = localdir(data) * ".tar.gz"
+localfile(data::RemoteMatrixData{<:Union{TURemoteType,SSRemoteType}}) = localdir(data) * ".tar.gz"
 localfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx.gz"
-function matrixfile(data::RemoteMatrixData{TURemoteType})
+function matrixfile(data::RemoteMatrixData{<:Union{TURemoteType,SSRemoteType}})
     joinpath(localdir(data), rsplit(data.name, '/', limit=2)[end] * ".mtx")
 end
 matrixfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx"

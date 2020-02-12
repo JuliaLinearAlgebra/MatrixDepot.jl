@@ -15,12 +15,19 @@ function save_target(path::AbstractString)
     end
     if basename(path) == "data"
         mkpath(path)
-        ufm = "uf_matrices.html"
-        cp(abspath(target, ufm), abspath(path, ufm))
-        mmm = "mm_matrices.html"
-        cp(abspath(target, mmm), abspath(path, mmm))
+        cp_if("uf_matrices.html", target, path)
+        cp_if("mm_matrices.html", target, path)
+        cp_if("ss_index.mat", target, path)
     end
     target
+end
+
+function cp_if(name::AbstractString, from::AbstractString, to::AbstractString)
+    fromname = abspath(from, name)
+    toname = abspath(to, name)
+    if isfile(fromname) && !MatrixDepot.URL_REDIRECT[]
+        cp(fromname, toname)
+    end
 end
 
 function revert_target(saved::AbstractString, orig::AbstractString)

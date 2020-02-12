@@ -234,13 +234,19 @@ return info comment strings for MatrixMarket format files
 """
 function mmreadcomment(filename::AbstractString)
     io = IOBuffer()
+    mark(io)
     open(filename,"r") do mmfile
-        line = readline(mmfile)
-        while startswith(line, '%') || isempty(strip(line))
-            println(io, line)
-            line = readline(mmfile)
+        skip = 0
+        while !eof(mmfile)
+            s = readline(mmfile)
+            skip = isempty(strip(s)) || s[1] == '%' ? 0 : skip + 1
+            skip <= 1 && println(io, s)
+            if skip == 1
+                length(split(s)) == 3 && break
+                reset(io)
+                mark(io)
+            end
         end
-        println(io, line)
     end
     String(take!(io))
 end
@@ -252,7 +258,8 @@ Read header information from mtx file.
 function mmreadheader(file::AbstractString)
     if isfile(file)
         open(file) do io
-            line = lowercase(readline(io))
+          line = lowercase(readline(io))
+          while true
             token = split(line)
             if length(token) >= 4 &&
                 token[1] == MATRIXM &&
@@ -282,10 +289,21 @@ function mmreadheader(file::AbstractString)
                     val = hdr[:date]
                     hdr[:date] = isempty(val) ? 0 : parse(Int, hdr[:date])
                 end
-                hdr
+                if length(hdr) >= 6 && get(hdr, :nz, 0) > 0
+                    return hdr
+                else
+                    while !eof(io) && !startswith(line, '%')
+                        line = readline(io)
+                    end
+                    if eof(io)
+                        return hdr
+                    end
+                    line = lowercase(line)
+                end
             else
                 daterr("file '$file' is not a MatrixMarket file")
             end
+          end
         end
     else
         nothing
@@ -356,15 +374,20 @@ function _parsenext(v::Vector{UInt8}, p1::Int)
         c = v[i += 1]
     end
     ne = i
+    di = 0
     while 0x30 <= c <= 0x39
-        iaccu = iaccu * 10 + c - 0x30
+        c -= 0x30
+        di += di > 0 || c > 0
+        iaccu = iaccu * 10 + c
         c = v[i += 1]
     end
     if c == UInt8('.')
         c = v[i += 1]
         d0 = i
         while 0x30 <= c <= 0x39
-            daccu = daccu * 10 + c - 0x30
+            c -= 0x30
+            di += di > 0 || c > 0
+            daccu = daccu * 10 + c
             c = v[i += 1]
         end
         df = i - d0
@@ -389,7 +412,7 @@ function _parsenext(v::Vector{UInt8}, p1::Int)
         end
     end
     i == n0 && parserr("No decimal number found: '$(String(v[n0:min(end,n0+5)]))'")
-    i, iaccu, daccu, eaccu, sig, df
+    i, iaccu, daccu, eaccu, sig, df, di
 end
 
 function parsenext(T::Type{<:Signed}, v::Vector{UInt8}, p1::Int)
@@ -403,8 +426,12 @@ function parsenext(T::Type{<:Unsigned}, v::Vector{UInt8}, p1::Int)
     i, T(iaccu)
 end
 function parsenext(T::Type{<:AbstractFloat}, v::Vector{UInt8}, p1::Int)
-    i, iaccu, daccu, eaccu, sig, df = _parsenext(v, p1)
-    f = exp10(eaccu) * (T(daccu) / T(exp10(df)) + T(iaccu))
+    i, iaccu, daccu, eaccu, sig, df, di = _parsenext(v, p1)
+    f = if di <= 15 && 0 <= eaccu - df < 23
+        exp10(eaccu) * (T(daccu) / T(exp10(df)) + T(iaccu))
+    else
+        parse(T, String(view(v, p1:i-1)))
+    end
     i, (sig < 0 ? -f : f)
 end
 function parsenext(T::Type{<:Complex}, c, p)
