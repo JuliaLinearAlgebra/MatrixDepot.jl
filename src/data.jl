@@ -141,6 +141,7 @@ const DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
 const MY_DEPOT_DIR = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
 data_dir() = get(ENV, "MATRIXDEPOT_DATA", DATA_DIR)
 my_depot_dir() = get(ENV, "MATRIXDEPOT_MYDEPOT", MY_DEPOT_DIR)
+url_redirect() = URL_REDIRECT[] = get(ENV, "MATRIXDEPOT_URL_REDIRECT", "0") != "0"
 
 const REDIRECT_DIR = abspath(dirname(@__FILE__), "..", "test", "data")
 const URL_REDIRECT = Ref(false)

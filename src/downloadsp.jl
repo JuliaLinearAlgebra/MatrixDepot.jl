@@ -5,8 +5,6 @@
 using MAT
 using DataFrames
 using Base.Filesystem
-using HTML_Entities, StrTables
-const html = HTML_Entities.default
 
 #const SS_SITE = "https://sparse.tamu.edu"
 const SS_FILES = "/files/ssstats.csv"
@@ -62,7 +60,6 @@ const MFIELDTYPES2 = [Int,
                      ComplexF64, ComplexF64]
 
 function readindex(remote::SSRemoteType, db::MatrixDatabase)
-    load_ss_index()
     df = read_ss_index()
     for id = 1:size(df, 1)
         mt = copy(df[id,:])
@@ -88,7 +85,7 @@ end
 
 function load_ss_index()
     file = joinpath(data_dir(), "ss_index.mat")
-    if !isfile(file)
+    if !isfile(file) || Base.Filesystem.stat(file).size == 0
         url = redirect(indexurl(SS_REMOTE))
         println("downloading: ", url)
         download(url, file)
@@ -118,29 +115,6 @@ function read_ss_index(d::DataFrame=DataFrame())
     jname(a::String, b::String) = a * '/' * b
     d[!,:name] .= jname.(d[!,:Group],d[!,:Name])
     select!(d, DataFrames.Not(:Group))
-    d
-end
-
-# Group, Name, nrows, ncols, nnz, isReal, isBinary, isND, posdef, pattern_symmetry, numerical_symmetry, kind, nnzwithzeros.
-function read_kinds(d::DataFrame=DataFrame())
-    file = joinpath(data_dir(), "ssstats.csv")
-    fieldno = 13
-    kind = open(file) do io
-        n = parse(Int, readline(io))
-        timestamp = readline(io)
-        kind = Vector{String}(undef,n)
-        index = 0
-        while (line = readline(io)) != ""
-            fields = split(line, ',', limit=fieldno+1)
-            length(fields) >= fieldno || throw(DataError("invalid input line")) 
-            index >= n && break
-            index += 1
-            kind[index] = fields[12]
-        end
-        n == index || throw(DataError("missing data"))
-        kind
-    end
-    d[!,:kind] = categorical(kind, true)
     d
 end
 
@@ -225,69 +199,7 @@ end
 _vector(sv::AbstractArray) = vec(sv)
 _vector(sv::Number) = [sv]
 
-"""
-    loadnotes(data::RemoteMatrixData)
-
-Download notes data of one problem from matrix detail web site.
-"""
-function loadnotes(data::RemoteMatrixData{TURemoteType})
-    s = loadnotessp(data)
-    file = notesfile(data)
-    dir = dirname(file)
-    mkpath(dir)
-    open(file, "w") do io
-        write(io, s)
-    end
-    s
-end
-
-function loadnotessp(data::RemoteMatrixData)
-    url = redirect(datadetailsurl(data))
-    buf = IOBuffer()
-    io = IOBuffer(read(downloadcommand(url)))
-    mode = 0
-    while !eof(io)
-        s = readline(io)
-        if mode == 0
-            if startswith(s, "<div class='notesbox'>")
-                mode = 1
-            end
-        elseif mode == 1
-            if startswith(s, "</div>")
-                break
-            end
-            write(buf, s)
-        end
-    end
-    s = String(take!(buf))
-    s = replace(s, r"<pre[^>]*>" => "", count = 1)
-    s = replace(s, r"</pre>" => "", count = 1)
-    s = replace(s, r"&[^;]*;" => entity)
-    s
-end
-loadnotes(data::MatrixData) = ""
-   
 datadetailsurl(data::RemoteMatrixData) = string(siteurl(data), '/', data.name)
-
-function readnotes(data::RemoteMatrixData)
-    file = notesfile(data)
-    if !isfile(file)
-        loadnotes(data)
-    else
-        read(file, String)
-    end
-end
-
-function entity(full::AbstractString)
-    n = length(full)
-    n <= 2 && return ""
-    s = full[2:end-1]
-    if s[1] == '#'
-        string(Char(parse(Int, string('0', s[2:end]))))
-    else
-        lookupname(html, s)
-    end
-end
 
 """
     svdstatistics(svd::Vector{<:Real})

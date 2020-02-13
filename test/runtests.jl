@@ -1,14 +1,14 @@
 
 const MD_TOGGLE = true
 
+ENV["MATRIXDEPOT_URL_REDIRECT"] = length(VERSION.prerelease) == 0 ? "1" : "0"
+
 using MatrixDepot
 using Test
 using LinearAlgebra
 using SparseArrays
 
 import MatrixDepot: DataError
-
-MatrixDepot.URL_REDIRECT[] = true
 
 include("clean.jl")
 data_save = save_target(data_dir)
@@ -50,4 +50,3 @@ include("generators.jl")
     end
 end
 
-println("Success in all tests.")

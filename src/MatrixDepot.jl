@@ -66,7 +66,7 @@ Access is like
     see also: "logical" for logical combinations of all kinds of patterns.
 """
 module MatrixDepot
-using LinearAlgebra, SparseArrays, SuiteSparse, Serialization
+using LinearAlgebra, SparseArrays, Serialization
 using CodecZlib
 import Base: show
 
@@ -104,9 +104,10 @@ include("downloadsp.jl")    # read metatdata from SS database
 function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
-    MYDEP = my_depot_dir()
+    url_redirect()          # env MATRIXDEPOT_URL_REDIRECT == "1"
+    MYDEP = my_depot_dir()  # env MATRIXDEPOT_MYDEPOT 
 
-    if !isdir(data_dir())
+    if !isdir(data_dir())   # env MATRIXDEPOT_DATA
         mkpath(data_dir())
     end
 
