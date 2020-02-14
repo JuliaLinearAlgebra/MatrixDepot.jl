@@ -427,8 +427,18 @@ function parsenext(T::Type{<:Unsigned}, v::Vector{UInt8}, p1::Int)
 end
 function parsenext(T::Type{<:AbstractFloat}, v::Vector{UInt8}, p1::Int)
     i, iaccu, daccu, eaccu, sig, df, di = _parsenext(v, p1)
-    f = if di <= 15 && 0 <= eaccu - df < 23
-        exp10(eaccu) * (T(daccu) / T(exp10(df)) + T(iaccu))
+    eaccu -= df
+    if di <= 16 && iaccu != 0
+        daccu += 10^df * iaccu
+    end
+    f = if di <= 16 && daccu < UInt(1)<<53
+        if 0 <= eaccu < 23
+            T(daccu) * exp10(eaccu)
+        elseif 0 < -eaccu < 23
+            T(daccu) / exp10(-eaccu)
+        else
+            parse(T, String(view(v, p1:i-1)))
+        end
     else
         parse(T, String(view(v, p1:i-1)))
     end

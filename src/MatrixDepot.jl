@@ -105,7 +105,7 @@ function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
     url_redirect()          # env MATRIXDEPOT_URL_REDIRECT == "1"
-    MYDEP = my_depot_dir()  # env MATRIXDEPOT_MYDEPOT 
+    MYDEP = user_dir()  # env MATRIXDEPOT_MYDEPOT 
 
     if !isdir(data_dir())   # env MATRIXDEPOT_DATA
         mkpath(data_dir())

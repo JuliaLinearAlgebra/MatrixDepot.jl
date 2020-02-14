@@ -38,7 +38,7 @@ end
 function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
     prop in keys(MATRIXCLASS) && daterr("$prop can not be modified.")
 
-    user = abspath(my_depot_dir(), "group.jl")
+    user = abspath(user_dir(), "group.jl")
     s = read(user, String)          # read complete file into s
     rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
     ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
