@@ -256,6 +256,7 @@ function keyfor(db::MatrixDatabase, name::AbstractString)
     end
 end
 
+localindex(::SSRemoteType) = abspath(data_dir(), "ss_index.mat")
 localindex(::TURemoteType) = abspath(data_dir(), "uf_matrices.html")
 localindex(::MMRemoteType) = abspath(data_dir(), "mm_matrices.html")
 

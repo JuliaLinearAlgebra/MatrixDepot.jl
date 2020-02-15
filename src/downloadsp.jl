@@ -7,9 +7,9 @@ using DataFrames
 using Base.Filesystem
 
 #const SS_SITE = "https://sparse.tamu.edu"
-const SS_FILES = "/files/ssstats.csv"
-const SS_INDEX = "/files/ss_index.mat"
-const SS_GRAPHICS = "/files/" # to be followed by /$Group/$(Name)$ending
+#const SS_FILES = "/files/ssstats.csv"
+#const SS_INDEX = "/files/ss_index.mat"
+#const SS_GRAPHICS = "/files/" # to be followed by /$Group/$(Name)$ending
 # where endings indicate graphics about the main matrix of different kinds
 # ".png"|"_thumb.png"               - sparsity structure 
 # "_graph.gif"|"_graph_thumb.gif"   - iconnectivity graph
@@ -84,7 +84,7 @@ function MetaInfo(a::Int64, b::Int64, c::Int64, d::Int64, e::String,
 end
 
 function load_ss_index()
-    file = joinpath(data_dir(), "ss_index.mat")
+    file = localindex(preferred(SSRemoteType))
     if !isfile(file) || Base.Filesystem.stat(file).size == 0
         url = redirect(indexurl(SS_REMOTE))
         println("downloading: ", url)

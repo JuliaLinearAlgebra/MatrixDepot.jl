@@ -1,8 +1,8 @@
-mdinfo()
+@test mdinfo() !== nothing
 groups = ["symmetric", "inverse", "illcond", "posdef", "eigen","sparse", "random", "regprob", "all"]
 
 for group in groups 
-    listnames(Symbol(group))
+    @test !isempty(listnames(Symbol(group)))
 end
 
 @test_throws DataError matrixdepot("something")
@@ -16,8 +16,6 @@ m = length(mdlist("**"))
 @test isempty(mdinfo(builtin(m+1)))
 
 @addgroup newlist = mdlist(builtin(3:6) | builtin(20))
-
-MatrixDepot.init(ignoredb=true)
 
 @test mdlist(:newlist) == mdlist(builtin(3:6,20))
 
@@ -109,6 +107,9 @@ REM = length(mdlist("*/*"))
 
 # metadata from ss_index.mat
 @test length(mdlist(@pred(posdef) & "HB/*")) == 60
+@test length(mdlist(isposdef)) >= 60
+@test mdlist(@pred(posdef)) == mdlist(isposdef & isremote)
+@test mdlist(:posdef) == mdlist(isposdef & islocal)
 
 # metadata from svd files
 @test mdlist(@pred(svdok)) == ["HB/1138_bus"]

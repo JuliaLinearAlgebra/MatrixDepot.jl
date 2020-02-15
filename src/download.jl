@@ -2,7 +2,7 @@
 # Download data from UF Sparse Matrix Collection
 #####################################################
 
-# collect the keys from local database (MATRIXDICT od USERMATRIXDICT)
+# collect the keys from local database (MATRIXDICT or USERMATRIXDICT)
 # provide a numerical id counting from 1 for either database.
 function insertlocal(db::MatrixDatabase, T::Type{<:GeneratedMatrixData},
                      ldb::Dict{<:AbstractString,Function})
@@ -11,8 +11,9 @@ function insertlocal(db::MatrixDatabase, T::Type{<:GeneratedMatrixData},
     ks = sort!(collect(keys(ldb)))
     for k in ks
         cnt += 1
-        db.data[k] = T(k, cnt, ldb[k])
+        push!(db, T(k, cnt, ldb[k]))
     end
+    cnt
 end
 
 dbpath(db::MatrixDatabase) = abspath(data_dir(), "db.data")
@@ -61,6 +62,8 @@ function downloadindices(db::MatrixDatabase; ignoredb=false)
     added += addmetadata!(db)
     println("adding svd data...")
     added += addsvd!(db)
+    added += insertlocal(db, GeneratedMatrixData{:B}, MATRIXDICT)
+    added += insertlocal(db, GeneratedMatrixData{:U}, USERMATRIXDICT)
     if added > 0
         println("writing database")
         writedb(db)
@@ -71,8 +74,6 @@ end
 function _downloadindices(db::MatrixDatabase)
     println("reading index files")
     empty!(db)
-    insertlocal(db, GeneratedMatrixData{:B}, MATRIXDICT)
-    insertlocal(db, GeneratedMatrixData{:U}, USERMATRIXDICT)
 
     try
         readindex(preferred(SSRemoteType), db)
