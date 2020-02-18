@@ -147,7 +147,12 @@ const REDIRECT_DIR = abspath(dirname(@__FILE__), "..", "test", "data")
 const URL_REDIRECT = Ref(false)
 function redirect(url::AbstractString)
     if URL_REDIRECT[]
-        string("file://", REDIRECT_DIR, split(url, ':', limit=2)[2])
+        urlpart = split(url, ":/", limit=2)[2]
+        if Sys.iswindows()
+            string("file:\\", REDIRECT_DIR, replace(urlpart, '/' => '\\'))
+        else
+            string("file://", REDIRECT_DIR, urlpart)
+        end
     else
         url
     end
