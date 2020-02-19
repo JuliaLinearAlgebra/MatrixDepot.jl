@@ -149,7 +149,7 @@ function redirect(url::AbstractString)
     if URL_REDIRECT[]
         urlpart = split(url, ":/", limit=2)[2]
         if Sys.iswindows()
-            string("file:\\", REDIRECT_DIR, replace(urlpart, '/' => '\\'))
+            string("file:/", replace(REDIRECT_DIR, '\\' => '/'), urlpart)
         else
             string("file://", REDIRECT_DIR, urlpart)
         end
