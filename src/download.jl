@@ -138,16 +138,18 @@ function loadmatrix(data::RemoteMatrixData)
     url = redirect(dataurl(data))
 
     isdir(dir) || mkpath(dir)
-
+    wdir = pwd()
     try
         println("downloading: ", url)
         download(url, dirfn)
         tarfile = gunzip(dirfn)
+        cd(dir)
         if endswith(tarfile, ".tar")
-            run(`tar -vxf $tarfile -C $dir`)
+            run(`tar -xf $tarfile`)
             rm(tarfile; force=true)
         end
     finally
+        cd(wdir)
         rm(dirfn, force=true)
     end
     addmetadata!(data)
