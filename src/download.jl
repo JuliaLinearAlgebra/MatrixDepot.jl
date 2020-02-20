@@ -2,6 +2,8 @@
 # Download data from UF Sparse Matrix Collection
 #####################################################
 
+using Base.Filesystem
+
 # collect the keys from local database (MATRIXDICT or USERMATRIXDICT)
 # provide a numerical id counting from 1 for either database.
 function insertlocal(db::MatrixDatabase, T::Type{<:GeneratedMatrixData},
@@ -143,9 +145,10 @@ function loadmatrix(data::RemoteMatrixData)
         println("downloading: ", url)
         download(url, dirfn)
         tarfile = gunzip(dirfn)
+        rfile = relpath(string(tarfile))
         cd(dir)
         if endswith(tarfile, ".tar")
-            run(`tar -xf $tarfile`)
+            run(`tar -xf $rfile`)
             rm(tarfile; force=true)
         end
     finally
