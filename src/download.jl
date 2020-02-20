@@ -213,7 +213,7 @@ function downloadpipeline(url::AbstractString)
     cmd = []
     push!(cmd, downloadcommand(url))
     if urls[end] == "gz"
-        push!(cmd, `gunzip`)
+        push!(cmd, `gzip -dc`)
         resize!(urls, length(urls)-1)
     end
     if urls[end] == "tar"
