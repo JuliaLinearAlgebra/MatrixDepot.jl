@@ -79,6 +79,7 @@ export builtin, user, sp, mm, logical
 export isgeneral, issymmetric, isskew, ishermitian
 export iscomplex, isreal, isinteger, isboolean
 export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
+export issvdok, isposdef
 export @pred, keyword, hasdata
 
 # The following functions are re-used as predicate functions / logical operators
