@@ -87,29 +87,64 @@ function downloadindex(remote::RemoteType)
 end
 
 # name translations (most of the MM problems are found with similar name in SuiteSparse)
-function namemm2uf(mmname::AbstractString)
+function namemm2ss(mmname::AbstractString)
     s = split(mmname, '/')
-    s = if s[2] == "qcd"
-        replace(s[3], r"^([^.]*)\.(.)-00l(......)00$" => s"QCD/\1_\2-\3")
-    elseif s[2] == "tokamak"
-        string("TOKAMAK/", s[3])
-    elseif s[2] == "fidap"
-        replace(s[3], r"fidap0*([^0]*)" => s"FIDAP/ex\1")
-    elseif s[1] == "Harwell-Boeing"
-        string("*/", replace(s[3], r"_+" => "_"))
-    elseif s[1] == "NEP"
-        if s[2] == "crystal"
-            string("*/", replace(s[3], r"^(cry)(.*)$" => s"\1g\2"))
-        elseif s[3] == "rdb2048l"
+    length(s) == 3 || return mmname
+    s1, s2, s3 = s
+    if s2 == "qcd"
+        replace(s3, r"^([^.]*)\.(.)-00l(......)00$" => s"QCD/\1_\2-\3")
+    elseif s2 == "tokamak"
+        string("TOKAMAK/", s3)
+    elseif s2 == "fidap"
+        replace(s3, r"fidap0*([^0]*)" => s"FIDAP/ex\1")
+    elseif s1 == "Harwell-Boeing"
+        string("*/", replace(s3, r"_+" => "_"))
+    elseif s1 == "NEP"
+        if s2 == "crystal"
+            string("*/", replace(s3, r"^(cry)(.*)$" => s"\1g\2"))
+        elseif s3 == "rdb2048l"
             string("*/", "rdb2048")
-        elseif s[3] == "rdb2048"
+        elseif s3 == "rdb2048"
             string("*/", "rdb2048_noL")
         else
-            string("*/", replace(s[3], r"^(bfw|mhd|rbs|odep)([\d]{2,3})([\w])$" => s"\1\3\2"))
+            string("*/", replace(s3, r"^(bfw|mhd|rbs|odep)([\d]{2,3})([a-z])$" => s"\1\3\2"))
         end
     else
-        string("*/", s[3])
+        string("*/", s3)
     end
-    s
 end
+
+function namess2mm(ssname::AbstractString)
+    s = split(ssname, '/')
+    length(s) == 2 || return ssname
+    s1, s2 = s
+    if s1 == "QCD"
+        replace(s2, r"^([^_]*)_(.)-(...)-(....)$" => s"misc/qcd/\1.\2-00l\3-\4") * "00"
+    elseif s1 == "TOKAMAK"
+        string("SPARSKIT/tokamak", s2)
+    elseif s1 == "FIDAP"
+        x = replace(s2, r"^ex([0-9]*)$" => s"\1")
+        x == s2 ? string(s1, '/', x) : "SPARSKIT/fidap/fidap$(printfint(parse(Int,x), 3))"
+    elseif s1 == "HB"
+        n = length(s2)
+        N = startswith(s2, "watt_") || startswith(s2, "pores_") ? 7 : 8
+        y = if n >= N
+            s2
+        else
+            x = replace(s2, r"^(.*)(_+)(.*[0-9])$" => s"\1/\3")
+            x == s2 ? s2 : replace(x, r"/" => "_" ^ (N + 1 - n))
+        end
+        "Harwell-Boeing/*/" * y
+    elseif s1 == "Bai" && startswith(s2, "cryg")
+        replace(s2, r"^(cry)g(.*)$" => s"NEP/crystal/\1\2")
+    elseif s1 == "Bai"
+        x = (s2 == "rdb2048" ? "rdb2048l" : s2 == "rdb2048_noL" ? "rdb2048" : s2)
+        x = replace(x, r"^(bfw|mhd|rbs|odep)([a-z])([\d]{2,3})" => s"\1\3\2")
+        string("NEP/*/", x)
+    else
+        string("*/*/", s2)
+    end
+end
+
+printfint(n::Integer, pad::Int) = String(reverse(digits(n, base=UInt8(10), pad=pad)) .+ '0')
 
