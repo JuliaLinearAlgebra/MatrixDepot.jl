@@ -1,5 +1,13 @@
 ## Matrix Depot Release Notes
 
+v1.0.0
+
+* additional meta-data for suite-sparse collection specially SVD data
+* improved testing
+* ready for windows
+* adapt documentation
+
+
 v0.8.1
 --------
 

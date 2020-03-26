@@ -3,26 +3,30 @@
 Interface to Test Collections
 =============================
 
-The internal database is loaded automatically when using the module:
+The internal database is loaded automatically when using the module::
 
-.. code::
-
-    julia> using MatrixDepot
-    include group.jl for user defined matrix generators
-    verify download of index files...
-    used remote site is https://sparse.tamu.edu/?per_page=All
-    populating internal database...
+   julia> using MatrixDepot
+   include group.jl for user defined matrix generators
+   include myrand.jl for user defined matrix generators
+   verify download of index files...
+   reading database
+   adding metadata...
+   adding svd data...
+   writing database
+   used remote sites are sparse.tamu.edu with MAT index and math.nist.gov with HTML index
 
 Interface to the SuiteSparse Matrix Collection (formerly UFL collection)
 ------------------------------------------------------------------------
 
 Use ``M = matrixdepot(NAME)`` or ``md = mdopen(NAME); M = md.A``, where ``NAME``
 is ``collection_name + '/' + matrix_name``, to download a test matrix from the
-`SuiteSparse Matrix Collection. https://sparse.tamu.edu/
+SuiteSparse Matrix Collection:
+https://sparse.tamu.edu/
+
 For example::
 
-  julia> md = mdopen("SNAP/web-Google")
-  PG SNAP/web-Google(#2301)  916428x916428(5105039) 2002 [A] 'Directed Graph' [Web graph from Google]()
+   julia> md = mdopen("SNAP/web-Google")
+   PG SNAP/web-Google(#2301)  916428x916428(5105039) 2002 [A] 'Directed Graph' [Web graph from Google]()
 
 .. note:: 
    ``listnames("*/*")`` displays all the matrix names in the
@@ -31,14 +35,14 @@ For example::
 
 
 If the matrix name is unique in the collections, we could also use
-``matrixdepot(matrix_name)`` to download the data. If more than
+``matrixdepot("**/matrix_name")`` to download the data. If more than
 one matrix has the same name, an error is thrown.
 
 When download is complete, we can check matrix information using:
 
 .. code::
 
-  julia> mdinfo("SNAP/web-Google")
+  julia> mdinfo(md) # - or mdinfo("SNAP/web-Google")
   SNAP/web-Google
   ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
@@ -70,7 +74,7 @@ When download is complete, we can check matrix information using:
   ...
 
 
-and generate it by accessing the field `A`.
+and generate it by accessing the field ``A``.
 
 .. code::
 
@@ -91,10 +95,11 @@ and generate it by accessing the field `A`.
 
 You can convert the boolean pattern matrix to integer by ``M * 1``.
 
-The metadata of a given matrix can be obtained by accessing properties of `md`.
+The metadata of a given matrix can be obtained by accessing properties of ``md``
+or ``md.data``.
 
 
-Which properties are available is shown in the `md::MatrixDescriptor`:
+Which properties are available is shown in the ``MatrixDescriptor``:
 
 .. code::
 
@@ -105,19 +110,83 @@ and also by the special function ``metasymbols``:
   
 .. code::
 
-  julia> metasymbols(md)
-  (:A, :b, :coord)
+    julia> metasymbols(md)
+    (:A, :b, :coord)
 
-When you access a single matrix with ``matrixdepot(pattern)`` or ``mdopen(pattern)`` the full
-matrix data are dowloaded implicitly in the background, if not yet available on the local disk
-cache. 
+You can obtain the metatdata ``A``, ``b``, and ``coord`` by::
 
-When you access matrix information with ``mdinfo(pattern)`` for one or more matrices, the header
-data of the matrix are downloaded implicitly, if not yet available on the local disk cache.
+    julia> md.coord
+    5563×3 Array{Float64,2}:
+    0.0   0.0   0.0
+    0.0   0.0   0.0
+    ⋮
+    520.0  50.0  15.0
+    520.0  50.0  15.0
 
-It is also possible to dowload a bulk of matrix data by ``MatrixDepot.loadinfo(pattern)`` and
-``MatrixDepot.load(pattern)`` to populate the disk cache in advance of usage.
 
+When you access a single matrix with ``matrixdepot(pattern)`` or ``mdopen(pattern)``
+the full matrix data are dowloaded implicitly in the background, if not yet available
+on the local disk cache. 
+
+When you access matrix information with ``mdinfo(pattern)`` for one or more matrices,
+the header data of the matrix are downloaded implicitly, if not yet available on the
+local disk cache.
+
+It is also possible to dowload a bulk of matrix data by ``MatrixDepot.loadinfo(pattern)``
+and ``MatrixDepot.load(pattern)`` to populate the disk cache in advance of usage.
+If you want to access the Singular Value Decomposition (svd) data available for quite a
+few of the Suite Sparse collection, you explicitly have to use
+``MatrixDepot.loadsvd(pattern)``.
+
+The following example demonstrates how to access SVD data (derived from singular
+value decomposition of the matrix). The predicate ``issvdok`` selects all
+matrices which have SVD data loaded. 
+
+.. code::
+
+    julia> mdlist(issvdok & @pred(5900 <= n < 6000))
+    8-element Array{String,1}:
+    "AG-Monien/ukerbe1"
+    "Cote/mplate"
+    "HB/man_5976"
+    "Hamrle/Hamrle2"
+    "JGD_Homology/cis-n4c6-b4"
+    "JGD_Homology/n4c6-b4"
+    "Schenk_IBMNA/c-32"
+    "TOKAMAK/utm5940"
+
+    julia> md = mdopen("AG-Monien/ukerbe1")
+    (PS AG-Monien/ukerbe1(#2422)  5981x5981(15704/7852) 1998 [A, coord] '2D/3D problem' [2D finite element problem])()
+
+    julia> reshape(propertynames(md.data),11, 4)
+    11×4 Array{Symbol,2}:
+    :name      :ed                  :amd_vnz             :xmax
+    :id        :fields              :amd_rnz             :svdok
+    :metadata  :notes               :amd_flops           :norm
+    :m         :nnzdiag             :ncc                 :minsv
+    :n         :pattern_symmetry    :nblocks             :cond
+    :nnz       :numerical_symmetry  :sprank              :rank
+    :dnz       :posdef              :lowerbandwidth      :nullspace
+    :kind      :isND                :upperbandwidth      :svgap
+    :date      :isGraph             :rcm_lowerbandwidth  :svdstatus
+    :title     :cholcand            :rcm_upperbandwidth  :svdhow
+    :author    :amd_lnz             :xmin                :sv
+
+    julia> md.data.rank
+    4108
+
+    julia> sv = md.data.sv
+    5981-element Array{Float64,1}:
+    3.131396665809681
+    3.1313966657795302
+    3.0773931783051283
+    ⋮
+    3.936758260137112e-18
+    1.550044427797539e-18
+    7.503077983559783e-19
+    8.317116401465794e-22
+
+For the meaning of the property names see also: https://sparse.tamu.edu/statistics.
 
 Interface to NIST Matrix Market
 -------------------------------
@@ -128,13 +197,13 @@ test matrix from NIST Matrix Market:
 http://math.nist.gov/MatrixMarket/. For example::
 
   julia> md = mdopen("Harwell-Boeing/lanpro/nos5")
-  The collection-name and set-name may as always be replaced by wildcard patterns "*",
-  as long as there exists only on name matching the pattern.
+
+The collection-name and set-name may as always be replaced by wildcard patterns "*",
+as long as there exists only one name matching the pattern.
+
+.. code::
 
   julia> md = mdopen("*/*/bp__1400")
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  100 28192  100 28192    0     0   4665      0  0:00:06  0:00:06 --:--:-- 10004
   download:/home/.../MatrixDepot/data/mm/Harwell-Boeing/smtape/bp__1400.mtx.gz
 
   (RG Harwell-Boeing/smtape/bp__1400(#M93)  822x822(4790)  [A] '' []()
@@ -151,7 +220,7 @@ the above case::
 
     822 822 4790
 
-There is no header information in this collection besides m, n, and dnz.
+There is typically no header information in this collection besides m, n, and dnz.
 
 .. code::
 
@@ -161,16 +230,79 @@ There is no header information in this collection besides m, n, and dnz.
 	[1  ,   2]  =  0.001
 	[26 ,   2]  =  -1.0
 	[1  ,   3]  =  0.6885
-	[25 ,   3]  =  0.9542
-	[692,   3]  =  1.0
-	[718,   3]  =  5.58
 	⋮
-	[202, 820]  =  -1.0
-	[776, 820]  =  1.0
-	[1  , 821]  =  0.4622
 	[25 , 821]  =  0.725
 	[28 , 821]  =  1.0
 	[202, 821]  =  -1.0
 	[796, 821]  =  1.0
 	[2  , 822]  =  1.0
+
+
+Matrix Identification (Patterns)
+--------------------------------
+
+A ``pattern`` is used to select from the available problems. There are several elementary
+and combination forms of patterns. Each pattern selects an array of matrix names
+currently found in the database. Matrix names contain zero, one or two ``/`` characters.
+
+Patterns can be used to select subsets or individual problems from the depot.
+They are used as arguments of the functions::
+
+    matrixdepot
+    mdinfo
+    mdlist
+    listnames
+    listdata
+    listdir     - only strings
+    mdopen      - single match required    
+    MatrixDepot.loadinfo
+    MatrixDepot.loadsvd
+
+1. ``AbstractString`` with wildcard characters ``*``, ``**``, and ``?``.
+
+  Here ``?`` stands for one arbitrary character in the matrix name excluding ``/``, and ``*``
+  for a sequence of arbitray characters excluding ``/``. ``**`` stands for an arbitrary
+  sequence of characters including ``/``.
+
+  Example: ``"*/???/w*"``, ``"**/1138*"``
+
+2. One of the integer identifiers ``builtin(n)``, ``user(n)``, ``sp(n)``, and ``mm(n)``.
+  
+  Here the respectively built-in, user-defined, suite-sparse, matrix-market problems are
+  numbered. ``n`` may be a positive integer, a range of integers, or a list of the previous.
+
+  Example: ``builtin(1,3,10:11)``
+
+2. A ``Symbol`` indicating one of the defined groups.
+
+  Example: ``:symmetric``
+
+3. A ``Function`` (predicate of subtypes of ``MatrixData``).
+
+  Example: ``data::MatrixDepot.RemoteMatrixData -> data.n <= 100``
+
+
+4. A ``@pred`` predicate function.
+
+  Example: ``@pred(n <= 100)`` which is a shorthand for the previous example.
+
+5. One of the predefined predicate functions.
+
+  ``isreal, iscomplex, isinteger, isboolean,``
+  ``islocal, isremote,``
+  ``isbuiltin, isuser, isloaded, isunloaded,``
+  ``isgeneral, issymmetric, ishermitian, isskew,``
+  ``issvdok, isposdef``
+
+6. A list ``AbstractVector`` or disjunction of any number of all forms, meaning ``OR``.
+
+  Example: ``[mm(1), sp(1)]`` or equivalently: ``mm(1) | sp(1)`` (note: single ``|``)
+
+7. A tuple or conjuction of any number of all forms, meaning ``AND``.
+
+  Example: ``(mm(:), @pred(m == 1000))`` or shorter: ``m(::) & @pred(m == 1000)``
+
+8. The negation of any of the previous by a unary ``~`` and parenthesized terms
+
+  Example: ``(issymmetric | ishermitian) & ~isposdef``
 
