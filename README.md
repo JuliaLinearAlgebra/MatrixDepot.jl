@@ -22,9 +22,9 @@ Access is like
 
     using MatrixDepot
 
-    A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
+    A = matrixdepot("hilb", 10)     # locally generated hilbert matrix dimensions (10,10)
     
-    A = ("HB/1138_bus")     # named matrix of the SuiteSparse Collection
+    A = matrixdepot("HB/1138_bus")  # named matrix of the SuiteSparse Collection
 
    or
 
