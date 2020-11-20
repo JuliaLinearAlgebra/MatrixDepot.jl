@@ -111,9 +111,9 @@ function read_ss_index(d::DataFrame=DataFrame())
         b = vec([from_matdat(T, s) for s in a])
         d[!,fn] = b
     end
-    d[!,:nnz] .+= d[!,:nzero]
+    d[!,:nnz] += d[!,:nzero]
     jname(a::String, b::String) = a * '/' * b
-    d[!,:name] .= jname.(d[!,:Group],d[!,:Name])
+    d[!,:name] = jname.(d[!,:Group],d[!,:Name])
     select!(d, DataFrames.Not(:Group))
     d
 end
