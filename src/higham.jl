@@ -235,7 +235,7 @@ function frank(::Type{T}, n::Integer, k::Integer) where T
     p = T[n:-1:1;];
     F = triu(ones(T, n, 1)*p') + diagm(-1 => p[2:n]);
     k == 0 ?  F :
-    k == 1 ?  F[p,p]' : error("k = 0 or 1, but get ", k)
+    k == 1 ?  F[n:-1:1,n:-1:1]' : error("k = 0 or 1, but get ", k)
 end
 frank(::Type{T}, n::Integer) where T = frank(T, n, 0)
 frank(args...) = frank(Float64, args...)
