@@ -143,7 +143,7 @@ function loadmatrix(data::RemoteMatrixData)
     wdir = pwd()
     try
         println("downloading: ", url)
-        download(url, dirfn)
+        downloadfile(url, dirfn)
         tarfile = gunzip(dirfn)
         cd(dir)
         rfile = relpath(string(tarfile))
@@ -319,4 +319,27 @@ end
 
 issvdok(data::RemoteMatrixData) = data.svdok
 issvdok(::MatrixData) = false
+
+function localurl(url::AbstractString)
+    if startswith(url, "file:/")
+        af = url[(startswith(url, "file://") ? 7 : 8):end]
+        replace(af, "/" => Filesystem.pathsep())
+    else
+        url
+    end
+end
+
+"""
+    downloadfile(url, out)
+
+Copy file from remote or local url. Works around julia issue #38525
+"""
+function downloadfile(url::AbstractString, out::AbstractString)
+    furl = localurl(url)
+    if furl === url
+        Downloads.download(url, out)
+    else
+        Filesystem.cp(furl, out, force=true)
+    end
+end
 

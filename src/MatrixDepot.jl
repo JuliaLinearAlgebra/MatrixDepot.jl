@@ -68,6 +68,7 @@ Access is like
 module MatrixDepot
 using LinearAlgebra, SparseArrays, Serialization
 using CodecZlib
+using Downloads
 import Base: show
 
 export matrixdepot
