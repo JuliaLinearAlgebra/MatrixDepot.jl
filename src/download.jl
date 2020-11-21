@@ -322,7 +322,7 @@ issvdok(::MatrixData) = false
 
 function localurl(url::AbstractString)
     if startswith(url, "file:/")
-        af = url[(startswith(url, "file://") ? 7 : 8):end]
+        af = url[(startswith(url, "file://") ? 8 : 7):end]
         replace(af, "/" => Filesystem.pathsep())
     else
         url
