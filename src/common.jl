@@ -198,10 +198,10 @@ return a vector of full matrix names where name or alias match given pattern.
 + a regular expression
 + an integer matching equivalent to the alias string `"#\$p"`
 + a range of integers
-+ a group name expressed as a symbol e.g. `:local`, `:all`, `:illcond`, `posdef`
-+ the name of a predicate function `f(::MatrixData)::Bool`, e.g. `symmetric`, ...
-+ a vector of patterns meaning the union
-+ a tuple of patterns meaning the intersection
++ a group name expressed as a symbol e.g. `:local`, `:all`, `:illcond`, `:posdef`
++ the name of a predicate function `f(::MatrixData)::Bool`, e.g. `issymmetric`, isposdef, ...
++ a vector of patterns meaning the union (or `|`)
++ a tuple of patterns meaning the intersection ( or `&`)
 """
 mdlist(p::Pattern) = mdlist(MATRIX_DB, p)
 is_all(res::Vector) = length(res) == 1 && res[1] == ""

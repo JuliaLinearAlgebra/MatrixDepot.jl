@@ -124,12 +124,9 @@ from_matdat(::Type{String}, s::AbstractString) = s
 """
     loadsvd(data::RemoteMatrixData)
 
-Download the files backing the data from a remote repository. That is currently
-the TAMU site for the UFl collection and the NIST site for the MatrixMarket
-collection. The files are uncompressed and un-tar-ed if necessary.
-The data files containing the matrix data have to be in MatrixMarket format in
-both cases. Note, that some of the files of the MM collection are not available
-in MatrixMarket format. An error message results, if tried to load them.
+Download the extra information related to SVD from the backing repository.
+That is currently the TAMU site for the UFl collection.
+The files are in MAT format, and are uncompressed and un-tar-ed if necessary.
 """
 function loadsvd(data::RemoteMatrixData{SSRemoteType})
     file = svdfile(data)

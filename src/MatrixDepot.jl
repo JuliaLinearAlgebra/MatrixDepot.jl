@@ -53,7 +53,7 @@ Access is like
 
 ###### commands:
     mdinfo, listdir, listgroups, matrixdepot, mdopen, listdata, mdlist,
-    metasymbols, @addgroup, @modifygroup, @rmgroup.
+    metasymbols, loadsvd, @addgroup, @modifygroup, @rmgroup.
 ###### selector patterns:
     strings, string-patterns (using "*", "?", "/", "**"), regular expressions: for names
     builtin(42), user(3,5), sp(10:11,6,2833), mm(1): to access by integer id
@@ -61,6 +61,7 @@ Access is like
     isboolean, isinteger, isreal, iscomplex
     isgeneral, issymmetric, ishermitian, isskew
     isbuiltin, isuser, islocal, isremote, isloaded, isunloaded
+    issvdok
     keyword(string expression), logical, hasdata(symbol), @pred(expression)
 
     see also: "logical" for logical combinations of all kinds of patterns.
@@ -73,6 +74,7 @@ import Base: show
 
 export matrixdepot
 export listnames, listdir, listdata, listgroups, mdlist, mdinfo, metasymbols, mdopen
+export loadsvd
 export @addgroup, @rmgroup, @modifygroup
 
 # exports for predicate functions in `logical.jl`
