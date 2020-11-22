@@ -16,6 +16,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 [compat]
 CodecZlib = "0.6, 1"
 DataFrames = "0.20, 1"
+Downloads = "1.2"
 MAT = "0.7, 1"
 julia = "1"
 
