@@ -34,7 +34,7 @@ Examples
 
 To get a feel of how it works, let's see an example. 
 Suppose we have a file ``myrand.jl`` which contains two 
-matrix generator ``randsym`` and ``randorth``::
+matrix generators ``randsym`` and ``randorth``::
 
   """
   random symmetric matrix
@@ -63,14 +63,26 @@ matrix generator ``randsym`` and ``randorth``::
 
   + n: the dimension of the matrix
   """
-  randorth(n) = qr(randn(n,n)).Q
+  randorth(n) = Matrix(qr(randn(n,n)).Q)
 
-We first need to find out where Matrix Depot is installed. This 
+We first need to find out where the user directory of Matrix Depot is installed. This 
 can be done by::
 
-    julia> @which matrixdepot("")
-    matrixdepot(p::Union{Regex,...}, args...) in MatrixDepot at
-    /home/.../.julia/dev/MatrixDepot/src/common.jl:508
+    julia> MatrixDepot.user_dir()
+    "/home/.../.julia/dev/MatrixDepot/myMatrixDepot"
+
+That points to the default user directory which can be changed by an environment variable::
+
+    MATRIXDEPOT_USERDIR=/...
+
+The data directory is found by::
+
+    julia> MatrixDepot.data_dir()
+    "/home/.../.julia/dev/MatrixDepot/data"
+
+It can be changed by another environment variable::
+
+    MATRIXDEPOT_DATA=/...
 
 For me, the package user data are installed at
 ``/home/.../.julia/dev/MatrixDepot/myMatrixDepot``. We can copy ``myrand.jl`` to this directory.
@@ -80,19 +92,10 @@ Now we open the file
   include_generator(FunctionName, "randsym", randsym)
   include_generator(FunctionName, "randorth", randorth)
 
-
-Due to a bug we have to remove file ``db.data`` and restart julia:
-``rm MatrixDepot/data/db.data``
-
+The changes are activated by re-initializing::
+    julia> MatrixDepot.init()
 
 This is it. We can now use them from Matrix Depot::
-
-    julia> using MatrixDepot
-    include group.jl for user defined matrix generators
-    include myrand.jl for user defined matrix generators
-    verify download of index files...
-    used remote site is https://sparse.tamu.edu/?per_page=All
-    populating internal database...
 
     julia> mdinfo()
       Currently loaded Matrices
@@ -128,79 +131,85 @@ This is it. We can now use them from Matrix Depot::
     488          498
 
 
-  julia> mdinfo("randsym")
-     random symmetric matrix
-    ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+    julia> mdinfo("randsym")
+        random symmetric matrix
+        ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-    Input options: 
+        Input options: 
 
-    •  n: the dimension of the matrix
+        •  n: the dimension of the matrix
 
-  julia> matrixdepot("randsym", 5)
-  5x5 Array{Float64,2}:
-   1.57579    0.474591  0.0261732  -0.536217  -0.0900839
-   0.474591   0.388406  0.77178     0.239696   0.302637 
-   0.0261732  0.77178   1.7336      1.72549    0.127008 
-  -0.536217   0.239696  1.72549     0.304016   1.5854   
-  -0.0900839  0.302637  0.127008    1.5854    -0.656608 
+    julia> matrixdepot("randsym", 5)
+    5x5 Array{Float64,2}:
+    1.57579    0.474591  0.0261732  -0.536217  -0.0900839
+    0.474591   0.388406  0.77178     0.239696   0.302637 
+    0.0261732  0.77178   1.7336      1.72549    0.127008 
+    -0.536217   0.239696  1.72549     0.304016   1.5854   
+    -0.0900839  0.302637  0.127008    1.5854    -0.656608 
 
-  julia> A = matrixdepot("randorth", 5)
-  5x5 Array{Float64,2}:
- -0.359134   0.401435   0.491005  -0.310518   0.610218
- -0.524132  -0.474053  -0.53949   -0.390514   0.238764
-  0.627656   0.223519  -0.483424  -0.104706   0.558054
- -0.171077   0.686038  -0.356957  -0.394757  -0.465654
-  0.416039  -0.305802   0.326723  -0.764383  -0.205834
+    julia> A = matrixdepot("randorth", 5)
+    5x5 Array{Float64,2}:
+    -0.359134   0.401435   0.491005  -0.310518   0.610218
+    -0.524132  -0.474053  -0.53949   -0.390514   0.238764
+    0.627656   0.223519  -0.483424  -0.104706   0.558054
+    -0.171077   0.686038  -0.356957  -0.394757  -0.465654
+    0.416039  -0.305802   0.326723  -0.764383  -0.205834
 
-  julia> A'*A
-  5x5 Array{Float64,2}:
-  1.0           8.32667e-17   1.11022e-16   5.55112e-17  -6.93889e-17
-  8.32667e-17   1.0          -1.80411e-16  -2.77556e-17  -5.55112e-17
-  1.11022e-16  -1.80411e-16   1.0           1.94289e-16  -1.66533e-16
-  5.55112e-17  -2.77556e-17   1.94289e-16   1.0           1.38778e-16
- -6.93889e-17  -5.55112e-17  -1.66533e-16   1.38778e-16   1.0 
+    julia> A'*A
+    5x5 Array{Float64,2}:
+    1.0           8.32667e-17   1.11022e-16   5.55112e-17  -6.93889e-17
+    8.32667e-17   1.0          -1.80411e-16  -2.77556e-17  -5.55112e-17
+    1.11022e-16  -1.80411e-16   1.0           1.94289e-16  -1.66533e-16
+    5.55112e-17  -2.77556e-17   1.94289e-16   1.0           1.38778e-16
+    -6.93889e-17  -5.55112e-17  -1.66533e-16   1.38778e-16   1.0 
 
-We can also add group information in generator.jl:
+We can also add group information in generator.jl::
 
-  include_generator(Group, :random, randsym)
-  include_generator(Group, :symmetric, randsym)
+    include_generator(Group, :random, randsym)
+    include_generator(Group, :symmetric, randsym)
+    include_generator(Group, :random, randorth)
 
-After re-starting julia, if we type:
+After re-initializing ``MatrixDepot`` we can do for example::
 
-.. code::
+    julia> mdlist(:symmetric)
+    22-element Array{String,1}:
+    "cauchy"
+    "circul"
+    "clement"
+    "dingdong"
+    "fiedler"
+    "hankel"
+    "hilb"
+    "invhilb"
+    "kms"
+    "lehmer"
+    "minij"
+    "moler"
+    "oscillate"
+    "pascal"
+    "pei"
+    "poisson"
+    "prolate"
+    "randcorr"
+    "randsym"
+    "tridiag"
+    "wathen"
+    "wilkinson"
 
-    julia> using MatrixDepot
-    include group.jl for user defined matrix generators
-    include myrand.jl for user defined matrix generators
-    verify download of index files...
-    used remote site is https://sparse.tamu.edu/?per_page=All
-    populating internal database...
+    julia> listnames(:random)
+    list(13)                                                           
+    –––––––– ––––––––– –––––––– –––––––– ––––––– –––––––––– ––––––     
+    erdrey   golub     randcorr randorth randsym rosser     wathen     
+    gilbert  oscillate rando    randsvd  rohess  smallworld            
 
-    julia> listnames(:symmetric)
-    list(22)                                                                                           
-    –––––––– –––––––– ––––––– ––––––– –––––– ––––– ––––––––– ––––––– –––––––– ––––––– –––––––––        
-    cauchy   clement  fiedler hilb    kms    minij oscillate pei     prolate  randsym wathen           
-    circul   dingdong hankel  invhilb lehmer moler pascal    poisson randcorr tridiag wilkinson        
-
-  julia> mdlist(:random)
-  9-element Array{ASCIIString,1}:
-  "golub"    
-  "oscillate"
-  "randcorr" 
-  "rando"    
-  "randsvd"  
-  "randsym"  
-  "rohess"   
-  "rosser"   
-  "wathen" 
-
-the function ``randsym`` will be part of the groups ``:symmetric`` and ``:random``.
+the function ``randsym`` will be part of the groups ``:symmetric`` and ``:random``
+while ``randorth`` is in group ``:random``.
 
 
 It is a good idea to back up your changes. For example, we 
 could save it on GitHub by creating a new repository named ``myMatrixDepot``.
 (See https://help.github.com/articles/create-a-repo/ for details of creating a new repository on GitHub.)
-Then we go to the directory ``path/to/MatrixDepot/myMatrixDepot`` and type::
+Then we go to the directory ``.../myMatrixDepot`` and type::
 
   git init
   git add *.jl

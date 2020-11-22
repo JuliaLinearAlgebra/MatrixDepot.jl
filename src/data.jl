@@ -88,7 +88,16 @@ const MATRIXCLASS = Dict(
 
 
 # remote parameters for several data sources
+const SS_REMOTE = SSRemoteType(RemoteParametersNew(
+                    "https://sparse.tamu.edu",
+                    "https://sparse.tamu.edu/MM",
+                    "https://sparse.tamu.edu/files/ss_index.mat",
+                    "https://sparse.tamu.edu/files/ssstats.csv",
+                    ".tar.gz"
+                   ))
+
 const TA_REMOTE = TURemoteType(RemoteParameters(
+                    "https://sparse.tamu.edu",
                     "https://sparse.tamu.edu/MM",
                     "https://sparse.tamu.edu/?per_page=All",
                     """<title>SuiteSparse Matrix Collection</title>""",
@@ -98,6 +107,7 @@ const TA_REMOTE = TURemoteType(RemoteParameters(
                    ))
 
 const UF_REMOTE = TURemoteType(RemoteParameters(
+                    "https://www.cise.ufl.edu/research/sparse",
                     "https://www.cise.ufl.edu/research/sparse/MM",
                     "https://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html",
                     """<title>UF Sparse Matrix Collection - sorted by id</title>""",
@@ -106,6 +116,7 @@ const UF_REMOTE = TURemoteType(RemoteParameters(
                    ))
 
 const MM_REMOTE = MMRemoteType(RemoteParameters(
+                    "http://math.nist.gov/MatrixMarket",
                     "ftp://math.nist.gov/pub/MatrixMarket2",
                     "http://math.nist.gov/MatrixMarket/matrices.html",
                     """<TITLE>The Matrix Market Matrices by Name</TITLE>""",
@@ -114,10 +125,10 @@ const MM_REMOTE = MMRemoteType(RemoteParameters(
                    ))
 
 # preferred remote source for UF matrix collection (TAMU vs. UFl)
-uf_remote = TA_REMOTE # may be altered
-preferred(::Type{TURemoteType}) = uf_remote
+uf_remote = SS_REMOTE # may be altered
+preferred(::Type{<:Union{TURemoteType,SSRemoteType}}) = uf_remote
 preferred(::Type{MMRemoteType}) = MM_REMOTE
-alternate(::Type{TURemoteType}) = uf_remote === TA_REMOTE ? UF_REMOTE : TA_REMOTE
+alternate(::Type{TURemoteType}) = uf_remote === SS_REMOTE ? UF_REMOTE : SS_REMOTE
 alternate(::Type{MMRemoteType}) = MM_REMOTE
 toggle_remote(T=TURemoteType) = begin global uf_remote = alternate(T) end
 """
@@ -126,6 +137,23 @@ toggle_remote(T=TURemoteType) = begin global uf_remote = alternate(T) end
 const MATRIX_DB = MatrixDatabase()
 
 # local storage directory
-DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
-MY_DEPOT_DIR = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
+const DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
+const MY_DEPOT_DIR = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
+data_dir() = get(ENV, "MATRIXDEPOT_DATA", DATA_DIR)
+user_dir() = get(ENV, "MATRIXDEPOT_MYDEPOT", MY_DEPOT_DIR)
+url_redirect() = URL_REDIRECT[] = get(ENV, "MATRIXDEPOT_URL_REDIRECT", "0") != "0"
 
+const REDIRECT_DIR = abspath(dirname(@__FILE__), "..", "test", "data")
+const URL_REDIRECT = Ref(false)
+function redirect(url::AbstractString)
+    if URL_REDIRECT[]
+        urlpart = split(url, ":/", limit=2)[2]
+        if Sys.iswindows()
+            string("file:/", replace(REDIRECT_DIR, '\\' => '/'), urlpart)
+        else
+            string("file://", REDIRECT_DIR, urlpart)
+        end
+    else
+        url
+    end
+end

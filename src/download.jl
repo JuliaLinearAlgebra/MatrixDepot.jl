@@ -2,86 +2,9 @@
 # Download data from UF Sparse Matrix Collection
 #####################################################
 
-# check line for remote identification and store in global variable
-function remotetype(line::AbstractString)
-    global uf_remote
-    TAMUID = TA_REMOTE.params.indexgrep
-    UFID = UF_REMOTE.params.indexgrep
-    MMID = MM_REMOTE.params.indexgrep
-    if occursin(TAMUID, line)
-        uf_remote = TA_REMOTE
-        uf_remote
-    elseif occursin(UFID, line)
-        uf_remote = UF_REMOTE
-        uf_remote
-    elseif occursin(MMID, line)
-        MM_REMOTE
-    else
-        nothing
-    end
-end
+using Base.Filesystem
 
-function parse_headerinfo(akku::Dict{AbstractString,AbstractString}, count::Integer)
-    toint(id::String) = parse(Int, replace(get(akku, id, "0"), ','=>""))
-    id = toint("id")
-    id == 0 && (id = count)
-    m = toint("num_rows")
-    n = toint("num_cols")
-    nnz = toint("nonzeros")
-    kind = get(akku, "kind", "")
-    datestr = get(akku, "date", "0")
-    date = match(r"^\d+$", datestr) != nothing ? parse(Int, datestr) : 0
-    id, MetaInfo(m, n, nnz, 0, kind, date, "", "", "", "", "")
-end
-
-# extract loading url base and matrix names from index file
-function extract_names(db::MatrixDatabase, matrices::AbstractString)
-    remote = nothing
-    matrixdata = RemoteMatrixData[]
-    count = 0
-    open(matrices) do f
-        akku = Dict{AbstractString,AbstractString}()
-        for line in readlines(f)
-            if remote === nothing
-                remote = remotetype(line)
-                continue
-            end
-            _, grepex, spquote, ending, parts, regexinf = remote.params.scan
-            m = regexinf === nothing ? nothing : match(regexinf, line)
-            if m != nothing
-                pname = length(m.captures) == 2 ? m.captures[1] : "id"
-                akku[pname] = m.captures[end]
-            end
-            if occursin(grepex, line)
-                murl = split(line, '"')[spquote]
-                if endswith(murl, ending)
-                    list = rsplit(murl[1:end-length(ending)], '/', limit=parts+1)[2:end]
-                    count += 1
-                    name = join(list, '/')
-                    id, info = parse_headerinfo(akku, count)
-                    data = RemoteMatrixData{typeof(remote)}(name, id, info)
-                    addmetadata!(data)
-                    push!(db, data)
-                    count = id
-                end
-            end
-        end
-    end
-    matrixdata
-end
-
-# read indexfile
-function downloadindex(remote::RemoteType)
-    file = localindex(remote)
-    url = indexurl(remote)
-    if !isfile(file)
-        println("dowloading index file $url")
-        download(url, file)
-    end
-    nothing
-end
-
-# collect the keys from local database (MATRIXDICT od USERMATRIXDICT)
+# collect the keys from local database (MATRIXDICT or USERMATRIXDICT)
 # provide a numerical id counting from 1 for either database.
 function insertlocal(db::MatrixDatabase, T::Type{<:GeneratedMatrixData},
                      ldb::Dict{<:AbstractString,Function})
@@ -90,12 +13,14 @@ function insertlocal(db::MatrixDatabase, T::Type{<:GeneratedMatrixData},
     ks = sort!(collect(keys(ldb)))
     for k in ks
         cnt += 1
-        db.data[k] = T(k, cnt, ldb[k])
+        push!(db, T(k, cnt, ldb[k]))
     end
+    cnt
 end
 
-dbpath(db::MatrixDatabase) = abspath(DATA_DIR, "db.data")
+dbpath(db::MatrixDatabase) = abspath(data_dir(), "db.data")
 function readdb(db::MatrixDatabase)
+    println("reading database")
     cachedb = dbpath(db)
     open(cachedb, "r") do io
         dbx = deserialize(io)
@@ -113,39 +38,48 @@ end
 
 """
     MatrixDepot.downloadindices(db)
-download html files and store matrix data in `db`.
+download index files and store matrix data in `db`.
 additionally generate aliases for local and loaded matrices.
 Serialize db object in file `db.data`.
 If a file `db.data` is present in the data directory, deserialize
-the data instead of downloading and collection data.
+the data instead of downloading and collecting data.
 """
 function downloadindices(db::MatrixDatabase; ignoredb=false)
     added = 0
     if !ignoredb && isfile(dbpath(db))
-        readdb(db)
+        try
+            readdb(db)
+        catch ex
+            println(ex)
+            println("recreating database file")
+            _downloadindices(db)
+            added = 1
+        end
     else
+        println("creating database file")
         _downloadindices(db)
         added = 1
     end
-    # println("populating internal database...")
+    println("adding metadata...")
     added += addmetadata!(db)
+    println("adding svd data...")
+    added += addsvd!(db)
+    added += insertlocal(db, GeneratedMatrixData{:B}, MATRIXDICT)
+    added += insertlocal(db, GeneratedMatrixData{:U}, USERMATRIXDICT)
     if added > 0
+        println("writing database")
         writedb(db)
     end
     nothing
 end
 
 function _downloadindices(db::MatrixDatabase)
+    println("reading index files")
     empty!(db)
-    insertlocal(db, GeneratedMatrixData{:B}, MATRIXDICT)
-    insertlocal(db, GeneratedMatrixData{:U}, USERMATRIXDICT)
 
     try
-        downloadindex(preferred(TURemoteType))
-        downloadindex(preferred(MMRemoteType))
-
-        extract_names(db, localindex(preferred(TURemoteType)))
-        extract_names(db, localindex(preferred(MMRemoteType)))
+        readindex(preferred(SSRemoteType), db)
+        readindex(preferred(MMRemoteType), db)
     finally
         for data in values(db.data)
             db.aliases[aliasname(data)] = data.name
@@ -159,7 +93,7 @@ end
 update database index from the websites
 """
 function update(db::MatrixDatabase=MATRIX_DB)
-    cachedb = abspath(DATA_DIR, "db.data")
+    cachedb = abspath(data_dir(), "db.data")
     isfile(cachedb) && rm(cachedb)
     uf_matrices = localindex(preferred(TURemoteType))
     isfile(uf_matrices) && rm(uf_matrices)
@@ -203,19 +137,22 @@ function loadmatrix(data::RemoteMatrixData)
     end
     dirfn = localfile(data)
     dir = dirname(localdir(data))
-    url = dataurl(data)
+    url = redirect(dataurl(data))
 
     isdir(dir) || mkpath(dir)
-
+    wdir = pwd()
     try
         println("downloading: ", url)
-        download(url, dirfn)
+        downloadfile(url, dirfn)
         tarfile = gunzip(dirfn)
+        cd(dir)
+        rfile = relpath(string(tarfile))
         if endswith(tarfile, ".tar")
-            run(`tar -vxf $tarfile -C $dir`)
+            run(`tar -xf $rfile`)
             rm(tarfile; force=true)
         end
     finally
+        cd(wdir)
         rm(dirfn, force=true)
     end
     addmetadata!(data)
@@ -226,9 +163,9 @@ loadmatrix(data::GeneratedMatrixData) = 0
 """
     loadinfo(data::RemoteDate)
 Download the first part of the data file. Stop reading, as soon as the initial
-comment an the size values of the main matrix have been finished. Stor this in
+comment and the size values of the main matrix have been finished. Store this in
 a file with extension `.info` in the same directory, where the `.mtx` file is.
-If the complete file is already availble, the download is not performed, because
+If the complete file is already available, the download is not performed, because
 the head of the `.mtx` file contains the same lines.
 """
 function loadinfo(data::RemoteMatrixData)
@@ -237,25 +174,19 @@ function loadinfo(data::RemoteMatrixData)
     if isfile(filemtx) || isfile(file)
         return 0
     end
-    url = dataurl(data)
-    urls = rsplit(url, '.', limit=3)
-    cmd = []
-    push!(cmd, `sh -c 'curl "'$url'" -o - 2>/dev/null'`)
-    if urls[end] == "gz"
-        push!(cmd, `gunzip`)
-        resize!(urls, length(urls)-1)
-    end
-    if urls[end] == "tar"
-        push!(cmd, `tar -xOf -`)
-    end
-
+    url = redirect(dataurl(data))
+    pipe = downloadpipeline(url)
     out = IOBuffer()
     s = try
         println("downloading head of $url")
-        open(pipeline(cmd...), "r") do io
+        open(pipe, "r") do io
+            skip = 0
             while ( s = readline(io) ) != ""
-                println(out, s)
-                s[1] != '%' && break
+                skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
+                skip <= 1 && println(out, s)
+                if skip == 1 && length(split(s)) == 3
+                    break
+                end
             end;
             close(io)
         end
@@ -269,12 +200,36 @@ function loadinfo(data::RemoteMatrixData)
     if !isempty(s)
         mkpath(dirname(file))
         write(file, s)
+        addmetadata!(data)
         1
     else
         0
     end
 end
 loadinfo(data::MatrixData) = 0
+
+"""
+    downloadpipeline(url)
+
+Set up a command pipeline (external processes to download and expand data)
+"""
+function downloadpipeline(url::AbstractString)
+    urls = rsplit(url, '.', limit=3)
+    cmd = []
+    push!(cmd, downloadcommand(url))
+    if urls[end] == "gz"
+        push!(cmd, `gzip -dc`)
+        resize!(urls, length(urls)-1)
+    end
+    if urls[end] == "tar"
+        push!(cmd, `tar -xOf -`)
+    end
+    pipeline(cmd...)
+end
+
+function downloadcommand(url::AbstractString)
+    `sh -c 'curl "'$url'" -so -'`
+end
 
 function data_warn(data::RemoteMatrixData, dn, i1, i2)
     @warn "$(data.name): header $dn = '$i1' file $dn = '$i2' $(data.properties[])"
@@ -314,7 +269,7 @@ function addmetadata!(data::RemoteMatrixData)
     isdir(dir) || return 0
     base = basename(file)
     name, ext = rsplit(base, '.', limit=2)
-    filtop(x) = x == base || startswith(x, string(name, '_'))
+    filtop(x) = x == base || (startswith(x, string(name, '_')) && !endswith(x, "SVD.mat"))
     append!(data.metadata, filter(filtop, readdir(dir)))
 
     if !isfile(file)
@@ -322,7 +277,7 @@ function addmetadata!(data::RemoteMatrixData)
     end
     if (finfo = mmreadheader(file)) !== nothing
         data.properties[] = MMProperties(MATRIX, finfo[:format], finfo[:field], finfo[:symmetry])
-        m, n, k = finfo[:m], finfo[:n], finfo[:nz]
+        m, n, k = finfo[:m], finfo[:n], get(finfo, :nz, 0)
         n1, n2 = extremnnz(data, m, n, k)
         hdr = data.header
         hdr.m = hdr.m in (0, m) ? m : data_warn(data, "m", hdr.m, m)
@@ -334,10 +289,10 @@ function addmetadata!(data::RemoteMatrixData)
         hdr.date = hdr.date in (0, date) ? date : data_warn(data, "date", hdr.date, date)
         kind = get(finfo, :kind, "")
         if kind != ""
-            if hdr.kind == ""
+            if hdr.kind == "" || hdr.kind == "other problem"
                 hdr.kind = kind
             else
-                if lowercase(replace(kind, '-' => ' ')) != lowercase(hdr.kind)
+                if standardkind(kind) != standardkind(hdr.kind)
                     data_warn(data, "kind", hdr.kind, kind)
                 end
             end
@@ -348,5 +303,43 @@ function addmetadata!(data::RemoteMatrixData)
         end
     end
     return 1
+end
+
+standardkind(s::AbstractString) = lowercase(replace(s, '-' => ' '))
+
+function addsvd!(db::MatrixDatabase)
+    added = 0
+    for data in values(db.data)
+        if data isa RemoteMatrixData && !issvdok(data)
+            added += addsvd!(data)
+        end
+    end
+    added
+end
+
+issvdok(data::RemoteMatrixData) = data.svdok
+issvdok(::MatrixData) = false
+
+function localurl(url::AbstractString)
+    if startswith(url, "file:/")
+        af = url[(startswith(url, "file://") ? 8 : 7):end]
+        replace(af, "/" => Filesystem.pathsep())
+    else
+        url
+    end
+end
+
+"""
+    downloadfile(url, out)
+
+Copy file from remote or local url. Works around julia issue #38525
+"""
+function downloadfile(url::AbstractString, out::AbstractString)
+    furl = localurl(url)
+    if furl === url
+        Downloads.download(url, out)
+    else
+        Filesystem.cp(furl, out, force=true)
+    end
 end
 

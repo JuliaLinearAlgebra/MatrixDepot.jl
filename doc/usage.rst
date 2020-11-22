@@ -13,7 +13,7 @@ matrices is symbolized by ``:symmetric``.
 
   Return a list of all the matrices in the collection::
 
-    julia> matrixdepot()
+    julia> mdinfo()
 
     Matrices:
      1) baart            2) binomial         3) blur             4) cauchy        
@@ -38,6 +38,7 @@ matrices is symbolized by ``:symmetric``.
 .. function:: matrixdepot(matrix_name, p1, p2, ...)
 
   Return a matrix specified by the query string ``matrix_name``.
+  The string must be a matrix name or a query pattern which matches exactly one matrix.
   ``p1, p2, ...`` are input parameters depending on ``matrix_name``.
   For example::
 
@@ -77,12 +78,12 @@ matrices is symbolized by ``:symmetric``.
    (Appendix 1).
 
 
-.. function:: listnames(group_name)
+.. function:: mdlist(group_name)
 
-  Return a list of matrices which belong to group ``group_name``.
+  Return a list of matrices which belong to group ``group_name`` (symbol) as an array.
   For example::
 
-    julia> matrixdepot(:posdef)
+    julia> mdlist(:posdef)
     11-element Array{ASCIIString,1}:
     "hilb"   
     "cauchy" 
@@ -98,18 +99,13 @@ matrices is symbolized by ``:symmetric``.
 
 .. function:: listnames(group1 & group2 & ...)
 
-  Return a list of matrices which belong to ``group1`` and ``group2``, etc. 
+  Return a iformatted list of matrices which belong to ``group1`` and ``group2``, etc. 
   For example::
 
-    julia> mdlist(:symmetric & :inverse, :illcond & :posdef)
-    7-element Array{ASCIIString,1}:
-    "hilb"   
-    "cauchy" 
-    "invhilb"
-    "moler"  
-    "pascal" 
-    "pei"    
-    "tridiag"
+  julia> listnames(:symmetric & :inverse & :illcond & :posdef)
+  list(8)
+  ––––––– –––– ––––––– ––– ––––– –––––– ––– –––––––
+  cauchy  hilb invhilb kms moler pascal pei tridiag
 
 .. function:: mdlist({builtin\user\sp\mm}(num))
 
@@ -134,14 +130,6 @@ matrices is symbolized by ``:symmetric``.
      "fiedler" 
      "forsythe"
      "foxgood"
-
-.. function:: mdinfo(name)
-
-    Output matrix information, where ``name`` is a matrix data name or pattern.
-
-.. function:: matrixdepot(name, arg...)
-
-    Generate the matrix data given by ``name``.
 
 We can define our own groups using the macro ``@addgroup`` and
 remove a defined group using ``@rmgroup``.

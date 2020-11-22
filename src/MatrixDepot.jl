@@ -53,7 +53,7 @@ Access is like
 
 ###### commands:
     mdinfo, listdir, listgroups, matrixdepot, mdopen, listdata, mdlist,
-    metasymbols, @addgroup, @modifygroup, @rmgroup.
+    metasymbols, loadsvd, @addgroup, @modifygroup, @rmgroup.
 ###### selector patterns:
     strings, string-patterns (using "*", "?", "/", "**"), regular expressions: for names
     builtin(42), user(3,5), sp(10:11,6,2833), mm(1): to access by integer id
@@ -61,17 +61,20 @@ Access is like
     isboolean, isinteger, isreal, iscomplex
     isgeneral, issymmetric, ishermitian, isskew
     isbuiltin, isuser, islocal, isremote, isloaded, isunloaded
+    issvdok
     keyword(string expression), logical, hasdata(symbol), @pred(expression)
 
     see also: "logical" for logical combinations of all kinds of patterns.
 """
 module MatrixDepot
-using LinearAlgebra, SparseArrays, SuiteSparse, Serialization
+using LinearAlgebra, SparseArrays, Serialization
 using CodecZlib
+using Downloads
 import Base: show
 
 export matrixdepot
 export listnames, listdir, listdata, listgroups, mdlist, mdinfo, metasymbols, mdopen
+export loadsvd
 export @addgroup, @rmgroup, @modifygroup
 
 # exports for predicate functions in `logical.jl`
@@ -79,6 +82,7 @@ export builtin, user, sp, mm, logical
 export isgeneral, issymmetric, isskew, ishermitian
 export iscomplex, isreal, isinteger, isboolean
 export isremote, islocal, isloaded, isunloaded, isbuiltin, isuser
+export issvdok, isposdef
 export @pred, keyword, hasdata
 
 # The following functions are re-used as predicate functions / logical operators
@@ -98,36 +102,41 @@ include("download.jl")      # download data from the UF and MM sparse matrix col
 include("datareader.jl")    # read matrix data from local storage
 include("matrixmarket.jl")  # read matrix data from local storage
 include("markdown.jl")      # construct MD objects
+include("downloadmm.jl")    # read metatdata from MM database
+include("downloadsp.jl")    # read metatdata from SS database
 
 function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
+    url_redirect()          # env MATRIXDEPOT_URL_REDIRECT == "1"
+    MYDEP = user_dir()  # env MATRIXDEPOT_MYDEPOT 
 
-    if !isdir(DATA_DIR)
-        mkpath(DATA_DIR)
+    if !isdir(data_dir())   # env MATRIXDEPOT_DATA
+        mkpath(data_dir())
     end
 
-    if !isdir(MY_DEPOT_DIR)
-        mkpath(MY_DEPOT_DIR)
-        open(joinpath(MY_DEPOT_DIR, GROUP), "w") do f
+    if !isdir(MYDEP)
+        mkpath(MYDEP)
+        open(joinpath(MYDEP, GROUP), "w") do f
             write(f, "usermatrixclass = Dict(\n);")
         end
-        open(joinpath(MY_DEPOT_DIR, GENERATOR), "w") do f
+        open(joinpath(MYDEP, GENERATOR), "w") do f
             write(f, "# include your matrix generators below \n")
         end
-        println("created dir $MY_DEPOT_DIR")
+        println("created dir $(MYDEP)")
     end
     
-    for file in readdir(MY_DEPOT_DIR)
+    for file in readdir(MYDEP)
         if endswith(file, ".jl") && file != GENERATOR
             println("include $file for user defined matrix generators")
-            include(joinpath(MY_DEPOT_DIR, file))
+            include(joinpath(MYDEP, file))
         end
     end
-    include(joinpath(MY_DEPOT_DIR, GENERATOR))
+    include(joinpath(MYDEP, GENERATOR))
     println("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
-    println("used remote site is $(uf_remote.params.indexurl)")
+    println("used remote sites are ", remote_name(preferred(TURemoteType)),
+            " and ", remote_name(preferred(MMRemoteType)))
     nothing
 end
 

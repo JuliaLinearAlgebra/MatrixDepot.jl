@@ -25,6 +25,7 @@ the logical operators `|`, `&`, and `~`
 function logical end
 
 import Base: ~
+import LinearAlgebra: isposdef
 
 (&)(p::Tuple, q::Tuple) = tuple(p..., q...)
 (&)(p::Tuple, q::Pattern...) = tuple(p..., q...)
@@ -96,6 +97,8 @@ isskew(data::MatrixData) = false
 ishermitian(data::MatrixData) = false
 issparse(data::RemoteMatrixData) = true
 issparse(data::MatrixData) = data.name in mdlist(:sparse)
+isposdef(data::RemoteMatrixData) = hasinfo(data) && data.posdef
+isposdef(data::MatrixData) = data.name in mdlist(:posdef)
 
 iscomplex(data::RemoteMatrixData) = _isfield(data, MMFieldComplex)
 isreal(data::RemoteMatrixData) = _isfield(data, MMFieldReal)
@@ -121,6 +124,15 @@ isbuiltin(data::MatrixData) = false
 islocal(data::GeneratedMatrixData) = true
 islocal(data::MatrixData) = false
 
+"""
+    pred(f::Function, s::Symbol...)
+
+Return a predicate function, which assigns to a each `data::MatrixData`
+iff
+*    `hasdata(data)` and
+*    all symbols `s` are property names of `data` and
+*    `f` applied to the tuple of values of those properties returns `true`
+"""
 function pred(f::Function, s::Symbol...)
     data::MatrixData -> hasinfo(data) &&
     s ⊆ propertynames(data) &&
@@ -128,7 +140,10 @@ function pred(f::Function, s::Symbol...)
 end
 
 """
-    prednzdev(
+    prednzdev(deviation)
+
+Test predicate - does number of stored (structural) non-zeros deviate from nnz
+by more than `deviation`?
 """
 function prednzdev(dev::AbstractFloat=0.1)
     function f(data::RemoteMatrixData)
@@ -210,8 +225,15 @@ function make_func(sli::AbstractVector{Symbol}, ex)
     res
 end
 
+"""
+    PROPS
+
+The symbols, which are naming properties of `MatrixData`
+"""
+const PROPS = (:name, :id, :metadata, fieldnames(MetaInfo)...)
+
 function make_pred(ex)
-    syms = extract_symbols(ex) ∩ (:m, :n, :nnz, :dnz, :name, :id, :title, :author, :ed, :fields, :notes, :date, :kind, :metadata)
+    syms = extract_symbols(ex) ∩ PROPS 
     :(MatrixDepot.pred($(make_func(syms, ex)), $(QuoteNode.(syms)...)))
 end
 

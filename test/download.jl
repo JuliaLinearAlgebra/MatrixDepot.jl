@@ -1,7 +1,7 @@
 #download
 # verify that no data are downloaded (empty directory)
 @test mdlist(isloaded) == []
-import MatrixDepot: load, loadinfo
+import MatrixDepot: load, loadinfo, loadsvd
 
 # sp
 @test loadinfo("*/1138_bus") == 1 # load only header
@@ -9,6 +9,7 @@ import MatrixDepot: load, loadinfo
 @test load("HB/1138_bus") == 0 # count actually loaded
 @test load("Pajek/Journals") == 1
 @test load("wing") == 0 # do not try to load local matrix
+
 # Matrix Markt
 @test load("Harwell-Boeing/smtape/bp___200") == 1
 
@@ -38,6 +39,8 @@ import MatrixDepot: load, loadinfo
 @test length(mdlist(isloaded)) == 6
 
 @test load("**/epb0") == 1
+
+@test loadsvd("*/1138_bus") == 1
 
 # matrix market
 @test load("Harwell-Boeing/lanpro/nos5") == 1

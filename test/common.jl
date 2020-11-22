@@ -1,8 +1,8 @@
-mdinfo()
+@test mdinfo() !== nothing
 groups = ["symmetric", "inverse", "illcond", "posdef", "eigen","sparse", "random", "regprob", "all"]
 
 for group in groups 
-    listnames(Symbol(group))
+    @test !isempty(listnames(Symbol(group)))
 end
 
 @test_throws DataError matrixdepot("something")
@@ -17,22 +17,21 @@ m = length(mdlist("**"))
 
 @addgroup newlist = mdlist(builtin(3:6) | builtin(20))
 
-MatrixDepot.init(ignoredb=true)
-
 @test mdlist(:newlist) == mdlist(builtin(3:6,20))
 
 @rmgroup newlist
 
 # testing the new API
 #
-# it is assumed that all matrices generated during "test/dowlnload.jl"
-# and the ibuiltin- and user-defined "randsym" but no others are available
+# it is assumed that all matrices are generated during "test/download.jl"
+# and the builtin- and user-defined "randsym" but no others are available
 #
 
 @testset "mdlist" begin
 
 REM = length(mdlist("*/*"))
-@test REM in [2757, 2833]   # depends on whether UFL or TAMU url has been used
+@test REM >= 2500
+#@test REM in [2757, 2856]   # depends on whether UFL or TAMU url has been used
 @test length(mdlist(:builtin)) == 59
 @test length(mdlist(:user)) in [0, 1]
 
@@ -82,27 +81,46 @@ REM = length(mdlist("*/*"))
 
 # predicates of remote and local matrices
 @test length(mdlist(issymmetric)) == 30
-
-@test length(mdlist(@pred(m < 10000))) == 1671   # items with m < *
-@test length(mdlist(@pred(m < 10000) & isloaded)) == 10   # items with m < *
-@test length(mdlist(@pred(n < 10000))) == 1611   # items with n < *
-@test length(mdlist(@pred(n < 10000) &  isloaded)) == 9    # items with n < *
-@test length(mdlist(@pred(nnz < 5000))) == 600    # items with nnz < *
-@test length(mdlist(@pred(nnz < 5000) & isloaded)) == 2    # items with nnz < *
-@test length(mdlist(@pred(m > n))) == 178   # items with m > n
-@test length(mdlist(@pred(m > n) & isloaded)) == 0   # items with m > n
-@test length(mdlist(@pred(occursin("Power", kind)))) == 70
-@test length(mdlist(@pred(0 < date <= 1971))) == 5
-@test length(mdlist(@pred(date >= 2016) & @pred(0< date <=2016))) == 2
-@test length(mdlist(@pred(date == 0) & sp(:))) == 42
 @test length(mdlist(:symmetric & "kahan")) == 0
 @test length(mdlist(:symmetric & "hankel")) == 1
-
 @test mdlist(:local) == mdlist(islocal)
 @test mdlist(:builtin) == mdlist(isbuiltin)
 @test mdlist(:user) == mdlist(isuser)
-
 @test mdlist(:symmetric) == mdlist(issymmetric & islocal)
+
+# general metadata
+@test length(mdlist(@pred(m < 10000) & "HB/*")) == 284   # items with m < *
+@test length(mdlist(@pred(m < 10000) & isloaded)) == 10   # items with m < *
+@test length(mdlist(@pred(n < 10000) & "HB/*")) == 283   # items with n < *
+@test length(mdlist(@pred(n < 10000) &  isloaded)) == 9    # items with n < *
+@test length(mdlist(@pred(nnz < 5000) & "HB/*")) == 163    # items with nnz < *
+@test length(mdlist(@pred(nnz < 5000) & isloaded)) == 2    # items with nnz < *
+@test length(mdlist(@pred(m > n) & "HB/*")) == 9   # items with m > n
+@test length(mdlist(@pred(m > n) & isloaded)) == 0   # items with m > n
+
+# metadata from header files
+@test length(mdlist(@pred(occursin("problem", kind)) & isloaded)) == 6
+@test length(mdlist(keyword("graph") & isloaded)) == 2
+@test length(mdlist(@pred(0 < date <= 1990) & isloaded)) == 1
+@test length(mdlist(@pred(date >= 2006) & @pred(0 < date <= 2006) & isloaded)) == 2
+@test length(mdlist(@pred(date == 0) & mm(:) & isloaded)) == 3
+
+# metadata from ss_index.mat
+@test length(mdlist(@pred(posdef) & "HB/*")) == 60
+@test length(mdlist(isposdef)) >= 60
+@test mdlist(@pred(posdef)) == mdlist(isposdef & isremote)
+@test mdlist(:posdef) == mdlist(isposdef & islocal)
+
+# metadata from svd files
+@test mdlist(@pred(svdok)) == ["HB/1138_bus"]
+data = mdopen("HB/1138_bus").data
+@test length(data.sv) > 0
+@test data.cond > 8.0e6
+@test data.norm > 30000
+@test data.rank == 1138
+@test data.svgap == Inf
+@test data.cholcand
+
 end
 
 @testset "logical" begin

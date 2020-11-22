@@ -38,7 +38,7 @@ end
 function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
     prop in keys(MATRIXCLASS) && daterr("$prop can not be modified.")
 
-    user = abspath(MY_DEPOT_DIR, "group.jl")
+    user = abspath(user_dir(), "group.jl")
     s = read(user, String)          # read complete file into s
     rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
     ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
@@ -198,10 +198,10 @@ return a vector of full matrix names where name or alias match given pattern.
 + a regular expression
 + an integer matching equivalent to the alias string `"#\$p"`
 + a range of integers
-+ a group name expressed as a symbol e.g. `:local`, `:all`, `:illcond`, `posdef`
-+ the name of a predicate function `f(::MatrixData)::Bool`, e.g. `symmetric`, ...
-+ a vector of patterns meaning the union
-+ a tuple of patterns meaning the intersection
++ a group name expressed as a symbol e.g. `:local`, `:all`, `:illcond`, `:posdef`
++ the name of a predicate function `f(::MatrixData)::Bool`, e.g. `issymmetric`, isposdef, ...
++ a vector of patterns meaning the union (or `|`)
++ a tuple of patterns meaning the intersection ( or `&`)
 """
 mdlist(p::Pattern) = mdlist(MATRIX_DB, p)
 is_all(res::Vector) = length(res) == 1 && res[1] == ""
@@ -421,6 +421,12 @@ load(db::MatrixDatabase, p::Pattern) = _load(db, loadmatrix, p)
 """
 loadinfo(p::Pattern) = loadinfo(MATRIX_DB, p)
 loadinfo(db::MatrixDatabase, p::Pattern) = _load(db, loadinfo, p)
+
+"""
+    loadsvd([db,], pattern)
+"""
+loadsvd(p::Pattern) = loadsvd(MATRIX_DB, p)
+loadsvd(db::MatrixDatabase, p::Pattern) = _load(db, loadsvd, p)
 
 function _load(db::MatrixDatabase, loadfunc::Function, p::Pattern)
     check_symbols(p)

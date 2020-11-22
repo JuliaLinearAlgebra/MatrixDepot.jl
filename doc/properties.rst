@@ -53,22 +53,31 @@ Predefined Groups
 Adding New Groups
 -----------------
 
-New groups can be added with the macro ``@addgroup``::
+New groups can be added with the macro ``@addgroup``in the REPL or
+in file ``../myMatrixDepot/generators.jl``::
 
     @addgroup myfav = ["lehmer", "cauchy", "hilb"]
-
     @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]
 
-    listgroups()
+    julia> listgroups()
+    14-element Array{Symbol,1}:
+    :all
+    :builtin
+    :local
+    :user
+    :eigen
+    :graph
+    :illcond
+    :inverse
+    :posdef
+    :random
+    :regprob
+    :sparse
+    :symmetric
+    :myfav
 
-    Groups:
-     data          eigen         illcond       inverse     
-     posdef        random        regprob       sparse      
-     symmetric     myfav         test_for_paper2
+    julia> listnames(:myfav)
+    list(3)            
+    ––––––– –––– ––––––
+    cauchy  hilb lehmer
 
-
-    listnames(:myfav)
-    3-element Array{ASCIIString,1}:
-     "lehmer"
-     "cauchy"
-     "hilb"

@@ -10,7 +10,8 @@ function mdinfo(db::MatrixDatabase, p::Pattern)
     for name in mdlist(p)
         try
             md = mdinfo(db.data[name])
-        catch
+        catch ex
+            ex isa InterruptException && rethrow()
             md = Markdown.parse("# $name\nno info available")
         finally
             append!(mdbuffer.content, md.content)

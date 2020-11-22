@@ -77,9 +77,7 @@ function getproperty(data::RemoteMatrixData, s::Symbol)
 end
 
 function propertynames(data::RemoteMatrixData; private=false)
-    props = Symbol[]
-    append!(props, [:name, :title, :id, :date, :author, :ed, :kind, :notes])
-    append!(props, [:m, :n, :nnz, :dnz])
+    props = [PROPS...]
     private && append!(props, fieldnames(RemoteMatrixData))
     props
 end
@@ -160,7 +158,7 @@ end
 """
     metastring_reverse(data::MatrixData, abbreviation::String)
 
-Given a `MatrixData` object and an abbreviation, return a matchingfull metadata name
+Given a `MatrixData` object and an abbreviation, return a matching full metadata name
 for the abbreviation. If no full name is found, return the abbreviation unchanged.
 """
 function metastring_reverse(data::RemoteMatrixData, metaabbr::AbstractString)

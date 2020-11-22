@@ -16,13 +16,11 @@ include_generator(FunctionName, "randsym", randsym)
 include_generator(Group, :random, randsym)
 include_generator(Group, :symmetric, randsym)
 """
-user_dir = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
-
-open(joinpath(user_dir, "generator.jl"), "w") do f
+open(joinpath(MatrixDepot.user_dir(), "generator.jl"), "w") do f
     write(f, matrixdata)
 end
 
-# incluse the just written user file
+# include the just written user file
 MatrixDepot.init(ignoredb=true)
 
 n = rand(1:8)
