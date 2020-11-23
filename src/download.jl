@@ -227,8 +227,8 @@ function downloadpipeline(url::AbstractString)
     pipeline(cmd...)
 end
 
-function downloadcommand(url::AbstractString)
-    `sh -c 'curl "'$url'" -so -'`
+function downloadcommand(url::AbstractString, filename::AbstractString="-")
+    `sh -c 'curl "'$url'" -Lso "'$filename'"'`
 end
 
 function data_warn(data::RemoteMatrixData, dn, i1, i2)
@@ -320,26 +320,13 @@ end
 issvdok(data::RemoteMatrixData) = data.svdok
 issvdok(::MatrixData) = false
 
-function localurl(url::AbstractString)
-    if startswith(url, "file:/")
-        af = url[(startswith(url, "file://") ? 8 : 7):end]
-        replace(af, "/" => Filesystem.pathsep())
-    else
-        url
-    end
-end
-
 """
     downloadfile(url, out)
 
-Copy file from remote or local url. Works around julia issue #38525
+Copy file from remote or local url. Works around julia Downloads #69 and #36
 """
 function downloadfile(url::AbstractString, out::AbstractString)
-    furl = localurl(url)
-    if furl === url
-        Downloads.download(url, out)
-    else
-        Filesystem.cp(furl, out, force=true)
-    end
+    run(downloadcommand(url, out))
+    nothing
 end
 
