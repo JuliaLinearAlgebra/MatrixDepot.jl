@@ -1,7 +1,7 @@
 
 # ![logo](doc/logo2.png) Matrix Depot
 
-[![Build Status](https://travis-ci.org/JuliaMatrices/MatrixDepot.jl.svg?branch=master)](https://travis-ci.org/JuliaMatrices/MatrixDepot.jl)
+[![Build Status](https://travis-ci.com/JuliaMatrices/MatrixDepot.jl.svg?branch=master)](https://travis-ci.com/JuliaMatrices/MatrixDepot.jl)
 [![codecov.io](https://codecov.io/github/JuliaMatrices/MatrixDepot.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaMatrices/MatrixDepot.jl?branch=master)
 
 An extensible test matrix collection for Julia.
