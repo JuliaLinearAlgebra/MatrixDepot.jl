@@ -14,7 +14,7 @@ Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-CodecZlib = "0.6"
+CodecZlib = "0.6, 0.7"
 DataFrames = "0.20, 0.22"
 Downloads = "1.2"
 MAT = "0.7, 0.8"

@@ -1,15 +1,23 @@
 # Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
+
 os:
   - linux
   - osx
   - windows
+
 julia:
   - 1
   - nightly
+
 matrix:
   allow_failures:
     - julia: nightly
+
+env:
+  - JULIA_PKG_SERVER=""
+
 notifications:
   email: false
+
 codecov: true
