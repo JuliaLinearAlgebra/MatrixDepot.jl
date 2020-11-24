@@ -13,22 +13,26 @@ using SparseArrays
 
 import MatrixDepot: DataError
 
-# include("clean.jl")
-# data_save = save_target(data_dir)
-# user_save = save_target(user_dir)
+function toggle_db()
+    MatrixDepot.toggle_remote()
+    MatrixDepot.init(ignoredb=true)
+    MatrixDepot.update()
+end
 
 # that will download the index files if necessary and initialize internal data
 MatrixDepot.init()
 
 include("generators.jl")
 
-@testset "MatrixDepot remote matrix tests" begin
+@testset "MatrixDepot simulate remote matrix tests" begin
     tests = [
             "download",
             "common",
             "number",
             "property",
             ]
+
+    tests = []
 
     @testset "$t" for t in tests
         tp = joinpath(@__DIR__(), "$(t).jl")
@@ -41,10 +45,14 @@ include("generators.jl")
     xtmpdir = string(xdir, ".tmp")
     println("mv $xdir $xtmpdir")
     mv(xdir, xtmpdir, force=true)
-    MatrixDepot.toggle_remote()
-    MatrixDepot.init(ignoredb=true)
-    MatrixDepot.update()
+    toggle_db()
     @test mdopen(sp(1)) != nothing
     mv(xtmpdir, xdir, force=true)
 end
 
+@testset "MatrixDepot real remote matrix tests" begin
+    toggle_db()
+    println("running remote.jl ...")
+    include("remote.jl")
+    println("finished remote.jl")
+end
