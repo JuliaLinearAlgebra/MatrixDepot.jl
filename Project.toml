@@ -1,6 +1,6 @@
 name = "MatrixDepot"
 uuid = "b51810bb-c9f3-55da-ae3c-350fc1fbce05"
-version = "1.0.2"
+version = "1.0.3"
 
 [deps]
 CodecZlib = "944b1d66-785c-5afd-91f1-9de20f533193"
