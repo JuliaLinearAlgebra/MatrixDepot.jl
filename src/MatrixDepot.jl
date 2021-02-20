@@ -69,6 +69,7 @@ Access is like
 module MatrixDepot
 using LinearAlgebra, SparseArrays, Serialization
 using CodecZlib
+using Requires
 import Base: show
 
 export matrixdepot
@@ -114,24 +115,25 @@ function init(;ignoredb::Bool=false)
         mkpath(data_dir())
     end
 
-    if !isdir(MYDEP)
-        mkpath(MYDEP)
-        open(joinpath(MYDEP, GROUP), "w") do f
-            write(f, "usermatrixclass = Dict(\n);")
+    if !hasproperty(MatrixDepot, :usermatrixclass)
+        if !isdir(MYDEP)
+            global usermatrixclass = Dict()
+        else
+            @warn """Custom MatrixDepot code loading is deprecated, and will be
+            removed in a future version of MatrixDepot. Please include user
+            defined matrix generators using include_generator() at runtime (e.g.
+            the __init__() function of a separate package). Proceeding to load
+            code from $MYDEP"""
+            for file in readdir(MYDEP)
+                if endswith(file, ".jl") && file != GENERATOR
+                    println("include $file for user defined matrix generators")
+                    include(joinpath(MYDEP, file))
+                end
+            end
+            include(joinpath(MYDEP, GENERATOR))
         end
-        open(joinpath(MYDEP, GENERATOR), "w") do f
-            write(f, "# include your matrix generators below \n")
-        end
-        println("created dir $(MYDEP)")
     end
-    
-    for file in readdir(MYDEP)
-        if endswith(file, ".jl") && file != GENERATOR
-            println("include $file for user defined matrix generators")
-            include(joinpath(MYDEP, file))
-        end
-    end
-    include(joinpath(MYDEP, GENERATOR))
+
     println("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
     println("used remote sites are ", remote_name(preferred(TURemoteType)),
@@ -139,9 +141,31 @@ function init(;ignoredb::Bool=false)
     nothing
 end
 
+SCRATCH_LOADED = Ref(false)
+
 # will be called automatically once after `using`, `import`, `require`.
 function __init__()
-    try init() catch ex; @warn "exception during initialization: '$ex'"
+    @require Scratch="6c6a2e73-6563-6170-7368-637461726353" @eval begin
+        using Scratch
+
+        DATA_DIR[] = get_scratch!(@__MODULE__, "data")
+
+        if isdir(abspath(dirname(@__FILE__),"..", "data")) && !haskey(ENV, "MATRIXDEPOT_DATA")
+            @warn """When Scratch is loaded, the default MatrixDepot data directory will be $(data_dir()). Consider running
+            `mv $(abspath(dirname(@__FILE__), "..", "data")) $(data_dir())`
+            if you wish to avoid redownloading old matrices.
+            To silence this warning, remove the $(abspath(dirname(@__FILE__),"..", "data")) directory or specify "MATRIXDEPOT_DATA" explicitly.
+            """
+        end
+
+        try init() catch ex; @warn "exception during initialization: '$ex'"
+        end
+        SCRATCH_LOADED[] = true
+    end
+
+    if !SCRATCH_LOADED[]
+        try init() catch ex; @warn "exception during initialization: '$ex'"
+        end
     end
 end
 

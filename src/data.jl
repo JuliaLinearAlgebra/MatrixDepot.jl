@@ -137,9 +137,9 @@ toggle_remote(T=TURemoteType) = begin global uf_remote = alternate(T) end
 const MATRIX_DB = MatrixDatabase()
 
 # local storage directory
-const DATA_DIR = abspath(dirname(@__FILE__),"..", "data")
+const DATA_DIR = Ref(abspath(dirname(@__FILE__),"..", "data"))
 const MY_DEPOT_DIR = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
-data_dir() = get(ENV, "MATRIXDEPOT_DATA", DATA_DIR)
+data_dir() = get(ENV, "MATRIXDEPOT_DATA", DATA_DIR[])
 user_dir() = get(ENV, "MATRIXDEPOT_MYDEPOT", MY_DEPOT_DIR)
 url_redirect() = URL_REDIRECT[] = get(ENV, "MATRIXDEPOT_URL_REDIRECT", "0") != "0"
 
