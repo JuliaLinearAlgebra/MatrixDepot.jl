@@ -69,6 +69,7 @@ Access is like
 module MatrixDepot
 using LinearAlgebra, SparseArrays, Serialization
 using CodecZlib
+using Scratch
 import Base: show
 
 export matrixdepot
