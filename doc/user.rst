@@ -12,7 +12,7 @@ be able to use them from Matrix Depot.
 Declaring Generators
 --------------------
 
-Users may override the ``include_generator`` function to declare new
+Users may use the ``include_generator`` function to declare new
 generators. Note that ``include_generator`` must be called at runtime, so
 users creating packages which define custom matrix test suites should place
 their calls to ``include_generator`` in the ``__init__`` function of their

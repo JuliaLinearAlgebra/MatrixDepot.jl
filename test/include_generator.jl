@@ -32,7 +32,7 @@ n = rand(1:8)
 @test "randsym" in MatrixDepot.mdlist(:random)
 @test "randsym" in MatrixDepot.mdlist(:symmetric)
 
-begin #Testing backward compatibility check deprecation. Delete eventually.
+begin #Testing backward compatibility deprecation. Delete eventually.
     mydepot_warning = "MY_DEPOT_DIR custom code inclusion is deprecated: load custom generators by calling include_generator and reinitializing matrix depot at runtime. For more information, see: https://matrixdepotjl.readthedocs.io/en/latest/user.html. Duplicate warnings will be suppressed."
 
     matrixdata = 
