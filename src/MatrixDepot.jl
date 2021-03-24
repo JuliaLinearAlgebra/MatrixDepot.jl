@@ -105,6 +105,8 @@ include("markdown.jl")      # construct MD objects
 include("downloadmm.jl")    # read metatdata from MM database
 include("downloadsp.jl")    # read metatdata from SS database
 
+usermatrixclass = Dict()
+
 function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
@@ -115,24 +117,33 @@ function init(;ignoredb::Bool=false)
         mkpath(data_dir())
     end
 
-    if !isdir(MYDEP)
-        mkpath(MYDEP)
-        open(joinpath(MYDEP, GROUP), "w") do f
-            write(f, "usermatrixclass = Dict(\n);")
+    if isdir(MYDEP) #Backward compatibility check deprecation. Delete eventually.
+        default_group_file = "usermatrixclass = Dict(\n);"
+        default_generator_file = "# include your matrix generators below \n"
+        has_warned = false
+        the_warning = "MY_DEPOT_DIR custom code inclusion is deprecated: load custom generators by calling include_generator and reinitializing matrix depot at runtime. For more information, see: https://matrixdepotjl.readthedocs.io/en/latest/user.html. Duplicate warnings will be suppressed."
+        for file in readdir(MYDEP)
+            if endswith(file, ".jl")
+                if file == GROUP && read(joinpath(MYDEP, GROUP), String) == default_generator_file
+                    continue
+                end
+                if !has_warned
+                    @warn(the_warning)
+                    has_warned = true
+                end
+                println("include $file for user defined matrix generators")
+                include(joinpath(MYDEP, file))
+            end
         end
-        open(joinpath(MYDEP, GENERATOR), "w") do f
-            write(f, "# include your matrix generators below \n")
+        if isfile(joinpath(MYDEP, GENERATOR)) && read(joinpath(MYDEP, GENERATOR), String) != default_generator_file
+            if !has_warned
+                @warn(the_warning)
+                has_warned = true
+            end
+            include(joinpath(MYDEP, GENERATOR))
         end
-        println("created dir $(MYDEP)")
     end
-    
-    for file in readdir(MYDEP)
-        if endswith(file, ".jl") && file != GENERATOR
-            println("include $file for user defined matrix generators")
-            include(joinpath(MYDEP, file))
-        end
-    end
-    include(joinpath(MYDEP, GENERATOR))
+
     println("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
     println("used remote sites are ", remote_name(preferred(TURemoteType)),
