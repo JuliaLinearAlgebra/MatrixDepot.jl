@@ -108,7 +108,7 @@ function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
     url_redirect()          # env MATRIXDEPOT_URL_REDIRECT == "1"
-    MYDEP = user_dir()  # env MATRIXDEPOT_MYDEPOT 
+    MYDEP = user_dir()  # env MATRIXDEPOT_MYDEPOT
 
     if !isdir(data_dir())   # env MATRIXDEPOT_DATA
         mkpath(data_dir())
@@ -122,20 +122,19 @@ function init(;ignoredb::Bool=false)
         open(joinpath(MYDEP, GENERATOR), "w") do f
             write(f, "# include your matrix generators below \n")
         end
-        println("created dir $(MYDEP)")
+        @info("created dir $(MYDEP)")
     end
-    
+
     for file in readdir(MYDEP)
         if endswith(file, ".jl") && file != GENERATOR
-            println("include $file for user defined matrix generators")
+            @info("include $file for user defined matrix generators")
             include(joinpath(MYDEP, file))
         end
     end
     include(joinpath(MYDEP, GENERATOR))
-    println("verify download of index files...")
+    @info("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
-    println("used remote sites are ", remote_name(preferred(TURemoteType)),
-            " and ", remote_name(preferred(MMRemoteType)))
+    @info("used remote sites are $(remote_name(preferred(TURemoteType))) and $(remote_name(preferred(MMRemoteType)))")
     nothing
 end
 
