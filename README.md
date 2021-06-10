@@ -207,7 +207,7 @@ By default, the data directory is a scratchspace managed by [`Scratch.jl`](https
 The data directory can be queried by
 
     julia> MatrixDepot.data_dir()
-    "/home/.../.julia/scratchspaces/MatrixDepot/data"
+    "/home/.../.julia/scratchspaces/b51810bb-c9f3-55da-ae3c-350fc1fbce05/data
 
 The occasional user needs not bother about downloads, because that is done in
 the background if matrix files are missing on the local disk.
