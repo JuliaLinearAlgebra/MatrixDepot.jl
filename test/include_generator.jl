@@ -46,7 +46,7 @@ begin #Testing backward compatibility deprecation. Delete eventually.
         write(f, matrixdata)
     end
 
-    @test_logs (:warn, mydepot_warning) MatrixDepot.init()
+    @test_logs (:warn, mydepot_warning) match_mode=:any MatrixDepot.init()
     n = rand(1:8)
 
     @test matrixdepot("randorth", n) !== nothing
