@@ -78,7 +78,7 @@ That points to the default user directory which can be changed by an environment
 The data directory is queried by::
 
     julia> MatrixDepot.data_dir()
-    "/home/.../.julia/scratchspaces/MatrixDepot/data"
+    "/home/.../.julia/scratchspaces/b51810bb-c9f3-55da-ae3c-350fc1fbce05/data"
 
 By default, the data directory is managed by ``Scratch.jl``, but can be changed by another environment variable::
 
