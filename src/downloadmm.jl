@@ -80,7 +80,7 @@ function downloadindex(remote::RemoteType)
     file = localindex(remote)
     url = redirect(indexurl(remote))
     if !isfile(file)
-        println("dowloading index file $url")
+        @info("dowloading index file $url")
         downloadfile(url, file)
     end
     file

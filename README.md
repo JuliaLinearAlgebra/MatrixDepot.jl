@@ -20,25 +20,30 @@ and the `Matrix Market Collection`.
 
 Access is like
 
-    using MatrixDepot
+```julia
+using MatrixDepot
+A = matrixdepot("hilb", 10)     # locally generated hilbert matrix dimensions (10,10)
+A = matrixdepot("HB/1138_bus")  # named matrix of the SuiteSparse Collection
+```
 
-    A = matrixdepot("hilb", 10)     # locally generated hilbert matrix dimensions (10,10)
-    
-    A = matrixdepot("HB/1138_bus")  # named matrix of the SuiteSparse Collection
+or
 
-   or
+```julia
+md = mdopen("*/bfly")   # named matrix with some extra data
+A = md.A
+co = md.coord
+tx = md("Gname_10.txt")
+```
 
-    md = mdopen("*/bfly")   # named matrix with some extra data
-    A = md.A
-    co = md.coord
-    tx = md("Gname_10.txt")
+or also
 
-   or also
+```julia
+md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
+A = md.A
+b = md.b
+x = md.x
+```
 
-    md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
-    A = md.A
-    b = md.b
-    x = md.x
 ## Install
 
 **NOTE:** If you use Windows, you need to install MinGW/MSYS or Cygwin
@@ -114,16 +119,17 @@ The following pattern types are supported:
 To express `OR` and `AND`, the binary operators `|` and `&` and `(` / `)` are preferred.
 
 Examples:
-```
-    "gravity" | "HB/*" & ~(ishermitian & iscomplex) & ~sp(20:30)
+
+```julia
+"gravity" | "HB/*" & ~(ishermitian & iscomplex) & ~sp(20:30)
 ```
 
 The set of all known matrices can be expressed as empty tuple `()`. In a shell-
 pattern the double `**` matches also slash characters, in contrast to the single `*`.
 
 A convenient form of a predicate-generator is
-```
-    @pred(expression)
+```julia
+@pred(expression)
 ```
 where expression is a valid `Julia` boolean expression, which may access all 
 properties of `MatrixData` as literal variable names.
@@ -149,16 +155,20 @@ For example: `hasdata(:x) & ~keyword("fluid"` provides solution (x) and does not
 
 ### Listing matrices with certain properties
 
-    mdlist(pattern) # array of matrix names according to pattern
-    listdata(pattern) # array of `MatrixData`objects according to pattern
-    listnames(pattern) # MD-formatted listing of all names according to pattern
-    listdir("*//*") # MD-formatted -  group over part before `//` - count matching
-    listgroups(:groupname) # list all matrices in group of that name
+```julia
+mdlist(pattern) # array of matrix names according to pattern
+listdata(pattern) # array of `MatrixData`objects according to pattern
+listnames(pattern) # MD-formatted listing of all names according to pattern
+listdir("*//*") # MD-formatted -  group over part before `//` - count matching
+listgroups(:groupname) # list all matrices in group of that name
+```
 
 ### Information about matrices
 
-    mdinfo() # overview over database
-    mdinfo(pattern) # individual documentation about matrix(es) matching pattern
+```julia
+mdinfo() # overview over database
+mdinfo(pattern) # individual documentation about matrix(es) matching pattern
+```
 
 ### Generating a matrix
 
@@ -269,6 +279,7 @@ To see an overview of the matrices in the collection, type
 
 ```julia
 julia> using MatrixDepot
+
 julia> mdinfo()
   Currently loaded Matrices
   –––––––––––––––––––––––––––
@@ -404,7 +415,6 @@ list(22)
 cauchy   dingdong hilb    lehmer oscillate poisson  randsym wilkinson
 circul   fiedler  invhilb minij  pascal    prolate  tridiag
 clement  hankel   kms     moler  pei       randcorr wathen
-
 ```
 
 ## Extend Matrix Depot

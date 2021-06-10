@@ -111,7 +111,7 @@ function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
     url_redirect()          # env MATRIXDEPOT_URL_REDIRECT == "1"
-    MYDEP = user_dir()  # env MATRIXDEPOT_MYDEPOT 
+    MYDEP = user_dir()  # env MATRIXDEPOT_MYDEPOT
 
     if !isdir(data_dir())   # env MATRIXDEPOT_DATA
         mkpath(data_dir())
@@ -146,8 +146,7 @@ function init(;ignoredb::Bool=false)
 
     println("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
-    println("used remote sites are ", remote_name(preferred(TURemoteType)),
-            " and ", remote_name(preferred(MMRemoteType)))
+    @info("used remote sites are $(remote_name(preferred(TURemoteType))) and $(remote_name(preferred(MMRemoteType)))")
     nothing
 end
 
