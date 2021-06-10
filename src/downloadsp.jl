@@ -87,7 +87,7 @@ function load_ss_index()
     file = localindex(preferred(SSRemoteType))
     if !isfile(file) || Base.Filesystem.stat(file).size == 0
         url = redirect(indexurl(SS_REMOTE))
-        println("downloading: ", url)
+        @info("downloading: $url")
         downloadfile(url, file)
     end
     file
@@ -139,7 +139,7 @@ function loadsvd(data::RemoteMatrixData{SSRemoteType})
     isdir(dir) || mkpath(dir)
 
     try
-        println("downloading: ", url)
+        @info("downloading: $url")
         downloadfile(url, file)
         addsvd!(data)
         1

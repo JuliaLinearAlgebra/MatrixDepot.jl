@@ -20,7 +20,7 @@ end
 
 dbpath(db::MatrixDatabase) = abspath(data_dir(), "db.data")
 function readdb(db::MatrixDatabase)
-    println("reading database")
+    @info("reading database")
     cachedb = dbpath(db)
     open(cachedb, "r") do io
         dbx = deserialize(io)
@@ -51,30 +51,30 @@ function downloadindices(db::MatrixDatabase; ignoredb=false)
             readdb(db)
         catch ex
             println(ex)
-            println("recreating database file")
+            @warn("recreating database file")
             _downloadindices(db)
             added = 1
         end
     else
-        println("creating database file")
+        @info("creating database file")
         _downloadindices(db)
         added = 1
     end
-    println("adding metadata...")
+    @info("adding metadata...")
     added += addmetadata!(db)
-    println("adding svd data...")
+    @info("adding svd data...")
     added += addsvd!(db)
     added += insertlocal(db, GeneratedMatrixData{:B}, MATRIXDICT)
     added += insertlocal(db, GeneratedMatrixData{:U}, USERMATRIXDICT)
     if added > 0
-        println("writing database")
+        @info("writing database")
         writedb(db)
     end
     nothing
 end
 
 function _downloadindices(db::MatrixDatabase)
-    println("reading index files")
+    @info("reading index files")
     empty!(db)
 
     try
@@ -142,7 +142,7 @@ function loadmatrix(data::RemoteMatrixData)
     isdir(dir) || mkpath(dir)
     wdir = pwd()
     try
-        println("downloading: ", url)
+        @info("downloading: $url")
         downloadfile(url, dirfn)
         tarfile = gunzip(dirfn)
         cd(dir)
@@ -178,7 +178,7 @@ function loadinfo(data::RemoteMatrixData)
     pipe = downloadpipeline(url)
     out = IOBuffer()
     s = try
-        println("downloading head of $url")
+        @info("downloading head of $url")
         open(pipe, "r") do io
             skip = 0
             while ( s = readline(io) ) != ""
