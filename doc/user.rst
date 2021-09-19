@@ -67,8 +67,8 @@ matrix generators ``randsym`` and ``randorth``::
 
 We can then write::
 
-  MatrixDepot.include_generator(FunctionName, "randsym", randsym)
-  MatrixDepot.include_generator(FunctionName, "randorth", randorth)
+  MatrixDepot.include_generator(MatrixDepot.FunctionName, "randsym", randsym)
+  MatrixDepot.include_generator(MatrixDepot.FunctionName, "randorth", randorth)
 
 and when we are done including generators, we need to update the database::
 
