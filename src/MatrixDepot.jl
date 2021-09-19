@@ -105,6 +105,7 @@ include("markdown.jl")      # construct MD objects
 include("downloadmm.jl")    # read metatdata from MM database
 include("downloadsp.jl")    # read metatdata from SS database
 
+#Once we no longer include code from MY_DEPOT_DIR, we can make this declaration const.
 usermatrixclass = Dict()
 
 function init(;ignoredb::Bool=false)
