@@ -17,7 +17,7 @@ generators. Note that ``include_generator`` must be called at runtime, so
 users creating packages which define custom matrix test suites should place
 their calls to ``include_generator`` in the ``__init__`` function of their
 module to avoid
-`precompilation issues <https://docs.julialang.org/en/v2/manual/modules/#Module-initialization-and-precompilation>`_.
+`precompilation issues <https://docs.julialang.org/en/v1/manual/modules/#Module-initialization-and-precompilation>`_.
 
 .. function:: include_generator(Stuff_To_Be_Included, Stuff, f)
 
