@@ -212,13 +212,6 @@ The remote data are originally stored at the remote web-site of one of the
 matrix collections. Before they are presented to the user, they are downloaded
 to local disk storage, which serves as a permanent cache.
 
-By default, the data directory is a scratchspace managed by [`Scratch.jl`](https://github.com/JuliaPackaging/Scratch.jl), but can be changed by setting the `MATRIXDEPOT_DATA` environment variable.
-
-The data directory can be queried by
-
-    julia> MatrixDepot.data_dir()
-    "/home/.../.julia/scratchspaces/b51810bb-c9f3-55da-ae3c-350fc1fbce05/data
-
 The occasional user needs not bother about downloads, because that is done in
 the background if matrix files are missing on the local disk.
 
