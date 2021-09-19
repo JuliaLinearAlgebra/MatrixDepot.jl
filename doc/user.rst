@@ -70,9 +70,9 @@ We can then write::
   MatrixDepot.include_generator(FunctionName, "randsym", randsym)
   MatrixDepot.include_generator(FunctionName, "randorth", randorth)
 
-and when we are done including generators, we need to reinitializie the database::
+and when we are done including generators, we need to update the database::
 
-  MatrixDepot.init()
+  MatrixDepot.publish_user_generators()
 
 This is it. We can now use them from Matrix Depot::
 
@@ -147,7 +147,7 @@ We can also add group information with::
     MatrixDepot.include_generator(MatrixDepot.Group, :random, randsym)
     MatrixDepot.include_generator(MatrixDepot.Group, :symmetric, randsym)
     MatrixDepot.include_generator(MatrixDepot.Group, :random, randorth)
-    MatrixDepot.init()
+    MatrixDepot.publish_user_generators()
 
 For example::
 

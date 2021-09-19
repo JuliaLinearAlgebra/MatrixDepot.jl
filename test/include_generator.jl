@@ -1,4 +1,4 @@
-import MatrixDepot: include_generator, Group, FunctionName
+import MatrixDepot: publish_user_generators, include_generator, Group, FunctionName
 
 "random symmetric matrix"
 function randsym(::Type{T}, n) where T
@@ -17,7 +17,7 @@ include_generator(Group, :random, randsym)
 include_generator(Group, :symmetric, randsym)
 
 # update the database
-MatrixDepot.init(ignoredb=true)
+MatrixDepot.publish_user_generators()
 
 n = rand(1:8)
 @test matrixdepot("randsym", n) !== nothing
