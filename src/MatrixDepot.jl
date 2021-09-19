@@ -144,7 +144,7 @@ function init(;ignoredb::Bool=false)
         end
     end
 
-    println("verify download of index files...")
+    @info("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
     @info("used remote sites are $(remote_name(preferred(TURemoteType))) and $(remote_name(preferred(MMRemoteType)))")
     nothing
