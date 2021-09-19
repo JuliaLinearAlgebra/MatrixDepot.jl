@@ -4,7 +4,7 @@ const MD_TOGGLE = true
 ENV["MATRIXDEPOT_URL_REDIRECT"] = length(VERSION.prerelease) == 0 ? "1" : "1"
 const basedir = tempname()
 ENV["MATRIXDEPOT_DATA"] = abspath(basedir, "data")
-ENV["MATRIXDEPOT_MYDEPOT"] = abspath(basedir, "myMatrixDepot")
+ENV["MATRIXDEPOT_MYDEPOT"] = abspath(basedir, "myMatrixDepot") #Delete when MYDEPOT functionality is deleted
 
 using MatrixDepot
 using Test

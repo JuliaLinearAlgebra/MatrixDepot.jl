@@ -36,15 +36,19 @@ n = rand(1:8)
 begin #Testing backward compatibility deprecation. Delete eventually.
     mydepot_warning = "MY_DEPOT_DIR custom code inclusion is deprecated: load custom generators by calling include_generator and reinitializing matrix depot at runtime. For more information, see: https://matrixdepotjl.readthedocs.io/en/latest/user.html. Duplicate warnings will be suppressed."
 
-    matrixdata = 
+    mkpath(MatrixDepot.user_dir())
+    open(joinpath(MatrixDepot.user_dir(), "group.jl"), "w") do f
+        write(f, "usermatrixclass = Dict(\n);")
+    end
+
+    matrixgenerator = 
     """
     randorth(n) = Matrix(qr(randn(n,n)).Q)
     include_generator(FunctionName, "randorth", randorth)
     include_generator(Group, :random, randorth)
     """
-    mkpath(MatrixDepot.user_dir())
     open(joinpath(MatrixDepot.user_dir(), "generator.jl"), "w") do f
-        write(f, matrixdata)
+        write(f, matrixgenerator)
     end
 
     @test_logs (:warn, mydepot_warning) match_mode=:any MatrixDepot.init()
@@ -53,6 +57,17 @@ begin #Testing backward compatibility deprecation. Delete eventually.
     @test matrixdepot("randorth", n) !== nothing
     @test mdinfo("randorth") != nothing
     @test "randorth" in MatrixDepot.mdlist(:random)
+
+    open(joinpath(MatrixDepot.user_dir(), "generator.jl"), "w") do f
+        write(f, "# include your matrix generators below \n")
+    end
+
+    @test_nowarn MatrixDepot.init()
+
+    rm(joinpath(MatrixDepot.user_dir(), "generator.jl"))
+    rm(joinpath(MatrixDepot.user_dir(), "group.jl"))
+
+    @test_nowarn MatrixDepot.init()
 end
 
 @test_throws ArgumentError include_generator(Group, :lkjasj, sin)

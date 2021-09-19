@@ -117,30 +117,21 @@ function init(;ignoredb::Bool=false)
         mkpath(data_dir())
     end
 
-    if isdir(MYDEP) #Backward compatibility check deprecation. Delete eventually.
-        default_group_file = "usermatrixclass = Dict(\n);"
-        default_generator_file = "# include your matrix generators below \n"
-        has_warned = false
-        the_warning = "MY_DEPOT_DIR custom code inclusion is deprecated: load custom generators by calling include_generator and reinitializing matrix depot at runtime. For more information, see: https://matrixdepotjl.readthedocs.io/en/latest/user.html. Duplicate warnings will be suppressed."
-        for file in readdir(MYDEP)
-            if endswith(file, ".jl")
-                if file == GROUP && read(joinpath(MYDEP, GROUP), String) == default_generator_file
-                    continue
+    if isdir(MYDEP) && readdir(MYDEP) != [] #Backward compatibility check deprecation. Delete eventually.
+        if sort(readdir(MYDEP)) != sort([GROUP, GENERATOR]) ||
+            read(joinpath(MYDEP, GROUP), String) != "usermatrixclass = Dict(\n);" ||
+            read(joinpath(MYDEP, GENERATOR), String) != "# include your matrix generators below \n"
+
+            @warn "MY_DEPOT_DIR custom code inclusion is deprecated: load custom generators by calling include_generator and reinitializing matrix depot at runtime. For more information, see: https://matrixdepotjl.readthedocs.io/en/latest/user.html. Duplicate warnings will be suppressed."
+            for file in readdir(MYDEP)
+                if endswith(file, ".jl") && file != GENERATOR
+                    println("include $file for user defined matrix generators")
+                    include(joinpath(MYDEP, file))
                 end
-                if !has_warned
-                    @warn(the_warning)
-                    has_warned = true
-                end
-                println("include $file for user defined matrix generators")
-                include(joinpath(MYDEP, file))
             end
-        end
-        if isfile(joinpath(MYDEP, GENERATOR)) && read(joinpath(MYDEP, GENERATOR), String) != default_generator_file
-            if !has_warned
-                @warn(the_warning)
-                has_warned = true
+            if isfile(joinpath(MYDEP, GENERATOR))
+                include(joinpath(MYDEP, GENERATOR))
             end
-            include(joinpath(MYDEP, GENERATOR))
         end
     end
 
