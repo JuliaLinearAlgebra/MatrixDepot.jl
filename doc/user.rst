@@ -18,6 +18,9 @@ users creating packages which define custom matrix test suites should place
 their calls to ``include_generator`` in the ``__init__`` function of their
 module to avoid
 `precompilation issues <https://docs.julialang.org/en/v1/manual/modules/#Module-initialization-and-precompilation>`_.
+A complete working example of how to create a Julia package with custom matrices is provided as a
+`template https://github.com/KlausC/MatrixDepotTemplate.jl`_.
+
 
 .. function:: include_generator(Stuff_To_Be_Included, Stuff, f)
 
@@ -33,8 +36,8 @@ module to avoid
 Examples
 --------- 
 
-To get a feel of how it works, let's see an example. Suppose we have two
-matrix generators ``randsym`` and ``randorth``::
+To get a feel of how it works, let's see an example. Suppose we have defined two
+matrix generators ``randsym`` and ``randorth`` in our own module outside of MatrixDepot::
 
   """
   random symmetric matrix
@@ -184,3 +187,15 @@ For example::
 
 the function ``randsym`` will be part of the groups ``:symmetric`` and ``:random``
 while ``randorth`` is in group ``:random``.
+
+If we put our code in a package called `MatrixDepotTemplate` and our calls to
+`include_generator` and `publish_user_generators` inside the `__init__` function, 
+we could use our new generators by simply importing the package.::
+
+    julia> import MatrixDepot
+    julia> import MatrixDepotTemplate
+    julia> listnames(:random)
+    list(13)                                                           
+    –––––––– ––––––––– –––––––– –––––––– ––––––– –––––––––– ––––––     
+    erdrey   golub     randcorr randorth randsym rosser     wathen     
+    gilbert  oscillate rando    randsvd  rohess  smallworld            
