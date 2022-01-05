@@ -1,4 +1,5 @@
 import MatrixDepot: publish_user_generators, include_generator, Group, FunctionName
+using Logging
 
 "random symmetric matrix"
 function randsym(::Type{T}, n) where T
@@ -25,7 +26,7 @@ n = rand(1:8)
 @test "randsym" in MatrixDepot.mdlist(:random)
 @test "randsym" in MatrixDepot.mdlist(:symmetric)
 
-@test_nowarn MatrixDepot.init()
+@test_logs min_level=Logging.Warn MatrixDepot.init()
 n = rand(1:8)
 @test matrixdepot("randsym", n) !== nothing
 @test mdinfo("randsym") !== nothing
@@ -51,7 +52,7 @@ begin #Testing backward compatibility deprecation. Delete eventually.
         write(f, matrixgenerator)
     end
 
-    @test_logs (:warn, mydepot_warning) match_mode=:any MatrixDepot.init()
+    @test_logs (:warn, mydepot_warning) min_level=Logging.Warn match_mode=:any MatrixDepot.init()
     n = rand(1:8)
 
     @test matrixdepot("randorth", n) !== nothing
@@ -62,12 +63,12 @@ begin #Testing backward compatibility deprecation. Delete eventually.
         write(f, "# include your matrix generators below \n")
     end
 
-    @test_nowarn MatrixDepot.init()
+    @test_logs min_level=Logging.Warn MatrixDepot.init()
 
     rm(joinpath(MatrixDepot.user_dir(), "generator.jl"))
     rm(joinpath(MatrixDepot.user_dir(), "group.jl"))
 
-    @test_nowarn MatrixDepot.init()
+    @test_logs min_level=Logging.Warn MatrixDepot.init()
 end
 
 @test_throws ArgumentError include_generator(Group, :lkjasj, sin)
