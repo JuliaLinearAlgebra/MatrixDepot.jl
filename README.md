@@ -81,14 +81,14 @@ start with a letter and contain only letters, digits, and `'_'`.
 
 Every matrix has a numeric identifier, which is unique for its area:
 
-  * `builtin(id)` - one of the built-in matrix generators - currently `id ∈ 1:59`.
-  
-  * `user(id)` - a user-defined matrix generator - starting with `1`.
+* `builtin(id)` - one of the built-in matrix generators - currently `id ∈ 1:59`.
 
-  *  `sp(id)` - one of the `SuiteSparse` collection. The integer ids are the
+* `user(id)` - a user-defined matrix generator - starting with `1`.
+
+* `sp(id)` - one of the `SuiteSparse` collection. The integer ids are the
   'official' ident numbers assigned by the collection. Currently `id ∈ 1:3000`.
 
-  * `mm(id)` - one of the `MatrixMarket` collection. Here id follows the ordering
+* `mm(id)` - one of the `MatrixMarket` collection. Here id follows the ordering
   of the index file of the collection.
 
 ### Sets of Matrix Names - Pattern
@@ -102,7 +102,7 @@ The following pattern types are supported:
   1. `"name"` - a string matching exactly a matrix name
   2. `"shell-pattern"` - a string with shell wildcards `'?', '*', "[...]"` included.
 
-  3. `r"egular expression"` - a regular expression to match the matrix name. 
+  3. `r"egular expression"` - a regular expression to match the matrix name.
 
   4. `:group` - one of the defined group names; match all matrices in the group
 
@@ -128,10 +128,12 @@ The set of all known matrices can be expressed as empty tuple `()`. In a shell-
 pattern the double `**` matches also slash characters, in contrast to the single `*`.
 
 A convenient form of a predicate-generator is
+
 ```julia
 @pred(expression)
 ```
-where expression is a valid `Julia` boolean expression, which may access all 
+
+where expression is a valid `Julia` boolean expression, which may access all
 properties of `MatrixData` as literal variable names.
 
 Examples:
@@ -141,7 +143,7 @@ Examples:
 
 `@pred(500_000 <= n * m < 1_000_000)` restricts the size of matched matrices.
 
-`@pred(10^4 <= n <= 2*10^4 && n == m && nnz / n > 10 )` in average more than 10 entries per row 
+`@pred(10^4 <= n <= 2*10^4 && n == m && nnz / n > 10 )` in average more than 10 entries per row
 
 There is s set of predefined predicate functions including:
 `(issymmetric, ishermitian, isgeneral, isskew, isreal, iscomplex, isboolean,
@@ -149,7 +151,7 @@ islocal, isremote, isloaded, isunloaded, isbuiltin, isuser, issparse)`
 
 Special predicate generators `keyword(word...)` and `hasdata(symbol...)` allow to
 support keyword-search and check for the existence of meta-data.
-For example: `hasdata(:x) & ~keyword("fluid"` provides solution (x) and does not mention "fluid". 
+For example: `hasdata(:x) & ~keyword("fluid"` provides solution (x) and does not mention "fluid".
 
 ## Accessing Data
 
@@ -181,18 +183,18 @@ mdinfo(pattern) # individual documentation about matrix(es) matching pattern
 
 In general the first form is preferrable, if only the pure matrix is required.
 For remote collections no arguments are used.
- 
+
 The second form allows to access all types of 'meta-data', which may be available for some local or remote matrices.
 
 Examples:
 
-`md = mdopen("spikes", 5, false); A = md.A; b = md.b; x = md.x`  
+`md = mdopen("spikes", 5, false); A = md.A; b = md.b; x = md.x`
 
 `md = mdopen("Rommes/bips07_1998"); A = md.A; v = md.iv; title = md.data.title;
  nodenames = md.("nodename.txt")`
 
 The last example shows, how to access textual meta-data, when the name contains
-`Julia` non-word characters. Also if the metadata-name is stored in a varaible, 
+`Julia` non-word characters. Also if the metadata-name is stored in a varaible,
 the last form has to be used.
 
 `meta = metasymbols(md)[2]; sec_matrix = md.(meta)`
@@ -200,7 +202,7 @@ the last form has to be used.
 The function `metasymbols` returns a list of all symbols denoting metadata
 provided by `md`. Wether expressed as symbols or strings does not matter.
 
-The system function `propertynames(md)` returns all data of `md`. That includes 
+The system function `propertynames(md)` returns all data of `md`. That includes
 size information and metadata.
 
 `propertynames(md.data)` gives an overview about all attributes of the
@@ -208,7 +210,7 @@ size information and metadata.
 
 ### Backoffice Jobs
 
-The remote data are originally stored at the remote web-site of one of the 
+The remote data are originally stored at the remote web-site of one of the
 matrix collections. Before they are presented to the user, they are downloaded
 to local disk storage, which serves as a permanent cache.
 
@@ -265,7 +267,6 @@ Example:
 `MatrixDepot.load(sp(:) & @pred(nnz < 100_000))` to download only problems with given
 number of stored entries in the main matrix.
 
-
 ## Sample Session
 
 To see an overview of the matrices in the collection, type
@@ -277,7 +278,7 @@ julia> mdinfo()
   Currently loaded Matrices
   –––––––––––––––––––––––––––
 
-builtin(#)                                                                                                                
+builtin(#)
 –––––––––– ––––––––––– ––––––––––– ––––––––––– –––––––––– –––––––––––– ––––––––––– ––––––––––– ––––––––––––– ––––––––––––
 1 baart    7 circul    13 fiedler  19 gravity  25 invhilb 31 magic     37 parter   43 randcorr 49 shaw       55 ursell
 2 binomial 8 clement   14 forsythe 20 grcar    26 invol   32 minij     38 pascal   44 rando    50 smallworld 56 vand
@@ -290,7 +291,7 @@ user(#)
 –––––––––
 1 randsym
 
-Groups                                                                                      
+Groups
 –––––– ––––––– ––––– –––– ––––– ––––– ––––––– ––––––– –––––– –––––– ––––––– –––––– –––––––––
 all    builtin local user eigen graph illcond inverse posdef random regprob sparse symmetric
 
@@ -298,7 +299,7 @@ Suite Sparse of
 –––––––––––– ––––
 2770         2833
 
-MatrixMarket of 
+MatrixMarket of
 –––––––––––– –––
 488          498
 
@@ -309,8 +310,8 @@ We can generate a 4-by-4 Hilbert matrix by typing
 ```julia
 julia> matrixdepot("hilb", 4)
 4x4 Array{Float64,2}:
- 1.0       0.5       0.333333  0.25    
- 0.5       0.333333  0.25      0.2     
+ 1.0       0.5       0.333333  0.25
+ 0.5       0.333333  0.25      0.2
  0.333333  0.25      0.2       0.166667
  0.25      0.2       0.166667  0.142857
 ```
@@ -349,7 +350,7 @@ We can also specify the data type for locally generated matrices.
 julia> matrixdepot("hilb", Float16, 5, 3)
 5x3 Array{Float16,2}:
  1.0      0.5      0.33325
- 0.5      0.33325  0.25   
+ 0.5      0.33325  0.25
  0.33325  0.25     0.19995
  0.25     0.19995  0.16663
  0.19995  0.16663  0.14282
@@ -418,30 +419,29 @@ and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/late
 
 ## References
 
-- Weijian Zhang and Nicholas J. Higham,
+* Weijian Zhang and Nicholas J. Higham,
   "Matrix Depot: An Extensible Test Matrix Collection for Julia",
   *PeerJ Comput. Sci.*, 2:e58 (2016),
   [[pdf]](https://peerj.com/articles/cs-58/)
 
-- Nicholas J. Higham,
+* Nicholas J. Higham,
   "Algorithm 694, A Collection of Test Matrices in MATLAB",
   *ACM Trans. Math. Software*,
   vol. 17. (1991), pp 289-305
   [[pdf]](http://www.maths.manchester.ac.uk/~higham/narep/narep172.pdf)
   [[doi]](https://dx.doi.org/10.1145/114697.116805)
-
-- T.A. Davis and Y. Hu,
+* T.A. Davis and Y. Hu,
   "The University of Florida Sparse Matrix Collection",
   *ACM Transaction on Mathematical Software*,
   vol. 38, Issue 1, (2011), pp 1:1-1:25
   [[pdf]](http://www.cise.ufl.edu/research/sparse/techreports/matrices.pdf)
 
-- R.F. Boisvert, R. Pozo, K. A. Remington, R. F. Barrett, & J. Dongarra,
+* R.F. Boisvert, R. Pozo, K. A. Remington, R. F. Barrett, & J. Dongarra,
   " Matrix Market: a web resource for test matrix collections",
   *Quality of Numerical Software* (1996) (pp. 125-137).
   [[pdf]](http://www.netlib.org/utk/people/JackDongarra/pdf/matrixmarket.pdf)
 
-- Per Christian Hansen,
+* Per Christian Hansen,
   "Test Matrices for Regularization Methods",
   *SIAM Journal on Scientific Computing*,
   vol. 16, 2, (1995) pp.506-512.

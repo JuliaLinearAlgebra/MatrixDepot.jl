@@ -36,7 +36,7 @@ function parse_headerinfo(akku::Dict{AbstractString,AbstractString}, count::Inte
     nnz = toint("nonzeros")
     kind = get(akku, "kind", "")
     datestr = get(akku, "date", "0")
-    date = match(r"^\d+$", datestr) != nothing ? parse(Int, datestr) : 0
+    date = match(r"^\d+$", datestr) !== nothing ? parse(Int, datestr) : 0
     id, MetaInfo(m, n, nnz, 0, kind, date, "", "", "", "", "")
 end
 
@@ -53,7 +53,7 @@ function extract_names(db::MatrixDatabase, matrices::AbstractString)
             end
             _, grepex, spquote, ending, parts, regexinf = remote.params.scan
             m = regexinf === nothing ? nothing : match(regexinf, line)
-            if m != nothing
+            if m !== nothing
                 pname = length(m.captures) == 2 ? m.captures[1] : "id"
                 akku[pname] = m.captures[end]
             end

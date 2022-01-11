@@ -46,7 +46,7 @@ include("generators.jl")
     println("mv $xdir $xtmpdir")
     mv(xdir, xtmpdir, force=true)
     toggle_db()
-    @test mdopen(sp(1)) != nothing
+    @test mdopen(sp(1)) !== nothing
     mv(xtmpdir, xdir, force=true)
 end
 

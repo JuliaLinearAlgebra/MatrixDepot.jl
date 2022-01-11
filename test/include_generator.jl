@@ -25,7 +25,7 @@ MatrixDepot.init(ignoredb=true)
 
 n = rand(1:8)
 @test matrixdepot("randsym", n) !== nothing
-@test mdinfo("randsym") != nothing
+@test mdinfo("randsym") !== nothing
 @test "randsym" in MatrixDepot.mdlist(:random)
 @test "randsym" in MatrixDepot.mdlist(:symmetric)
 
