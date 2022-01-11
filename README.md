@@ -1,8 +1,7 @@
 
 # ![logo](doc/logo2.png) Matrix Depot
 
-[![Build Status](https://travis-ci.com/JuliaMatrices/MatrixDepot.jl.svg?branch=master)](https://travis-ci.com/JuliaMatrices/MatrixDepot.jl)
-[![codecov.io](https://codecov.io/github/JuliaMatrices/MatrixDepot.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaMatrices/MatrixDepot.jl?branch=master)
+[![Build Status][gha-img]][gha-url]     [![Coverage Status][codecov-img]][codecov-url]
 
 An extensible test matrix collection for Julia.
 
@@ -15,13 +14,14 @@ An extensible test matrix collection for Julia.
 Give access to a wealth of sample and test matrices and accompanying data.
 A set of matrices is generated locally (with arguments controlling the special case).
 Another set is loaded from one of the publicly accessible matrix collections
-`SuiteSparse Matrix Collection` (formerly `University of Florida Matrix Collection`)
-and the `Matrix Market Collection`.
+[`SuiteSparse Matrix Collection`](https://sparse.tamu.edu) (formerly `University of Florida Matrix Collection`)
+and the [`Matrix Market Collection`](https://math.nist.gov/MatrixMarket), the latter being obsolescent.
 
 Access is like
 
 ```julia
 using MatrixDepot
+?MatrixDepot                    # display package help info
 A = matrixdepot("hilb", 10)     # locally generated hilbert matrix dimensions (10,10)
 A = matrixdepot("HB/1138_bus")  # named matrix of the SuiteSparse Collection
 ```
@@ -33,11 +33,14 @@ md = mdopen("*/bfly")   # named matrix with some extra data
 A = md.A
 co = md.coord
 tx = md("Gname_10.txt")
+md.<tab><tab>           # overview of the "fields" of md returning like
+                        # A m n dnz nnz coord Gname_10.txt  G_10 Gcoord_10
 ```
 
 or also
 
 ```julia
+mdinfo("gravity")                 # text info about the selected matrix
 md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
 A = md.A
 b = md.b
@@ -68,7 +71,7 @@ Every Matrix type has a unique name, which is a string of one of the forms:
   3. `"dir/subdir/name"` - for all matrices of the `MatrixMarket` collection.
 
 The names are similar to relative path names, separated by a slash character.
- The components of the name must not contain any of the characters `"/*[]"`.
+The components of the name must not contain any of the characters `"/*[]"`.
 
 #### Groups
 
@@ -158,17 +161,18 @@ For example: `hasdata(:x) & ~keyword("fluid"` provides solution (x) and does not
 ### Listing matrices with certain properties
 
 ```julia
-mdlist(pattern) # array of matrix names according to pattern
-listdata(pattern) # array of `MatrixData`objects according to pattern
+mdinfo()           # overview
+listgroups()       # list all defined group names
+mdlist(pattern)    # array of matrix names according to pattern
+listdata(pattern)  # array of `MatrixData`objects according to pattern
 listnames(pattern) # MD-formatted listing of all names according to pattern
 listdir("*//*") # MD-formatted -  group over part before `//` - count matching
-listgroups(:groupname) # list all matrices in group of that name
 ```
 
 ### Information about matrices
 
 ```julia
-mdinfo() # overview over database
+mdinfo()        # overview over database
 mdinfo(pattern) # individual documentation about matrix(es) matching pattern
 ```
 
@@ -191,13 +195,13 @@ Examples:
 `md = mdopen("spikes", 5, false); A = md.A; b = md.b; x = md.x`
 
 `md = mdopen("Rommes/bips07_1998"); A = md.A; v = md.iv; title = md.data.title;
- nodenames = md.("nodename.txt")`
+ nodenames = md("nodename.txt")`
 
 The last example shows, how to access textual meta-data, when the name contains
 `Julia` non-word characters. Also if the metadata-name is stored in a varaible,
 the last form has to be used.
 
-`meta = metasymbols(md)[2]; sec_matrix = md.(meta)`
+`meta = metasymbols(md)[2]; sec_matrix = md(meta)`
 
 The function `metasymbols` returns a list of all symbols denoting metadata
 provided by `md`. Wether expressed as symbols or strings does not matter.
@@ -206,13 +210,20 @@ The system function `propertynames(md)` returns all data of `md`. That includes
 size information and metadata.
 
 `propertynames(md.data)` gives an overview about all attributes of the
-`data::MatrixData`, which can for example be used in the `@pred` definitions.
+`md.data::MatrixData`, which can for example be used in the `@pred` definitions.
 
 ### Backoffice Jobs
 
 The remote data are originally stored at the remote web-site of one of the
 matrix collections. Before they are presented to the user, they are downloaded
 to local disk storage, which serves as a permanent cache.
+
+By default, the data directory is a scratchspace managed by [`Scratch.jl`](https://github.com/JuliaPackaging/Scratch.jl), but can be changed by setting the `MATRIXDEPOT_DATA` environment variable.
+
+The data directory can be queried by
+
+    julia> MatrixDepot.data_dir()
+    "/home/.../.julia/scratchspaces/b51810bb-c9f3-55da-ae3c-350fc1fbce05/data
 
 The occasional user needs not bother about downloads, because that is done in
 the background if matrix files are missing on the local disk.
@@ -232,15 +243,15 @@ according to the matrix-market-format and the size values `m` row-number,
 `MatrixDepot.loadinfo(pattern)` where `pattern` defines the subset.
 
 That is possible for the [SuiteSparse collection](https://sparse.tamu.edu) and the
-[NIST MatrixMarket collection](http://math.nist.gov/MatrixMarket).
+[NIST MatrixMarket collection](https://math.nist.gov/MatrixMarket).
 The patterns can always refer to matrix names and id numbers.
 In the case of `SuiteSparse` collection, also the metadata
 `"date"`, `"kind"`, `"m"`, `"n"`, `"nnz"`
 are available and can be used, before individual matrix data
-have been loaded. They are contained in the [index file](https://sparse.tamu.edu).
+have been loaded. They are contained in an data file obtained from the remote site.
 For `MatrixMarket` collection, patterns are restricted to names and id numbers.
 
-In general it would be possible to `loadinfo("**")` to load all header data. That
+In general it would be possible by `loadinfo("**")` to load all header data. That
 would last maybe an hour and generate some traffic for the remote sites.
 Nevertheless it is not necessary to do so, if you don't need the header data
 for the following task.
@@ -447,3 +458,9 @@ and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/late
   vol. 16, 2, (1995) pp.506-512.
   [[pdf]](http://epubs.siam.org/doi/abs/10.1137/0916032)
   [[doi]](https://dx.doi.org/10.1137/0916032)
+
+[gha-img]: https://github.com/JuliaMatrices/MatrixDepot.jl/workflows/CI/badge.svg
+[gha-url]: https://github.com/JuliaMatrices/MatrixDepot.jl/actions?query=workflow%3ACI
+
+[codecov-img]: https://codecov.io/gh/JuliaMatrices/MatrixDepot.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/JuliaMatrices/MatrixDepot.jl
