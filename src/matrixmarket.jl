@@ -334,7 +334,7 @@ function push_hdr!(hdr, line::AbstractString, field::Symbol)
     end
     reg = r"^% *([^:[]+): *(.*)$"
     regtitle = r"^% *\[([^]]*)]"
-    if (m = match(reg, line)) != nothing
+    if (m = match(reg, line)) !== nothing
         s = Symbol(m[1])
         if s in (:name, :kind, :ed, :fields, :author, :date)
             field = s
@@ -343,7 +343,7 @@ function push_hdr!(hdr, line::AbstractString, field::Symbol)
         elseif s == :notes
             field = s
         end
-    elseif (m = match(regtitle, line)) != nothing
+    elseif (m = match(regtitle, line)) !== nothing
         field = :title
         value = m[1]
         hdr[field] = value

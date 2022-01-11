@@ -3,10 +3,10 @@ n = 7 # rand(1:10)
 r = mdopen("deriv2", n, false)
 @test r !== nothing && r.A !== nothing
 rf32 = mdopen("deriv2", Float32, n, false)
-@test rf32 !== nothing && rf32.A != nothing
+@test rf32 !== nothing && rf32.A !== nothing
 
 r2 = mdopen("deriv2", Float32, n, 2, false)
-@test r2 !== nothing && r2.b != nothing
+@test r2 !== nothing && r2.b !== nothing
 @test mdopen("deriv2", Float32, (n ÷ 2) * 2, 3, false).A !== nothing
 
 @test_throws ArgumentError matrixdepot("deriv2", Float64, n, 4, false)

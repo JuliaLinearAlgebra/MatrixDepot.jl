@@ -1,4 +1,4 @@
-@test mdinfo(:symmetric | :posdef) != nothing
+@test mdinfo(:symmetric | :posdef) !== nothing
 
-@test mdinfo(isloaded) != nothing
+@test mdinfo(isloaded) !== nothing
 

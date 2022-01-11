@@ -30,7 +30,7 @@ function mdinfo(data::GeneratedMatrixData)
     md = Docs.doc(data.func)
     # As md is cached internally, need to make copies
     mdh, md = _mdheader(md, nothing, md)
-    if mdh != nothing
+    if mdh !== nothing
         mdh, md = Markdown.Header(copy(mdh.text)), copy(md)
         push!(mdh.text, " ($(data.name))")
         md.content[1] = mdh
