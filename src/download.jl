@@ -31,8 +31,12 @@ end
 
 function writedb(db::MatrixDatabase)
     cachedb = dbpath(db)
+    #Avoid serializing user matrices, since we don't know which ones will be loaded on deserialization.
+    dbx_data = filter(((key, val),) -> !(val isa GeneratedMatrixData{:U}), db.data)
+    dbx_aliases = filter(((_, key),) -> !(db.data[key] isa GeneratedMatrixData{:U}), db.aliases)
+    dbx = MatrixDatabase(dbx_data, dbx_aliases)
     open(cachedb, "w") do io
-        serialize(io, db)
+        serialize(io, dbx)
     end
 end
 

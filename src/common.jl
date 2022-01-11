@@ -116,6 +116,12 @@ function include_generator(::Type{Group}, groupname::Symbol, f::Function)
               @addgroup to add this group")
 end
 
+#a more lightweight alternative to calling `init` again after adding user-defined matrices.
+function publish_user_generators()
+    insertlocal(MATRIX_DB, GeneratedMatrixData{:U}, USERMATRIXDICT)
+    #note that we do not call writedb because we don't serialize user matrix generators
+end
+
 "return the name of the function `f` as a string."
 function fname(f::Function)
     for (key, value) in MATRIXDICT

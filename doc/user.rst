@@ -12,11 +12,15 @@ be able to use them from Matrix Depot.
 Declaring Generators
 --------------------
 
-When Matrix Depot is first loaded, a new directory ``myMatrixDepot``
-will be created. Matrix Depot automatically includes all Julia files
-in this directory. Hence, all we need to do is to copy
-the generator files to ``path/to/MatrixDepot/myMatrixDepot`` and use
-the function ``include_generator`` to declare them.
+Users may use the ``include_generator`` function to declare new
+generators. Note that ``include_generator`` must be called at runtime, so
+users creating packages which define custom matrix test suites should place
+their calls to ``include_generator`` in the ``__init__`` function of their
+module to avoid
+`precompilation issues <https://docs.julialang.org/en/v1/manual/modules/#Module-initialization-and-precompilation>`_.
+A complete working example of how to create a Julia package with custom matrices is provided as a
+`template https://github.com/KlausC/MatrixDepotTemplate.jl`_.
+
 
 .. function:: include_generator(Stuff_To_Be_Included, Stuff, f)
 
@@ -32,9 +36,8 @@ the function ``include_generator`` to declare them.
 Examples
 --------- 
 
-To get a feel of how it works, let's see an example. 
-Suppose we have a file ``myrand.jl`` which contains two 
-matrix generators ``randsym`` and ``randorth``::
+To get a feel of how it works, let's see an example. Suppose we have defined two
+matrix generators ``randsym`` and ``randorth`` in our own module outside of MatrixDepot::
 
   """
   random symmetric matrix
@@ -65,35 +68,14 @@ matrix generators ``randsym`` and ``randorth``::
   """
   randorth(n) = Matrix(qr(randn(n,n)).Q)
 
-We first need to find out where the user directory of Matrix Depot is installed. This 
-can be done by::
+We can then write::
 
-    julia> MatrixDepot.user_dir()
-    "/home/.../.julia/dev/MatrixDepot/myMatrixDepot"
+  MatrixDepot.include_generator(MatrixDepot.FunctionName, "randsym", randsym)
+  MatrixDepot.include_generator(MatrixDepot.FunctionName, "randorth", randorth)
 
-That points to the default user directory which can be changed by an environment variable::
+and when we are done including generators, we need to update the database::
 
-    MATRIXDEPOT_USERDIR=/...
-
-The data directory is queried by::
-
-    julia> MatrixDepot.data_dir()
-    "/home/.../.julia/scratchspaces/b51810bb-c9f3-55da-ae3c-350fc1fbce05/data"
-
-By default, the data directory is managed by ``Scratch.jl``, but can be changed by another environment variable::
-
-    MATRIXDEPOT_DATA=/...
-
-For me, the package user data are installed at
-``/home/.../.julia/dev/MatrixDepot/myMatrixDepot``. We can copy ``myrand.jl`` to this directory.
-Now we open the file
-``myMatrixDepot/generator.jl`` and write::
-
-  include_generator(FunctionName, "randsym", randsym)
-  include_generator(FunctionName, "randorth", randorth)
-
-The changes are activated by re-initializing::
-    julia> MatrixDepot.init()
+  MatrixDepot.publish_user_generators()
 
 This is it. We can now use them from Matrix Depot::
 
@@ -163,13 +145,14 @@ This is it. We can now use them from Matrix Depot::
     5.55112e-17  -2.77556e-17   1.94289e-16   1.0           1.38778e-16
     -6.93889e-17  -5.55112e-17  -1.66533e-16   1.38778e-16   1.0 
 
-We can also add group information in generator.jl::
+We can also add group information with::
 
-    include_generator(Group, :random, randsym)
-    include_generator(Group, :symmetric, randsym)
-    include_generator(Group, :random, randorth)
+    MatrixDepot.include_generator(MatrixDepot.Group, :random, randsym)
+    MatrixDepot.include_generator(MatrixDepot.Group, :symmetric, randsym)
+    MatrixDepot.include_generator(MatrixDepot.Group, :random, randorth)
+    MatrixDepot.publish_user_generators()
 
-After re-initializing ``MatrixDepot`` we can do for example::
+For example::
 
     julia> mdlist(:symmetric)
     22-element Array{String,1}:
@@ -205,15 +188,14 @@ After re-initializing ``MatrixDepot`` we can do for example::
 the function ``randsym`` will be part of the groups ``:symmetric`` and ``:random``
 while ``randorth`` is in group ``:random``.
 
+If we put our code in a package called `MatrixDepotTemplate` and our calls to
+`include_generator` and `publish_user_generators` inside the `__init__` function, 
+we could use our new generators by simply importing the package.::
 
-It is a good idea to back up your changes. For example, we 
-could save it on GitHub by creating a new repository named ``myMatrixDepot``.
-(See https://help.github.com/articles/create-a-repo/ for details of creating a new repository on GitHub.)
-Then we go to the directory ``.../myMatrixDepot`` and type::
-
-  git init
-  git add *.jl
-  git commit -m "first commit"
-  git remote add origin https://github.com/your-user-name/myMatrixDepot.git
-  git push -u origin master
-
+    julia> import MatrixDepot
+    julia> import MatrixDepotTemplate
+    julia> listnames(:random)
+    list(13)                                                           
+    –––––––– ––––––––– –––––––– –––––––– ––––––– –––––––––– ––––––     
+    erdrey   golub     randcorr randorth randsym rosser     wathen     
+    gilbert  oscillate rando    randsvd  rohess  smallworld            
