@@ -56,7 +56,7 @@ begin #Testing backward compatibility deprecation. Delete eventually.
     n = rand(1:8)
 
     @test matrixdepot("randorth", n) !== nothing
-    @test mdinfo("randorth") != nothing
+    @test mdinfo("randorth") !== nothing
     @test "randorth" in MatrixDepot.mdlist(:random)
 
     open(joinpath(MatrixDepot.user_dir(), "generator.jl"), "w") do f
