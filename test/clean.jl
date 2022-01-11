@@ -1,8 +1,5 @@
 # setup clean and empty directories
 
-user_dir = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
-data_dir = abspath(dirname(@__FILE__),"..","data")
-
 function save_target(path::AbstractString)
     base = basename(path)
     dir = dirname(path)

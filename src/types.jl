@@ -139,6 +139,7 @@ struct MatrixDatabase
     aliases::Dict{AbstractString,AbstractString}
     MatrixDatabase() = new(Dict{AbstractString,MatrixData}(),
                            Dict{AbstractString,AbstractString}())
+    MatrixDatabase(data, aliases) = new(data, aliases)
 end
 Base.show(io::IO, db::MatrixDatabase) = print(io, "MatrixDatabase(", length(db.data), ")")
 

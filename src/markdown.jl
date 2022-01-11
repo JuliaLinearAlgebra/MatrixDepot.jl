@@ -27,7 +27,7 @@ _mdheader(md::Markdown.Header, p, o) = (md, p)
 _mdheader(md, p, o) = (nothing, o)
 
 function mdinfo(data::GeneratedMatrixData)
-    md = eval(Meta.parse("Docs.@doc $(data.func)", raise = false))
+    md = Docs.doc(data.func)
     # As md is cached internally, need to make copies
     mdh, md = _mdheader(md, nothing, md)
     if mdh !== nothing
