@@ -17,7 +17,7 @@ import MatrixDepot: load, loadinfo, loadsvd
                         "Harwell-Boeing/smtape/bp___200", "Pajek/Journals"]
 
 # read data
-@test matrixdepot("HB/1138_bus") != nothing
+@test matrixdepot("HB/1138_bus") !== nothing
 @test mdlist("**/1138_bus") == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus"]
 @test string(mdinfo("Harwell-Boeing/psadmit/662_bus")) ==
         "# Harwell-Boeing/psadmit/662_bus\n\n" *
@@ -33,8 +33,8 @@ import MatrixDepot: load, loadinfo, loadsvd
 @test_throws DataError MatrixDepot.metareader(mdopen("that is nothing"))
 
 @test load("Bates/C*") == 2
-@test mdinfo("Bates/Chem97Zt") != nothing
-@test matrixdepot("Bates/Chem97Zt") != nothing
+@test mdinfo("Bates/Chem97Zt") !== nothing
+@test matrixdepot("Bates/Chem97Zt") !== nothing
 @test "Bates/Chem97Zt" in mdlist(isloaded)
 @test length(mdlist(isloaded)) == 6
 
@@ -67,7 +67,7 @@ A2 = mdesc.A
 
 # read a format array file
 @test MatrixDepot.mmreadheader(abspath(MatrixDepot.matrixfile(mdesc.data),
-                                       "..", string("cavity14_b.mtx"))) != nothing
+                                       "..", string("cavity14_b.mtx"))) !== nothing
 
 mdesc = mdopen("blur", 10, false)
 @test mdesc.A isa AbstractMatrix
