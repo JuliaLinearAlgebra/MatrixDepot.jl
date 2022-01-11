@@ -116,9 +116,9 @@ const UF_REMOTE = TURemoteType(RemoteParameters(
                    ))
 
 const MM_REMOTE = MMRemoteType(RemoteParameters(
-                    "http://math.nist.gov/MatrixMarket",
-                    "ftp://math.nist.gov/pub/MatrixMarket2",
-                    "http://math.nist.gov/MatrixMarket/matrices.html",
+                    "https://math.nist.gov/MatrixMarket",
+                    "https://math.nist.gov/pub/MatrixMarket2",
+                    "https://math.nist.gov/MatrixMarket/matrices.html",
                     """<TITLE>The Matrix Market Matrices by Name</TITLE>""",
                     ("M", """<A HREF="/MatrixMarket/data/""", 2, ".html", 3, nothing),
                     ".mtx.gz"
