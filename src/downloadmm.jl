@@ -119,12 +119,12 @@ function namess2mm(ssname::AbstractString)
     length(s) == 2 || return ssname
     s1, s2 = s
     if s1 == "QCD"
-        replace(s2, r"^([^_]*)_(.)-(...)-(....)$" => s"misc/qcd/\1.\2-00l\3-\4") * "00"
+        replace(s2, r"^([^_]*)_(.)-(...)-(..)$" => s"misc/qcd/\1.\2-00l\3-\4") * "00"
     elseif s1 == "TOKAMAK"
-        string("SPARSKIT/tokamak", s2)
+        string("SPARSKIT/tokamak/", s2)
     elseif s1 == "FIDAP"
         x = replace(s2, r"^ex([0-9]*)$" => s"\1")
-        x == s2 ? string(s1, '/', x) : "SPARSKIT/fidap/fidap$(printfint(parse(Int,x), 3))"
+        x == s2 ? ssname : "SPARSKIT/fidap/fidap$(printfint(parse(Int,x), 3))"
     elseif s1 == "HB"
         n = length(s2)
         N = startswith(s2, "watt_") || startswith(s2, "pores_") ? 7 : 8
@@ -148,3 +148,24 @@ end
 
 printfint(n::Integer, pad::Int) = String(reverse(digits(n, base=UInt8(10), pad=pad)) .+ '0')
 
+function namex(x::AbstractString)
+    n = length(split(x, '/'))
+    y = n == 2 ? namess2mm(x) : n == 3 ? namemm2ss(x) : String[]
+    x != y ? y : String[]
+end
+
+export mdalternative
+"""
+    mdalternative(p::Pattern)
+
+Like `mdlist`, but return list of problem names from alternative source.
+
+Most of the problems of the `Matrixmarket` collection are also available in the `Suite Sparse` collection,
+sometimes with modified name, sometimes also the content is slightly different.
+
+If no alternative is present, an empty list is returned.
+"""
+function mdalternative(p::Pattern)
+    vcat(String[], (mdlist(namex(x)) for x in mdlist(p))...)
+end
+    
