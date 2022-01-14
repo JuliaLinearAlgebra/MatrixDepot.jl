@@ -109,13 +109,13 @@ isreal(data::MatrixData) = false
 isinteger(data::MatrixData) = false
 isboolean(data::MatrixData) = false
 
-hasinfo(data::RemoteMatrixData) = data.header.m > 0 && data.header.n > 0
+hasinfo(data::RemoteMatrixData) = isassigned(data.properties) && data.properties[] !== nothing
 hasinfo(data::MatrixData) = false
 isremote(data::RemoteMatrixData) = true
 isremote(data::MatrixData) = false
-isloaded(data::RemoteMatrixData) = !isempty(data.metadata)
+isloaded(data::RemoteMatrixData) = hasinfo(data) && !isempty(data.metadata)
 isloaded(data::MatrixData) = false
-isunloaded(data::RemoteMatrixData) = isempty(data.metadata)
+isunloaded(data::RemoteMatrixData) = !isloaded(data)
 isunloaded(data::MatrixData) = false
 isuser(data::GeneratedMatrixData{:U}) = true
 isuser(data::MatrixData) = false
