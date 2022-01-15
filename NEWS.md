@@ -1,4 +1,17 @@
 ## Matrix Depot Release Notes
+v1.1
+
+* remove deprecated method of defining user functions
+* remove obsolete methods of accessing remote SuiteSparse data
+
+v1.0.7
+
+* bug fix release
+
+v1.0.6
+
+* allow to define user functions in separate package
+* deprecate way of storing user definitions in myMatrixDepot data subdirectory
 
 v1.0.0
 

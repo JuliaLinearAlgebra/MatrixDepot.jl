@@ -105,35 +105,13 @@ include("markdown.jl")      # construct MD objects
 include("downloadmm.jl")    # read metatdata from MM database
 include("downloadsp.jl")    # read metatdata from SS database
 
-#Once we no longer include code from MY_DEPOT_DIR, we can make this declaration const.
-usermatrixclass = Dict()
-
 function init(;ignoredb::Bool=false)
     GROUP = "group.jl"
     GENERATOR = "generator.jl"
     url_redirect()          # env MATRIXDEPOT_URL_REDIRECT == "1"
-    MYDEP = user_dir()  # env MATRIXDEPOT_MYDEPOT
 
     if !isdir(data_dir())   # env MATRIXDEPOT_DATA
         mkpath(data_dir())
-    end
-
-    if isdir(MYDEP) && readdir(MYDEP) != [] #Backward compatibility check deprecation. Delete eventually.
-        if sort(readdir(MYDEP)) != sort([GROUP, GENERATOR]) ||
-            read(joinpath(MYDEP, GROUP), String) != "usermatrixclass = Dict(\n);" ||
-            read(joinpath(MYDEP, GENERATOR), String) != "# include your matrix generators below \n"
-
-            @warn "MY_DEPOT_DIR custom code inclusion is deprecated: load custom generators by calling include_generator and reinitializing matrix depot at runtime. For more information, see: https://matrixdepotjl.readthedocs.io/en/latest/user.html. Duplicate warnings will be suppressed."
-            for file in readdir(MYDEP)
-                if endswith(file, ".jl") && file != GENERATOR
-                    println("include $file for user defined matrix generators")
-                    include(joinpath(MYDEP, file))
-                end
-            end
-            if isfile(joinpath(MYDEP, GENERATOR))
-                include(joinpath(MYDEP, GENERATOR))
-            end
-        end
     end
 
     @info("verify download of index files...")

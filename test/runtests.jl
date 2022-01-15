@@ -1,10 +1,7 @@
 
-const MD_TOGGLE = true
-
 ENV["MATRIXDEPOT_URL_REDIRECT"] = length(VERSION.prerelease) == 0 ? "1" : "1"
-const basedir = tempname()
+const basedir = tempname() # tests start with a clean data directory
 ENV["MATRIXDEPOT_DATA"] = abspath(basedir, "data")
-ENV["MATRIXDEPOT_MYDEPOT"] = abspath(basedir, "myMatrixDepot") #Delete when MYDEPOT functionality is deleted
 
 using MatrixDepot
 using Test
@@ -21,6 +18,8 @@ end
 
 # that will download the index files if necessary and initialize internal data
 MatrixDepot.init()
+
+@testset "MatrixDepot.jl" begin
 
 include("generators.jl")
 include("include_generator.jl")
@@ -55,3 +54,5 @@ end
     include("remote.jl")
     println("finished remote.jl")
 end
+
+end # testset MatrixDepot.jl

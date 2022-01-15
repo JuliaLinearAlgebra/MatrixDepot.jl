@@ -15,7 +15,7 @@ function listgroups()
     groups = Symbol[]
     append!(groups, sort!(collect(keys(SUBSETS))))
     append!(groups, sort!(collect(keys(MATRIXCLASS))))
-    append!(groups, sort!(collect(keys(usermatrixclass))))
+    append!(groups, sort!(collect(keys(USERMATRIXCLASS))))
     groups
 end
 
@@ -38,34 +38,10 @@ end
 function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
     prop in keys(MATRIXCLASS) && daterr("$prop can not be modified.")
 
-    user = abspath(user_dir(), "group.jl")
-    if isfile(user)
-        s = read(user, String)          # read complete file into s
-        rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
-        ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
-        if ppos !== nothing
-            start_char = first(ppos) - 1    # the start of the line
-            end_char = last(ppos)           # the end of the line
-        else
-            ppos = findnext(r"\);", s, 1)
-            start_char = ppos !== nothing ? first(ppos) - 1 : length(s)
-            end_char = start_char
-        end
-        if mats !== nothing
-            mats = sort(mats)
-        end
-        open(user, "w") do io
-            write(io, s[1:start_char])
-            if mats !== nothing
-                propline(io, prop, mats)
-            end
-            write(io, s[end_char+1:end])
-        end
-    end
     if mats !== nothing
-        usermatrixclass[prop] = mats
+        USERMATRIXCLASS[prop] = mats
     else
-        delete!(usermatrixclass, prop)
+        delete!(USERMATRIXCLASS, prop)
     end
     return nothing
 end
@@ -113,7 +89,7 @@ function addtogroup(dir::Dict, groupname::Symbol, f::Function)
 end
 function include_generator(::Type{Group}, groupname::Symbol, f::Function)
     addtogroup(MATRIXCLASS, groupname, f) ||
-    addtogroup(usermatrixclass, groupname, f) ||
+    addtogroup(USERMATRIXCLASS, groupname, f) ||
     argerr("$(groupname) is not a group in MatrixDepot, use
               @addgroup to add this group")
 end
@@ -250,8 +226,8 @@ function list!(db::MatrixDatabase, res::Vector{String}, p::Symbol)
         SUBSETS[p](db)
     elseif haskey(MATRIXCLASS, p)
         MATRIXCLASS[p]
-    elseif haskey(usermatrixclass, p)
-        usermatrixclass[p]
+    elseif haskey(USERMATRIXCLASS, p)
+        USERMATRIXCLASS[p]
     else
         argerr("unknown group name '$p'")
         # EMPTY_PATTERN

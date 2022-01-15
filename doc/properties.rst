@@ -53,8 +53,7 @@ Predefined Groups
 Adding New Groups
 -----------------
 
-New groups can be added with the macro ``@addgroup``in the REPL or
-in file ``../myMatrixDepot/generators.jl``::
+New groups can be added with the macro ``@addgroup``in the REPL::
 
     @addgroup myfav = ["lehmer", "cauchy", "hilb"]
     @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]

@@ -33,7 +33,7 @@ REM = length(mdlist("*/*"))
 @test REM >= 2500
 #@test REM in [2757, 2856]   # depends on whether UFL or TAMU url has been used
 @test length(mdlist(:builtin)) == 59
-@test mdlist(:user) == String["randorth", "randsym"]
+@test mdlist(:user) == String["randsym"]
 
 @test mdlist("") == []
 @test mdlist("HB/1138_bus") == ["HB/1138_bus"]

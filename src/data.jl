@@ -5,6 +5,11 @@
 const USERMATRIXDICT = Dict{String,Function}()
 
 """
+    user-defined groups
+"""
+const USERMATRIXCLASS = Dict{Symbol,Pattern}()
+
+"""
 Associate names with matrix-generating functions
 """
 const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
@@ -138,9 +143,7 @@ const MATRIX_DB = MatrixDatabase()
 
 # local storage directory
 const DATA_DIR = @get_scratch!("data")
-const MY_DEPOT_DIR = abspath(dirname(@__FILE__), "..", "myMatrixDepot")
 data_dir() = get(ENV, "MATRIXDEPOT_DATA", DATA_DIR)
-user_dir() = get(ENV, "MATRIXDEPOT_MYDEPOT", MY_DEPOT_DIR)
 url_redirect() = URL_REDIRECT[] = get(ENV, "MATRIXDEPOT_URL_REDIRECT", "0") != "0"
 
 const REDIRECT_DIR = abspath(dirname(@__FILE__), "..", "test", "data")
