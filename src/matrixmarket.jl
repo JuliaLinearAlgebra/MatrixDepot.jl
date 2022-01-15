@@ -9,6 +9,9 @@ They may be converted to numerical types by multiplying with a number.
 """
 function mmread(filename::AbstractString)
     open(filename, "r") do file
+        if stat(file).size == 0
+            throw(DataError("matrix file $filename is empty"))
+        end
         mmread(file)
     end
 end
@@ -258,6 +261,9 @@ Read header information from mtx file.
 function mmreadheader(file::AbstractString)
     if isfile(file)
         open(file) do io
+          if stat(io).size == 0
+            return nothing
+          end
           line = lowercase(readline(io))
           while true
             token = split(line)

@@ -33,14 +33,14 @@ REM = length(mdlist("*/*"))
 @test REM >= 2500
 #@test REM in [2757, 2856]   # depends on whether UFL or TAMU url has been used
 @test length(mdlist(:builtin)) == 59
-@test length(mdlist(:user)) in [0, 1]
+@test mdlist(:user) == String["randorth", "randsym"]
 
 @test mdlist("") == []
 @test mdlist("HB/1138_bus") == ["HB/1138_bus"]
 @test mdlist(sp(1)) == ["HB/1138_bus"]
 @test mdlist(mm(1)) == ["Harwell-Boeing/psadmit/1138_bus"]
-@test sort(mdlist(sp(1:3000))) == mdlist("*/*")
-@test sort(mdlist(mm(1:3000))) == mdlist("*/*/*")
+@test sort(mdlist(sp(:))) == mdlist("*/*")
+@test sort(mdlist(mm(1:1000))) == mdlist("*/*/*")
 @test mdlist(builtin(:)) == mdlist(isbuiltin)
 @test mdlist(user(:)) == mdlist(isuser)
 @test mdlist("*") == mdlist(islocal)

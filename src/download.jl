@@ -111,14 +111,19 @@ function gunzip(fname)
 
     destname = rsplit(fname, ".gz", limit=2)[1]
     BUFFSIZE = 1000000
-    open(destname, "w") do f
-        open(GzipDecompressorStream, fname) do g
-            buffer = read(g, BUFFSIZE)
-            while length(buffer) > 0
-                write(f, buffer)
+    try
+        open(destname, "w") do f
+            open(GzipDecompressorStream, fname) do g
                 buffer = read(g, BUFFSIZE)
+                while length(buffer) > 0
+                    write(f, buffer)
+                    buffer = read(g, BUFFSIZE)
+                end
             end
         end
+    catch
+        @warn "decompression error - file $destname set to empty."
+        open(destname, "w") do f; end
     end
     destname
 end
@@ -142,6 +147,7 @@ function loadmatrix(data::RemoteMatrixData)
     dirfn = localfile(data)
     dir = dirname(localdir(data))
     url = redirect(dataurl(data))
+    tarfile = ""
 
     isdir(dir) || mkpath(dir)
     wdir = pwd()
@@ -155,6 +161,8 @@ function loadmatrix(data::RemoteMatrixData)
             run(`tar -xf $rfile`)
             rm(tarfile; force=true)
         end
+    catch
+        
     finally
         cd(wdir)
         rm(dirfn, force=true)
