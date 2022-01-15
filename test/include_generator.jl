@@ -34,6 +34,13 @@ n = rand(1:8)
 @test "randsym" in MatrixDepot.mdlist(:random)
 @test "randsym" in MatrixDepot.mdlist(:symmetric)
 
+@addgroup testgroup = ["rand1"]
+@test mdlist(:testgroup) == ["rand1"]
+@modifygroup testgroup = ["rand2"]
+@test mdlist(:testgroup) == ["rand2"]
+@rmgroup testgroup
+@test_throws ArgumentError mdlist(:testgroup)
+
 begin #Testing backward compatibility deprecation. Delete eventually.
     mydepot_warning = "MY_DEPOT_DIR custom code inclusion is deprecated: load custom generators by calling include_generator and reinitializing matrix depot at runtime. For more information, see: https://matrixdepotjl.readthedocs.io/en/latest/user.html. Duplicate warnings will be suppressed."
 
@@ -55,19 +62,15 @@ begin #Testing backward compatibility deprecation. Delete eventually.
     @test_logs (:warn, mydepot_warning) min_level=Logging.Warn match_mode=:any MatrixDepot.init()
     n = rand(1:8)
 
+    MatrixDepot.modgroup(:testgroup, ["rand1"])
+    @test mdlist(:testgroup) == ["rand1"]
+
     @test matrixdepot("randorth", n) !== nothing
     @test mdinfo("randorth") !== nothing
     @test "randorth" in MatrixDepot.mdlist(:random)
 
-    open(joinpath(MatrixDepot.user_dir(), "generator.jl"), "w") do f
-        write(f, "# include your matrix generators below \n")
-    end
-
-    @test_logs min_level=Logging.Warn MatrixDepot.init()
-
-    rm(joinpath(MatrixDepot.user_dir(), "generator.jl"))
     rm(joinpath(MatrixDepot.user_dir(), "group.jl"))
-
+    rm(joinpath(MatrixDepot.user_dir(), "generator.jl"))
     @test_logs min_level=Logging.Warn MatrixDepot.init()
 end
 
