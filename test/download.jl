@@ -3,14 +3,14 @@
 @test mdlist(isloaded) == []
 import MatrixDepot: load, loadinfo, loadsvd
 
-# sp
+# Suite Sparse
 @test loadinfo("*/1138_bus") == 1 # load only header
 @test load("**/1138_bus") == 2 # loaded both versions (sp and mm)
 @test load("HB/1138_bus") == 0 # count actually loaded
 @test load("Pajek/Journals") == 1
 @test load("wing") == 0 # do not try to load local matrix
 
-# Matrix Markt
+# Matrix Market
 @test load("Harwell-Boeing/smtape/bp___200") == 1
 
 @test mdlist(isloaded) == ["HB/1138_bus", "Harwell-Boeing/psadmit/1138_bus",
@@ -27,7 +27,7 @@ import MatrixDepot: load, loadinfo, loadsvd
 @test loadinfo(MatrixDepot.mdata("Bates/Chem97Zt")) == 1
 @test length(string(mdinfo("Bates/Chem97Zt"))) == 447
 
-# metatdata access with old interface
+# metadata access with old interface
 @test MatrixDepot.metareader(mdopen("Pajek/Journals"), "Journals.mtx") !== nothing
 @test_throws DataError MatrixDepot.metareader(mdopen("*/1138_bus"), "1138_bus_b")
 @test_throws DataError MatrixDepot.metareader(mdopen("that is nothing"))
@@ -53,6 +53,9 @@ mdesc = mdopen("Bai/dwg961b")
 @test !isboolean(mdesc.data)
 @test metasymbols(mdesc) == [:A]
 @test mdesc.A == matrixdepot("Bai/dwg961b")
+mdesc = mdopen("Harwell-Boeing/cegb/cegb2802")
+@test isloaded(mdesc.data) == false
+@test_throws DataError mdesc.A
 
 # an example with rhs and solution
 mdesc = mdopen("DRIVCAV/cavity14")

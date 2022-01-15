@@ -23,6 +23,7 @@ end
 MatrixDepot.init()
 
 include("generators.jl")
+include("include_generator.jl")
 
 @testset "MatrixDepot simulate remote matrix tests" begin
     tests = [
@@ -31,8 +32,6 @@ include("generators.jl")
             "number",
             "property",
             ]
-
-    tests = []
 
     @testset "$t" for t in tests
         tp = joinpath(@__DIR__(), "$(t).jl")
