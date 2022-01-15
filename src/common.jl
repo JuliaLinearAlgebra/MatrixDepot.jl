@@ -39,26 +39,28 @@ function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
     prop in keys(MATRIXCLASS) && daterr("$prop can not be modified.")
 
     user = abspath(user_dir(), "group.jl")
-    s = read(user, String)          # read complete file into s
-    rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
-    ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
-    if ppos !== nothing
-        start_char = first(ppos) - 1    # the start of the line
-        end_char = last(ppos)           # the end of the line
-    else
-        ppos = findnext(r"\);", s, 1)
-        start_char = ppos !== nothing ? first(ppos) - 1 : length(s)
-        end_char = start_char
-    end
-    if mats !== nothing
-        mats = sort(mats)
-    end
-    open(user, "w") do io
-        write(io, s[1:start_char])
-        if mats !== nothing
-            propline(io, prop, mats)
+    if isfile(user)
+        s = read(user, String)          # read complete file into s
+        rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
+        ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
+        if ppos !== nothing
+            start_char = first(ppos) - 1    # the start of the line
+            end_char = last(ppos)           # the end of the line
+        else
+            ppos = findnext(r"\);", s, 1)
+            start_char = ppos !== nothing ? first(ppos) - 1 : length(s)
+            end_char = start_char
         end
-        write(io, s[end_char+1:end])
+        if mats !== nothing
+            mats = sort(mats)
+        end
+        open(user, "w") do io
+            write(io, s[1:start_char])
+            if mats !== nothing
+                propline(io, prop, mats)
+            end
+            write(io, s[end_char+1:end])
+        end
     end
     if mats !== nothing
         usermatrixclass[prop] = mats

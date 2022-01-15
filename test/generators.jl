@@ -53,8 +53,7 @@ end
     @inc("test_smallworld.jl")
 end
 
-@testset "regu and include tests" begin
+@testset "regularization methods" begin
     include("regu.jl")
-    include("include_generator.jl")
 end
 
