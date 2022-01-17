@@ -99,7 +99,7 @@ update database index from the websites
 function update(db::MatrixDatabase=MATRIX_DB)
     cachedb = abspath(data_dir(), "db.data")
     isfile(cachedb) && rm(cachedb)
-    uf_matrices = localindex(preferred(TURemoteType))
+    uf_matrices = localindex(preferred(SSRemoteType))
     isfile(uf_matrices) && rm(uf_matrices)
     mm_matrices = localindex(preferred(MMRemoteType))
     isfile(mm_matrices) && rm(mm_matrices)

@@ -3,6 +3,7 @@ v1.1
 
 * remove deprecated method of defining user functions
 * remove obsolete methods of accessing remote SuiteSparse data
+* deprecate `@addgroup` and `@rmgroup`, ues `setgroup!` and `deletegroup!`
 
 v1.0.7
 

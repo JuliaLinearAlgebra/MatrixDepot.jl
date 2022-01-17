@@ -32,16 +32,16 @@ import LinearAlgebra: isposdef
 (&)(p::Pattern, q::Tuple) = tuple(p, q...)
 (&)(p::Pattern, q::Pattern...) = tuple(p, q...)
 (|)(p::Pattern, q::Pattern...) = vcat(p, q...)
-(~)(p::Pattern) = Not(p)
 (~)(c::AbstractChar) = Not(string(c))
+(*)(a::Not{<:AbstractString}, b::Union{AbstractString,AbstractChar}) = Not(a.pattern * b)
 (~)(p::Not) = p.pattern
 Not(p::Not) = p.pattern
-(*)(a::Not{<:AbstractString}, b::Union{AbstractString,AbstractChar}) = Not(a.pattern * b)
 (~)(p::Pattern...) = Not(tuple(p...))
+(~)(p::Pattern) = p == EMPTY_PATTERN ? ALL_PATTERN : p == ALL_PATTERN ? EMPTY_PATTERN : Not(p)
 (~)() = EMPTY_PATTERN
-(~)(p::Vector) = length(p) == 0 ? ALL_PATTERN : Not(p)
+(~)(p::Vector{<:Pattern}) = length(p) == 0 ? ALL_PATTERN : length(p) == 1 ? Not(p[1]) : Not(p)
 
-const EMPTY_PATTERN = []
+const EMPTY_PATTERN = Pattern[]
 const ALL_PATTERN = ()
 
 ###
@@ -66,7 +66,7 @@ function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector{<:IntOrVec
     aliasr2(x) = aliasresolve(db, x)
     collect(Iterators.flatten(aliasr2.(aliasname(a))))
 end
-aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{TURemoteType},Colon}, ) = "*/*"
+aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{SSRemoteType},Colon}, ) = "*/*"
 aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{MMRemoteType},Colon}) = "*/*/*"
 aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:B},Colon}) = :builtin
 aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:U},Colon}) = :user
@@ -77,7 +77,7 @@ aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:U},Colon}) = :use
 
 builtin(p...) = Alias{GeneratedMatrixData{:B}}(p...)
 user(p...) = Alias{GeneratedMatrixData{:U}}(p...)
-sp(p...) = Alias{RemoteMatrixData{TURemoteType}}(p...)
+sp(p...) = Alias{RemoteMatrixData{SSRemoteType}}(p...)
 mm(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
 
 function _issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})

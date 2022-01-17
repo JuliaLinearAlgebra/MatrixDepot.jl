@@ -5,15 +5,13 @@ Interface to Test Collections
 
 The internal database is loaded automatically when using the module::
 
-   julia> using MatrixDepot
-   include group.jl for user defined matrix generators
-   include myrand.jl for user defined matrix generators
-   verify download of index files...
-   reading database
-   adding metadata...
-   adding svd data...
-   writing database
-   used remote sites are sparse.tamu.edu with MAT index and math.nist.gov with HTML index
+  julia> using MatrixDepot
+  [ Info: verify download of index files...
+  [ Info: reading database
+  [ Info: adding metadata...
+  [ Info: adding svd data...
+  [ Info: writing database
+  [ Info: used remote sites are sparse.tamu.edu with MAT index and math.nist.gov with HTML index
 
 Interface to the SuiteSparse Matrix Collection (formerly UFL collection)
 ------------------------------------------------------------------------

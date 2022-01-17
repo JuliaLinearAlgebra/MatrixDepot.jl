@@ -53,10 +53,10 @@ Predefined Groups
 Adding New Groups
 -----------------
 
-New groups can be added with the macro ``@addgroup``in the REPL::
+New groups can be added with the function `setgroup!` in the REPL::
 
-    @addgroup myfav = ["lehmer", "cauchy", "hilb"]
-    @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]
+    julia> setgroup!(:myfav, ["lehmer", "cauchy", "hilb"])
+    julia> setgroup!(:test_for_paper2, ["tridiag", "sampling", "wing"])
 
     julia> listgroups()
     14-element Array{Symbol,1}:
@@ -74,6 +74,7 @@ New groups can be added with the macro ``@addgroup``in the REPL::
     :sparse
     :symmetric
     :myfav
+    :test_for_paper2
 
     julia> listnames(:myfav)
     list(3)            

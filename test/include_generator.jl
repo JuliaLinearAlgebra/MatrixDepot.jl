@@ -34,11 +34,11 @@ n = rand(1:8)
 @test "randsym" in MatrixDepot.mdlist(:random)
 @test "randsym" in MatrixDepot.mdlist(:symmetric)
 
-@addgroup testgroup = ["rand1"]
-@test mdlist(:testgroup) == ["rand1"]
-@modifygroup testgroup = ["rand2"]
-@test mdlist(:testgroup) == ["rand2"]
-@rmgroup testgroup
+setgroup!(:testgroup, "randsy*")
+@test mdlist(:testgroup) == ["randsym"]
+setgroup!(:testgroup, ["*/1138_bus"])
+@test mdlist(:testgroup) == ["HB/1138_bus"]
+deletegroup!(:testgroup)
 @test_throws ArgumentError mdlist(:testgroup)
 
 @test_throws ArgumentError include_generator(Group, :lkjasj, sin)

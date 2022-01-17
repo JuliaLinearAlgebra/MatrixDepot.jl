@@ -101,25 +101,6 @@ const SS_REMOTE = SSRemoteType(RemoteParametersNew(
                     ".tar.gz"
                    ))
 
-const TA_REMOTE = TURemoteType(RemoteParameters(
-                    "https://sparse.tamu.edu",
-                    "https://sparse.tamu.edu/MM",
-                    "https://sparse.tamu.edu/?per_page=All",
-                    """<title>SuiteSparse Matrix Collection</title>""",
-                    ("", """">Matrix Market""", 4, ".tar.gz", 2,
-                     r"<td class='column-([[:alpha:]_]+)[^']*'>([^<]*)</td>"),
-                    ".tar.gz"
-                   ))
-
-const UF_REMOTE = TURemoteType(RemoteParameters(
-                    "https://www.cise.ufl.edu/research/sparse",
-                    "https://www.cise.ufl.edu/research/sparse/MM",
-                    "https://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html",
-                    """<title>UF Sparse Matrix Collection - sorted by id</title>""",
-                    ("", """>MM</a>""", 4, ".tar.gz", 2, r"<td>([[:digit:]]*)</td>"),
-                    ".tar.gz"
-                   ))
-
 const MM_REMOTE = MMRemoteType(RemoteParameters(
                     "https://math.nist.gov/MatrixMarket",
                     "https://math.nist.gov/pub/MatrixMarket2",
@@ -129,13 +110,10 @@ const MM_REMOTE = MMRemoteType(RemoteParameters(
                     ".mtx.gz"
                    ))
 
-# preferred remote source for UF matrix collection (TAMU vs. UFl)
-uf_remote = SS_REMOTE # may be altered
-preferred(::Type{<:Union{TURemoteType,SSRemoteType}}) = uf_remote
+# return the single instance for the remote type
+preferred(::Type{SSRemoteType}) = SS_REMOTE
 preferred(::Type{MMRemoteType}) = MM_REMOTE
-alternate(::Type{TURemoteType}) = uf_remote === SS_REMOTE ? UF_REMOTE : SS_REMOTE
-alternate(::Type{MMRemoteType}) = MM_REMOTE
-toggle_remote(T=TURemoteType) = begin global uf_remote = alternate(T) end
+
 """
     The place to store all matrix data in process
 """

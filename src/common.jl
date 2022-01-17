@@ -35,7 +35,7 @@ function propline(io::IO, propname, matnames)
 end
 
 # add, remove, or replace complete user group
-function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
+function modgroup(prop::Symbol, mats::Union{Nothing,Pattern})
     prop in keys(MATRIXCLASS) && daterr("$prop can not be modified.")
 
     if mats !== nothing
@@ -45,23 +45,40 @@ function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
     end
     return nothing
 end
+"""
+    setgroup!(s::Symbol, p::Pattern)
+
+Define user group. `s` must not be one of the predefined group names.
+`p` may be any pattern, also a vector of matrix names.
+"""
+setgroup!(s::Symbol, p::Pattern) = modgroup(s, p)
+
+"""
+    deletegroup!(s::Symbol)
+
+Delete a previously defined user group.
+"""
+deletegroup!(s::Symbol) = modgroup(s, nothing)
 
 "add a group to Matrix Depot"
 macro addgroup(ex)
-    name = Symbol(ex.args[1])
-    esc(modgroup(name, eval(ex.args[2])))
+    @warn("`@addgroup name = ex` is deprecated, use `setgroup!(:name, ex)`")
+    nn = QuoteNode(ex.args[1])
+    :( modgroup($(esc(nn)), $(esc(ex.args[2]))) )
 end
 
 "add or replace group in Matrix Depot"
 macro modifygroup(ex)
-    name = Symbol(ex.args[1])
-    esc(modgroup(name, eval(ex.args[2])))
+    @warn("`@modifygroup name = ex`` is deprecated, use `setgroup!(:name, ex)`")
+    nn = QuoteNode(ex.args[1])
+    :( modgroup($(esc(nn)), $(esc(ex.args[2]))) )
 end
 
 "remove an added group from Matrix Depot"
 macro rmgroup(ex)
-    name = Symbol(ex)
-    esc(modgroup(name, nothing))
+    @warn("`@rmgroup name` is deprecated, use `deletegroup!(:name)`")
+    nn = QuoteNode(ex)
+    :( modgroup($(esc(nn)), nothing) )
 end
 
 ################################
@@ -91,7 +108,7 @@ function include_generator(::Type{Group}, groupname::Symbol, f::Function)
     addtogroup(MATRIXCLASS, groupname, f) ||
     addtogroup(USERMATRIXCLASS, groupname, f) ||
     argerr("$(groupname) is not a group in MatrixDepot, use
-              @addgroup to add this group")
+              `setgroup!`` to add this group")
 end
 
 #a more lightweight alternative to calling `init` again after adding user-defined matrices.
@@ -227,7 +244,7 @@ function list!(db::MatrixDatabase, res::Vector{String}, p::Symbol)
     elseif haskey(MATRIXCLASS, p)
         MATRIXCLASS[p]
     elseif haskey(USERMATRIXCLASS, p)
-        USERMATRIXCLASS[p]
+        list!(db, [""], USERMATRIXCLASS[p])
     else
         argerr("unknown group name '$p'")
         # EMPTY_PATTERN
@@ -303,9 +320,10 @@ end
 
 function list!(db::MatrixDatabase, res::Vector{String}, p::Not)
     isempty(res) && return res
-    cres = copy(res)
+    cres = list!(db, copy(res), p.pattern)
+    isempty(cres) && return res 
     resall!(db, res)
-    setdiff!(res, list!(db, cres, p.pattern))
+    setdiff!(res, cres)
 end
 
 # logical OR

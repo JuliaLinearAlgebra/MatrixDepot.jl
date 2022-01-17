@@ -53,7 +53,7 @@ Access is like
 
 ###### commands:
     mdinfo, listdir, listgroups, matrixdepot, mdopen, listdata, mdlist,
-    metasymbols, loadsvd, @addgroup, @modifygroup, @rmgroup.
+    metasymbols, loadsvd, setgroup!, deletegroup!.
 ###### selector patterns:
     strings, string-patterns (using "*", "?", "/", "**"), regular expressions: for names
     builtin(42), user(3,5), sp(10:11,6,2833), mm(1): to access by integer id
@@ -75,7 +75,8 @@ import Base: show
 export matrixdepot
 export listnames, listdir, listdata, listgroups, mdlist, mdinfo, metasymbols, mdopen
 export loadsvd
-export @addgroup, @rmgroup, @modifygroup
+export @addgroup, @rmgroup, @modifygroup # deprecated
+export setgroup!, deletegroup!
 
 # exports for predicate functions in `logical.jl`
 export builtin, user, sp, mm, logical
@@ -116,7 +117,7 @@ function init(;ignoredb::Bool=false)
 
     @info("verify download of index files...")
     downloadindices(MATRIX_DB, ignoredb=ignoredb)
-    @info("used remote sites are $(remote_name(preferred(TURemoteType))) and $(remote_name(preferred(MMRemoteType)))")
+    @info("used remote sites are $(remote_name(preferred(SSRemoteType))) and $(remote_name(preferred(MMRemoteType)))")
     nothing
 end
 

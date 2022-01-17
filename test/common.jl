@@ -15,11 +15,11 @@ nlist = mdlist(builtin([1, 3]) | builtin(4:20))
 m = length(mdlist("**"))
 @test isempty(mdinfo(builtin(m+1)))
 
-@addgroup newlist = mdlist(builtin(3:6) | builtin(20))
+setgroup!(:newlist, builtin(3:6) | builtin(20))
 
 @test mdlist(:newlist) == mdlist(builtin(3:6,20))
 
-@rmgroup newlist
+deletegroup!(:newlist)
 
 # testing the new API
 #

@@ -106,10 +106,6 @@ struct SSRemoteType <: RemoteType
     params::RemoteParametersNew
 end
 
-struct TURemoteType <: RemoteType
-    params::RemoteParameters
-end
-
 struct MMRemoteType <: RemoteType
     params::RemoteParameters
 end
@@ -225,7 +221,6 @@ end
     aliasname(Type{<:MatrixData, id::Integer)
 return alias name derived from integer id
 """
-aliasname(::Type{RemoteMatrixData{TURemoteType}}, i::Integer) = string('#', i)
 aliasname(::Type{RemoteMatrixData{SSRemoteType}}, i::Integer) = string('#', i)
 aliasname(::Type{RemoteMatrixData{MMRemoteType}}, i::Integer) = string('#', 'M', i)
 aliasname(::Type{GeneratedMatrixData{N}}, i::Integer) where N = string('#', N, i)
@@ -258,7 +253,6 @@ function keyfor(db::MatrixDatabase, name::AbstractString)
 end
 
 localindex(::SSRemoteType) = abspath(data_dir(), "ss_index.mat")
-localindex(::TURemoteType) = abspath(data_dir(), "uf_matrices.html")
 localindex(::MMRemoteType) = abspath(data_dir(), "mm_matrices.html")
 
 function sitename(s::AbstractString, t::AbstractString)
@@ -267,10 +261,8 @@ function sitename(s::AbstractString, t::AbstractString)
 end
 
 remote_name(s::SSRemoteType) = sitename(s.params.site, "MAT")
-remote_name(s::TURemoteType) = sitename(s.params.site, "HTML")
 remote_name(s::MMRemoteType) = sitename(s.params.site, "HTML")
 
-localbase(::Type{TURemoteType}) = abspath(data_dir(), "uf")
 localbase(::Type{SSRemoteType}) = abspath(data_dir(), "uf")
 localbase(::Type{MMRemoteType}) = abspath(data_dir(), "mm")
 
@@ -285,9 +277,9 @@ extension(remote::RemoteType) = remote.params.extension
 dataurl(data::RemoteMatrixData{T}) where T = join((dataurl(T), data.name), '/') * extension(T)
 siteurl(data::RemoteMatrixData{T}) where T = preferred(T).params.site
 filename(data::RemoteMatrixData) = joinpath(split(data.name, '/')...)
-localfile(data::RemoteMatrixData{<:Union{TURemoteType,SSRemoteType}}) = localdir(data) * ".tar.gz"
+localfile(data::RemoteMatrixData{<:SSRemoteType}) = localdir(data) * ".tar.gz"
 localfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx.gz"
-function matrixfile(data::RemoteMatrixData{<:Union{TURemoteType,SSRemoteType}})
+function matrixfile(data::RemoteMatrixData{<:SSRemoteType})
     joinpath(localdir(data), rsplit(data.name, '/', limit=2)[end] * ".mtx")
 end
 matrixfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx"

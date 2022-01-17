@@ -8,25 +8,6 @@ function readindex(remote::RemoteType, db::MatrixDatabase)
     extract_names(db, file)
 end
 
-# check line for remote identification and store in global variable
-function remotetype(line::AbstractString)
-    global uf_remote
-    TAMUID = TA_REMOTE.params.indexgrep
-    UFID = UF_REMOTE.params.indexgrep
-    MMID = MM_REMOTE.params.indexgrep
-    if occursin(TAMUID, line)
-        uf_remote = TA_REMOTE
-        uf_remote
-    elseif occursin(UFID, line)
-        uf_remote = UF_REMOTE
-        uf_remote
-    elseif occursin(MMID, line)
-        MM_REMOTE
-    else
-        nothing
-    end
-end
-
 function parse_headerinfo(akku::Dict{AbstractString,AbstractString}, count::Integer)
     toint(id::String) = parse(Int, replace(get(akku, id, "0"), ','=>""))
     id = toint("id")
@@ -42,15 +23,11 @@ end
 
 # extract loading url base and matrix names from index file
 function extract_names(db::MatrixDatabase, matrices::AbstractString)
-    remote = nothing
     count = 0
+    remote = preferred(MMRemoteType)
     open(matrices) do f
         akku = Dict{AbstractString,AbstractString}()
         for line in readlines(f)
-            if remote === nothing
-                remote = remotetype(line)
-                continue
-            end
             _, grepex, spquote, ending, parts, regexinf = remote.params.scan
             m = regexinf === nothing ? nothing : match(regexinf, line)
             if m !== nothing
@@ -119,12 +96,12 @@ function namess2mm(ssname::AbstractString)
     length(s) == 2 || return ssname
     s1, s2 = s
     if s1 == "QCD"
-        replace(s2, r"^([^_]*)_(.)-(...)-(....)$" => s"misc/qcd/\1.\2-00l\3-\4") * "00"
+        replace(s2, r"^([^_]*)_(.)-(...)-(..)$" => s"misc/qcd/\1.\2-00l\3-\4") * "00"
     elseif s1 == "TOKAMAK"
-        string("SPARSKIT/tokamak", s2)
+        string("SPARSKIT/tokamak/", s2)
     elseif s1 == "FIDAP"
         x = replace(s2, r"^ex([0-9]*)$" => s"\1")
-        x == s2 ? string(s1, '/', x) : "SPARSKIT/fidap/fidap$(printfint(parse(Int,x), 3))"
+        x == s2 ? ssname : "SPARSKIT/fidap/fidap$(printfint(parse(Int,x), 3))"
     elseif s1 == "HB"
         n = length(s2)
         N = startswith(s2, "watt_") || startswith(s2, "pores_") ? 7 : 8
