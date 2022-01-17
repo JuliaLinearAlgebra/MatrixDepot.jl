@@ -24,6 +24,7 @@ include("include_generator.jl")
             "common",
             "number",
             "property",
+            "downloadmm",
             ]
 
     @testset "$t" for t in tests
