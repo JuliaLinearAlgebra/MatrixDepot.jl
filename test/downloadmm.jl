@@ -1,36 +1,25 @@
 
-import MatrixDepot: namemm2ss, namess2mm, Pattern
+@testset "mdalternative interface" begin
+    mpat = "Harwell-Boeing/psadmit/1138_bus"
+    spat = "HB/1138_bus"
+    @test mdlist(mm(spat)) == [mpat]
+    @test mdlist(sp(mpat)) == [spat]
+    @test mdlist(mm(mpat)) == [mpat]
+    @test mdlist(sp(spat)) == [spat]
+    @test mdlist(sp("vand")) == String[]
+    @test mdlist(mm("Sandia/adder_dcop_17")) == String[]
 
-
-function namex(x::AbstractString)
-    n = length(split(x, '/'))
-    y = n == 2 ? namess2mm(x) : n == 3 ? namemm2ss(x) : String[]
-    x != y ? y : String[]
-end
-
-"""
-    mdalternative(p::Pattern)
-
-Like `mdlist`, but return list of problem names from alternative source.
-
-Most of the problems of the `Matrixmarket` collection are also available in the `Suite Sparse` collection,
-sometimes with modified name, sometimes also the content is slightly different.
-
-If no alternative is present, an empty list is returned.
-"""
-function mdalternative(p::Pattern)
-    vcat(String[], (mdlist(namex(x)) for x in mdlist(p))...)
-end
-
-
-@testset "provisional mdalternative interface" begin
-    s1 = mdalternative(mm(:))
+    s1 = mdlist(sp(mm(:)))
     @test length(s1) == 455
-    m1 = mdalternative(s1)
+    m1 = mdlist(mm(s1))
+    @test length(m1) == 455
     @test m1 ⊆ mdlist(mm(:))
     
-    m2 = mdalternative(sp(:))
+    m2 = mdlist(mm(sp(:)))
     @test length(m2) == 455
-    s2 = mdalternative(m2)
+    s2 = mdlist(sp(m2))
+    @test length(s2) == 455
     @test s2 ⊆ mdlist(sp(:))
+
+    @test m1 == m2
 end

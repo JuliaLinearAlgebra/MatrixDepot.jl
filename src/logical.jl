@@ -62,9 +62,8 @@ end
 function aliasresolve(db::MatrixDatabase, a::Alias{T,<:Integer}) where T
     aliasresolve(db, aliasname(a))
 end
-function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector{<:IntOrVec}}) where T
-    aliasr2(x) = aliasresolve(db, x)
-    collect(Iterators.flatten(aliasr2.(aliasname(a))))
+function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector}) where T
+    collect(Iterators.flatten(aliasresolve.(Ref(db), aliasname(a))))
 end
 aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{SSRemoteType},Colon}, ) = "*/*"
 aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{MMRemoteType},Colon}) = "*/*/*"
@@ -77,8 +76,45 @@ aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:U},Colon}) = :use
 
 builtin(p...) = Alias{GeneratedMatrixData{:B}}(p...)
 user(p...) = Alias{GeneratedMatrixData{:U}}(p...)
-sp(p...) = Alias{RemoteMatrixData{SSRemoteType}}(p...)
-mm(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
+sp1(p...) = Alias{RemoteMatrixData{SSRemoteType}}(p...)
+mm1(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
+sp(p...) = sp1(p...)
+mm(p...) = mm1(p...)
+
+"""
+    sp(i, j:k, ...)
+    sp(pattern)
+
+The first form with integer and integer range arguments is a pattern selecting
+by the id number in the Suite Sparse collection.
+
+The second form is a pattern, which selects a matrix in the Suite Sparse collection, which
+corresponds to the pattern by name, even if the name is from the Matrix Market collection.
+
+example:
+    mdlist(sp("*/*/1138_bus")) == ["HB/1138_bus"]
+"""
+sp(p::P) where P<:Pattern = is_ivec(p) ? sp1(p) : Alternate{SSRemoteType,P}(p)
+
+"""
+    mm(i, j:k, ...)
+    mm(pattern)
+
+The first form with integer and integer range arguments is a pattern selecting
+by the id number in the Matrix Market collection.
+
+The second form is a pattern, which selects a matrix in the Matrix Market collection, which
+corresponds to the pattern by name, even if the name is from the Suite Sparse collection.
+
+example:
+    mdlist(mm("*/1138_bus")) == ["Harwell-Boeing/psadmit/1138_bus"]
+"""
+mm(p::P) where P<:Pattern = is_ivec(p) ? mm1(p) : Alternate{MMRemoteType,P}(p)
+
+is_ivec(::AbstractVector{<:Integer}) = true
+is_ivec(p::AbstractVector) = all(is_ivec.(p))
+is_ivec(::typeof(:)) = true
+is_ivec(::Any) = false
 
 function _issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})
     data.properties[] !== nothing && data.properties[].symmetry isa T
@@ -143,14 +179,14 @@ end
     prednzdev(deviation)
 
 Test predicate - does number of stored (structural) non-zeros deviate from nnz
-by more than `deviation`?
+by more than `deviation`. That would indicate a data error or high number of stored zeros. 
 """
 function prednzdev(dev::AbstractFloat=0.1)
     function f(data::RemoteMatrixData)
         n1, n2 = extremnnz(data)
         n1 -= Int(floor(n1 * dev))
         n2 += Int(floor(n2 * dev))
-        isloaded(data) && ! ( n1 <= data.dnz <= n2 )
+        isloaded(data) && ! ( n1 <= data.nnz <= n2 )
     end
     f(::MatrixData) = false
     f

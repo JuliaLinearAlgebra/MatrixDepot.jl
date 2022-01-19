@@ -271,6 +271,17 @@ They are used as arguments of the functions::
 
   Example: ``builtin(1,3,10:11)``
 
+2. One of the patterns for accessing alternate collection ``mm(pattern), sp(pattern)``.
+
+   If ``pattern`` selects a matrix form the Suite Sparse, then ``mm(pattern)` selects the
+   corresponding matrix form Matrix Market. If no such matrix exists, nothing is returned.
+   If the matrix selected by ``pattern`` is already in Matrix Market, the same matrix is returned.
+
+   Example: ``sp("*/*/1138_bus") == ["HB/1138_bus"]``.
+
+   Note:
+   The matrix names may be mangled sometimes.
+
 2. A ``Symbol`` indicating one of the defined groups.
 
   Example: ``:symmetric``

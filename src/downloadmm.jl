@@ -63,10 +63,12 @@ function downloadindex(remote::RemoteType)
     file
 end
 
+const NAME_NOT_TRANS = ""
 # name translations (most of the MM problems are found with similar name in SuiteSparse)
-function namemm2ss(mmname::AbstractString)
+function name2ss(mmname::AbstractString)
     s = split(mmname, '/')
-    length(s) == 3 || return mmname
+    length(s) == 2 && return mmname
+    length(s) == 3 || return NAME_NOT_TRANS
     s1, s2, s3 = s
     if s2 == "qcd"
         replace(s3, r"^([^.]*)\.(.)-00l(......)00$" => s"QCD/\1_\2-\3")
@@ -91,9 +93,10 @@ function namemm2ss(mmname::AbstractString)
     end
 end
 
-function namess2mm(ssname::AbstractString)
+function name2mm(ssname::AbstractString)
     s = split(ssname, '/')
-    length(s) == 2 || return ssname
+    length(s) == 3 && return ssname
+    length(s) == 2 || return NAME_NOT_TRANS
     s1, s2 = s
     if s1 == "QCD"
         replace(s2, r"^([^_]*)_(.)-(...)-(..)$" => s"misc/qcd/\1.\2-00l\3-\4") * "00"
@@ -101,7 +104,7 @@ function namess2mm(ssname::AbstractString)
         string("SPARSKIT/tokamak/", s2)
     elseif s1 == "FIDAP"
         x = replace(s2, r"^ex([0-9]*)$" => s"\1")
-        x == s2 ? ssname : "SPARSKIT/fidap/fidap$(printfint(parse(Int,x), 3))"
+        x == s2 ? NAME_NOT_TRANS : "SPARSKIT/fidap/fidap$(printfint(parse(Int,x), 3))"
     elseif s1 == "HB"
         n = length(s2)
         N = startswith(s2, "watt_") || startswith(s2, "pores_") ? 7 : 8

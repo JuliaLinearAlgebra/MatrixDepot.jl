@@ -308,6 +308,12 @@ end
 
 list!(db::MatrixDatabase, res::Vector{String}, p::Alias) = list!(db, res, aliasresolve(db, p))
 
+function list!(db::MatrixDatabase, res::Vector{String}, p::Alternate{R}) where R
+    xlate = R == MMRemoteType ? name2mm : name2ss
+    xpatterns = xlate.(mdlist(db, p.pattern))
+    list!(db, res, xpatterns)
+end
+
 # If res is symbolically [""], populate it with the set of all available names
 function resall!(db::MatrixDatabase, res::Vector{String})
     if is_all(res)

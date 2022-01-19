@@ -56,7 +56,8 @@ Access is like
     metasymbols, loadsvd, setgroup!, deletegroup!.
 ###### selector patterns:
     strings, string-patterns (using "*", "?", "/", "**"), regular expressions: for names
-    builtin(42), user(3,5), sp(10:11,6,2833), mm(1): to access by integer id
+    builtin(42), user(3,5), sp(10:11,6,2833), mm(1), mm(:): to access by integer id or all
+    sp(pattern), mm(pattern) to access corresponding (alternative) matrix for other collection
 ###### predicate patterns:
     isboolean, isinteger, isreal, iscomplex
     isgeneral, issymmetric, ishermitian, isskew
