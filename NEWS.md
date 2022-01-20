@@ -4,7 +4,7 @@ v1.1
 
 * remove deprecated method of defining user functions
 * remove obsolete methods of accessing remote SuiteSparse data
-* deprecate `@addgroup` and `@rmgroup`, ues `setgroup!` and `deletegroup!`
+* deprecate `@addgroup` and `@rmgroup`, use `setgroup!` and `deletegroup!`
 * add feature of alternative matrices relating MM matrices to SS matrices
 
 v1.0.7

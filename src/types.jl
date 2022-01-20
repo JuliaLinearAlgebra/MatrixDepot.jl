@@ -148,7 +148,7 @@ struct Alias{T,D}
     data::D
     Alias{T}(d::D) where {T<:MatrixData,D} = new{T,D}(d)
     function Alias{T}(d...) where {T<:MatrixData}
-        v = getindex.(convertalias(collect(d)))
+        v = getindex.(convertalias(collect(d))) # strip Ref wrap if necessary
         Alias{T}(besttype(v))
     end
 end
@@ -236,6 +236,7 @@ end
 """
     aliasname(data::MatrixData)
     aliasname(Type{<:MatrixData, id::Integer)
+
 return alias name derived from integer id
 """
 aliasname(::Type{RemoteMatrixData{SSRemoteType}}, i::Integer) = string('#', i)
@@ -244,30 +245,16 @@ aliasname(::Type{GeneratedMatrixData{N}}, i::Integer) where N = string('#', N, i
 function aliasname(T::Type{<:MatrixData}, r::AbstractVector)
     aliasname.(T, [ x for x in Iterators.flatten(r) if x > 0])
 end
-aliasname(T::Type{<:MatrixData}, r::Colon) = aliasname(T, 0)
+aliasname(T::Type{<:MatrixData}, ::Colon) = aliasname(T, 0)
 aliasname(data::MatrixData) = aliasname(typeof(data), data.id)
 aliasname(ali::Alias{T,D}) where {T,D} = aliasname(T, ali.data)
 
 Base.show(io::IO, a::Alias) = print(io, aliasname(a))
 
-import Base: get, empty!
-get(db::MatrixDatabase, key::Tuple, default=nothing) = get(db.data, key, default)
-function get(db::MatrixDatabase, name::AbstractString, default=nothing)
-    get(db.data, keyfor(db, name), default)
-end
+import Base: ==
+==(a::S, b::T) where {R,S<:Alias{R},T<:Alias{R}} = aliasname(a) == aliasname(b)
 
-empty!(db::MatrixDatabase) = (empty!(db.aliases); empty!(db.data))
-
-function keyfor(db::MatrixDatabase, name::AbstractString)
-    key = Tuple(split(name, '/'))
-    if haskey(db.data, name)
-        name
-    elseif length(key) == 1
-        get(db.aliases, name, nothing)
-    else
-        name
-    end
-end
+Base.empty!(db::MatrixDatabase) = (empty!(db.aliases); empty!(db.data))
 
 localindex(::SSRemoteType) = abspath(data_dir(), "ss_index.mat")
 localindex(::MMRemoteType) = abspath(data_dir(), "mm_matrices.html")
@@ -331,22 +318,6 @@ MM_NAME_TO_PROP = Dict{String,MMProperty}(mm_property_name(x) => x for x in (
     MMSymmetryHermitian())
 )
 
-#=
-row_num(data::RemoteMatrixData) = data.header.m
-col_num(data::RemoteMatrixData) = data.header.n
-nz_num(data::RemoteMatrixData) = data.header.nnz
-dnz_num(data::RemoteMatrixData) = data.header.dnz
-kind(data::RemoteMatrixData) = data.header.kind
-date(data::RemoteMatrixData) = data.header.date
-row_num(data::MatrixData) = 0
-col_num(data::MatrixData) = 0
-nz_num(data::MatrixData) = 0
-dnz_num(data::MatrixData) = 0
-kind(data::MatrixData) = ""
-date(data::MatrixData) = 0
-ident(data::MatrixData) = data.id
-=#
-
 MMProperties() = MMProperties("matrix", "coordinate", "real", "general")
 function MMProperties(args::AbstractString...)
     prop(x) = MM_NAME_TO_PROP[lowercase(x)]
@@ -360,8 +331,6 @@ end
 mm_short_name(pr::MMSymmetrySkewSymmetric) = "K"
 mm_short_name(pr::MMProperty) = uppercase(first(mm_property_name(pr)))
 
-
-
 """
     flattenPattern(p::Pattern)
 return the vector of all elementary patterns, contained in the pattern.
@@ -371,9 +340,3 @@ _flatten_pattern(::Tuple{}) = []
 _flatten_pattern(p::Union{AbstractVector,Tuple}) = Iterators.flatten(_flatten_pattern.(p))
 _flatten_pattern(p::Not) = [p.pattern]
 _flatten_pattern(p::Pattern) = [p]
-
-Base.length(a::Alias) = length(a.data)
-function Base.iterate(a::Alias{T}, args...) where T
-    d = iterate(a.data, args...); d === nothing && return d
-    Alias{T}(d[1]), d[2]
-end

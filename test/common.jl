@@ -36,6 +36,7 @@ REM = length(mdlist("*/*"))
 @test mdlist(:user) == String["randsym"]
 
 @test mdlist("") == []
+@test mdlist("**") == mdlist(:) == mdlist(()) == sort!(collect(keys(MatrixDepot.MATRIX_DB.data)))
 @test mdlist("HB/1138_bus") == ["HB/1138_bus"]
 @test mdlist(sp(1)) == ["HB/1138_bus"]
 @test mdlist(mm(1)) == ["Harwell-Boeing/psadmit/1138_bus"]
@@ -110,6 +111,7 @@ REM = length(mdlist("*/*"))
 @test length(mdlist(isposdef)) >= 60
 @test mdlist(@pred(posdef)) == mdlist(isposdef & isremote)
 @test mdlist(:posdef) == mdlist(isposdef & islocal)
+@test length(mdlist(isloaded & MatrixDepot.prednzdev(0.0))) == 0
 
 # metadata from svd files
 @test mdlist(@pred(svdok)) == ["HB/1138_bus"]
@@ -121,6 +123,13 @@ data = mdopen("HB/1138_bus").data
 @test data.svgap == Inf
 @test data.cholcand
 
+end
+
+@testset "aliases" begin
+    @test mm(:) == mm(:, 1)
+    @test mm([1,2,3]) == mm(1,2,3) == mm(1, 2:3) == mm([1:2],3) == mm([1:2,3])
+    @test mdlist(mm(:)) == mdlist(mm(1:1000))
+    @test mm(1:2, 4:5) == mm(1,2,4,5)
 end
 
 @testset "logical" begin
@@ -149,10 +158,18 @@ end
 @test_throws ArgumentError mdlist([] & :invalid_group_name)
 
 @test MatrixDepot.mdlist(builtin(10, 1:7, 3)) == ["baart", "binomial", "blur", "cauchy",
-                                                "chebspec", "chow", "circul", "deriv2"] 
+                                                "chebspec", "chow", "circul", "deriv2"]
 
 @test MatrixDepot.fname(sin) == "unknown-function"
 @test_throws MethodError mdopen("baart", 10, 11)
+end
+
+@testset "charfun" begin
+data = mdopen("vand", 10).data
+@test charfun(())(data)
+@test charfun(isbuiltin)(data)
+@test charfun(isbuiltin)(data.name)
+@test charfun(:)("unknown") == false
 end
 
 @testset "properties" begin
