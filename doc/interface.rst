@@ -5,15 +5,13 @@ Interface to Test Collections
 
 The internal database is loaded automatically when using the module::
 
-   julia> using MatrixDepot
-   include group.jl for user defined matrix generators
-   include myrand.jl for user defined matrix generators
-   verify download of index files...
-   reading database
-   adding metadata...
-   adding svd data...
-   writing database
-   used remote sites are sparse.tamu.edu with MAT index and math.nist.gov with HTML index
+  julia> using MatrixDepot
+  [ Info: verify download of index files...
+  [ Info: reading database
+  [ Info: adding metadata...
+  [ Info: adding svd data...
+  [ Info: writing database
+  [ Info: used remote sites are sparse.tamu.edu with MAT index and math.nist.gov with HTML index
 
 Interface to the SuiteSparse Matrix Collection (formerly UFL collection)
 ------------------------------------------------------------------------
@@ -272,6 +270,17 @@ They are used as arguments of the functions::
   numbered. ``n`` may be a positive integer, a range of integers, or a list of the previous.
 
   Example: ``builtin(1,3,10:11)``
+
+2. One of the patterns for accessing alternate collection ``mm(pattern), sp(pattern)``.
+
+   If ``pattern`` selects a matrix form the Suite Sparse, then ``mm(pattern)` selects the
+   corresponding matrix form Matrix Market. If no such matrix exists, nothing is returned.
+   If the matrix selected by ``pattern`` is already in Matrix Market, the same matrix is returned.
+
+   Example: ``sp("*/*/1138_bus") == ["HB/1138_bus"]``.
+
+   Note:
+   The matrix names may be mangled sometimes.
 
 2. A ``Symbol`` indicating one of the defined groups.
 

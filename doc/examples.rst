@@ -17,6 +17,8 @@ To see all the matrices in the collection, type
 
 .. code:: 
    
+    julia> using MatrixDepot
+
     julia> mdinfo()
       Currently loaded Matrices
       –––––––––––––––––––––––––––
@@ -212,12 +214,12 @@ Matrices can be accessed by groups.
 User Defined Groups
 -------------------
 
-We can add new groups to MatrixDepot. Since each group in Matrix
-Depot is a list of strings, you can simply do, for example,
+We can add new groups to MatrixDepot. While the predefined groups are a list of strings, you can
+define user groups with with contrived patterns:
 
 .. code:: 
 
-    spd = mdlist(:symmetric & :posdef)
+    spd = mdlist(:symmetric & :posdef) # intersection of two groups - also `|` and `~` are supported, see ?MatrixDepot
 
 
     10-element Array{ASCIIString,1}:
@@ -261,14 +263,14 @@ Then use it in your tests like
     1-norm error for hilb matrix is 2.7755575615628914e-17
 
 
-To add a group of matrices permanently for future use, we put the macro
-``@addgroup`` at the beginning.
+To add a group of matrices permanently for future use, we call
+`setgroup!` at the beginning. Note the `:` in the group name.
 
 .. code:: 
 
-    @addgroup myfav = ["lehmer", "cauchy", "hilb"]
+    setgroup!(:myfav, ["lehmer", "cauchy", "hilb"])
 
-    @addgroup test_for_paper2 = ["tridiag", "sampling", "wing"]
+    setgroup!(:test_for_paper2, ["tridiag", "sampling", "wing"])
 
 You can see the changes immediately:
 

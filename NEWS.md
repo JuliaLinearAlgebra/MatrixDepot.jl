@@ -1,5 +1,21 @@
 ## Matrix Depot Release Notes
 
+v1.1
+
+* remove deprecated method of defining user functions
+* remove obsolete methods of accessing remote SuiteSparse data
+* deprecate `@addgroup` and `@rmgroup`, use `setgroup!` and `deletegroup!`
+* add feature of alternative matrices relating MM matrices to SS matrices
+
+v1.0.7
+
+* bug fix release
+
+v1.0.6
+
+* allow to define user functions in separate package
+* deprecate way of storing user definitions in myMatrixDepot data subdirectory
+
 v1.0.0
 
 * additional meta-data for suite-sparse collection specially SVD data
@@ -7,16 +23,13 @@ v1.0.0
 * ready for windows
 * adapt documentation
 
-
 v0.8.1
---------
 
 * fix problem with serialization of database
 * adapt data recognition for SuiteSparse index file
 * fix typo in sample problem "baart"
 
 v0.8.0
---------
 
 * Improved API (see: README.md and `?MatrixDepot`)
 * Keyword search
@@ -25,35 +38,29 @@ v0.8.0
 * some bugs fixed - see git log
 * Documentation adapted
 
-V0.7.0
---------
+v0.7.0
 
 * Drop support for Julia v0.6
 
 v0.6.0
---------
 
 * Adapt to Juliav0.7 - deprecations and minor bugs
 
 v0.5.6
---------
 
 * Fix various typos in documentation, thanks to @jiahao.
 
 v0.5.5
---------
 
 * Improve the documentation of regularization problems.
 
 v0.5.4
---------
 
 * Fix `SparseMatrix` deprecation for Julia v0.5.
 
 * Enhance the UF sparse matrix collection's meta data storage.
 
 v0.5.3
----------
 
 * Add new test problems for regularization methods:
 
@@ -62,12 +69,10 @@ v0.5.3
 * Allow the UF sparse matrix collection interface to store meta data. 
 
 v0.5.2
-------
 
 * Update documentation.
 
 v0.5.1
-------
 
 * Fix a bug in user defined generators.
 
@@ -75,8 +80,7 @@ v0.5.1
 
 * Allow accessing matrices by different subtypes of Integer or UnitRange.
 
-v0.5.0 
-------
+v0.5.0
 
 * Drop support for Julia 0.3
 
@@ -91,7 +95,6 @@ v0.5.0
 	details.
 
 v0.4.3
-------
 
 * Ignore any changes to the directory `myMatrixDepot`. This means
   any local changes to `myMatrixDepot\generator.jl` won't be affected when
@@ -100,7 +103,6 @@ v0.4.3
 * Add more tests
 
 v0.4.2
-------
 
 * Fix: build failing on Julia v0.5
 
@@ -109,14 +111,12 @@ v0.4.2
 * Add more tests
 
 v0.4.1
-------
 
 * Add new feature:
 
    - allow users to download a group of matrices from UF sparse matrix collection.
 
 v0.4.0 
-------
 
 * Add new feature:
 
@@ -136,7 +136,6 @@ v0.4.0
 * Document function `matrixdepot`.
 
 v0.3.5 
-----------
 
 * Add new test problems for regularization methods:
 
@@ -151,7 +150,6 @@ v0.3.5
 * Implement all three examples for `deriv2`.
 
 v0.3.4 
--------
 
 * fix Julia v0.5 String deprecation.
 
@@ -164,7 +162,6 @@ v0.3.4
 * add option `matrixonly` for regularization problems.
 
 v0.3.3 
--------
 
 * display the matrices in group lists alphabetically.
 
@@ -173,7 +170,6 @@ v0.3.3
 * fix pascal matrix overflow error.
 
 v0.3.2 
--------
 
 * make `matrixdepot()` display better information.
 
@@ -182,13 +178,11 @@ v0.3.2
 * rename property `regu` to `regprob`.
 
 * set Float64 as the default data type for all the parameterized matrices in
-  the collection. 
+  the collection.
 
 * update matrix references.
-	
 
-v0.3.1 
-------
+v0.3.1
 
 * Add new test problems for regularization methods:
 
@@ -196,8 +190,7 @@ v0.3.1
   - `phillips`
   - `baart`
 
-v0.3.0 
-------
+v0.3.0
 
 * Add test problems for regularization methods:
 
@@ -214,7 +207,6 @@ v0.3.0
   - `matrixdepot(name, :read)`: read matrix data `name`.
 
 v0.2.8
-------
 
 * Add new test matrices
 
@@ -222,23 +214,17 @@ v0.2.8
   - `prolate`: a symmetric ill-conditioned Toeplitz matrix.
   - `toeplitz`: Toeplitz matrix.
 
-
 v0.2.7
-------
 
 * Fix some typos and v0.4 deprecation warnings
 
-
 v0.2.6
-------
 
 * add reference information for test matrices
 
 * update demo
 
-
 v0.2.5
-------
 
 * support accessing matrices by number and UnitRange
 
@@ -249,20 +235,16 @@ v0.2.5
 * use base Matrix Market reader for Julia 0.4
 
 v0.2.2
-------
 
 * Include an interface to NIST Matrix Market
 
 * reimplement ransvd to include rectangular case
 
-v0.2.1 
-------
+v0.2.1
 
 * Include an interface to the UF Sparse Matrix Collection
 
-
 v0.1.3
-------
 
 * New matrices
 
@@ -271,9 +253,7 @@ v0.1.3
 
 * Style the output information
 
-
-v0.1.2 
-------
+v0.1.2
 
 * New matrices
 
@@ -285,10 +265,7 @@ v0.1.2
 
 	fix test error for randsvd. 
 
-	
-
-v0.1.1 
-------
+v0.1.1
 
 * New matrices 
 
@@ -306,9 +283,8 @@ v0.1.1
 
 	Thanks to @synapticarbors and @stevengj
 
-
 v0.1.0
-------
+
 * New matrices
 
 	rosser: a matrix with close eigenvalues.
@@ -316,12 +292,6 @@ v0.1.0
 	sampling: a matrix with application in sampling theory.
 
 * Sphinx documentation
-
-
-TODO
-----
-
-* add a subcollection for symmetric quasi-definite linear system?
 
 
 

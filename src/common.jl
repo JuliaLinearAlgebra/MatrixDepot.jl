@@ -15,7 +15,7 @@ function listgroups()
     groups = Symbol[]
     append!(groups, sort!(collect(keys(SUBSETS))))
     append!(groups, sort!(collect(keys(MATRIXCLASS))))
-    append!(groups, sort!(collect(keys(usermatrixclass))))
+    append!(groups, sort!(collect(keys(USERMATRIXCLASS))))
     groups
 end
 
@@ -35,57 +35,50 @@ function propline(io::IO, propname, matnames)
 end
 
 # add, remove, or replace complete user group
-function modgroup(prop::Symbol, mats::Union{Nothing,Vector{<:AbstractString}})
+function modgroup(prop::Symbol, mats::Union{Nothing,Pattern})
     prop in keys(MATRIXCLASS) && daterr("$prop can not be modified.")
 
-    user = abspath(user_dir(), "group.jl")
-    if isfile(user)
-        s = read(user, String)          # read complete file into s
-        rg = Regex(repr(prop) * r"\W*=>\W*(\[.*\]\W*,\W*\n)".pattern)
-        ppos = findfirst(rg, s)         # locate the prop in user.jl to remove.
-        if ppos !== nothing
-            start_char = first(ppos) - 1    # the start of the line
-            end_char = last(ppos)           # the end of the line
-        else
-            ppos = findnext(r"\);", s, 1)
-            start_char = ppos !== nothing ? first(ppos) - 1 : length(s)
-            end_char = start_char
-        end
-        if mats !== nothing
-            mats = sort(mats)
-        end
-        open(user, "w") do io
-            write(io, s[1:start_char])
-            if mats !== nothing
-                propline(io, prop, mats)
-            end
-            write(io, s[end_char+1:end])
-        end
-    end
     if mats !== nothing
-        usermatrixclass[prop] = mats
+        USERMATRIXCLASS[prop] = mats
     else
-        delete!(usermatrixclass, prop)
+        delete!(USERMATRIXCLASS, prop)
     end
     return nothing
 end
+"""
+    setgroup!(s::Symbol, p::Pattern)
+
+Define user group. `s` must not be one of the predefined group names.
+`p` may be any pattern, also a vector of matrix names.
+"""
+setgroup!(s::Symbol, p::Pattern) = modgroup(s, p)
+
+"""
+    deletegroup!(s::Symbol)
+
+Delete a previously defined user group.
+"""
+deletegroup!(s::Symbol) = modgroup(s, nothing)
 
 "add a group to Matrix Depot"
 macro addgroup(ex)
-    name = Symbol(ex.args[1])
-    esc(modgroup(name, eval(ex.args[2])))
+    @warn("`@addgroup name = ex` is deprecated, use `setgroup!(:name, ex)`")
+    nn = QuoteNode(ex.args[1])
+    :( modgroup($(esc(nn)), $(esc(ex.args[2]))) )
 end
 
 "add or replace group in Matrix Depot"
 macro modifygroup(ex)
-    name = Symbol(ex.args[1])
-    esc(modgroup(name, eval(ex.args[2])))
+    @warn("`@modifygroup name = ex`` is deprecated, use `setgroup!(:name, ex)`")
+    nn = QuoteNode(ex.args[1])
+    :( modgroup($(esc(nn)), $(esc(ex.args[2]))) )
 end
 
 "remove an added group from Matrix Depot"
 macro rmgroup(ex)
-    name = Symbol(ex)
-    esc(modgroup(name, nothing))
+    @warn("`@rmgroup name` is deprecated, use `deletegroup!(:name)`")
+    nn = QuoteNode(ex)
+    :( modgroup($(esc(nn)), nothing) )
 end
 
 ################################
@@ -113,9 +106,9 @@ function addtogroup(dir::Dict, groupname::Symbol, f::Function)
 end
 function include_generator(::Type{Group}, groupname::Symbol, f::Function)
     addtogroup(MATRIXCLASS, groupname, f) ||
-    addtogroup(usermatrixclass, groupname, f) ||
+    addtogroup(USERMATRIXCLASS, groupname, f) ||
     argerr("$(groupname) is not a group in MatrixDepot, use
-              @addgroup to add this group")
+              `setgroup!`` to add this group")
 end
 
 #a more lightweight alternative to calling `init` again after adding user-defined matrices.
@@ -250,8 +243,8 @@ function list!(db::MatrixDatabase, res::Vector{String}, p::Symbol)
         SUBSETS[p](db)
     elseif haskey(MATRIXCLASS, p)
         MATRIXCLASS[p]
-    elseif haskey(usermatrixclass, p)
-        usermatrixclass[p]
+    elseif haskey(USERMATRIXCLASS, p)
+        list!(db, [""], USERMATRIXCLASS[p])
     else
         argerr("unknown group name '$p'")
         # EMPTY_PATTERN
@@ -315,6 +308,12 @@ end
 
 list!(db::MatrixDatabase, res::Vector{String}, p::Alias) = list!(db, res, aliasresolve(db, p))
 
+function list!(db::MatrixDatabase, res::Vector{String}, p::Alternate{R}) where R
+    xlate = R == MMRemoteType ? name2mm : name2ss
+    xpatterns = xlate.(mdlist(db, p.pattern))
+    list!(db, res, xpatterns)
+end
+
 # If res is symbolically [""], populate it with the set of all available names
 function resall!(db::MatrixDatabase, res::Vector{String})
     if is_all(res)
@@ -327,9 +326,10 @@ end
 
 function list!(db::MatrixDatabase, res::Vector{String}, p::Not)
     isempty(res) && return res
-    cres = copy(res)
+    cres = list!(db, copy(res), p.pattern)
+    isempty(cres) && return res 
     resall!(db, res)
-    setdiff!(res, list!(db, cres, p.pattern))
+    setdiff!(res, cres)
 end
 
 # logical OR

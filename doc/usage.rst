@@ -131,14 +131,8 @@ matrices is symbolized by ``:symmetric``.
      "forsythe"
      "foxgood"
 
-We can define our own groups using the macro ``@addgroup`` and
-remove a defined group using ``@rmgroup``.
+We can define our own groups using the function ``setgroup!`` and
+remove a defined group with ``deletegroup!``.
 
-.. function:: @addgroup group_name = ["matrix1", "matrix2", "matrix3"]
-
-   Create a new group ``"group_name"`` such that it has members
-   ``"matrix1"``, ``"matrix2"`` and ``"matrix3"``.
-
-.. function:: @rmgroup group_name
-  
-   Delete a created group ``group_name``.
+User definied groups may use arbitrary patterns to declare subsets of all available matrices,
+and are not restricted to simple lists of alternative names.

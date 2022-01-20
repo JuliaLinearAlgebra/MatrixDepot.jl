@@ -1,7 +1,12 @@
 #download
+
+import MatrixDepot: load, loadinfo, loadsvd
+
+# for test coverage
+MatrixDepot.update()
+
 # verify that no data are downloaded (empty directory)
 @test mdlist(isloaded) == []
-import MatrixDepot: load, loadinfo, loadsvd
 
 # Suite Sparse
 @test loadinfo("*/1138_bus") == 1 # load only header

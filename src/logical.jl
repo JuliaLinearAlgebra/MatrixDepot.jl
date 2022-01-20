@@ -32,16 +32,16 @@ import LinearAlgebra: isposdef
 (&)(p::Pattern, q::Tuple) = tuple(p, q...)
 (&)(p::Pattern, q::Pattern...) = tuple(p, q...)
 (|)(p::Pattern, q::Pattern...) = vcat(p, q...)
-(~)(p::Pattern) = Not(p)
 (~)(c::AbstractChar) = Not(string(c))
+(*)(a::Not{<:AbstractString}, b::Union{AbstractString,AbstractChar}) = Not(a.pattern * b)
 (~)(p::Not) = p.pattern
 Not(p::Not) = p.pattern
-(*)(a::Not{<:AbstractString}, b::Union{AbstractString,AbstractChar}) = Not(a.pattern * b)
 (~)(p::Pattern...) = Not(tuple(p...))
+(~)(p::Pattern) = p == EMPTY_PATTERN ? ALL_PATTERN : p == ALL_PATTERN ? EMPTY_PATTERN : Not(p)
 (~)() = EMPTY_PATTERN
-(~)(p::Vector) = length(p) == 0 ? ALL_PATTERN : Not(p)
+(~)(p::Vector{<:Pattern}) = length(p) == 0 ? ALL_PATTERN : length(p) == 1 ? Not(p[1]) : Not(p)
 
-const EMPTY_PATTERN = []
+const EMPTY_PATTERN = Pattern[]
 const ALL_PATTERN = ()
 
 ###
@@ -62,14 +62,13 @@ end
 function aliasresolve(db::MatrixDatabase, a::Alias{T,<:Integer}) where T
     aliasresolve(db, aliasname(a))
 end
-function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector{<:IntOrVec}}) where T
-    aliasr2(x) = aliasresolve(db, x)
-    collect(Iterators.flatten(aliasr2.(aliasname(a))))
+function aliasresolve(db::MatrixDatabase, a::Alias{T,<:AbstractVector}) where T
+    collect(Iterators.flatten(aliasresolve.(Ref(db), aliasname(a))))
 end
-aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{TURemoteType},Colon}, ) = "*/*"
+aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{SSRemoteType},Colon}, ) = "*/*"
 aliasresolve(db::MatrixDatabase, a::Alias{RemoteMatrixData{MMRemoteType},Colon}) = "*/*/*"
-aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:B},Colon}) = :builtin
-aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:U},Colon}) = :user
+aliasresolve(::MatrixDatabase, ::Alias{GeneratedMatrixData{:B},Colon}) = :builtin
+aliasresolve(::MatrixDatabase, ::Alias{GeneratedMatrixData{:U},Colon}) = :user
 
 ###
 # Predefined predicates for MatrixData
@@ -77,8 +76,46 @@ aliasresolve(db::MatrixDatabase, a::Alias{GeneratedMatrixData{:U},Colon}) = :use
 
 builtin(p...) = Alias{GeneratedMatrixData{:B}}(p...)
 user(p...) = Alias{GeneratedMatrixData{:U}}(p...)
-sp(p...) = Alias{RemoteMatrixData{TURemoteType}}(p...)
-mm(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
+sp1(p...) = Alias{RemoteMatrixData{SSRemoteType}}(p...)
+mm1(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
+sp(p...) = sp1(p...)
+mm(p...) = mm1(p...)
+
+"""
+    sp(i, j:k, ...)
+    sp(pattern)
+
+The first form with integer and integer range arguments is a pattern selecting
+by the id number in the Suite Sparse collection.
+
+The second form is a pattern, which selects a matrix in the Suite Sparse collection, which
+corresponds to the pattern by name, even if the name is from the Matrix Market collection.
+
+example:
+    mdlist(sp("*/*/1138_bus")) == ["HB/1138_bus"]
+"""
+sp(p::P) where P<:Pattern = is_ivec(p) ? sp1(p) : Alternate{SSRemoteType,P}(p)
+
+"""
+    mm(i, j:k, ...)
+    mm(pattern)
+
+The first form with integer and integer range arguments is a pattern selecting
+by the id number in the Matrix Market collection.
+
+The second form is a pattern, which selects a matrix in the Matrix Market collection, which
+corresponds to the pattern by name, even if the name is from the Suite Sparse collection.
+
+example:
+    mdlist(mm("*/1138_bus")) == ["Harwell-Boeing/psadmit/1138_bus"]
+"""
+mm(p::P) where P<:Pattern = is_ivec(p) ? mm1(p) : Alternate{MMRemoteType,P}(p)
+
+is_ivec(::Integer) = true
+is_ivec(::AbstractVector{<:Integer}) = true
+is_ivec(p::AbstractVector) = all(is_ivec.(p))
+is_ivec(::typeof(:)) = true
+is_ivec(::Any) = false
 
 function _issymmetry(data::RemoteMatrixData, T::Type{<:MMSymmetry})
     data.properties[] !== nothing && data.properties[].symmetry isa T
@@ -125,7 +162,7 @@ islocal(data::GeneratedMatrixData) = true
 islocal(data::MatrixData) = false
 
 """
-    pred(f::Function, s::Symbol...)
+    pred_macro(f::Function, s::Symbol...)
 
 Return a predicate function, which assigns to a each `data::MatrixData`
 iff
@@ -133,7 +170,7 @@ iff
 *    all symbols `s` are property names of `data` and
 *    `f` applied to the tuple of values of those properties returns `true`
 """
-function pred(f::Function, s::Symbol...)
+function pred_macro(f::Function, s::Symbol...)
     data::MatrixData -> hasinfo(data) &&
     s ⊆ propertynames(data) &&
     f(getproperty.(Ref(data), s)...)
@@ -142,15 +179,18 @@ end
 """
     prednzdev(deviation)
 
-Test predicate - does number of stored (structural) non-zeros deviate from nnz
-by more than `deviation`?
+Test predicate - does number of stored (structural) values deviate from nnz
+by more than `deviation`. That would indicate a data error or high number of stored zeros.
+
+The number of stored values is in `dnz`. It has to be approximately doubled for
+symmetric matrices to be comparable to `nnz``.
 """
 function prednzdev(dev::AbstractFloat=0.1)
     function f(data::RemoteMatrixData)
         n1, n2 = extremnnz(data)
         n1 -= Int(floor(n1 * dev))
         n2 += Int(floor(n2 * dev))
-        isloaded(data) && ! ( n1 <= data.dnz <= n2 )
+        isloaded(data) && ! ( n1 <= data.nnz <= n2 )
     end
     f(::MatrixData) = false
     f
@@ -219,6 +259,7 @@ function extract_symbols(ex)
 end
 
 # construct a function definition from a list of symbols and expression
+# `make_func([:a, :b], expr)` returns `:( (a, b) -> expr )`
 function make_func(sli::AbstractVector{Symbol}, ex)
     res = :( () -> $ex )
     append!(res.args[1].args, sli)
@@ -234,7 +275,7 @@ const PROPS = (:name, :id, :metadata, fieldnames(MetaInfo)...)
 
 function make_pred(ex)
     syms = extract_symbols(ex) ∩ PROPS 
-    :(MatrixDepot.pred($(make_func(syms, ex)), $(QuoteNode.(syms)...)))
+    :(MatrixDepot.pred_macro($(make_func(syms, ex)), $(QuoteNode.(syms)...)))
 end
 
 """
@@ -251,3 +292,20 @@ macro pred(ex)
     esc(make_pred(ex))
 end
 
+"""
+    charfun(p::Pattern)
+
+Return the characteristic function corresponding to the set-defining pattern `p`.
+
+This function can be applied to objects `data::MatrixData` and strings, the canonical
+names of those objects.
+"""
+function charfun(p::Pattern)
+    f(d::MatrixData) = !isempty(list!(MATRIX_DB, [d.name], p)) # equivalent to: `d.name ∈ mdlist(p)`
+    f(s::AbstractString) = haskey(MATRIX_DB.data, s) && f(MATRIX_DB.data[s])
+    f
+end
+
+# make `:` an ordinary pattern (so it can be applied to MatrixData)
+import Base: (:)
+(:)(d::MatrixData) = true

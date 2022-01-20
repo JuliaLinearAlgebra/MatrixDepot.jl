@@ -1,10 +1,7 @@
 
-const MD_TOGGLE = true
-
 ENV["MATRIXDEPOT_URL_REDIRECT"] = length(VERSION.prerelease) == 0 ? "1" : "1"
-const basedir = tempname()
+const basedir = tempname() # tests start with a clean data directory
 ENV["MATRIXDEPOT_DATA"] = abspath(basedir, "data")
-ENV["MATRIXDEPOT_MYDEPOT"] = abspath(basedir, "myMatrixDepot") #Delete when MYDEPOT functionality is deleted
 
 using MatrixDepot
 using Test
@@ -13,14 +10,10 @@ using SparseArrays
 
 import MatrixDepot: DataError
 
-function toggle_db()
-    MatrixDepot.toggle_remote()
-    MatrixDepot.init(ignoredb=true)
-    MatrixDepot.update()
-end
-
 # that will download the index files if necessary and initialize internal data
 MatrixDepot.init()
+
+@testset "MatrixDepot.jl" begin
 
 include("generators.jl")
 include("include_generator.jl")
@@ -31,6 +24,7 @@ include("include_generator.jl")
             "common",
             "number",
             "property",
+            "downloadmm",
             ]
 
     @testset "$t" for t in tests
@@ -39,19 +33,12 @@ include("include_generator.jl")
         include(tp)
         println("finished $(tp)")
     end
-
-    xdir = MatrixDepot.data_dir()
-    xtmpdir = string(xdir, ".tmp")
-    println("mv $xdir $xtmpdir")
-    mv(xdir, xtmpdir, force=true)
-    toggle_db()
-    @test mdopen(sp(1)) !== nothing
-    mv(xtmpdir, xdir, force=true)
 end
 
 @testset "MatrixDepot real remote matrix tests" begin
-    toggle_db()
     println("running remote.jl ...")
     include("remote.jl")
     println("finished remote.jl")
 end
+
+end # testset MatrixDepot.jl
