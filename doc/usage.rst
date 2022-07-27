@@ -14,26 +14,36 @@ matrices is symbolized by ``:symmetric``.
   Return a list of all the matrices in the collection::
 
     julia> mdinfo()
+    Currently loaded Matrices
+    –––––––––––––––––––––––––––
 
-    Matrices:
-     1) baart            2) binomial         3) blur             4) cauchy        
-     5) chebspec         6) chow             7) circul           8) clement       
-     9) companion       10) deriv2          11) dingdong        12) fiedler       
-     13) forsythe        14) foxgood         15) frank           16) golub         
-     17) gravity         18) grcar           19) hadamard        20) hankel        
-     21) heat            22) hilb            23) invhilb         24) invol         
-     25) kahan           26) kms             27) lehmer          28) lotkin        
-     29) magic           30) minij           31) moler           32) neumann       
-     33) oscillate       34) parter          35) pascal          36) pei           
-     37) phillips        38) poisson         39) prolate         40) randcorr      
-     41) rando           42) randsvd         43) rohess          44) rosser        
-     45) sampling        46) shaw            47) spikes          48) toeplitz      
-     49) tridiag         50) triw            51) ursell          52) vand          
-     53) wathen          54) wilkinson       55) wing          
-    Groups:
-     all           data          eigen        illcond    
-     inverse       posdef       random        regprob     
-     sparse        symmetric 
+    builtin(#)                                                                             
+    ––––––––––– ––––––––––– ––––––––––– –––––––––––– ––––––––––– ––––––––––––– ––––––––––––
+    1 baart     10 deriv2   19 gravity  28 kms       37 parter   46 rohess     55 ursell   
+    2 binomial  11 dingdong 20 grcar    29 lehmer    38 pascal   47 rosser     56 vand     
+    3 blur      12 erdrey   21 hadamard 30 lotkin    39 pei      48 sampling   57 wathen   
+    4 cauchy    13 fiedler  22 hankel   31 magic     40 phillips 49 shaw       58 wilkinson
+    5 chebspec  14 forsythe 23 heat     32 minij     41 poisson  50 smallworld 59 wing     
+    6 chow      15 foxgood  24 hilb     33 moler     42 prolate  51 spikes                 
+    7 circul    16 frank    25 invhilb  34 neumann   43 randcorr 52 toeplitz               
+    8 clement   17 gilbert  26 invol    35 oscillate 44 rando    53 tridiag                
+    9 companion 18 golub    27 kahan    36 parallax  45 randsvd  54 triw                   
+
+    user(#)
+    –––––––
+
+    Groups                                                   
+    ––––––– ––––– ––––– ––––––– –––––– ––––––– –––––––––     
+    all     local eigen illcond posdef regprob symmetric     
+    builtin user  graph inverse random sparse                
+
+    Suite Sparse of  
+    –––––––––––– ––––
+    2777         2893
+
+    MatrixMarket of 
+    –––––––––––– –––
+    488          498
 
 .. function:: matrixdepot(matrix_name, p1, p2, ...)
 
@@ -117,6 +127,7 @@ matrices is symbolized by ``:symmetric``.
 .. function:: mdlist(builtin(num1:num2, ...))
 
    Access matrix by range and combinations. For example::
+
     julia> mdlist(builtin(1:4, 6, 10:15))
     11-element Array{String,1}:
      "baart"   
@@ -136,3 +147,52 @@ remove a defined group with ``deletegroup!``.
 
 User definied groups may use arbitrary patterns to declare subsets of all available matrices,
 and are not restricted to simple lists of alternative names.
+
+See also::
+
+    help?> MatrixDepot
+    search: MatrixDepot matrixdepot
+
+      julia MatrixDepot
+
+      Give access to a wealth of sample and test matrices and accompanying data. A set of matrices is generated locally (with arguments controlling the special case). Another set is loaded from one of
+      the publicly accessible matrix collections SuiteSparse Matrix Collection (formerly University of Florida Matrix Collection) and the Matrix Market Collection.
+
+      Access is like
+
+      using MatrixDepot
+      
+      A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
+      
+      A = matrixdepot("HB/1138_bus")     # named matrix of the SuiteSparse Collection
+      A = matrixdepot(sp(1))             # same matrix using numerical id
+      A = matrixdepot("Harwell*/*/1138_bus") # matrix from the Matrix Market Collection 
+      
+      md = mdopen("*/bfly")   # named matrix with some extra data
+      A = md.A
+      co = md.coord
+      tx = md("Gname_10.txt")
+      
+      md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
+      A = md.A
+      b = md.b
+      x = md.x
+
+      commands:
+
+      mdinfo, listdir, listgroups, matrixdepot, mdopen, listdata, mdlist,
+      metasymbols, setgroup!, deletegroup!.
+
+      selector patterns:
+
+      strings, string-patterns (using "*", "?", "[]", "/", "**"), regular expressions: for names
+      builtin(42), user(3,5), sp(10:11,6,2833), mm(1), mm(:): to access by integer id or all
+      sp(pattern), mm(pattern) to access corresponding (alternative) matrix for other collection
+
+      predicate patterns:
+
+      isboolean, isinteger, isreal, iscomplex
+      isgeneral, issymmetric, ishermitian, isskew
+      isbuiltin, isuser, islocal, isremote, isloaded, isunloaded
+      issvdok
+      keyword(string expression), logical, hasdata(symbol), @pred(expression)
