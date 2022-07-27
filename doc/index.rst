@@ -28,11 +28,12 @@ To install the release version, type::
 .. toctree:: 
 
    usage.rst
+   database.rst
+   interface.rst
    matrices.rst
    graphs.rst
    regu.rst
    properties.rst
-   interface.rst
    user.rst
    examples.rst   
   

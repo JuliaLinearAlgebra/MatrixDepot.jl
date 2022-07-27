@@ -17,7 +17,7 @@ Interface to the SuiteSparse Matrix Collection (formerly UFL collection)
 ------------------------------------------------------------------------
 
 Use ``M = matrixdepot(NAME)`` or ``md = mdopen(NAME); M = md.A``, where ``NAME``
-is ``collection_name + '/' + matrix_name``, to download a test matrix from the
+is ``collection_name/matrix_name``, to download a test matrix from the
 SuiteSparse Matrix Collection:
 https://sparse.tamu.edu/
 
@@ -190,7 +190,7 @@ Interface to NIST Matrix Market
 -------------------------------
 
 Use ``M = matrixdepot(NAME)`` or ``md = mdopen(NAME); M = md.A``, where ``NAME``
-is ``collection name + '/' + set name + '/' + matrix name`` to download a
+is ``collection name/set name/matrix name`` to download a
 test matrix from NIST Matrix Market:
 http://math.nist.gov/MatrixMarket/. For example::
 

@@ -319,12 +319,13 @@ Notice new defined groups have been included. We can use them as
      "hilb"  
 
 
-We can remove a group using the macro ``@rmgroup``. As before, we
-need to reload Julia to see the changes.
+We can remove a group using the `deletegroup!`. 
 
-.. code:: 
+.. code::
 
-    @rmgroup myfav
+    deletegroup!(:myfav)
+
+As with `setgroup!` the changes are immediately visible:
 
 .. code:: 
 
