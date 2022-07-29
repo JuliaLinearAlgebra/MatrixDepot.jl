@@ -1,8 +1,7 @@
 
 # ![logo](doc/logo2.png) Matrix Depot
 
-[![Build Status][gha-img]][gha-url]     [![Coverage Status][codecov-img]][codecov-url]
-[![Documentation Status](https://readthedocs.org/projects/matrix-depot/badge/?version=latest)](https://matrix-depot.readthedocs.io/en/latest/?badge=latest)
+[![Build Status][gha-img]][gha-url]    [![Coverage Status][codecov-img]][codecov-url]    [![Documentation Status][rtd-img]][rtd-url]
 
 An extensible test matrix collection for Julia.
 
@@ -423,8 +422,8 @@ clement  hankel   kms     moler  pei       randcorr wathen
 ## Extend Matrix Depot
 
 It is possible to extend the builtin local problems with user defined generators and groups.
-We can add [new matrix generators](http://matrixdepotjl.readthedocs.org/en/latest/user.html)
-and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/latest/properties.html).
+We can add [new matrix generators](http://matrix-depot.readthedocs.org/en/latest/user.html)
+and define [new groups of matrices](http://matrix-depot.readthedocs.org/en/latest/properties.html).
 
 ## References
 
