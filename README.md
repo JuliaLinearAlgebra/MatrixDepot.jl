@@ -2,14 +2,12 @@
 # ![logo](doc/logo2.png) Matrix Depot
 
 [![Build Status][gha-img]][gha-url]     [![Coverage Status][codecov-img]][codecov-url]
+[![Documentation Status](https://readthedocs.org/projects/matrix-depot/badge/?version=latest)](https://matrix-depot.readthedocs.io/en/latest/?badge=latest)
 
 An extensible test matrix collection for Julia.
 
-* [Documentation](http://matrixdepotjl.readthedocs.org/en/latest/)
-
 * [Release Notes](https://github.com/JuliaMatrices/MatrixDepot.jl/blob/master/NEWS.md)
 
-    MatrixDepot
 
 Give access to a wealth of sample and test matrices and accompanying data.
 A set of matrices is generated locally (with arguments controlling the special case).
@@ -464,3 +462,6 @@ and define [new groups of matrices](http://matrixdepotjl.readthedocs.org/en/late
 
 [codecov-img]: https://codecov.io/gh/JuliaMatrices/MatrixDepot.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/JuliaMatrices/MatrixDepot.jl
+
+[rtd-img]: https://readthedocs.org/projects/matrix-depot/badge/?version=latest
+[rtd-url]: https://matrix-depot.readthedocs.io/en/latest/?badge=latest
