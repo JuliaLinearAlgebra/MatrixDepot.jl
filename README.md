@@ -245,7 +245,7 @@ The patterns can always refer to matrix names and id numbers.
 In the case of `SuiteSparse` collection, also the metadata
 `"date"`, `"kind"`, `"m"`, `"n"`, `"nnz"`
 are available and can be used, before individual matrix data
-have been loaded. They are contained in an data file obtained from the remote site.
+have been loaded. They are contained in a data file obtained from the remote site.
 For `MatrixMarket` collection, patterns are restricted to names and id numbers.
 
 In general it would be possible by `loadinfo("**")` to load all header data. That

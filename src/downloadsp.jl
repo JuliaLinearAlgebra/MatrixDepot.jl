@@ -11,13 +11,13 @@ using Base.Filesystem
 #const SS_INDEX = "/files/ss_index.mat"
 #const SS_GRAPHICS = "/files/" # to be followed by /$Group/$(Name)$ending
 # where endings indicate graphics about the main matrix of different kinds
-# ".png"|"_thumb.png"               - sparsity structure 
+# ".png"|"_thumb.png"               - sparsity structure
 # "_graph.gif"|"_graph_thumb.gif"   - iconnectivity graph
 # "_svd.png"                        - singular values plot
 
 const SS_SVDDIR = "/svd/" # to be followed by "$Group/$(Name)_SVD{.mat|_piroband.mat}
 
-# the files "$SS_SITE/$Group/$Name" contain html-formatted further information 
+# the files "$SS_SITE/$Group/$Name" contain html-formatted further information
 # the directories "/mat" "/MM" "/RB"
 # contain data files in $Group/$Name.mat or $Group/Name.tar.gz" in different formats
 #
@@ -61,7 +61,7 @@ const MFIELDTYPES2 = [Int,
 
 function readindex(remote::SSRemoteType, db::MatrixDatabase)
     df = read_ss_index()
-    for id = 1:size(df, 1)
+    for id in axes(df, 1)
         mt = copy(df[id,:])
         name = mt.name
         data = get!(db.data, name) do
@@ -340,4 +340,3 @@ singular values
     These can be downloaded as a MATLAB MAT-file. Each file contains a struct with the fields: s (a vector containing the singular values), how (a string stating how the SVD was computed), and status (a string that is either 'ok' or a warning). If the status shows that the SVD did not converge, the singular values are probably not computed accurately.
 
 =#
-

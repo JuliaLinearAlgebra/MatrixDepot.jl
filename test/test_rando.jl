@@ -5,7 +5,7 @@ A = matrixdepot("rando", Int, n, 1)
 B = matrixdepot("rando", Int, n, 2)
 C = matrixdepot("rando", Int, n, 3)
 
-for i in 1:length(A)
+for i in eachindex(A)
     @test A[i] == 0 || A[i] == 1
 end
 
