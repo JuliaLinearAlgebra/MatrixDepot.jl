@@ -1,7 +1,7 @@
 @test mdinfo() !== nothing
 groups = ["symmetric", "inverse", "illcond", "posdef", "eigen","sparse", "random", "regprob", "all"]
 
-for group in groups 
+for group in groups
     @test !isempty(listnames(Symbol(group)))
 end
 
@@ -32,7 +32,7 @@ deletegroup!(:newlist)
 REM = length(mdlist("*/*"))
 @test REM >= 2500
 #@test REM in [2757, 2856]   # depends on whether UFL or TAMU url has been used
-@test length(mdlist(:builtin)) == 59
+@test length(mdlist(:builtin)) == 61
 @test mdlist(:user) == String["randsym"]
 
 @test mdlist("") == []
@@ -72,7 +72,7 @@ REM = length(mdlist("*/*"))
 @test length(mdlist(islocal)) + length(mdlist(isremote)) == length(mdlist(:all))
 @test length(mdlist("**")) == length(mdlist("*")) + length(mdlist("*/*")) + length(mdlist("*/*/*"))
 @test mdlist(:all) == mdlist("**")
-@test length(mdlist(:symmetric)) == 22
+@test length(mdlist(:symmetric)) == 24
 @test length(mdlist(:illcond)) == 20
 
 # intersections and unions
@@ -81,7 +81,7 @@ REM = length(mdlist("*/*"))
 
 
 # predicates of remote and local matrices
-@test length(mdlist(issymmetric)) == 30
+@test length(mdlist(issymmetric)) == 32
 @test length(mdlist(:symmetric & "kahan")) == 0
 @test length(mdlist(:symmetric & "hankel")) == 1
 @test mdlist(:local) == mdlist(islocal)
@@ -206,4 +206,3 @@ io = IOBuffer()
 @test length(mdlist(hasdata(:A & (:b | :x)))) == 2
 
 end
-

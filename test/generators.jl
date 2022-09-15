@@ -51,9 +51,9 @@ end
     @inc("test_erdrey.jl")
     @inc("test_gilbert.jl")
     @inc("test_smallworld.jl")
+    @inc("test_sprand.jl")
 end
 
 @testset "regularization methods" begin
     include("regu.jl")
 end
-

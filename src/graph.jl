@@ -25,8 +25,9 @@ of all symmetric graphs with `n` nodes and `m` edges.
 **P. Erdos and A. Renyi**, On Random Graphs, Publ. Math. Debrecen, 6, 1959,
 pp. 290-297
 """
-function erdrey(::Type{T}, n::Integer, m::Integer) where T
-    nzeros = ceil.(Int, 0.5*n*(n-1)*rand(m))
+function erdrey(::Type{T}, n::Integer, m::Integer; rng=Random.default_rng()) where T
+    rng::AbstractRNG
+    nzeros = ceil.(Int, 0.5*n*(n-1)*rand(rng, m))
     v = zeros(Int, n)
     for count in 1:n
         v[count] = count*(count -one(Int))/2
@@ -47,7 +48,7 @@ function erdrey(::Type{T}, n::Integer, m::Integer) where T
         is_new = zeros(Int, diff)
         js_new = zeros(Int, diff)
         for count = 1:diff
-            idx = ceil(Int, 0.5*n*(n-1)*rand())
+            idx = ceil(Int, 0.5*n*(n-1)*rand(rng))
             is_new[count] = minimum(findall(x -> x >= idx, v))
             js_new[count] = idx - (is_new[count] - 1)*(is_new[count] - 2)/2
         end
@@ -58,8 +59,8 @@ function erdrey(::Type{T}, n::Integer, m::Integer) where T
     end
     A
 end
-erdrey(::Type{T}, n::Integer) where T = erdrey(T, n, ceil(Int, n*log(n)/2))
-erdrey(n::Integer, arg...) = erdrey(Float64, n, arg...)
+erdrey(::Type{T}, n::Integer; kw...) where T = erdrey(T, n, ceil(Int, n*log(n)/2); kw...)
+erdrey(n::Integer, arg...; kw...) = erdrey(Float64, n, arg...; kw...)
 
 """
 Gilbert Random Graph
@@ -80,7 +81,8 @@ with pairs of nodes are connected with indepdent probability `p`.
 
 **E.N. Gilbert**, Random Graphs, Ann. Math. Statist., 30, (1959) pp. 1141-1144.
 """
-function gilbert(::Type{T}, n::Integer, p::AbstractFloat) where T
+function gilbert(::Type{T}, n::Integer, p::AbstractFloat; rng=Random.default_rng()) where T
+    rng::AbstractRNG
     v = zeros(Int, n)
     for k = 1:n
         v[k] = round(Int, k*(k-1)/2)
@@ -91,35 +93,35 @@ function gilbert(::Type{T}, n::Integer, p::AbstractFloat) where T
 
     w = zero(Int)
 
-    w += one(Int) + floor(Int, log(1 - rand()) / log(1 - p))
+    w += one(Int) + floor(Int, log(1 - rand(rng)) / log(1 - p))
 
     while w < n*(n-1)/2
         i = minimum(findall(x -> x >= w, v))
         j = w - round(Int, (i -1)*(i - 2)/2)
         push!(is, i)
         push!(js, j)
-        w += one(Int) + floor(Int, log(1 - rand()) / log(1-p))
+        w += one(Int) + floor(Int, log(1 - rand(rng)) / log(1-p))
     end
 
     s = ones(T, length(is))
     return sparse([is;js], [js;is], [s;s], n, n)
 end
-function gilbert(::Type{T}, n::Integer) where T
+function gilbert(::Type{T}, n::Integer; kw...) where T
     if n == 1
-        return gilbert(T, n, 0.2)
+        return gilbert(T, n, 0.2; kw...)
     else
-        return gilbert(T, n, log(n)/n)
+        return gilbert(T, n, log(n)/n; kw...)
     end
 end
-gilbert(n::Integer, arg...) = gilbert(Float64, n, arg...)
+gilbert(n::Integer, arg...; kw...) = gilbert(Float64, n, arg...; kw...)
 
 
 # utility function
 # shortcuts: randomly add entries (shortcuts) to a matrix.
-function shortcuts(A::SparseMatrixCSC{T}, p::Real) where T
+function shortcuts(rng::AbstractRNG, A::SparseMatrixCSC{T}, p::Real) where T
     n, = size(A)
-    Ihat = findall(x -> x <= p, rand(n))
-    Jhat = ceil.(Int, n*rand(Float64, size(Ihat)))
+    Ihat = findall(x -> x <= p, rand(rng, n))
+    Jhat = ceil.(Int, n*rand(rng, Float64, size(Ihat)))
     Ehat = ones(T, size(Ihat))
 
     # an edge
@@ -154,7 +156,10 @@ it by adding shortcuts to a kth nearest neighbour ring network
 **D. J. Watts and S. H. Strogatz**, Collective Dynamics of Small World Networks,
 Nature 393 (1998), pp. 440-442.
 """
-function smallworld(::Type{T}, n::Integer, k::Integer, p::Real) where T
+function smallworld(::Type{T}, n::Integer, k::Integer, p::Real;
+    rng=Random.default_rng()) where T
+
+    rng::AbstractRNG
     twok = 2*k
     is = zeros(Int, 2*k*n)
     js = zeros(Int, 2*k*n)
@@ -168,10 +173,10 @@ function smallworld(::Type{T}, n::Integer, k::Integer, p::Real) where T
     end
 
     A = sparse(is, js, es, n, n)
-    return sign.(shortcuts(A, p))
+    return sign.(shortcuts(rng, A, p))
 end
-smallworld(::Type{T}, n::Integer) where T = smallworld(T, n, 2, 0.1)
-smallworld(n::Integer, arg...) = smallworld(Float64, n, arg...)
+smallworld(::Type{T}, n::Integer; kw...) where T = smallworld(T, n, 2, 0.1; kw...)
+smallworld(n::Integer, arg...; kw...) = smallworld(Float64, n, arg...; kw...)
 
 
 function geo(n::Integer)

@@ -29,7 +29,8 @@ const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
                   "poisson" => poisson, "neumann" => neumann,
                   "rosser" => rosser, "sampling" => sampling,
                   "wilkinson" => wilkinson, "rando" => rando,
-                  "randsvd" => randsvd, "rohess" => rohess,
+                  "randsvd" => randsvd, "sprandsvd" => sprandsvd,
+                  "sprandsym" => sprandsym, "rohess" => rohess,
                   "kms" => kms, "wathen" => wathen,
                   "oscillate" => oscillate, "toeplitz" => toeplitz,
                   "hankel" => hankel, "golub" => golub,
@@ -53,7 +54,7 @@ const MATRIXCLASS = Dict(
                              "clement", "fiedler", "minij", "tridiag",
                              "lehmer", "randcorr", "poisson", "wilkinson",
                              "kms", "wathen", "oscillate", "prolate",
-                             "hankel"],
+                             "hankel", "rosser", "sprandsym"],
 
             :inverse => ["hilb", "hadamard", "cauchy", "invhilb",
                            "forsythe", "magic", "triw", "moler", "pascal",
@@ -79,10 +80,11 @@ const MATRIXCLASS = Dict(
                            "oscillate"],
 
              :sparse => ["poisson", "neumann", "wathen", "blur", "erdrey", "gilbert",
-                          "smallworld"],
+                          "smallworld", "sprandsvd", "sprandsym"],
 
-             :random => ["rosser", "rando", "randcorr", "randsvd", "rohess",
-                          "wathen", "oscillate", "golub", "erdrey", "gilbert", "smallworld"],
+             :random => ["rosser", "rando", "randcorr", "randsvd",
+                          "sprandsvd", "sprandsym", "rohess", "wathen", "oscillate",
+                          "golub", "erdrey", "gilbert", "smallworld"],
 
              :regprob => ["deriv2", "shaw", "wing", "foxgood", "heat",
                            "baart", "phillips", "gravity", "blur",

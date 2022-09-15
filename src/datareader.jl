@@ -16,13 +16,14 @@ end
 function metareader(mdesc::MatrixDescriptor{<:GeneratedMatrixData}, name::AbstractString)
     fillcache!(mdesc)
     dao = mdesc.cache[]
-    if name == "A" && dao isa AbstractArray
+    if dao isa AbstractArray
+        name != "A" && daterr("array must be retrieved using 'A', no metatdata '$name'")
         dao
     else
         try
             getproperty(dao, Symbol(name))
         catch
-            daterr("this instance of '$(typeof(dao))' has no property '$name'")
+            daterr("this instance of '$(typeof(dao))' has no metadata '$name'")
         end
     end
 end
@@ -39,7 +40,7 @@ end
 function fillcache!(mdesc::MatrixDescriptor{<:GeneratedMatrixData})
     dao = mdesc.cache[]
     if dao === nothing
-        dao = mdesc.cache[] = mdesc.data.func(mdesc.args...)
+        dao = mdesc.cache[] = mdesc.data.func(mdesc.args...; mdesc.kwargs...)
         dao !== nothing || daterr("function $(mdesc.data.func) returned `nothing`")
     end
     dao
@@ -49,7 +50,7 @@ end
 import Base: getproperty, propertynames, getindex
 
 function getproperty(mdesc::MatrixDescriptor{T}, s::Symbol) where T
-    s in (:data, :args, :cache) && return getfield(mdesc, s)
+    s in (:data, :args, :kwargs, :cache) && return getfield(mdesc, s)
     s in metasymbols(mdesc) && return metareader(mdesc, string(s))
     if T <: RemoteMatrixData
         s in (:m, :n, :nnz, :dnz) && return getfield(mdesc.data.header, s)
@@ -103,7 +104,7 @@ function metasymbols(data::RemoteMatrixData)
 end
 function metasymbols(md::MatrixDescriptor{<:GeneratedMatrixData})
     mdc = md.cache[]
-    mdc isa Array || mdc === nothing ? [:A] : propertynames(mdc)
+    mdc isa AbstractArray || mdc === nothing ? [:A] : propertynames(mdc)
 end
 metasymbols(data::MatrixData) = [:A]
 
@@ -173,4 +174,3 @@ function metastring_reverse(data::RemoteMatrixData, metaabbr::AbstractString)
     metaabbr
 end
 metastring_reverse(::MatrixData, metaabbr::AbstractString) = metaabbr
-

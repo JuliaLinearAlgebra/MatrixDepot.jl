@@ -1,6 +1,6 @@
 n = 6 # rand(2:10)
 
-kappa = 5 # rand(2:6)
+kappa = 5.0 # rand(2.0:6.0)
 mode =  2 # rand(1:5)
 
 
@@ -9,7 +9,7 @@ B = matrixdepot("randsvd", n, kappa)
 
 if mode == 5
     @test cond(A) <= kappa
-else 
+else
     @test cond(A) ≈ kappa
 end
 

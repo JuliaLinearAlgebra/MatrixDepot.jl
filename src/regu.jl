@@ -27,15 +27,17 @@ A matrix `A` is called oscillating if `A` is totally
     regularization methods. SIAM J. SCI. COMPUT Vol 16,
     No2, pp 506-512 (1995).
 """
-function oscillate(Σ::Vector{T}) where T
+function oscillate(Σ::Vector{T}; rng=Random.default_rng()) where T
+
+    rng::AbstractRNG
     n = length(Σ)
-    dv = rand(T, 1, n)[:] .+ eps(T)
-    ev = rand(T, 1, n-1)[:] .+ eps(T)
+    dv = rand(rng, T, 1, n)[:] .+ eps(T)
+    ev = rand(rng, T, 1, n-1)[:] .+ eps(T)
     B = Bidiagonal(dv, ev, :U)
     U, S, V = svd(B)
     return U*Diagonal(Σ)*U'
 end
-function oscillate(::Type{T}, n::Integer, mode::Integer) where T
+function oscillate(::Type{T}, n::Integer, mode::Integer; kw...) where T
     κ = sqrt(1/eps(T))
     if mode == 1
         factor = κ^(-1/(n-1))
@@ -45,11 +47,11 @@ function oscillate(::Type{T}, n::Integer, mode::Integer) where T
     else
         throw(ArgumentError("invalid mode value."))
     end
-    return oscillate(Σ)
+    return oscillate(Σ; kw...)
 end
-oscillate(::Type{T}, n::Integer) where T = oscillate(T, n, 2)
-oscillate(args...) = oscillate(Float64, args...)
-oscillate(::Type, args...) = throw(MethodError(oscillate, Tuple(args)))
+oscillate(::Type{T}, n::Integer; kw...) where T = oscillate(T, n, 2; kw...)
+oscillate(args...; kw...) = oscillate(Float64, args...; kw...)
+oscillate(::Type, args...; kw...) = throw(MethodError(oscillate, Tuple(args)))
 
 struct RegProb{T}
     A::AbstractMatrix{T}  # matrix of interest

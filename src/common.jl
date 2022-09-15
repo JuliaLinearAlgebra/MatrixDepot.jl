@@ -327,7 +327,7 @@ end
 function list!(db::MatrixDatabase, res::Vector{String}, p::Not)
     isempty(res) && return res
     cres = list!(db, copy(res), p.pattern)
-    isempty(cres) && return res 
+    isempty(cres) && return res
     resall!(db, res)
     setdiff!(res, cres)
 end
@@ -348,7 +348,7 @@ end
 
 list!(db::MatrixDatabase, res::Vector{String}, ::Tuple{}) = res
 
-# logical AND 
+# logical AND
 function list!(db::MatrixDatabase, res::Vector{String}, r::Tuple)
     isempty(res) && return res
     check_symbols(r)
@@ -419,7 +419,7 @@ mdatav(db::MatrixDatabase, p::Pattern) = verify_loaded(db, mdata(db, p))
 
 Load data from remote repository for all problems matching pattern.
 
-Return the number of successfully loaded matrices. 
+Return the number of successfully loaded matrices.
 """
 load(p::Pattern) = load(MATRIX_DB, p)
 load(db::MatrixDatabase, p::Pattern) = _load(db, loadmatrix, p)
@@ -460,14 +460,14 @@ Make sure that data files are loaded.
 Keeps a cache of already delivered matrices and metadata.
 If the pattern has not a unique resolution, an error is thrown.
 """
-mdopen(p::Pattern, args...) = mdopen(MATRIX_DB, p, args...)
-function mdopen(db::MatrixDatabase, p::Pattern, args...)
-    _mdopen(mdatav(db, p), args...)
+mdopen(p::Pattern, args...; kwargs...) = mdopen(MATRIX_DB, p, args...; kwargs...)
+function mdopen(db::MatrixDatabase, p::Pattern, args...; kwargs...)
+    _mdopen(mdatav(db, p), args...; kwargs...)
 end
 
-mdopen(f::Function, p::Pattern, args...) = mdopen(f, MATRIX_DB, p, args...)
-function mdopen(f::Function, db::MatrixDatabase, p::Pattern, args...)
-    data = _mdopen(mdatav(db, p), args...)
+mdopen(f::Function, p::Pattern, args...; kwargs...) = mdopen(f, MATRIX_DB, p, args...; kwargs...)
+function mdopen(f::Function, db::MatrixDatabase, p::Pattern, args...; kwargs...)
+    data = _mdopen(mdatav(db, p), args...; kwargs...)
     f(data)
 end
 
@@ -495,8 +495,8 @@ metadata(data::RemoteMatrixData) = copy(data.metadata)
 metadata(data::MatrixData) = String[]
 
 _mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
-function _mdopen(data::GeneratedMatrixData, args...)
-    md = MatrixDescriptor(data, args...)
+function _mdopen(data::GeneratedMatrixData, args...; kwargs...)
+    md = MatrixDescriptor(data, args...; kwargs...)
     md.A # trigger generation of data and fill cache
     md
 end

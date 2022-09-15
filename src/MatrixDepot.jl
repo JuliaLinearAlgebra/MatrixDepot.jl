@@ -36,10 +36,10 @@ Access is like
     using MatrixDepot
 
     A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
-    
+
     A = matrixdepot("HB/1138_bus")     # named matrix of the SuiteSparse Collection
     A = matrixdepot(sp(1))             # same matrix using numerical id
-    A = matrixdepot("Harwell*/*/1138_bus") # matrix from the Matrix Market Collection 
+    A = matrixdepot("Harwell*/*/1138_bus") # matrix from the Matrix Market Collection
 
     md = mdopen("*/bfly")   # named matrix with some extra data
     A = md.A
@@ -94,6 +94,7 @@ import Base: &, |, *, ~
 
 include("types.jl")         # common data type definitions
 include("higham.jl")        # test matrices
+include("random.jl")        # test matrices
 include("regu.jl")          # regularization test problem
 include("graph.jl")         # adjacency matrices for graphs
 include("data.jl")          # global variables and matrix data

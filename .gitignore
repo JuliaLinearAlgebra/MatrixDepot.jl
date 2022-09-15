@@ -19,6 +19,9 @@ _build
 _static
 _templates
 
+# ignore docs/build
+docs/build
+
 # ignore myMatrixDepot
 
 myMatrixDepot/

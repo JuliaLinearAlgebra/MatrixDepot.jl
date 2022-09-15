@@ -187,14 +187,15 @@ metadata.
 struct MatrixDescriptor{T<:MatrixData}
     data::T
     args::Tuple
+    kwargs::AbstractDict
     cache::Union{Ref,Dict}
 end
 function MatrixDescriptor(data::T) where T<:RemoteMatrixData
-    MatrixDescriptor{T}(data, (), Dict())
+    MatrixDescriptor{T}(data, (), Dict(), Dict())
 end
 
-function MatrixDescriptor(data::T, args...) where T<:GeneratedMatrixData
-    MatrixDescriptor{T}(data, deepcopy(args), Ref{Any}(nothing))
+function MatrixDescriptor(data::T, args...; kwargs...) where T<:GeneratedMatrixData
+    MatrixDescriptor{T}(data, deepcopy(args), kwargs, Ref{Any}(nothing))
 end
 
 struct Auxiliar{T<:MatrixDescriptor}
