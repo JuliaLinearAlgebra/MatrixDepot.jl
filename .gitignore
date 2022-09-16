@@ -13,6 +13,7 @@ myMatrixDepot*
 
 *.mem
 *.cov
+lcov.info
 
 # ignore generated files from Sphinx
 _build

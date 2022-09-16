@@ -103,16 +103,20 @@ Similar to `sprandn`
 https://de.mathworks.com/help/matlab/ref/sprand.html
 """
 function sprandsvd(::Type{T}, m::Integer, n::Integer, p::AbstractFloat,
-    κ::AbstractFloat, mode::Integer=3; rng=Random.default_rng()) where {T}
+    κ::AbstractFloat=sqrt(1 / eps(T)), mode::Integer=3; rng=Random.default_rng()) where {T}
 
     sigma = make_sigma(rng, min(m, n), (real(T))(κ), mode)
     sprandsvd(T, m, n, p, sigma; rng)
 end
 
-function sprandsvd(::Type{T}, n::Integer, p::AbstractFloat,κ::AbstractFloat, mode::Integer=3; kw...) where {T}
+function sprandsvd(::Type{T}, n::Integer, p::AbstractFloat,
+    κ::AbstractFloat, mode::Integer=3; kw...) where {T}
+
     sprandsvd(T, n, n, p, κ, mode; kw...)
 end
-sprandsvd(::Type{T}, n::Integer, p::AbstractFloat; kw...) where {T} = sprandsvd(T, n, p, sqrt(1 / eps(T)); kw...)
+function sprandsvd(::Type{T}, n::Integer, p::AbstractFloat; kw...) where {T}
+    sprandsvd(T, n, n, p; kw...)
+end
 sprandsvd(args...; kw...) = sprandsvd(Float64, args...; kw...)
 sprandsvd(::Type, args...; kw...) = throw(MethodError(sprandsvd, Tuple(args)))
 
@@ -120,7 +124,8 @@ function sprandsvd(::Type{T}, m::Integer, n::Integer, p::AbstractFloat,
     sigma::AbstractVector; rng=Random.default_rng()) where {T}
 
     rng::AbstractRNG
-    m >= 0 && n >= 0 || throw(ArgumentError("m and n must be positive"))
+    0 <= p <= 1 || throw(ArgumentError("$p not in [0,1]"))
+    m >= 0 && n >= 0 || throw(ArgumentError("invalid Array dimensions"))
     v = sigma
     mn = min(m, n, length(v))
     R = spzeros(T, m, n)
@@ -135,7 +140,7 @@ function sprandsvd(::Type{T}, m::Integer, n::Integer, p::AbstractFloat,
         push!(rows, pm[i])
         push!(cols, pn[i])
     end
-    m <= 1 && n <= 1 && return R
+    m <= 1 && n <= 1 && return SparseMatrixCSC(S)
     nnzs = nnz(S)
     nnzm = max(Int(floor(p * m * n)), nnzs)
     cl = 1
@@ -241,12 +246,15 @@ function sprandsym(::Type{T}, n::Integer, p::AbstractFloat,
     sigma = make_sigma(rng, n, (real(T))(κ), mode)
     sprandsym(T, n, p, sigma; rng)
 end
+sprandsym(args...; kw...) = sprandsym(Float64, args...; kw...)
+sprandsym(::Type, args...; kw...) = throw(MethodError(sprandsym, Tuple(args)))
 
 function sprandsym(::Type{T}, n::Integer, p::AbstractFloat,
     sigma::AbstractVector{<:Real}; rng=Random.default_rng()) where {T}
 
     rng::AbstractRNG
-    n >= 0 || throw(ArgumentError("n must be positive"))
+    0 <= p <= 1 || throw(ArgumentError("$p not in [0,1]"))
+    n >= 0 || throw(ArgumentError("invalid Array dimensions"))
     v = sigma
     mn = min(n, length(v))
     R = spzeros(T, n, n)
@@ -258,7 +266,6 @@ function sprandsym(::Type{T}, n::Integer, p::AbstractFloat,
         S[pn[i], pn[i]] = v[i]
         push!(rows, pn[i])
     end
-    n <= 1 && return R
     nnzs = nnz(S)
     nnzm = max(Int(floor(p * n * n)), nnzs)
     @inbounds while nnzs < nnzm

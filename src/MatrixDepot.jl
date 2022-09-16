@@ -94,7 +94,7 @@ import Base: &, |, *, ~
 
 include("types.jl")         # common data type definitions
 include("higham.jl")        # test matrices
-include("random.jl")        # test matrices
+include("sprandsvd.jl")     # sparse random test matrices
 include("regu.jl")          # regularization test problem
 include("graph.jl")         # adjacency matrices for graphs
 include("data.jl")          # global variables and matrix data

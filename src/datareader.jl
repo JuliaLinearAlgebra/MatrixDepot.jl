@@ -2,7 +2,7 @@
     metareader(md::MatrixDescriptor, key::AbstractString)
 
 Return specific data files (matrix, rhs, solution, or other metadata).
-The `key` must be contained in data.metadata or an `DataError` is thrown.
+The `key` must be contained in data.metadata or a `DataError` is thrown.
 Hint: `md.A, md.b, md.x` also deliver the matrix, rhs, and solution.
 So this is needed specifically for other metadata.
 """
@@ -17,7 +17,7 @@ function metareader(mdesc::MatrixDescriptor{<:GeneratedMatrixData}, name::Abstra
     fillcache!(mdesc)
     dao = mdesc.cache[]
     if dao isa AbstractArray
-        name != "A" && daterr("array must be retrieved using 'A', no metatdata '$name'")
+        name != "A" && daterr("array must be retrieved using 'A', no metadata '$name'")
         dao
     else
         try
