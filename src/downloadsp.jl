@@ -3,8 +3,8 @@
 #
 
 using MAT
-using DataFrames
 using Base.Filesystem
+import DataFrames
 
 #const SS_SITE = "https://sparse.tamu.edu"
 #const SS_FILES = "/files/ssstats.csv"
@@ -101,7 +101,7 @@ Read file "ssstats.csv" and add field "kinds" to `d`.
 As a result, all available metadata for all problems in `"SuiteSparseMatrixCollection"`
 as in the data frame `d`.
 """
-function read_ss_index(d::DataFrame=DataFrame())
+function read_ss_index(d::DataFrames.DataFrame=DataFrames.DataFrame())
     file = load_ss_index()
     m = matopen(file) do io
         read(io, "ss_index")
@@ -114,7 +114,7 @@ function read_ss_index(d::DataFrame=DataFrame())
     d[!,:nnz] += d[!,:nzero]
     jname(a::String, b::String) = a * '/' * b
     d[!,:name] = jname.(d[!,:Group],d[!,:Name])
-    select!(d, DataFrames.Not(:Group))
+    DataFrames.select!(d, DataFrames.Not(:Group))
     d
 end
 
