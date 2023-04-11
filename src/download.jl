@@ -3,6 +3,9 @@
 #####################################################
 
 using Base.Filesystem
+using CURL_jll
+using Tar_jll
+using Gzip_jll
 
 # collect the keys from local database (MATRIXDICT or USERMATRIXDICT)
 # provide a numerical id counting from 1 for either database.
@@ -158,11 +161,11 @@ function loadmatrix(data::RemoteMatrixData)
         cd(dir)
         rfile = relpath(string(tarfile))
         if endswith(tarfile, ".tar")
-            run(`tar -xf $rfile`)
+            run(`$(tar()) -xf $rfile`)
             rm(tarfile; force=true)
         end
     catch
-        
+
     finally
         cd(wdir)
         rm(dirfn, force=true)
@@ -230,17 +233,17 @@ function downloadpipeline(url::AbstractString)
     cmd = []
     push!(cmd, downloadcommand(url))
     if urls[end] == "gz"
-        push!(cmd, `gzip -dc`)
+        push!(cmd, `$(gzip()) -dc`)
         resize!(urls, length(urls)-1)
     end
     if urls[end] == "tar"
-        push!(cmd, `tar -xOf -`)
+        push!(cmd, `$(tar()) -xOf -`)
     end
     pipeline(cmd...)
 end
 
 function downloadcommand(url::AbstractString, filename::AbstractString="-")
-    `sh -c 'curl "'$url'" -Lso "'$filename'"'`
+    `$(curl()) -k $url -Lso $filename`
 end
 
 function data_warn(data::RemoteMatrixData, dn, i1, i2)
@@ -341,4 +344,3 @@ function downloadfile(url::AbstractString, out::AbstractString)
     run(downloadcommand(url, out))
     nothing
 end
-
