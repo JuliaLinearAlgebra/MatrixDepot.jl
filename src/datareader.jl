@@ -99,7 +99,7 @@ Example:
 """
 metasymbols(md::MatrixDescriptor{<:RemoteMatrixData}) = metasymbols(md.data)
 function metasymbols(data::RemoteMatrixData)
-    Symbol.(metastring.(data.name, metadata(data)))
+    Symbol.(metastring.(data.name, getmeta(data)))
 end
 function metasymbols(md::MatrixDescriptor{<:GeneratedMatrixData})
     mdc = md.cache[]
@@ -118,7 +118,7 @@ end
 #internal helper to select special metadata (matrix, rhs, or solution)
 function metaname(data::RemoteMatrixData, exli::AbstractString...)
     base = rsplit(data.name, '/', limit=2)[end]
-    meda = metadata(data)
+    meda = getmeta(data)
     for ext in exli
         f = metastring_reverse(data, ext)
         if f in meda
@@ -165,7 +165,7 @@ function metastring_reverse(data::RemoteMatrixData, metaabbr::AbstractString)
     MTX = ".mtx"
     base = split(data.name, '/')[end]
     metaabbr == "A" && return string(base, MTX)
-    mdata = metadata(data)
+    mdata = getmeta(data)
     meta = string(base, '_', metaabbr)
     meta in mdata && return meta
     meta = string(meta, MTX)
@@ -173,4 +173,3 @@ function metastring_reverse(data::RemoteMatrixData, metaabbr::AbstractString)
     metaabbr
 end
 metastring_reverse(::MatrixData, metaabbr::AbstractString) = metaabbr
-

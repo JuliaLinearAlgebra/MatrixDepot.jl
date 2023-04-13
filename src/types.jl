@@ -211,7 +211,7 @@ function Base.show(io::IO, data::RemoteMatrixData)
     nnz = hd.nnz == hd.dnz ? "$(hd.nnz)" : "$(hd.nnz)/$(hd.dnz)"
     print(io, " $(hd.m)x$(hd.n)($nnz) ")
     print(io, data.date != 0 ? data.date : "")
-    meta = join(metastring.(data.name, metadata(data)), ", ")
+    meta = join(metastring.(data.name, getmeta(data)), ", ")
     n = length(meta)
     if n > 40
         meta = string(meta[1:17], " ... ", meta[end-17:end])
