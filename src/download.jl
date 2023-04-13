@@ -141,8 +141,8 @@ function loadmatrix(data::RemoteMatrixData)
     catch ex
         @warn("download of $url failed: $ex")
     finally
-        rm(dirt, force=true, recursive=true)
         cd(wdir)
+        rm(dirt, force=true, recursive=true)
     end
     addmetadata!(data)
     1
