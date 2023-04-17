@@ -96,9 +96,8 @@ fn = joinpath(dirname(MatrixDepot.matrixfile(mdesc.data)), "bfly_Gname_01.txt")
 @test_throws DataError MatrixDepot.mmreadheader(fn)
 
 # read from a pipeline
-@test open(`printf '%%%%matrixmarket matrix array real general\n1 1\n2.5\n'`) do io
-    MatrixDepot.mmread(io) == reshape([2.5], 1, 1)
-end
+io = IOBuffer("%%matrixmarket matrix array real general\n1 1\n2.5\n")
+@test MatrixDepot.mmread(io) == reshape([2.5], 1, 1)
 
 # read from temporary file
 mktemp() do path, io
@@ -172,10 +171,9 @@ io = IOBuffer("""
 """)
 @test MatrixDepot.mmread(io) == [0 -2.1; 2.1 0]
 
-# the line containing blanks seemed to suck when using IOBuffer
-@test open(`printf '%%%%matrixmarket matrix array complex hermitian\n    \n2 2\n2.1 0\n.314e+1 1\n+3.0 -0.0\n'`) do io
-    MatrixDepot.mmread(io) == [2.1 3.14-im; 3.14+im 3]
-end
+# the line containing blanks seemed once to suck when using IOBuffer
+io = IOBuffer("%%matrixmarket matrix array complex hermitian\n    \n2 2\n2.1 0\n.314e+1 1\n+3.0 -0.0\n")
+@test MatrixDepot.mmread(io) == [2.1 3.14-im; 3.14+im 3]
 
 io = IOBuffer("""
 %%Matrixmarket matrix coordinate pattern general

@@ -36,10 +36,10 @@ Access is like
     using MatrixDepot
 
     A = matrixdepot("hilb", 10) # locally generated hilbert matrix dimensions (10,10)
-    
+
     A = matrixdepot("HB/1138_bus")     # named matrix of the SuiteSparse Collection
     A = matrixdepot(sp(1))             # same matrix using numerical id
-    A = matrixdepot("Harwell*/*/1138_bus") # matrix from the Matrix Market Collection 
+    A = matrixdepot("Harwell*/*/1138_bus") # matrix from the Matrix Market Collection
 
     md = mdopen("*/bfly")   # named matrix with some extra data
     A = md.A
@@ -69,7 +69,6 @@ Access is like
 """
 module MatrixDepot
 using LinearAlgebra, SparseArrays, Serialization
-using CodecZlib
 using Scratch
 import Base: show
 

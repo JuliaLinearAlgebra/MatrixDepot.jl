@@ -3,6 +3,7 @@
 #####################################################
 
 using Base.Filesystem
+using ChannelBuffers
 
 # collect the keys from local database (MATRIXDICT or USERMATRIXDICT)
 # provide a numerical id counting from 1 for either database.
@@ -106,28 +107,6 @@ function update(db::MatrixDatabase=MATRIX_DB)
     downloadindices(db, ignoredb=true)
 end
 
-function gunzip(fname)
-    endswith(fname, ".gz") || error("gunzip: $fname: unknown suffix")
-
-    destname = rsplit(fname, ".gz", limit=2)[1]
-    BUFFSIZE = 1000000
-    try
-        open(destname, "w") do f
-            open(GzipDecompressorStream, fname) do g
-                buffer = read(g, BUFFSIZE)
-                while length(buffer) > 0
-                    write(f, buffer)
-                    buffer = read(g, BUFFSIZE)
-                end
-            end
-        end
-    catch
-        @warn "decompression error - file $destname set to empty."
-        open(destname, "w") do f; end
-    end
-    destname
-end
-
 """
     loadmatrix(data::RemoteMatrixData)
 
@@ -144,28 +123,26 @@ function loadmatrix(data::RemoteMatrixData)
         addmetadata!(data)
         return 0
     end
-    dirfn = localfile(data)
     dir = dirname(localdir(data))
+    dirt = string(dir, ".tmp")
+    rm(dirt, force=true, recursive=true)
+    mkpath(dirt)
     url = redirect(dataurl(data))
-    tarfile = ""
-
     isdir(dir) || mkpath(dir)
     wdir = pwd()
     try
         @info("downloading: $url")
-        downloadfile(url, dirfn)
-        tarfile = gunzip(dirfn)
-        cd(dir)
-        rfile = relpath(string(tarfile))
-        if endswith(tarfile, ".tar")
-            run(`tar -xf $rfile`)
-            rm(tarfile; force=true)
+        pipe = downloadpipeline(url, dirt)
+        wait(run(pipe))
+        cd(dirt)
+        for file in readdir(dirt)
+            mv(file, joinpath(dir, file), force=true)
         end
-    catch
-        
+    catch ex
+        @warn("download of $url failed: $ex")
     finally
         cd(wdir)
-        rm(dirfn, force=true)
+        rm(dirt, force=true, recursive=true)
     end
     addmetadata!(data)
     1
@@ -187,20 +164,19 @@ function loadinfo(data::RemoteMatrixData)
         return 0
     end
     url = redirect(dataurl(data))
-    pipe = downloadpipeline(url)
+    io = ChannelPipe()
+    pipe = downloadpipeline(url, io)
+    tl = run(pipe)
     out = IOBuffer()
     s = try
         @info("downloading head of $url")
-        open(pipe, "r") do io
-            skip = 0
-            while ( s = readline(io) ) != ""
-                skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
-                skip <= 1 && println(out, s)
-                if skip == 1 && length(split(s)) == 3
-                    break
-                end
-            end;
-            close(io)
+        skip = 0
+        while ( s = readskip(io) ) != ""
+            skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
+            skip <= 1 && println(out, s)
+            if skip == 1 && length(split(s)) == 3
+                break
+            end
         end
         String(take!(out))
     catch ex
@@ -225,22 +201,29 @@ loadinfo(data::MatrixData) = 0
 
 Set up a command pipeline (external processes to download and expand data)
 """
-function downloadpipeline(url::AbstractString)
+function downloadpipeline(url::AbstractString, dir=nothing)
     urls = rsplit(url, '.', limit=3)
-    cmd = []
-    push!(cmd, downloadcommand(url))
+    cmd = Any[ChannelBuffers.curl(url)]
     if urls[end] == "gz"
-        push!(cmd, `gzip -dc`)
+        push!(cmd, gunzip())
         resize!(urls, length(urls)-1)
+        url = url[1:end-3]
     end
-    if urls[end] == "tar"
-        push!(cmd, `tar -xOf -`)
+    if dir isa AbstractString
+        if urls[end] == "tar"
+            push!(cmd, tarx(dir))
+        else
+            file = rsplit(url, '/', limit=2)
+            push!(cmd, joinpath(dir, file[end]))
+        end
+    elseif dir isa ChannelPipe
+        push!(cmd, dir)
     end
     pipeline(cmd...)
 end
 
 function downloadcommand(url::AbstractString, filename::AbstractString="-")
-    `sh -c 'curl "'$url'" -Lso "'$filename'"'`
+    curl(url) → (filename == "-" ? stdout : filename)
 end
 
 function data_warn(data::RemoteMatrixData, dn, i1, i2)
@@ -338,7 +321,6 @@ issvdok(::MatrixData) = false
 Copy file from remote or local url. Works around julia Downloads #69 and #36
 """
 function downloadfile(url::AbstractString, out::AbstractString)
-    run(downloadcommand(url, out))
+    wait(run(downloadcommand(url, out)))
     nothing
 end
-

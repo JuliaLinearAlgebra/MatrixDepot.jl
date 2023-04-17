@@ -327,7 +327,7 @@ end
 function list!(db::MatrixDatabase, res::Vector{String}, p::Not)
     isempty(res) && return res
     cres = list!(db, copy(res), p.pattern)
-    isempty(cres) && return res 
+    isempty(cres) && return res
     resall!(db, res)
     setdiff!(res, cres)
 end
@@ -348,7 +348,7 @@ end
 
 list!(db::MatrixDatabase, res::Vector{String}, ::Tuple{}) = res
 
-# logical AND 
+# logical AND
 function list!(db::MatrixDatabase, res::Vector{String}, r::Tuple)
     isempty(res) && return res
     check_symbols(r)
@@ -419,7 +419,7 @@ mdatav(db::MatrixDatabase, p::Pattern) = verify_loaded(db, mdata(db, p))
 
 Load data from remote repository for all problems matching pattern.
 
-Return the number of successfully loaded matrices. 
+Return the number of successfully loaded matrices.
 """
 load(p::Pattern) = load(MATRIX_DB, p)
 load(db::MatrixDatabase, p::Pattern) = _load(db, loadmatrix, p)
@@ -486,13 +486,13 @@ function mdata(db::MatrixDatabase, p::Pattern)
 end
 
 """
-    metadata([db, ], Union{MatrixDescriptor,MatrixData})
+    getmeta([db, ], Union{MatrixDescriptor,MatrixData})
 
 Return copy of list of metadata names.
 """
-metadata(mdesc::MatrixDescriptor) = metadata(mdesc.data)
-metadata(data::RemoteMatrixData) = copy(data.metadata)
-metadata(data::MatrixData) = String[]
+getmeta(mdesc::MatrixDescriptor) = getmeta(mdesc.data)
+getmeta(data::RemoteMatrixData) = copy(data.metadata)
+getmeta(data::MatrixData) = String[]
 
 _mdopen(data::RemoteMatrixData)= MatrixDescriptor(data)
 function _mdopen(data::GeneratedMatrixData, args...)

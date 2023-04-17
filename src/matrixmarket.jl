@@ -32,9 +32,9 @@ const HERMITIAN = "hermitian"
 const SKEW_SYMMETRIC = "skew-symmetric"
 
 function mmread(file::IO)
-    line = lowercase(readline(file))
+    line = lowercase(readskip(file))
     tokens = split(line)
-    if tokens[1] != MATRIXM
+    if length(tokens) < 2 || tokens[1] != MATRIXM
         parserr(string("Matrixmarket: invalid header:", line))
     end
     line = readline(file)
@@ -241,7 +241,7 @@ function mmreadcomment(filename::AbstractString)
     open(filename,"r") do mmfile
         skip = 0
         while !eof(mmfile)
-            s = readline(mmfile)
+            s = readskip(mmfile)
             skip = isempty(strip(s)) || s[1] == '%' ? 0 : skip + 1
             skip <= 1 && println(io, s)
             if skip == 1
@@ -255,6 +255,21 @@ function mmreadcomment(filename::AbstractString)
 end
 
 """
+    readskip(io)
+
+Read a line. If line starts with a ustar-header block remove this block.
+This allows to read through a tar archive without extracting the files.
+"""
+function readskip(io::IO)
+    max = 512
+    line = readline(io)
+    if length(line) >= max && line[258:263] == "ustar\0"
+        line = line[max+1:end]
+    end
+    line
+end
+
+"""
     mmreadheader(filename)
 Read header information from mtx file.
 """
@@ -264,7 +279,7 @@ function mmreadheader(file::AbstractString)
           if stat(io).size == 0
             return nothing
           end
-          line = lowercase(readline(io))
+          line = lowercase(readskip(io))
           while true
             token = split(line)
             if length(token) >= 4 &&
@@ -275,8 +290,8 @@ function mmreadheader(file::AbstractString)
                 hdr = Dict{Symbol,Any}()
                 field = :none
                 while startswith(line, '%') || isempty(strip(line))
-                    field = push_hdr!(hdr, line, field) 
-                    line = readline(io)
+                    field = push_hdr!(hdr, line, field)
+                    line = readskip(io)
                 end
                 res = try parseint(line) catch; [] end
                 if length(res) != (token[3] == COORD ? 3 : 2)
@@ -299,7 +314,7 @@ function mmreadheader(file::AbstractString)
                     return hdr
                 else
                     while !eof(io) && !startswith(line, '%')
-                        line = readline(io)
+                        line = readskip(io)
                     end
                     if eof(io)
                         return hdr
@@ -456,4 +471,3 @@ function parsenext(T::Type{<:Complex}, c, p)
     p, s = parsenext(R, c, p)
     p, r + s*im
 end
-
