@@ -255,9 +255,10 @@ function mmreadcomment(filename::AbstractString)
 end
 
 """
-    readskip(io, max=512)
+    readskip(io)
 
-Read a line. If line length > max, remove first max bytes.
+Read a line. If line starts with a ustar-header block remove this block.
+This allows to read through a tar archive without extracting the files.
 """
 function readskip(io::IO)
     max = 512
@@ -289,7 +290,7 @@ function mmreadheader(file::AbstractString)
                 hdr = Dict{Symbol,Any}()
                 field = :none
                 while startswith(line, '%') || isempty(strip(line))
-                    field = push_hdr!(hdr, line, field) 
+                    field = push_hdr!(hdr, line, field)
                     line = readskip(io)
                 end
                 res = try parseint(line) catch; [] end
@@ -470,4 +471,3 @@ function parsenext(T::Type{<:Complex}, c, p)
     p, s = parsenext(R, c, p)
     p, r + s*im
 end
-

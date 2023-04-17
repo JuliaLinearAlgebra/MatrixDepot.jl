@@ -3,7 +3,7 @@
 #
 
 using MAT
-using DataFrames
+using DataFrames: DataFrames, DataFrame, select!
 using Base.Filesystem
 
 #const SS_SITE = "https://sparse.tamu.edu"
