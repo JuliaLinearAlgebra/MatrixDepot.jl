@@ -1,6 +1,6 @@
 # adjacency matrices
 #
-# The code is adapted from CONTEST(Controlable TEST matrices)
+# The code is adapted from CONTEST(Controllable TEST matrices)
 # by Alan Taylor and Professor Des Higham
 # http://www.mathstat.strath.ac.uk/outreach/contest/
 
@@ -65,7 +65,7 @@ erdrey(n::Integer, arg...) = erdrey(Float64, n, arg...)
 Gilbert Random Graph
 ==================
 Generate an adjecency matrix of a Gilbert random graph: an undirected graph
-with pairs of nodes are connected with indepdent probability `p`.
+with pairs of nodes are connected with independent probability `p`.
 
 *Input options:*
 

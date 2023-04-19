@@ -111,7 +111,7 @@ and also by the special function ``metasymbols``:
     julia> metasymbols(md)
     (:A, :b, :coord)
 
-You can obtain the metatdata ``A``, ``b``, and ``coord`` by::
+You can obtain the metadata ``A``, ``b``, and ``coord`` by::
 
     julia> md.coord
     5563×3 Array{Float64,2}:
@@ -123,14 +123,14 @@ You can obtain the metatdata ``A``, ``b``, and ``coord`` by::
 
 
 When you access a single matrix with ``matrixdepot(pattern)`` or ``mdopen(pattern)``
-the full matrix data are dowloaded implicitly in the background, if not yet available
+the full matrix data are downloaded implicitly in the background, if not yet available
 on the local disk cache. 
 
 When you access matrix information with ``mdinfo(pattern)`` for one or more matrices,
 the header data of the matrix are downloaded implicitly, if not yet available on the
 local disk cache.
 
-It is also possible to dowload a bulk of matrix data by ``MatrixDepot.loadinfo(pattern)``
+It is also possible to download a bulk of matrix data by ``MatrixDepot.loadinfo(pattern)``
 and ``MatrixDepot.load(pattern)`` to populate the disk cache in advance of usage.
 If you want to access the Singular Value Decomposition (svd) data available for quite a
 few of the Suite Sparse collection, you explicitly have to use
@@ -259,7 +259,7 @@ They are used as arguments of the functions::
 1. ``AbstractString`` with wildcard characters ``*``, ``**``, and ``?``.
 
   Here ``?`` stands for one arbitrary character in the matrix name excluding ``/``, and ``*``
-  for a sequence of arbitray characters excluding ``/``. ``**`` stands for an arbitrary
+  for a sequence of arbitrary characters excluding ``/``. ``**`` stands for an arbitrary
   sequence of characters including ``/``.
 
   Example: ``"*/???/w*"``, ``"**/1138*"``
@@ -307,7 +307,7 @@ They are used as arguments of the functions::
 
   Example: ``[mm(1), sp(1)]`` or equivalently: ``mm(1) | sp(1)`` (note: single ``|``)
 
-7. A tuple or conjuction of any number of all forms, meaning ``AND``.
+7. A tuple or conjunction of any number of all forms, meaning ``AND``.
 
   Example: ``(mm(:), @pred(m == 1000))`` or shorter: ``m(::) & @pred(m == 1000)``
 

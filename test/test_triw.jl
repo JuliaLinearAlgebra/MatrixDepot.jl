@@ -7,6 +7,6 @@ alpha = 3.0
 
 A = matrixdepot("triw", Float32, n)
 @test istriu(A)
-# B = A'*A has diagnoal B(i,i) = i  
+# B = A'*A has diagonal B(i,i) = i  
 @test diag(A'*A) ≈ [1. : n;]
 println("'triw' passed test...")

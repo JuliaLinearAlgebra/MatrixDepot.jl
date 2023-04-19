@@ -145,7 +145,7 @@ matrices is symbolized by ``:symmetric``.
 We can define our own groups using the function ``setgroup!`` and
 remove a defined group with ``deletegroup!``.
 
-User definied groups may use arbitrary patterns to declare subsets of all available matrices,
+User defined groups may use arbitrary patterns to declare subsets of all available matrices,
 and are not restricted to simple lists of alternative names.
 
 See also::
@@ -173,7 +173,7 @@ See also::
       co = md.coord
       tx = md("Gname_10.txt")
       
-      md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
+      md = mdopen("gravity", 10, false) # locally generated example with rhs and solution
       A = md.A
       b = md.b
       x = md.x

@@ -305,13 +305,13 @@ RBtype
 
     The third letter is always 'a' (for 'assembled'). The RB format allows for unassembled finite-element matrices, but they are converted to assembled format for this collection.
 cholcand
-    1 if the matrix is symmetric (Hermitian if complex) and if all the diagonal entries are postive and real. Zero otherwise. If 1, the matrix is a candidate for a Cholesky factorization, which MATLAB will first try when computing x=A\b.
+    1 if the matrix is symmetric (Hermitian if complex) and if all the diagonal entries are positive and real. Zero otherwise. If 1, the matrix is a candidate for a Cholesky factorization, which MATLAB will first try when computing x=A\b.
 ncc
     The number of of strongly-connected components in the graph of A (if A is square) or in the bipartite graph if A is rectangular. The diagonal is ignored.
 isND
-    1 if the problem comes from a 2D/3D discretization, zero otherwise. This determination is not a property of the matrix, but a qualitative assesment of the kind of problem the matrix represents.
+    1 if the problem comes from a 2D/3D discretization, zero otherwise. This determination is not a property of the matrix, but a qualitative assessment of the kind of problem the matrix represents.
 isGraph
-    1 if the problem is best considered as a graph rather than a system of equations, zero otherwise. This determination is not a property of the matrix, but a qualitative assesment of the kind of problem the matrix represents.
+    1 if the problem is best considered as a graph rather than a system of equations, zero otherwise. This determination is not a property of the matrix, but a qualitative assessment of the kind of problem the matrix represents.
 
 UFstats.csv
 

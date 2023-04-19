@@ -11,7 +11,7 @@ A matrix `A` is called oscillating if `A` is totally
 
 *Input options:*
 
-+ [type,] Σ: the singular vaule spectrum of the matrix.
++ [type,] Σ: the singular value spectrum of the matrix.
 
 + [type,] dim, mode: `dim` is the dimension of the matrix.
         `mode = 1`: geometrically distributed singular values.
@@ -145,7 +145,7 @@ A classical test problem for regularization algorithms:
 
 *References:*
 
-**P. C. Hansen**, Regularization tools: A MATLAB pacakge for
+**P. C. Hansen**, Regularization tools: A MATLAB package for
     analysis and solution of discrete ill-posed problems.
     Numerical Algorithms, 6(1994), pp.1-35
 """
@@ -206,7 +206,7 @@ deriv2(::Type, args...) = throw(MethodError(deriv2, Tuple(args)))
 One-Dimensional Image Restoration Model
 =======================================
 This test problem uses a first-kind Fredholm integral equation
-    to model a one-dimentional image restoration situation.
+    to model a one-dimensional image restoration situation.
 
 *Input options:*
 
@@ -408,7 +408,7 @@ Fredholm Integral Equation of the First Kind
 
 *Input options:*
 
-+ [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
++ [type,] dim, [matrixonly]: the dimension of the matrix is `dim`.
     If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
@@ -470,7 +470,7 @@ Phillips's \"Famous\" Problem
 
 *Input options:*
 
-+ [type,] dim, [matrixonly]: the dimenstion of the matrix is `dim`.
++ [type,] dim, [matrixonly]: the dimension of the matrix is `dim`.
     If `matrixonly = false`, the matrix A and vectors b and x in the linear system Ax = b will be generated
     (`matrixonly = true` by default).
 
@@ -745,7 +745,7 @@ which represents the true distribution of stellar parallaxes, is unknown.
 (1938), p. 30.
 """
 function parallax(::Type{T}, n::Integer, matrixonly::Bool=true) where T
-    # Intialization
+    # Initialization
     a = zero(T)
     b = T(0.1)
     m = 26
@@ -787,7 +787,7 @@ parallax(::Type, args...) = throw(MethodError(parallax, Tuple(args)))
 """
 Test Problem with \"Spike\" Solution
 ====================================
-Artifically generated discrete ill-posed problem.
+Artificially generated discrete ill-posed problem.
 
 *Input options:*
 

@@ -542,7 +542,7 @@ pei(::Type, args...) = throw(MethodError(pei, Tuple(args)))
 """
 Vandermonde Matrix
 ==================
-The inverse and determinat are known explicity.
+The inverse and determinat are known explicitly.
 
 *Input options:*
 
@@ -1018,7 +1018,7 @@ A block tridiagonal matrix from Poisson’s equation.
 
 *Input options:*
 
-+ [type,] dim: the dimension of the matirx is `dim^2`.
++ [type,] dim: the dimension of the matrix is `dim^2`.
 
 *Groups:* ["inverse", "symmetric", "posdef", "eigen", "sparse"]
 

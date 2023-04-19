@@ -38,7 +38,7 @@ or also
 
 ```julia
 mdinfo("gravity")                 # text info about the selected matrix
-md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
+md = mdopen("gravity", 10, false) # locally generated example with rhs and solution
 A = md.A
 b = md.b
 x = md.x
@@ -94,7 +94,7 @@ Every matrix has a numeric identifier, which is unique for its area:
 ### Sets of Matrix Names - Pattern
 
 For some functions it makes sense to have lists of matrix names to operate on, for
-example to select a set matrices with certain properties. These sets are descibed
+example to select a set matrices with certain properties. These sets are described
 by 'Patterns', which are applied to matrix names and also to other matrix properties.
 
 The following pattern types are supported:
@@ -175,14 +175,14 @@ mdinfo(pattern) # individual documentation about matrix(es) matching pattern
 
 ### Generating a matrix
 
-`A = matrixdepot("kahan", 10)` generates a matrix using one of the buit-in generators
+`A = matrixdepot("kahan", 10)` generates a matrix using one of the built-in generators
 
 `md = mdopen("kahan", 10)` returns a handle `md`; matrix can be obtained by
 `A = md.A`
 
 ### Accessing Meta-Data
 
-In general the first form is preferrable, if only the pure matrix is required.
+In general the first form is preferable, if only the pure matrix is required.
 For remote collections no arguments are used.
 
 The second form allows to access all types of 'meta-data', which may be available for some local or remote matrices.
@@ -195,13 +195,13 @@ Examples:
  nodenames = md("nodename.txt")`
 
 The last example shows, how to access textual meta-data, when the name contains
-`Julia` non-word characters. Also if the metadata-name is stored in a varaible,
+`Julia` non-word characters. Also if the metadata-name is stored in a variable,
 the last form has to be used.
 
 `meta = metasymbols(md)[2]; sec_matrix = md(meta)`
 
 The function `metasymbols` returns a list of all symbols denoting metadata
-provided by `md`. Wether expressed as symbols or strings does not matter.
+provided by `md`. Whether expressed as symbols or strings does not matter.
 
 The system function `propertynames(md)` returns all data of `md`. That includes
 size information and metadata.

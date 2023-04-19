@@ -70,7 +70,7 @@ mutable struct MetaInfo
     xmin::ComplexF64
     xmax::ComplexF64
     # the following data are derived from the singular value decomposition of A
-    svdok::Bool      # singular value decomposition was successfull - data available
+    svdok::Bool      # singular value decomposition was successful - data available
     norm::Float64   # maximal SV
     minsv::Float64  # minimal positive SV
     cond::Float64   # condition number in 2-norm (norm/minsv)
@@ -197,7 +197,7 @@ function MatrixDescriptor(data::T, args...) where T<:GeneratedMatrixData
     MatrixDescriptor{T}(data, deepcopy(args), Ref{Any}(nothing))
 end
 
-struct Auxiliar{T<:MatrixDescriptor}
+struct Auxiliary{T<:MatrixDescriptor}
     md::T
 end
 # essential functions of the types
