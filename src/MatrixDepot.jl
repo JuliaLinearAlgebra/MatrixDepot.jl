@@ -46,7 +46,7 @@ Access is like
     co = md.coord
     tx = md("Gname_10.txt")
 
-    md = mdopen("gravity", 10, false) # localy generated example with rhs and solution
+    md = mdopen("gravity", 10, false) # locally generated example with rhs and solution
     A = md.A
     b = md.b
     x = md.x
@@ -102,8 +102,8 @@ include("download.jl")      # download data from the UF and MM sparse matrix col
 include("datareader.jl")    # read matrix data from local storage
 include("matrixmarket.jl")  # read matrix data from local storage
 include("markdown.jl")      # construct MD objects
-include("downloadmm.jl")    # read metatdata from MM database
-include("downloadsp.jl")    # read metatdata from SS database
+include("downloadmm.jl")    # read metadata from MM database
+include("downloadsp.jl")    # read metadata from SS database
 
 function init(;ignoredb::Bool=false)
     GROUP = "group.jl"

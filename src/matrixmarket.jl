@@ -149,7 +149,7 @@ end
 Construct a `SparseMatrixCSC` of dimensions `(m,n)` from the data given in the
 three input vectors of equal lengths.
 
-`mksparse!` destoys the content of `colval`.
+`mksparse!` destroys the content of `colval`.
 
 `A[rowval[i],colval[i]] == nzval[i] for i ∈ 1:length(nzval)`. All other entries are zero.
 """
@@ -203,7 +203,7 @@ end
 
 """
     colval(A)
-reconstruct colum-indices from colptr of `SparseMatrixCSC`.
+reconstruct column-indices from colptr of `SparseMatrixCSC`.
 """
 function colval(A::SparseMatrixCSC{Tv,Ti}) where {Tv,Ti}
     nz = nnz(A)

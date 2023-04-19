@@ -1,7 +1,7 @@
 let mode, n, A, p, k, A
 # test two properties of oscillating matrix
 # For an n x n oscillating matrix A, the following holds:
-# 1. A has n distinct and postive eigenvalues λ_1 > λ_2 > ... > λ_n > 0
+# 1. A has n distinct and positive eigenvalues λ_1 > λ_2 > ... > λ_n > 0
 # 2. The ith eigenvector, corresponding to λ_i in the above ordering has 
 #    exactly i-1 sign changes. 
 
