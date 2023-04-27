@@ -133,7 +133,7 @@ function loadmatrix(data::RemoteMatrixData)
     try
         @info("downloading: $url")
         pipe = downloadpipeline(url, dirt)
-        wait(run(pipe))
+        run(pipe)
         cd(dirt)
         for file in readdir(dirt)
             mv(file, joinpath(dir, file), force=true)
@@ -164,14 +164,12 @@ function loadinfo(data::RemoteMatrixData)
         return 0
     end
     url = redirect(dataurl(data))
-    io = ChannelPipe()
-    pipe = downloadpipeline(url, io)
-    tl = run(pipe)
+    io = open(downloadpipeline(url))
     out = IOBuffer()
     s = try
         @info("downloading head of $url")
         skip = 0
-        while ( s = readskip(io) ) != ""
+        while ( s = readline(io) ) != ""
             skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
             skip <= 1 && println(out, s)
             if skip == 1 && length(split(s)) == 3
@@ -183,7 +181,7 @@ function loadinfo(data::RemoteMatrixData)
         ex isa InterruptException && rethrow()
         String(take!(out))
     finally
-        close(out)
+        close(io)
     end
     if !isempty(s)
         mkpath(dirname(file))
@@ -197,11 +195,13 @@ end
 loadinfo(data::MatrixData) = 0
 
 """
-    downloadpipeline(url)
+    downloadpipeline(url, path=nothing)
 
 Set up a command pipeline (external processes to download and expand data)
+If a path name is given, extract tar file into the empty directory or, if
+not a tar file, write contents to file of that name.
 """
-function downloadpipeline(url::AbstractString, dir=nothing)
+function downloadpipeline(url::AbstractString, dir::Union{Nothing,AbstractString}=nothing)
     urls = rsplit(url, '.', limit=3)
     cmd = Any[ChannelBuffers.curl(url)]
     if urls[end] == "gz"
@@ -216,8 +216,8 @@ function downloadpipeline(url::AbstractString, dir=nothing)
             file = rsplit(url, '/', limit=2)
             push!(cmd, joinpath(dir, file[end]))
         end
-    elseif dir isa ChannelPipe
-        push!(cmd, dir)
+    elseif dir === nothing && urls[end] == "tar"
+        push!(cmd, tarxO())
     end
     pipeline(cmd...)
 end
@@ -321,6 +321,6 @@ issvdok(::MatrixData) = false
 Copy file from remote or local url. Works around julia Downloads #69 and #36
 """
 function downloadfile(url::AbstractString, out::AbstractString)
-    wait(run(downloadcommand(url, out)))
+    run(downloadcommand(url, out))
     nothing
 end
