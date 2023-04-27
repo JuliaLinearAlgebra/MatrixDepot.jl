@@ -164,33 +164,32 @@ function loadinfo(data::RemoteMatrixData)
         return 0
     end
     url = redirect(dataurl(data))
-    open(downloadpipeline(url)) do io
-        out = IOBuffer()
-        s = try
-            @info("downloading head of $url")
-            skip = 0
-            while ( s = readline(io) ) != ""
-                skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
-                skip <= 1 && println(out, s)
-                if skip == 1 && length(split(s)) == 3
-                    break
-                end
+    io = open(downloadpipeline(url))
+    out = IOBuffer()
+    s = try
+        @info("downloading head of $url")
+        skip = 0
+        while ( s = readline(io) ) != ""
+            skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
+            skip <= 1 && println(out, s)
+            if skip == 1 && length(split(s)) == 3
+                break
             end
-            String(take!(out))
-        catch ex
-            ex isa InterruptException && rethrow()
-            String(take!(out))
-        finally
-            close(io)
         end
-        if !isempty(s)
-            mkpath(dirname(file))
-            write(file, s)
-            addmetadata!(data)
-            1
-        else
-            0
-        end
+        String(take!(out))
+    catch ex
+        ex isa InterruptException && rethrow()
+        String(take!(out))
+    finally
+        close(io)
+    end
+    if !isempty(s)
+        mkpath(dirname(file))
+        write(file, s)
+        addmetadata!(data)
+        1
+    else
+        0
     end
 end
 loadinfo(data::MatrixData) = 0
