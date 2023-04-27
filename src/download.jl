@@ -164,44 +164,45 @@ function loadinfo(data::RemoteMatrixData)
         return 0
     end
     url = redirect(dataurl(data))
-    io = ChannelPipe()
-    pipe = downloadpipeline(url, io)
-    tl = run(pipe, wait=false)
-    out = IOBuffer()
-    s = try
-        @info("downloading head of $url")
-        skip = 0
-        while ( s = readskip(io) ) != ""
-            skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
-            skip <= 1 && println(out, s)
-            if skip == 1 && length(split(s)) == 3
-                break
+    open(downloadpipeline(url)) do io
+        out = IOBuffer()
+        s = try
+            @info("downloading head of $url")
+            skip = 0
+            while ( s = readline(io) ) != ""
+                skip = s[1] == '%'  || isempty(strip(s)) ? 0 : skip + 1
+                skip <= 1 && println(out, s)
+                if skip == 1 && length(split(s)) == 3
+                    break
+                end
             end
+            String(take!(out))
+        catch ex
+            ex isa InterruptException && rethrow()
+            String(take!(out))
+        finally
+            close(io)
         end
-        String(take!(out))
-    catch ex
-        ex isa InterruptException && rethrow()
-        String(take!(out))
-    finally
-        close(out)
-    end
-    if !isempty(s)
-        mkpath(dirname(file))
-        write(file, s)
-        addmetadata!(data)
-        1
-    else
-        0
+        if !isempty(s)
+            mkpath(dirname(file))
+            write(file, s)
+            addmetadata!(data)
+            1
+        else
+            0
+        end
     end
 end
 loadinfo(data::MatrixData) = 0
 
 """
-    downloadpipeline(url)
+    downloadpipeline(url, path=nothing)
 
 Set up a command pipeline (external processes to download and expand data)
+If a path name is given, extract tar file into the empty directory or, if
+not a tar file, write contents to file of that name.
 """
-function downloadpipeline(url::AbstractString, dir=nothing)
+function downloadpipeline(url::AbstractString, dir::Union{Nothing,AbstractString}=nothing)
     urls = rsplit(url, '.', limit=3)
     cmd = Any[ChannelBuffers.curl(url)]
     if urls[end] == "gz"
@@ -216,8 +217,8 @@ function downloadpipeline(url::AbstractString, dir=nothing)
             file = rsplit(url, '/', limit=2)
             push!(cmd, joinpath(dir, file[end]))
         end
-    elseif dir isa ChannelPipe
-        push!(cmd, dir)
+    elseif dir === nothing && urls[end] == "tar"
+        push!(cmd, tarxO())
     end
     pipeline(cmd...)
 end
