@@ -133,7 +133,7 @@ function loadmatrix(data::RemoteMatrixData)
     try
         @info("downloading: $url")
         pipe = downloadpipeline(url, dirt)
-        wait(run(pipe))
+        run(pipe)
         cd(dirt)
         for file in readdir(dirt)
             mv(file, joinpath(dir, file), force=true)
@@ -166,7 +166,7 @@ function loadinfo(data::RemoteMatrixData)
     url = redirect(dataurl(data))
     io = ChannelPipe()
     pipe = downloadpipeline(url, io)
-    tl = run(pipe)
+    tl = run(pipe, wait=false)
     out = IOBuffer()
     s = try
         @info("downloading head of $url")
@@ -321,6 +321,6 @@ issvdok(::MatrixData) = false
 Copy file from remote or local url. Works around julia Downloads #69 and #36
 """
 function downloadfile(url::AbstractString, out::AbstractString)
-    wait(run(downloadcommand(url, out)))
+    run(downloadcommand(url, out))
     nothing
 end
