@@ -153,6 +153,11 @@ Special predicate generators `keyword(word...)` and `hasdata(symbol...)` allow t
 support keyword-search and check for the existence of meta-data.
 For example: `hasdata(:x) & ~keyword("fluid"` provides solution (x) and does not mention "fluid".
 
+### Number of nonzeros
+
+Beware that some sparse matrices contain non-structural zeros, that is, coefficients stored explicitly but whose value is `0`.
+If you observe a discrepancy between the theoretical number of nonzeros and the result of `nnz(A)`, try `sum(!iszero, A)` instead to diagnose this issue.
+
 ## Accessing Data
 
 ### Listing matrices with certain properties
