@@ -1,6 +1,6 @@
 name = "MatrixDepot"
 uuid = "b51810bb-c9f3-55da-ae3c-350fc1fbce05"
-version = "1.0.11"
+version = "1.0.12"
 
 [deps]
 ChannelBuffers = "79a69506-cdd1-4876-b8e5-7af85e53af4f"
