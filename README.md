@@ -156,7 +156,7 @@ For example: `hasdata(:x) & ~keyword("fluid"` provides solution (x) and does not
 ### Number of nonzeros
 
 Beware that some sparse matrices contain non-structural zeros, that is, coefficients stored explicitly but whose value is `0`.
-If you observe a discrepancy between the theoretical number of nonzeros and the result of `nnz(A)`, try `sum(!iszero, A)` instead to diagnose this issue.
+In this case a discrepancy between nnz(A) and sum(!iszero, A) will be observed.
 
 ## Accessing Data
 
