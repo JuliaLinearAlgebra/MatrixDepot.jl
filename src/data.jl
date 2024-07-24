@@ -50,7 +50,7 @@ const MATRIXDICT = Dict("hilb" => hilb, "hadamard" => hadamard,
 const MATRIXCLASS = Dict(
             :symmetric => ["hilb", "cauchy", "circul", "dingdong",
                              "invhilb", "moler", "pascal", "pei",
-                             "clement", "fiedler", "minij", "tridiag",
+                             "clement", "fiedler", "minij",
                              "lehmer", "randcorr", "poisson", "wilkinson",
                              "kms", "wathen", "oscillate", "prolate",
                              "hankel"],
