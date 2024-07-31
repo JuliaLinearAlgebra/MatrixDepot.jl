@@ -1103,6 +1103,8 @@ A prolate matrix is a symmetirc, ill-conditioned Toeplitz matrix.
 
 + [type,] dim: the case when `w = 0.25`.
 
+*Groups:* ["symmetric", "illcond"]
+
 *References:*
 
 **J. M. Varah**. The Prolate Matrix. Linear Algebra and Appl.
