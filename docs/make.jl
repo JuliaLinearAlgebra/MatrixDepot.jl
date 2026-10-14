@@ -1,3 +1,7 @@
+# use the index snapshot in test/data, as test/runtests.jl does, so the build needs no network
+ENV["MATRIXDEPOT_URL_REDIRECT"] = "1"
+ENV["MATRIXDEPOT_DATA"] = mktempdir()
+
 using Documenter, MatrixDepot
 
 DocMeta.setdocmeta!(MatrixDepot, :DocTestSetup, :(using MatrixDepot); recursive=true)

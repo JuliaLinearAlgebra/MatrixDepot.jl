@@ -40,14 +40,12 @@ end
 
 ## Magic squares
 
+All row sums, column sums and both diagonal sums of a magic square are equal:
+
 ```@example ex
 M = matrixdepot("magic", Int, 5)
-```
-
-All row sums, column sums and both diagonal sums are equal:
-
-```@example ex
-sum(M, dims=1), sum(M, dims=2)', sum(diag(M)), sum(diag(M[:, end:-1:1]))
+(rows = vec(sum(M, dims=2)), cols = vec(sum(M, dims=1)),
+ diag = sum(diag(M)), antidiag = sum(diag(reverse(M, dims=2))))
 ```
 
 ## Pascal matrices
