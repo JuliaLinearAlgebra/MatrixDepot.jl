@@ -45,14 +45,6 @@ const EMPTY_PATTERN = Pattern[]
 const ALL_PATTERN = ()
 
 ###
-# simplification of patterns
-###
-is_pure_string(p::AbstractString) = !occursin(r"[]*?]", p)
-is_pure_string(p::Pattern) = false
-is_pure_vector(p::Vector) = all(is_pure_string.(p))
-is_pure_vector(p::Pattern) = false
-
-###
 # Alias resolution
 ###
 

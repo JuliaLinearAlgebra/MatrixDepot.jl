@@ -174,6 +174,7 @@ circul(::Type{T}, v::Vector, n::Integer) where T = circul(T, v, T[1:n;])
 circul(::Type{T}, v::Vector) where T = circul(T, v, v)
 circul(::Type{T}, k::Integer) where T = circul(T, [1:k;])
 circul(arg...) = circul(Float64, arg...)
+circul(::Type, args...) = throw(MethodError(circul, Tuple(args)))
 
 """
 Dingdong Matrix

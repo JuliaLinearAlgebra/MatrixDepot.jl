@@ -65,19 +65,24 @@ end
 function show(io::IO, p::RegProb)
     println(io, "Test problems for Regularization Methods")
     println(io, "A:")
-    display(p.A)
+    show(io, MIME"text/plain"(), p.A)
+    println(io)
     println(io, "b:")
-    display(p.b)
+    show(io, MIME"text/plain"(), p.b)
+    println(io)
     println(io, "x:")
-    display(p.x)
+    show(io, MIME"text/plain"(), p.x)
+    println(io)
 end
 
 function show(io::IO, p::RegProbNoSolution)
     println(io, "Test problems for Regularization Methods with No Solution")
     println(io, "A:")
-    display(p.A)
+    show(io, MIME"text/plain"(), p.A)
+    println(io)
     println(io, "b:")
-    display(p.b)
+    show(io, MIME"text/plain"(), p.b)
+    println(io)
 end
 
 # The following test problems are derived from Per Christian Hansen's
@@ -710,14 +715,6 @@ blur(::Type, args...) = throw(MethodError(blur, Tuple(args)))
 
 
 """
-Inverse Laplace Transformation
-"""
-function ilaplace(::Type{T}, n::Integer) where T
-
-end
-
-
-"""
 Stellar Parallax Problem with 26 Fixed, Real Observations
 =========================================================
 The underlying problem is a Fredholm integral equation of the first
@@ -836,13 +833,6 @@ spikes(::Type{T}, n::Integer, matrixonly::Bool = true) where T =
          spikes(T, n, 5, matrixonly)
 spikes(args...) = spikes(Float64, args...)
 spikes(::Type, args...) = throw(MethodError(spikes, Tuple(args)))
-
-#
-# Two-dimensional tomography problem with sparse matrix
-#
-function tomo(::Type{T}, n::Integer) where T
-
-end
 
 """
 Integral Equation with No square Integrable Solution

@@ -23,16 +23,6 @@ end
 # matrix group
 #######################
 
-# write one property association
-function propline(io::IO, propname, matnames)
-    write(io, repr(propname))
-    write(io, " => [")
-    for str in matnames
-        write(io, repr(str))
-        write(io, ", ")
-    end
-    write(io, "],\n")
-end
 
 # add, remove, or replace complete user group
 function modgroup(prop::Symbol, mats::Union{Nothing,Pattern})
@@ -99,9 +89,9 @@ function addtogroup(dir::Dict, groupname::Symbol, f::Function)
         fn = fname(f)
         gr = dir[groupname]
         fn in gr || push!(gr, fn)
-        true
+        return true
     else
-        false
+        return false
     end
 end
 function include_generator(::Type{Group}, groupname::Symbol, f::Function)
@@ -125,7 +115,7 @@ function fname(f::Function)
     for (key, value) in USERMATRIXDICT
         value == f && return key
     end
-    "unknown-function"
+    return "unknown-function"
 end
 
 """
