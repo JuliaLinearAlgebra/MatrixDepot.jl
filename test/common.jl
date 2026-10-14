@@ -1,4 +1,5 @@
 @test mdinfo() !== nothing
+@test !occursin("no info available", string(mdinfo("hilb")))
 groups = ["symmetric", "inverse", "illcond", "posdef", "eigen","sparse", "random", "regprob", "all"]
 
 for group in groups
