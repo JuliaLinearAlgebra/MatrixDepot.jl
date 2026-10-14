@@ -1,0 +1,9 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+MatrixDepot = "b51810bb-c9f3-55da-ae3c-350fc1fbce05"
+
+[sources]
+MatrixDepot = {path = ".."}
+
+[compat]
+Documenter = "1"
