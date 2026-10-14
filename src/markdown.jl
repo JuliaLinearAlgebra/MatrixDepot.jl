@@ -101,6 +101,11 @@ end
 
 MD(a...) = Markdown.MD([a...])
 
+"""
+    listnames([db,] p::Pattern)
+
+Return a formatted table of the names of all matrices matching pattern `p`.
+"""
 listnames(p::Pattern) = listnames(MATRIX_DB, p)
 function listnames(db::MatrixDatabase, p::Pattern)
     li = mdlist(db, p)

@@ -79,7 +79,13 @@ abstract type MatrixGenerator end
 abstract type FunctionName <: MatrixGenerator end
 abstract type Group <: MatrixGenerator end
 
+"""
+    include_generator(FunctionName, name::AbstractString, f::Function)
+    include_generator(Group, group::Symbol, f::Function)
 
+Register the matrix generator `f` under `name`, or add it to the existing `group`.
+Call [`publish_user_generators`](@ref) afterwards to update the database.
+"""
 function include_generator(::Type{FunctionName}, fn::AbstractString, f::Function)
     (haskey(MATRIXDICT, fn) ? MATRIXDICT : USERMATRIXDICT)[fn] = f
 end
@@ -101,10 +107,14 @@ function include_generator(::Type{Group}, groupname::Symbol, f::Function)
               `setgroup!`` to add this group")
 end
 
-#a more lightweight alternative to calling `init` again after adding user-defined matrices.
+"""
+    publish_user_generators()
+
+Make the generators registered by [`include_generator`](@ref) available in the database.
+User generators are not written to the database cache.
+"""
 function publish_user_generators()
     insertlocal(MATRIX_DB, GeneratedMatrixData{:U}, USERMATRIXDICT)
-    #note that we do not call writedb because we don't serialize user matrix generators
 end
 
 "return the name of the function `f` as a string."

@@ -66,7 +66,23 @@ aliasresolve(::MatrixDatabase, ::Alias{GeneratedMatrixData{:U},Colon}) = :user
 # Predefined predicates for MatrixData
 ###
 
+"""
+    builtin(i, j:k, ...)
+    builtin(:)
+
+Pattern selecting built-in (locally generated) matrices by id number.
+
+example:
+    mdlist(builtin(1:3))
+"""
 builtin(p...) = Alias{GeneratedMatrixData{:B}}(p...)
+
+"""
+    user(i, j:k, ...)
+    user(:)
+
+Pattern selecting user-defined matrix generators by id number.
+"""
 user(p...) = Alias{GeneratedMatrixData{:U}}(p...)
 sp1(p...) = Alias{RemoteMatrixData{SSRemoteType}}(p...)
 mm1(p...) = Alias{RemoteMatrixData{MMRemoteType}}(p...)
