@@ -173,7 +173,3 @@ end
 smallworld(::Type{T}, n::Integer) where T = smallworld(T, n, 2, 0.1)
 smallworld(n::Integer, arg...) = smallworld(Float64, n, arg...)
 
-
-function geo(n::Integer)
-
-end

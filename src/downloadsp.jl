@@ -133,7 +133,7 @@ function loadsvd(data::RemoteMatrixData{SSRemoteType})
     if isfile(file)
         return 0
     end
-    dir = dirname(localdir(data))
+    dir = dirname(file)
     url = redirect(datasvdurl(data))
 
     isdir(dir) || mkpath(dir)
@@ -142,12 +142,12 @@ function loadsvd(data::RemoteMatrixData{SSRemoteType})
         @info("downloading: $url")
         downloadfile(url, file)
         addsvd!(data)
-        1
+        return 1
     catch
         rm(file, force=true)
         write(file, "")
-        0
     end
+    return 0
 end
 loadsvd(data::MatrixData) = 0
 
@@ -159,7 +159,7 @@ function addsvd!(data::RemoteMatrixData{SSRemoteType})
             pushsvd!(data, d["status"], d["how"], d["s"])
         end
     else
-        0
+        return 0
     end
 end
 addsvd!(::MatrixData) = 0
@@ -169,10 +169,6 @@ function datasvdurl(data::RemoteMatrixData)
 end
 function svdfile(data::RemoteMatrixData)
     abspath(localdir(data), string(basename(data.name), "_SVD.mat"))
-end
-
-function notesfile(data::RemoteMatrixData)
-    abspath(localdir(data), string(basename(data.name), "_notes.txt"))
 end
 
 function pushsvd!(data::RemoteMatrixData, status::AbstractString, how::AbstractString, sv)
@@ -196,7 +192,6 @@ end
 _vector(sv::AbstractArray) = vec(sv)
 _vector(sv::Number) = [sv]
 
-datadetailsurl(data::RemoteMatrixData) = string(siteurl(data), '/', data.name)
 
 """
     svdstatistics(svd::Vector{<:Real})

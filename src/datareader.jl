@@ -115,18 +115,6 @@ function (mdesc::MatrixDescriptor)(name::Union{Symbol,AbstractString})
     metareader(mdesc, string(name))
 end
 
-#internal helper to select special metadata (matrix, rhs, or solution)
-function metaname(data::RemoteMatrixData, exli::AbstractString...)
-    base = rsplit(data.name, '/', limit=2)[end]
-    meda = getmeta(data)
-    for ext in exli
-        f = metastring_reverse(data, ext)
-        if f in meda
-            return f
-        end
-    end
-    daterr("unknown metadata extensions: $exli - available $(String.(data.metadata))")
-end
 
 """
     metastring(name, metaname)

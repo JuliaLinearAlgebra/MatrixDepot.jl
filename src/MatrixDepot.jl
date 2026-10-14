@@ -70,6 +70,7 @@ Access is like
 module MatrixDepot
 using LinearAlgebra, SparseArrays
 using Scratch
+import REPL # Docs.doc methods for mdinfo; REPL is not always loaded since Julia 1.11
 import Base: show
 
 export matrixdepot

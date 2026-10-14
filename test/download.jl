@@ -46,6 +46,12 @@ MatrixDepot.update()
 @test load("**/epb0") == 1
 
 @test loadsvd("*/1138_bus") == 1
+@test loadsvd("HB/1138_bus") == 0 # already loaded
+@test (@test_logs (:info, r"downloading") loadsvd("HB/494_bus")) == 0 # not available
+@test loadinfo("HB/494_bus") == 0
+@test MatrixDepot.addsvd!(MatrixDepot.mdata("HB/494_bus")) == 0
+@test loadsvd("hilb") == loadinfo("hilb") == 0
+@test (@test_logs (:warn, r"could not load hilb") MatrixDepot._load(MatrixDepot.MATRIX_DB, error, "hilb")) == 0
 
 # matrix market
 @test load("Harwell-Boeing/lanpro/nos5") == 1
@@ -95,6 +101,19 @@ mdesc = mdopen("*/bfly")
 fn = joinpath(dirname(MatrixDepot.matrixfile(mdesc.data)), "bfly_Gname_01.txt")
 @test_throws DataError MatrixDepot.mmreadheader(fn)
 
+data = MatrixDepot.mdata("HB/1138_bus")
+@test (@test_logs (:warn, r"quadratic") MatrixDepot.extremnnz(data, 2, 3, 4)) == (5, 8)
+kind = data.kind
+data.header.kind = "other kind"
+@test_logs (:warn, r"header kind") match_mode=:any MatrixDepot.addmetadata!(data)
+data.header.kind = kind
+@test MatrixDepot.addmetadata!(MatrixDepot.mdata("hilb")) == 0
+@test !MatrixDepot.issvdok(MatrixDepot.mdata("hilb"))
+@test MatrixDepot._vector(2.0) == [2.0]
+@test MatrixDepot.svdstatistics([1.0, 1e-20, 0.0]).rank == 1
+@test occursin(" ... ", sprint(show, mdopen("*/bfly").data))
+@test sprint(show, MatrixDepot.MATRIX_DB) == "MatrixDatabase($(length(MatrixDepot.MATRIX_DB.data)))"
+
 # read from a pipeline
 io = IOBuffer("%%matrixmarket matrix array real general\n1 1\n2.5\n")
 @test MatrixDepot.mmread(io) == reshape([2.5], 1, 1)
@@ -139,6 +158,17 @@ mktemp() do path, io
 end
 
 @test MatrixDepot.mmreadheader("") === nothing
+mktemp() do path, io
+    close(io)
+    @test MatrixDepot.mmreadheader(path) === nothing
+    @test_throws DataError MatrixDepot.mmread(path)
+end
+mktemp() do path, io # header of a second matrix is used when the first has no nz
+    println(io, "%%MatrixMarket matrix array real general\n1 1\n1.0")
+    println(io, "%%MatrixMarket matrix coordinate real general\n2 2 1\n1 1 1.0")
+    close(io)
+    @test MatrixDepot.mmreadheader(path)[:nz] == 1
+end
 
 # an example loading a txt file
 data = mdopen("Pajek/Journals")
@@ -183,6 +213,12 @@ io = IOBuffer("""
 2 2
 """)
 @test MatrixDepot.mmread(io) == [false true; true true]
+
+A = sparse([1, 2, 2], [1, 1, 2], [1.0, 2im, 3.0])
+@test MatrixDepot.mtranspose(A) == transpose(A)
+@test MatrixDepot.madjoint(A) == A'
+@test MatrixDepot.mtranspose(1:2) == transpose(1:2)
+@test MatrixDepot.mksparse(2, 2, [1, 2], [2, 1], [1.0, 2.0]) == [0 1; 2 0]
 
 io = IOBuffer("""
 %%Matrixmarket matrix coordinate pattern general
@@ -259,3 +295,7 @@ io = IOBuffer("""
 """)
 @test_throws BoundsError MatrixDepot.mmread(io)
 
+# corrupted database file is recreated
+db = MatrixDepot.MATRIX_DB
+write(MatrixDepot.dbpath(db), "garbage")
+@test_logs (:warn, r"recreating") match_mode=:any MatrixDepot.downloadindices(db)

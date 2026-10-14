@@ -281,8 +281,6 @@ extension(remote::RemoteType) = remote.params.extension
 dataurl(data::RemoteMatrixData{T}) where T = join((dataurl(T), data.name), '/') * extension(T)
 siteurl(data::RemoteMatrixData{T}) where T = preferred(T).params.site
 filename(data::RemoteMatrixData) = joinpath(split(data.name, '/')...)
-localfile(data::RemoteMatrixData{<:SSRemoteType}) = localdir(data) * ".tar.gz"
-localfile(data::RemoteMatrixData{MMRemoteType}) = localdir(data) * ".mtx.gz"
 function matrixfile(data::RemoteMatrixData{<:SSRemoteType})
     joinpath(localdir(data), rsplit(data.name, '/', limit=2)[end] * ".mtx")
 end
@@ -304,11 +302,6 @@ mm_property_name(::MMSymmetryGeneral) = "general"
 mm_property_name(::MMSymmetrySymmetric) = "symmetric"
 mm_property_name(::MMSymmetrySkewSymmetric) = "skew-symmetric"
 mm_property_name(::MMSymmetryHermitian) = "hermitian"
-
-mm_property_type(::MMFieldReal) = Float64
-mm_property_type(::MMFieldComplex) = ComplexF64
-mm_property_type(::MMFieldInteger) = Integer
-mm_property_type(::MMFieldPattern) = Bool
 
 MM_NAME_TO_PROP = Dict{String,MMProperty}(mm_property_name(x) => x for x in (
     MMObjectMatrix(),

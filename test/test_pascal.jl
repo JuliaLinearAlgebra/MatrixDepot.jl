@@ -14,4 +14,5 @@ for j = 2: n-1
 end
 
 @test A ≈ P*P'
+@test matrixdepot("pascal", 36)[36, 36] ≈ binomial(BigInt(70), 35) # Int overflow
 println("'pascal' passed test...")

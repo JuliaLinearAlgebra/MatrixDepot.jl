@@ -30,10 +30,10 @@ function extract_names(db::MatrixDatabase, matrices::AbstractString)
         for line in readlines(f)
             _, grepex, spquote, ending, parts, regexinf = remote.params.scan
             m = regexinf === nothing ? nothing : match(regexinf, line)
-            if m !== nothing
+            if m !== nothing # COV_EXCL_START - no index regex configured for MM_REMOTE
                 pname = length(m.captures) == 2 ? m.captures[1] : "id"
                 akku[pname] = m.captures[end]
-            end
+            end # COV_EXCL_STOP
             if occursin(grepex, line)
                 murl = split(line, '"')[spquote]
                 if endswith(murl, ending)

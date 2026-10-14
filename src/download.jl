@@ -149,7 +149,7 @@ function loadmatrix(data::RemoteMatrixData)
         rm(dirt, force=true, recursive=true)
     end
     addmetadata!(data)
-    1
+    return 1
 end
 loadmatrix(data::GeneratedMatrixData) = 0
 
@@ -182,7 +182,7 @@ function loadinfo(data::RemoteMatrixData)
         end
         String(take!(out))
     catch ex
-        ex isa InterruptException && rethrow()
+        ex isa InterruptException && rethrow() # COV_EXCL_LINE
         String(take!(out))
     finally
         close(io)
@@ -191,9 +191,9 @@ function loadinfo(data::RemoteMatrixData)
         mkpath(dirname(file))
         write(file, s)
         addmetadata!(data)
-        1
+        return 1
     else
-        0
+        return 0
     end
 end
 loadinfo(data::MatrixData) = 0
@@ -238,7 +238,7 @@ end
 function extremnnz(data::RemoteMatrixData, m, n, k)
     if issymmetric(data) || ishermitian(data) || isskew(data)
         if m != n
-            @warn "$(data.name) needs to be quadratic but is ($mx$n)"
+            @warn "$(data.name) needs to be quadratic but is ($(m)x$(n))"
         end
         isskew(data) ? (2k, 2k) : (2k - max(m, n), 2k)
     else

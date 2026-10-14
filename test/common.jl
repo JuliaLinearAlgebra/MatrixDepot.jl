@@ -1,4 +1,5 @@
 @test mdinfo() !== nothing
+@test !occursin("no info available", string(mdinfo("hilb")))
 groups = ["symmetric", "inverse", "illcond", "posdef", "eigen","sparse", "random", "regprob", "all"]
 
 for group in groups
@@ -162,6 +163,21 @@ end
 
 @test MatrixDepot.fname(sin) == "unknown-function"
 @test_throws MethodError mdopen("baart", 10, 11)
+@testset "$name" for (name, f) in MatrixDepot.MATRIXDICT
+    @test_throws MethodError f("x")
+    @test_throws MethodError f(Float64, "x")
+end
+@test ("a", "b") & ("c",) == ("a", "b", "c")
+@test MatrixDepot.Not(~"a") == "a"
+@test (~)("a", "b") == MatrixDepot.Not(("a", "b"))
+@test (~)() == []
+@test mdlist(("hilb", ("hilb", :symmetric))) == ["hilb"]
+@test mdlist(hasdata(:A & :b)) == mdlist(hasdata(:A) & hasdata(:b))
+d, r = MatrixDepot.mdata("frank"), MatrixDepot.mdata("HB/1138_bus")
+@test isgeneral(d) && !isskew(d) && !ishermitian(d) && !issparse(d) && issparse(r)
+@test !isgeneral(r) && isreal(r) && !isinteger(r)
+@test !iscomplex(d) && !isreal(d) && !isinteger(d) && !isboolean(d)
+@test !MatrixDepot.prednzdev()(d)
 end
 
 @testset "charfun" begin
@@ -170,6 +186,16 @@ data = mdopen("vand", 10).data
 @test charfun(isbuiltin)(data)
 @test charfun(isbuiltin)(data.name)
 @test charfun(:)("unknown") == false
+@test listdata("vand") == [data]
+@test mdopen(md -> size(md.A), "vand", 3) == (3, 3)
+@test MatrixDepot.getmeta(mdopen("vand", 3)) == String[]
+@test MatrixDepot.metastring_reverse(data, "A") == "A"
+@test propertynames(data) == [:name, :id]
+@test :func in propertynames(data, private=true)
+@test MatrixDepot.localdir(data) === nothing
+@test string(mdinfo(mdopen("vand", 3))) == string(mdinfo("vand"))
+@test occursin("no info", string(MatrixDepot.mdinfo(MatrixDepot.MatrixDatabase(), "vand")))
+@test sprint(show, sp(1)) == "#1"
 end
 
 @testset "properties" begin
@@ -182,6 +208,8 @@ io = IOBuffer()
 @test md.nnz == count(md.A .!= 0)
 @test md.dnz == 0
 @test_throws DataError md.x
+@test occursin("x:", sprint(show, MatrixDepot.gravity(4, false)))
+@test occursin("No Solution", sprint(show, MatrixDepot.ursell(4, false)))
 
 md = mdopen("gravity", 10, false)
 io = IOBuffer()
@@ -209,7 +237,12 @@ FieldMissing = VERSION < v"1.12" ? ErrorException : FieldError
 end
 
 # issue 131
-@testset "parse($str)" for str in ("-0.0010831521544791237\n", "-0.00108e100\n")
+@testset "parse($str)" for str in ("-0.0010831521544791237\n", "-0.00108e100\n", "1.5e3\n")
     c = MatrixDepot.getbytes(IOBuffer(str))
     @test MatrixDepot.parsenext(Float64, c, 1)[2] == parse(Float64, str)
 end
+@test MatrixDepot.parsenext(UInt8, MatrixDepot.getbytes(IOBuffer("12\n")), 1)[2] === 0x0c
+p = MatrixDepot.MMProperties()
+@test sprint(show, p) == "RG"
+@test all(sprint(show, v) == k for (k, v) in MatrixDepot.MM_NAME_TO_PROP)
+@test MatrixDepot.mm_short_name(MatrixDepot.MMSymmetrySkewSymmetric()) == "K"
