@@ -1,11 +1,11 @@
 
-# ![logo](doc/logo2.png) Matrix Depot
+# ![logo](docs/src/assets/logo.png) Matrix Depot
 
-[![Build Status][gha-img]][gha-url]    [![Coverage Status][codecov-img]][codecov-url]    [![Documentation Status][rtd-img]][rtd-url]
+[![Build Status][gha-img]][gha-url]    [![Coverage Status][codecov-img]][codecov-url]    [![Stable docs][docs-stable-img]][docs-stable-url]    [![Dev docs][docs-dev-img]][docs-dev-url]
 
 An extensible test matrix collection for Julia.
 
-* [Release Notes](https://github.com/JuliaMatrices/MatrixDepot.jl/blob/master/NEWS.md)
+* [Release Notes](https://github.com/JuliaLinearAlgebra/MatrixDepot.jl/blob/master/NEWS.md)
 
 
 Give access to a wealth of sample and test matrices and accompanying data.
@@ -427,8 +427,8 @@ clement  hankel   kms     moler  pei       randcorr wathen
 ## Extend Matrix Depot
 
 It is possible to extend the builtin local problems with user defined generators and groups.
-We can add [new matrix generators](http://matrix-depot.readthedocs.org/en/latest/user.html)
-and define [new groups of matrices](http://matrix-depot.readthedocs.org/en/latest/properties.html).
+We can add [new matrix generators](https://JuliaLinearAlgebra.github.io/MatrixDepot.jl/stable/user/)
+and define [new groups of matrices](https://JuliaLinearAlgebra.github.io/MatrixDepot.jl/stable/groups/).
 
 ## References
 
@@ -461,11 +461,13 @@ and define [new groups of matrices](http://matrix-depot.readthedocs.org/en/lates
   [[pdf]](http://epubs.siam.org/doi/abs/10.1137/0916032)
   [[doi]](https://dx.doi.org/10.1137/0916032)
 
-[gha-img]: https://github.com/JuliaMatrices/MatrixDepot.jl/workflows/CI/badge.svg
-[gha-url]: https://github.com/JuliaMatrices/MatrixDepot.jl/actions?query=workflow%3ACI
+[gha-img]: https://github.com/JuliaLinearAlgebra/MatrixDepot.jl/workflows/CI/badge.svg
+[gha-url]: https://github.com/JuliaLinearAlgebra/MatrixDepot.jl/actions?query=workflow%3ACI
 
-[codecov-img]: https://codecov.io/gh/JuliaMatrices/MatrixDepot.jl/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/JuliaMatrices/MatrixDepot.jl
+[codecov-img]: https://codecov.io/gh/JuliaLinearAlgebra/MatrixDepot.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/JuliaLinearAlgebra/MatrixDepot.jl
 
-[rtd-img]: https://readthedocs.org/projects/matrix-depot/badge/?version=latest
-[rtd-url]: https://matrix-depot.readthedocs.io/en/latest/?badge=latest
+[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
+[docs-stable-url]: https://JuliaLinearAlgebra.github.io/MatrixDepot.jl/stable/
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-dev-url]: https://JuliaLinearAlgebra.github.io/MatrixDepot.jl/dev/
