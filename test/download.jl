@@ -295,6 +295,46 @@ io = IOBuffer("""
 """)
 @test_throws BoundsError MatrixDepot.mmread(io)
 
+# last entry is not followed by a newline
+mktempdir() do dir
+    for (text, A) in (
+        ("coordinate real general\n2 2 1\n1 1 1.5", sparse([1], [1], [1.5], 2, 2)),
+        ("coordinate integer general\n2 2 1\n1 1 7", sparse([1], [1], [7], 2, 2)),
+        ("coordinate pattern general\n2 2 1\n2 1", sparse([2], [1], [true], 2, 2)),
+        ("coordinate complex general\n2 2 1\n1 2 1 -2", sparse([1], [2], [1-2im], 2, 2)),
+        ("coordinate real general\n2 2 2\n1 1 1.5\n2 2 -2.5e1", sparse([1, 2], [1, 2], [1.5, -25], 2, 2)),
+        ("array real general\n2 1\n1.5\n2.5", reshape([1.5, 2.5], 2, 1)),
+        ("array integer general\n1 2\n3\n-4", [3 -4]),
+        ("array complex general\n1 1\n1.5 2", fill(1.5+2im, 1, 1)),
+        )
+        path = joinpath(dir, "nonewline.mtx")
+        write(path, "%%MatrixMarket matrix " * text)
+        @test MatrixDepot.mmread(path) == A
+        @test MatrixDepot.mmread(IOBuffer(read(path))) == A
+    end
+end
+
+# file ends before the size line - used to loop forever, so run in a subprocess with time limit
+mktempdir() do dir
+    files = [joinpath(dir, "header.mtx"), joinpath(dir, "comments.mtx")]
+    write(files[1], "%%MatrixMarket matrix coordinate real general\n")
+    write(files[2], "%%MatrixMarket matrix array real general\n% comment\n\n%\n")
+    code = """
+    using MatrixDepot
+    for f in ARGS, g in (MatrixDepot.mmread, MatrixDepot.mmreadheader)
+        try g(f); println("no exception") catch ex; println(nameof(typeof(ex))) end
+    end
+    """
+    cmd = `$(Base.julia_cmd()) --startup-file=no --project=$(Base.active_project()) -e $code $files`
+    out = Pipe()
+    proc = run(pipeline(cmd, stdout=out), wait=false)
+    close(out.in)
+    output = @async read(out, String)
+    timedwait(() -> process_exited(proc), 300.0) == :ok || kill(proc)
+    @test success(proc)
+    @test split(fetch(output)) == repeat(["ParseError", "DataError"], length(files))
+end
+
 # corrupted database file is recreated
 db = MatrixDepot.MATRIX_DB
 write(MatrixDepot.dbpath(db), "garbage")
