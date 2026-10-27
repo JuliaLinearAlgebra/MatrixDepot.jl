@@ -39,6 +39,7 @@ function mmread(file::IO)
     end
     line = readline(file)
     while length(strip(line)) == 0 || line[1] == '%'
+        eof(file) && parserr("Matrixmarket: unexpected end of file, no size line found")
         line = readline(file)
     end
     if tokens[2] == MATRIX
@@ -276,6 +277,7 @@ function mmreadheader(file::AbstractString)
                 field = :none
                 while startswith(line, '%') || isempty(strip(line))
                     field = push_hdr!(hdr, line, field)
+                    eof(io) && daterr("MatrixMarket file '$file' has no size line")
                     line = readline(io)
                 end
                 res = try parseint(line) catch; [] end
@@ -358,6 +360,9 @@ function push_hdr!(hdr, line::AbstractString, field::Symbol)
 end
 
 ### parsing decimal integers and floats
+# byte at position `i`, or `0x00` past the end of the buffer, which terminates a number
+@inline _byteat(v::Vector{UInt8}, i::Int, n::Int) = i <= n ? @inbounds(v[i]) : 0x00
+
 function _parsenext(v::Vector{UInt8}, p1::Int)
     iaccu = Unsigned(0)
     daccu = Unsigned(0)
@@ -374,10 +379,10 @@ function _parsenext(v::Vector{UInt8}, p1::Int)
     n0 = i
     if c == UInt8('+')
         sig = 1
-        c = v[i += 1]
+        c = _byteat(v, i += 1, n)
     elseif c == UInt8('-')
         sig = -1
-        c = v[i += 1]
+        c = _byteat(v, i += 1, n)
     end
     ne = i
     di = 0
@@ -385,33 +390,33 @@ function _parsenext(v::Vector{UInt8}, p1::Int)
         c -= 0x30
         di += di > 0 || c > 0
         iaccu = iaccu * 10 + c
-        c = v[i += 1]
+        c = _byteat(v, i += 1, n)
     end
     if c == UInt8('.')
-        c = v[i += 1]
+        c = _byteat(v, i += 1, n)
         d0 = i
         while 0x30 <= c <= 0x39
             c -= 0x30
             di += di > 0 || c > 0
             daccu = daccu * 10 + c
-            c = v[i += 1]
+            c = _byteat(v, i += 1, n)
         end
         df = i - d0
         ne += 1
     end
     i > ne || parserr("Invalid decimal number: '$(String(v[n0:min(end,n0+5)]))'")
     if i > ne && ( c == UInt8('e') || c == UInt8('E') )
-        c = v[i += 1]
+        c = _byteat(v, i += 1, n)
         if c == UInt8('+')
             esig = 1
-            c = v[i += 1]
+            c = _byteat(v, i += 1, n)
         elseif c == UInt8('-')
             esig = -1
-            c = v[i += 1]
+            c = _byteat(v, i += 1, n)
         end
         while 0x30 <= c <= 0x39
             eaccu = eaccu * 10 + c - 0x30
-            c = v[i += 1]
+            c = _byteat(v, i += 1, n)
         end
         if esig < 0
             eaccu = -eaccu
