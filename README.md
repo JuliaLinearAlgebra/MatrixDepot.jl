@@ -1,7 +1,7 @@
 
 # ![logo](docs/src/assets/logo.png) Matrix Depot
 
-[![Build Status][gha-img]][gha-url]    [![Coverage Status][codecov-img]][codecov-url]    [![Stable docs][docs-stable-img]][docs-stable-url]    [![Dev docs][docs-dev-img]][docs-dev-url]
+[![Build Status][gha-img]][gha-url]    [![Coverage Status][codecov-img]][codecov-url]    [![Dev docs][docs-dev-img]][docs-dev-url]
 
 An extensible test matrix collection for Julia.
 
