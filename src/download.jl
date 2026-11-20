@@ -138,7 +138,10 @@ function loadmatrix(data::RemoteMatrixData)
     try
         @info("downloading: $url")
         pipe = downloadpipeline(url, dirt)
-        run(pipe)
+        tl = run(pipe)
+        for i in 1:length(tl)
+            wait(tl, i)
+        end
         cd(dirt)
         for file in readdir(dirt)
             mv(file, joinpath(dir, file), force=true)
