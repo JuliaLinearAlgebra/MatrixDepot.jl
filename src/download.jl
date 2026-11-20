@@ -134,6 +134,7 @@ function loadmatrix(data::RemoteMatrixData)
     url = redirect(dataurl(data))
     isdir(dir) || mkpath(dir)
     wdir = pwd()
+    loaded = 0
     try
         @info("downloading: $url")
         pipe = downloadpipeline(url, dirt)
@@ -142,6 +143,7 @@ function loadmatrix(data::RemoteMatrixData)
         for file in readdir(dirt)
             mv(file, joinpath(dir, file), force=true)
         end
+        loaded = 1
     catch ex
         @warn("download of $url failed: $ex")
     finally
@@ -149,7 +151,7 @@ function loadmatrix(data::RemoteMatrixData)
         rm(dirt, force=true, recursive=true)
     end
     addmetadata!(data)
-    return 1
+    return loaded
 end
 loadmatrix(data::GeneratedMatrixData) = 0
 
