@@ -1,4 +1,4 @@
-
+ENV["MATRIXDEPOT_URL_REDIRECT"] = "1"
 ENV["MATRIXDEPOT_URL_REDIRECT"] = length(VERSION.prerelease) == 0 ? "1" : "1"
 const basedir = tempname() # tests start with a clean data directory
 ENV["MATRIXDEPOT_DATA"] = abspath(basedir, "data")
