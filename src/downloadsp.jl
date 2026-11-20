@@ -86,9 +86,16 @@ end
 function load_ss_index()
     file = localindex(preferred(SSRemoteType))
     if !isfile(file) || Base.Filesystem.stat(file).size == 0
-        url = redirect(indexurl(SS_REMOTE))
-        @info("downloading: $url")
-        downloadfile(url, file)
+        urls = alternates(indexurl(SS_REMOTE))
+        for (i, url) in enumerate(urls)
+            @info("downloading: $url")
+            try
+                downloadfile(url, file)
+                break
+            catch
+                i == length(urls) && rethrow()
+            end
+        end
     end
     file
 end
@@ -125,7 +132,8 @@ from_matdat(::Type{String}, s::AbstractString) = s
     loadsvd(data::RemoteMatrixData)
 
 Download the extra information related to SVD from the backing repository.
-That is currently the TAMU site for the UFl collection.
+That is currently the TAMU site for the UFl collection, falling back to its
+mirrors in `SS_MIRRORS`.
 The files are in MAT format, and are uncompressed and un-tar-ed if necessary.
 """
 function loadsvd(data::RemoteMatrixData{SSRemoteType})
@@ -134,19 +142,20 @@ function loadsvd(data::RemoteMatrixData{SSRemoteType})
         return 0
     end
     dir = dirname(file)
-    url = redirect(datasvdurl(data))
 
     isdir(dir) || mkpath(dir)
 
-    try
-        @info("downloading: $url")
-        downloadfile(url, file)
-        addsvd!(data)
-        return 1
-    catch
-        rm(file, force=true)
-        write(file, "")
+    for url in alternates(datasvdurl(data))
+        try
+            @info("downloading: $url")
+            downloadfile(url, file)
+            addsvd!(data)
+            return 1
+        catch
+        end
     end
+    rm(file, force=true)
+    write(file, "")
     return 0
 end
 loadsvd(data::MatrixData) = 0
