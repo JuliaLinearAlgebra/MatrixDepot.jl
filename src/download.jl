@@ -172,10 +172,23 @@ function loadinfo(data::RemoteMatrixData)
     if isfile(filemtx) || isfile(file)
         return 0
     end
-    url = redirect(dataurl(data))
+    s = loadhead(redirect(dataurl(data)))
+    if !isempty(s)
+        mkpath(dirname(file))
+        write(file, s)
+        addmetadata!(data)
+        return 1
+    else
+        return 0
+    end
+end
+loadinfo(data::MatrixData) = 0
+
+# download the head of the data file at `url`, return "" if that fails
+function loadhead(url::AbstractString)
     io = open(downloadpipeline(url))
     out = IOBuffer()
-    s = try
+    try
         @info("downloading head of $url")
         skip = 0
         while ( s = readline(io) ) != ""
@@ -192,16 +205,7 @@ function loadinfo(data::RemoteMatrixData)
     finally
         close(io)
     end
-    if !isempty(s)
-        mkpath(dirname(file))
-        write(file, s)
-        addmetadata!(data)
-        return 1
-    else
-        return 0
-    end
 end
-loadinfo(data::MatrixData) = 0
 
 """
     downloadpipeline(url, path=nothing)
