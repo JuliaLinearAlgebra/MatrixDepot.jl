@@ -103,6 +103,10 @@ const SS_REMOTE = SSRemoteType(RemoteParametersNew(
                     ".tar.gz"
                    ))
 
+# mirrors of the SuiteSparse collection, tried in this order if a download
+# from the TAMU site fails
+const SS_MIRRORS = ["https://www.cise.ufl.edu/research/sparse"]
+
 const MM_REMOTE = MMRemoteType(RemoteParameters(
                     "https://math.nist.gov/MatrixMarket",
                     "https://math.nist.gov/pub/MatrixMarket2",
@@ -139,4 +143,21 @@ function redirect(url::AbstractString)
     else
         url
     end
+end
+
+"""
+    alternates(url)
+
+Return the urls to try for downloading `url`: `url` itself followed by
+the same file on each mirror in `SS_MIRRORS`, if `url` is on the TAMU site.
+Mirrors are not used when urls are redirected to local test data.
+"""
+function alternates(url::AbstractString)
+    site = SS_REMOTE.params.site
+    urls = [url]
+    if !URL_REDIRECT[] && startswith(url, site)
+        rest = url[ncodeunits(site)+1:end]
+        append!(urls, string(mirror, rest) for mirror in SS_MIRRORS)
+    end
+    redirect.(urls)
 end
