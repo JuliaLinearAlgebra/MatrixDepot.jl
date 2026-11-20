@@ -115,8 +115,8 @@ end
     loadmatrix(data::RemoteMatrixData)
 
 Download the files backing the data from a remote repository. That is currently
-the TAMU site for the UFl collection and the NIST site for the MatrixMarket
-collection. The files are uncompressed and un-tar-ed if necessary.
+the TAMU site for the UFl collection, falling back to its mirrors in `SS_MIRRORS`,
+and the NIST site for the MatrixMarket collection. The files are uncompressed and un-tar-ed if necessary.
 The data files containing the matrix data have to be in MatrixMarket format in
 both cases. Note, that some of the files of the MM collection are not available
 in MatrixMarket format. An error message results, if tried to load them.
@@ -129,27 +129,34 @@ function loadmatrix(data::RemoteMatrixData)
     end
     dir = dirname(localdir(data))
     dirt = string(dir, ".tmp")
-    rm(dirt, force=true, recursive=true)
-    mkpath(dirt)
-    url = redirect(dataurl(data))
     isdir(dir) || mkpath(dir)
     wdir = pwd()
-    try
-        @info("downloading: $url")
-        pipe = downloadpipeline(url, dirt)
-        run(pipe)
-        cd(dirt)
-        for file in readdir(dirt)
-            mv(file, joinpath(dir, file), force=true)
-        end
-    catch ex
-        @warn("download of $url failed: $ex")
-    finally
-        cd(wdir)
+    loaded = 0
+    for url in alternates(dataurl(data))
         rm(dirt, force=true, recursive=true)
+        mkpath(dirt)
+        try
+            @info("downloading: $url")
+            pipe = downloadpipeline(url, dirt)
+            tl = run(pipe)
+            for i in 1:length(tl)
+                wait(tl, i)
+            end
+            cd(dirt)
+            for file in readdir(dirt)
+                mv(file, joinpath(dir, file), force=true)
+            end
+            loaded = 1
+        catch ex
+            @warn("download of $url failed: $ex")
+        finally
+            cd(wdir)
+            rm(dirt, force=true, recursive=true)
+        end
+        loaded == 1 && break
     end
     addmetadata!(data)
-    return 1
+    return loaded
 end
 loadmatrix(data::GeneratedMatrixData) = 0
 
@@ -167,10 +174,27 @@ function loadinfo(data::RemoteMatrixData)
     if isfile(filemtx) || isfile(file)
         return 0
     end
-    url = redirect(dataurl(data))
+    s = ""
+    for url in alternates(dataurl(data))
+        s = loadhead(url)
+        isempty(s) || break
+    end
+    if !isempty(s)
+        mkpath(dirname(file))
+        write(file, s)
+        addmetadata!(data)
+        return 1
+    else
+        return 0
+    end
+end
+loadinfo(data::MatrixData) = 0
+
+# download the head of the data file at `url`, return "" if that fails
+function loadhead(url::AbstractString)
     io = open(downloadpipeline(url))
     out = IOBuffer()
-    s = try
+    try
         @info("downloading head of $url")
         skip = 0
         while ( s = readline(io) ) != ""
@@ -187,16 +211,7 @@ function loadinfo(data::RemoteMatrixData)
     finally
         close(io)
     end
-    if !isempty(s)
-        mkpath(dirname(file))
-        write(file, s)
-        addmetadata!(data)
-        return 1
-    else
-        return 0
-    end
 end
-loadinfo(data::MatrixData) = 0
 
 """
     downloadpipeline(url, path=nothing)
